@@ -1,0 +1,16 @@
+name: Move to Review
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  move-to-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move to Review
+        uses: mikeal/pull-request-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          column_name: "Review"
