@@ -1,9 +1,11 @@
-## CY Virtual Workplace ## 
-# Description:
 
-# Development plans: 
+## CY Virtual Workplace ##   
 
-# Dependencies: 
+# PURPOSE # 
 
-# Install and try it out:
+# PROCESS # 
+- enkätundersökning 
 
+# DEVELOPMENT PLANS # 
+
+# RUN APPLICATION #
