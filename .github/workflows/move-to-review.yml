@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: Move Issue to Review Column
 
 on:
   pull_request:
@@ -13,18 +13,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Move Issue to Review Column for Expo App
-        if: ${{ contains(github.event.client_payload.pull_request.base.repo.full_name, 'expo-app') }}
-        run: |
-          # Your Expo-specific commands to move issue to "Review" column
-          # ...
-
-      - name: Move Issue to Review Column for .NET Project
-        if: ${{ contains(github.event.client_payload.pull_request.base.repo.full_name, 'dotnet-project') }}
-        run: |
-          # Your .NET-specific commands to move issue to "Review" column
-          # ...
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -37,7 +25,7 @@ jobs:
           sudo apt update
           sudo apt install gh
 
-      - name: Move Issue to Review Column (Fallback)
+      - name: Move Issue to Review Column
         run: |
           # Extract the pull request number
           PR_NUMBER=$(echo "${{ github.event_name }}_${{ github.event.client_payload.pull_request.number }}")
