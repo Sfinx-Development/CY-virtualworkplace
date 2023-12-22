@@ -16,6 +16,8 @@
 # Project-specific files
 backend/api/obj/
 backend/api/bin/
+backend/core/obj/
+backend/core/bin/
 
 # Mono auto generated files
 mono_crash.*
