@@ -1,0 +1,16 @@
+name: Move PR to Review
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  move-to-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move to Review
+        uses: pascalgn/automerge-action@v0.14.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          column: "Review"
