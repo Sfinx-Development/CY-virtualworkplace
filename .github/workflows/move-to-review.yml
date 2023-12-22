@@ -1,4 +1,4 @@
-name: Move to Review
+name: Move PR to Review
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Move to Review
-        uses: mikeal/pull-request-action@main
+        uses: pascalgn/automerge-action@v0.14.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          column_name: "Review"
+          column: "Review"
