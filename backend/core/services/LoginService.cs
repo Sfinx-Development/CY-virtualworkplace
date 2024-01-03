@@ -9,39 +9,35 @@ namespace core
 {
     public class LogInService
     {
-        // private readonly ILogInDB<User> _logInUser;
         private readonly SymmetricSecurityKey _securityKey;
+        private readonly LogInRepository _logInRepository;
 
-        public LogInService(SymmetricSecurityKey securityKey)
+        public LogInService(SymmetricSecurityKey securityKey, LogInRepository logInRepository)
         {
-            // _logInUser = logInUser;
             _securityKey = securityKey;
+            _logInRepository = logInRepository;
         }
 
-        public LogInDTO LogIn(string email, string passWord)
+        public async Task<LogInDTO> LogIn(string email, string password)
         {
             try
             {
-                // User user = _logInUser.GetMemberByLogIn(email, passWord);
-                if (email == "kalle@mail.com" && passWord == "Hej123")
+                User foundUser = await _logInRepository.GetByLogIn(email, password);
+                if (foundUser == null)
                 {
-                    Console.WriteLine("INNE I IF I LOGISERVICE");
-                    User user = new();
-                    user.Id = "12312481";
-                    user.Email = email;
-                    string jwtToken = GenerateJwtToken(user);
-
-                    LogInDTO logInDTO = new LogInDTO
-                    {
-                        Email = email,
-                        Password = passWord,
-                        JWT = jwtToken
-                    };
-
-                    return logInDTO;
+                    return null;
                 }
 
-                return null;
+                string jwtToken = GenerateJwtToken(foundUser);
+
+                LogInDTO logInDTO = new LogInDTO
+                {
+                    Email = foundUser.Email,
+                    Password = foundUser.Password,
+                    JWT = jwtToken
+                };
+
+                return logInDTO;
             }
             catch (InvalidOperationException)
             {

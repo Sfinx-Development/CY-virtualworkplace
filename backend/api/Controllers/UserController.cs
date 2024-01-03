@@ -1,4 +1,5 @@
 using System;
+using System.Security.Permissions;
 using System.Threading.Tasks;
 using api;
 using core;
@@ -52,26 +53,98 @@ namespace Controllers
             }
         }
 
-               [HttpPost("Create")]
-    public async Task<ActionResult<User>> Post(UserCreateDTO userCreateDto)
-    {
-        try
+        [HttpGet]
+        public async Task<ActionResult<User>> GetById(string id)
         {
-           var userCreated = _userService.Create(userCreateDto);
-        
-            if (userCreated == null)
+            try
             {
-                return BadRequest("Failed to create movie.");
+                User foundUser = await _userService.GetById(id);
+                return foundUser;
             }
-            // return CreatedAtAction(nameof(GetById), new { id = newMovieDTO.Id }, newMovieDTO);
-            return Ok(userCreated);
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
-        catch (Exception e)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-        }
-    }
-    }
 
- 
+        [HttpPost("Create")]
+        public async Task<ActionResult<User>> Post(UserCreateDTO userCreateDto)
+        {
+            try
+            {
+                var userCreated = _userService.Create(userCreateDto);
+
+                if (userCreated == null)
+                {
+                    return BadRequest("Failed to create movie.");
+                }
+                return CreatedAtAction(nameof(GetById), new { id = userCreated.Id }, userCreated);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult<User>> UpdateUser(User user)
+        {
+            try
+            {
+                var jwt = HttpContext
+                    .Request.Headers["Authorization"]
+                    .ToString()
+                    .Replace("Bearer ", string.Empty);
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                User updatedUser = await _userService.Edit(user);
+                return Ok(updatedUser);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<ActionResult<User>> DeleteUser(string id)
+        {
+            try
+            {
+                var jwt = HttpContext
+                    .Request.Headers["Authorization"]
+                    .ToString()
+                    .Replace("Bearer ", string.Empty);
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                await _userService.DeleteById(id);
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+    }
 }

@@ -23,7 +23,10 @@ namespace Controllers
         {
             try
             {
-                LogInDTO logInDTOWithJwt = _logInService.LogIn(logInDTO.Email, logInDTO.Password);
+                LogInDTO logInDTOWithJwt = await _logInService.LogIn(
+                    logInDTO.Email,
+                    logInDTO.Password
+                );
                 return logInDTOWithJwt;
             }
             catch (Exception e)
