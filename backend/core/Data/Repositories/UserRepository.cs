@@ -1,8 +1,9 @@
+using Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class UserRepository
+public class UserRepository : IUserRepository
 {
     private readonly CyDbContext _cyDbContext;
 
