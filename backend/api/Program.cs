@@ -1,5 +1,6 @@
 using System.Text;
 using core;
+using Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,6 +38,8 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<LogInService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LogInService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
