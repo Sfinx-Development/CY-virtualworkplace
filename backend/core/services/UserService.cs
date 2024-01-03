@@ -6,10 +6,8 @@ namespace core
 {
     public class UserService
     {
-        public UserService()
-        {
+        public UserService() { }
 
-        }
         private static readonly Random random = new Random();
 
         public User Create(UserCreateDTO userCreateDto)
@@ -22,18 +20,16 @@ namespace core
             user.LastName = userCreateDto.LastName;
             user.Email = userCreateDto.Email;
             user.Gender = userCreateDto.Gender;
-            user.IsOwner = userCreateDto.IsOwner;
             user.Password = userCreateDto.Password;
             user.PhoneNumber = userCreateDto.PhoneNumber;
-            user.Role = userCreateDto.Role;
             user.DateCreated = DateTime.UtcNow;
             user.Age = userCreateDto.Age;
-           
+
             // Ska sparas till databasen sen här
             Console.WriteLine(user.FirstName);
             return user;
-
         }
+
         public static string GenerateRandomId(int length = 8)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -46,6 +42,5 @@ namespace core
 
             return new string(idArray);
         }
-
     }
 }

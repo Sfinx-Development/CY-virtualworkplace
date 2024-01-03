@@ -28,8 +28,7 @@ public class CyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().HasMany(u => u.Teams).WithMany(t => t.Users);
-
+       
         modelBuilder.Entity<Office>().HasOne(o => o.User);
         modelBuilder.Entity<Office>().HasOne(o => o.Cy);
 
@@ -46,5 +45,8 @@ public class CyDbContext : DbContext
 
         modelBuilder.Entity<Conversation>().HasOne(c => c.Creator);
         modelBuilder.Entity<Conversation>().HasMany(c => c.Participants);
+
+        modelBuilder.Entity<Profile>().HasOne(p => p.User).WithMany(u => u.Profiles);
+        modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);
     }
 }
