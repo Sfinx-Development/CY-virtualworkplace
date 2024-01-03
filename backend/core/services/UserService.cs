@@ -17,42 +17,70 @@ namespace core
 
         public async Task<User> Create(UserCreateDTO userCreateDto)
         {
-            User user = new();
+            try
+            {
+                User user = new();
 
-            var generateRandomId = GenerateRandomId();
-            user.Id = generateRandomId;
-            user.FirstName = userCreateDto.FirstName;
-            user.LastName = userCreateDto.LastName;
-            user.Email = userCreateDto.Email;
-            user.Gender = userCreateDto.Gender;
-            user.Password = userCreateDto.Password;
-            user.PhoneNumber = userCreateDto.PhoneNumber;
-            user.DateCreated = DateTime.UtcNow;
-            user.Age = userCreateDto.Age;
+                var generateRandomId = GenerateRandomId();
+                user.Id = generateRandomId;
+                user.FirstName = userCreateDto.FirstName;
+                user.LastName = userCreateDto.LastName;
+                user.Email = userCreateDto.Email;
+                user.Gender = userCreateDto.Gender;
+                user.Password = userCreateDto.Password;
+                user.PhoneNumber = userCreateDto.PhoneNumber;
+                user.DateCreated = DateTime.UtcNow;
+                user.Age = userCreateDto.Age;
 
-            User createdUser = await _userRepository.CreateAsync(user);
+                User createdUser = await _userRepository.CreateAsync(user);
 
-            Console.WriteLine(user.FirstName);
-            return createdUser;
+                return createdUser;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<User> Edit(User user)
         {
-            User editedUser = new();
+            try
+            {
+                User editedUser = await _userRepository.UpdateAsync(user);
 
-            return editedUser;
+                return editedUser;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<User> GetById(string id)
         {
-            User editedUser = new();
+            try
+            {
+                User userFound = await _userRepository.GetByIdAsync(id);
 
-            return editedUser;
+                return userFound;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        public async Task Delete(User user)
+        public async Task<bool> DeleteById(string id)
         {
-            User editedUser = new();
+            try
+            {
+                await _userRepository.DeleteByIdAsync(id);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static string GenerateRandomId(int length = 8)
