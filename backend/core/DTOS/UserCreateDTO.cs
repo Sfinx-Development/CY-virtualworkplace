@@ -1,8 +1,7 @@
 namespace core;
 
-public class User
+public class UserCreateDTO
 {
-    public string Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
@@ -13,7 +12,6 @@ public class User
     public string Gender { get; set; }
     public int Age { get; set; }
     public DateTime DateCreated { get; set; }
-    public List<Team> Teams { get; set; } = new();
 
-    public User() { }
+    public UserCreateDTO() { }
 }

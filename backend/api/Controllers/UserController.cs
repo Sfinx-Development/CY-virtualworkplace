@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using api;
 using core;
-using services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +13,7 @@ namespace Controllers
     public class UserController : ControllerBase
     {
         private readonly JwtService _jwtService;
+        private readonly UserService _userService;
 
         public UserController(JwtService jwtService)
         {
@@ -50,5 +50,27 @@ namespace Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+               [HttpPost("Create")]
+    public async Task<ActionResult<User>> Post(UserCreateDTO userCreateDto)
+    {
+        try
+        {
+           var userCreated = _userService.Create(userCreateDto);
+        
+            if (userCreated == null)
+            {
+                return BadRequest("Failed to create movie.");
+            }
+            // return CreatedAtAction(nameof(GetById), new { id = newMovieDTO.Id }, newMovieDTO);
+            return userCreated;
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        }
     }
+    }
+
+ 
 }

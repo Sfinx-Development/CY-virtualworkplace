@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using core;
 using Microsoft.IdentityModel.Tokens;
 
-namespace services
+namespace core
 {
     public class LogInService
     {
