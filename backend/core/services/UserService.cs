@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using core;
 
-namespace services
+namespace core
 {
     public class UserService
     {
@@ -15,13 +14,23 @@ namespace services
 
         public User Create(UserCreateDTO userCreateDto)
         {
+            User user = new();
+
             var generateRandomId = GenerateRandomId();
             user.Id = generateRandomId;
             user.FirstName = userCreateDto.FirstName;
-            List<Team>teams = new();
-            user.Teams = teams;
+            user.LastName = userCreateDto.LastName;
+            user.Email = userCreateDto.Email;
+            user.Gender = userCreateDto.Gender;
+            user.IsOwner = userCreateDto.IsOwner;
+            user.Password = userCreateDto.Password;
+            user.PhoneNumber = userCreateDto.PhoneNumber;
+            user.Role = userCreateDto.Role;
+            user.DateCreated = DateTime.UtcNow;
+            user.Age = userCreateDto.Age;
+           
             // Ska sparas till databasen sen här
-
+            Console.WriteLine(user.FirstName);
             return user;
 
         }

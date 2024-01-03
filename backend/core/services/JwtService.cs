@@ -1,8 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using core;
 using Microsoft.IdentityModel.Tokens;
 
-namespace services
+namespace core
 {
     public class JwtService
     {

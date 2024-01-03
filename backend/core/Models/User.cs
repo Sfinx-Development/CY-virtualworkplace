@@ -13,7 +13,7 @@ public class User
     public string Gender { get; set; }
     public int Age { get; set; }
     public DateTime DateCreated { get; set; }
-    public List<Team> Teams { get; set; }
+    public List<Team> Teams { get; set; } = new();
 
     public User() { }
 }
