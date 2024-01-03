@@ -31,27 +31,25 @@ public class UserRepository
     //     }
     // }
 
-    // public async Task<Movie> GetByIdAsync(int id)
-    // {
-    //     try
-    //     {
-    //         if (_trananDbContext.Movies.Count() < 1)
-    //         {
-    //             return new Movie();
-    //         }
-    //         var movie = await _trananDbContext.Movies
-    //             .Include(m => m.Actors)
-    //             .Include(m => m.Directors)
-    //             .Include(m => m.Reviews)
-    //             .FirstAsync(m => m.MovieId == id);
-
-    //         return movie;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return null;
-    //     }
-    // }
+    public async Task<User> GetByIdAsync(string id)
+    {
+        try
+        {
+            User user = await _cyDbContext.Users.FirstAsync(u => u.Id == id);
+            if (user != null)
+            {
+                return user;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
 
     public async Task<User> CreateAsync(User user)
     {
@@ -59,70 +57,64 @@ public class UserRepository
         {
             await _cyDbContext.Users.AddAsync(user);
             await _cyDbContext.SaveChangesAsync();
-          
+
             return user;
         }
         catch (Exception e)
         {
-            throw  new Exception();
+            throw new Exception();
         }
     }
 
-    // public async Task<Movie> UpdateAsync(Movie movie)
-    // {
-    //     try
-    //     {
-    //         var movieToUpdate = await _trananDbContext.Movies
-    //             .Include(m => m.Actors)
-    //             .Include(m => m.Directors)
-    //             .FirstAsync(m => m.MovieId == movie.MovieId);
-    //         if (movie == null)
-    //         {
-    //             return null;
-    //         }
-    //         movieToUpdate.Title = movie.Title ?? movieToUpdate.Title;
-    //         movieToUpdate.Description = movie.Description ?? movieToUpdate.Description;
-    //         movieToUpdate.AmountOfScreenings = movie.AmountOfScreenings;
-    //         movieToUpdate.MaxScreenings = movie.MaxScreenings;
-    //         movieToUpdate.Language = movie.Language ?? movieToUpdate.Language;
-    //         movieToUpdate.ReleaseYear = movie.ReleaseYear;
-    //         movieToUpdate.DurationMinutes = movie.DurationMinutes;
-    //         movieToUpdate.ImageUrl = movie.ImageUrl ?? movieToUpdate.ImageUrl;
-    //         movieToUpdate.Price = movie.Price;
-    //         movieToUpdate.TrailerId = movie.TrailerId;
+    public async Task<User> UpdateAsync(User user)
+    {
+        try
+        {
+            var userToUpdate = await _cyDbContext.Users.FirstAsync(u => u.Id == u.Id);
 
-    //         movieToUpdate.Actors = movie.Actors;
+            if (userToUpdate == null)
+            {
+                return null;
+            }
 
-    //         movieToUpdate.Directors = movie.Directors;
+            userToUpdate.FirstName = user.FirstName ?? userToUpdate.FirstName;
+            userToUpdate.LastName = user.LastName ?? userToUpdate.LastName;
+            userToUpdate.Gender = user.Gender ?? userToUpdate.Gender;
+            userToUpdate.Email = user.Email ?? userToUpdate.Email;
+            userToUpdate.Age = user.Age > 0 ? user.Age : userToUpdate.Age;
+            userToUpdate.PhoneNumber = user.PhoneNumber ?? userToUpdate.PhoneNumber;
+            userToUpdate.Password = user.Password ?? userToUpdate.Password;
 
-    //         _trananDbContext.Movies.Update(movieToUpdate);
+            _cyDbContext.Users.Update(userToUpdate);
 
-    //         await _trananDbContext.SaveChangesAsync();
-    //         return movieToUpdate;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return null;
-    //     }
-    // }
+            await _cyDbContext.SaveChangesAsync();
+            return userToUpdate;
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
 
-    // public async Task DeleteByIdAsync(int id)
-    // {
-    //     try
-    //     {
-    //         var movieToDelete = await _trananDbContext.Movies.FindAsync(id);
-    //         var deletedMovie = movieToDelete;
-    //         if (movieToDelete != null)
-    //         {
-    //             _trananDbContext.Movies.Remove(movieToDelete);
-    //             await _trananDbContext.SaveChangesAsync();
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
+    public async Task DeleteByIdAsync(string id)
+    {
+        try
+        {
+            //OBS!!!!!!!!!!
+            //sen behöver vi ta bort allt som har med usern att göra när vi har allt kodat o klart
+            var userToDelete = await _cyDbContext.Users.FindAsync(id);
+            var deletedUser = userToDelete;
+            if (userToDelete != null)
+            {
+                _cyDbContext.Users.Remove(userToDelete);
+                await _cyDbContext.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 
     // public async Task DeleteAsync()
     // {

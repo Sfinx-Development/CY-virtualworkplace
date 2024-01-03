@@ -1,11 +1,11 @@
 using System.Text;
 using core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5290");
@@ -23,19 +23,20 @@ builder.Services.AddControllers();
 // builder.Services.AddScoped<IDataToObject<User, User>, UsersDB>();
 // builder.Services.AddScoped<ILogInManager<OutgoingLogInDTO>, LogInServiceForDTO>();
 
-builder.Services.AddDbContext<CyDbContext>(options =>
- options.UseMySql(
+builder.Services.AddDbContext<CyDbContext>(
+    options =>
+        options.UseMySql(
             "server=localhost;database=cy;user=root;password=",
             ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
         )
 );
 
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<LogInRepository>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<LogInService>();
 builder.Services.AddScoped<UserService>();
-
-
+builder.Services.AddScoped<LogInService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
