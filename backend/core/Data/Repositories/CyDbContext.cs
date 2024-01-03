@@ -18,6 +18,12 @@ public class CyDbContext : DbContext
 
     public CyDbContext() { }
 
+    public CyDbContext(DbContextOptions<CyDbContext> options)
+        : base(options)
+    {
+        Database.EnsureCreated();
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         options.UseMySql(

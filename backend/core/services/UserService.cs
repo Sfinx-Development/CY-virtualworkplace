@@ -5,12 +5,16 @@ using System.Text;
 namespace core
 {
     public class UserService
+
     {
-        public UserService() { }
+       private readonly UserRepository _userRepository;
+        public UserService(UserRepository userRepository) {
+            _userRepository = userRepository;
+         }
 
         private static readonly Random random = new Random();
 
-        public User Create(UserCreateDTO userCreateDto)
+        public async Task<User> Create(UserCreateDTO userCreateDto)
         {
             User user = new();
 
@@ -25,9 +29,10 @@ namespace core
             user.DateCreated = DateTime.UtcNow;
             user.Age = userCreateDto.Age;
 
+           User createdUser = await _userRepository.CreateAsync(user);
             // Ska sparas till databasen sen här
             Console.WriteLine(user.FirstName);
-            return user;
+            return createdUser;
         }
 
         public static string GenerateRandomId(int length = 8)

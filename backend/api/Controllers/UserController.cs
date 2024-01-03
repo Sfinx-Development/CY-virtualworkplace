@@ -15,9 +15,10 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly UserService _userService;
 
-        public UserController(JwtService jwtService)
+        public UserController(JwtService jwtService, UserService userService)
         {
             _jwtService = jwtService;
+            _userService = userService;
         }
 
         [HttpPost]
@@ -63,7 +64,7 @@ namespace Controllers
                 return BadRequest("Failed to create movie.");
             }
             // return CreatedAtAction(nameof(GetById), new { id = newMovieDTO.Id }, newMovieDTO);
-            return userCreated;
+            return Ok(userCreated);
         }
         catch (Exception e)
         {
