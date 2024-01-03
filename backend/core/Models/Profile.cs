@@ -8,6 +8,7 @@ public class Profile
     public DateTime DateCreated { get; set; }
     public Team Team { get; set; }
     public User User { get; set; }
+    public List<Conversation> Conversations = new();
 
     public Profile() { }
 }
