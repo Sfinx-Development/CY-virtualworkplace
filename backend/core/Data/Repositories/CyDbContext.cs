@@ -6,6 +6,7 @@ namespace core;
 public class CyDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<Profile> Profiles { get; set; }
     public DbSet<Meeting> Meetings { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Office> Offices { get; set; }
