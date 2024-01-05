@@ -34,10 +34,14 @@ builder.Services.AddDbContext<CyDbContext>(
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<LogInRepository>();
+builder.Services.AddScoped<ProfileRepository>();
+builder.Services.AddScoped<TeamRepository>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<LogInService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LogInService>();
+builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<TeamService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 

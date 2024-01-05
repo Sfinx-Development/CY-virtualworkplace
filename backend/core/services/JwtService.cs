@@ -6,13 +6,15 @@ namespace core
     public class JwtService
     {
         // IDataToObject<User, User> _userDataToObject;
+        private readonly UserRepository _userRepository;
 
-        public JwtService()
+        public JwtService(UserRepository userRepository)
         {
             // _userDataToObject = userDataToObject;
+            _userRepository = userRepository;
         }
 
-        public User GetByJWT(string jwt)
+        public async Task<User> GetByJWT(string jwt)
         {
             try
             {
@@ -25,10 +27,9 @@ namespace core
                         claim => claim.Type == "sub" || claim.Type == "UserId"
                     );
 
-                    if (idClaim != null && int.TryParse(idClaim.Value, out int userId))
+                    if (idClaim != null)
                     {
-                        // User foundUser = _userDataToObject.GetOne(userId, null);
-                        User user = new() { FirstName = "Kalle" };
+                        User user = await _userRepository.GetByIdAsync(idClaim.Value);
                         return user;
                     }
                 }
