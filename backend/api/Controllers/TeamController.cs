@@ -90,8 +90,10 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Join")]
-        public async Task<ActionResult<Profile>> Post(string code, string role)
+        public async Task<ActionResult<Profile>> Post([FromBody] JoinRequestDTO request)
         {
+            //ATT GÖRA: kolla villkor så man inte kan gå med flera gånger i samma team
+
             try
             {
                 var jwt = HttpContext
@@ -109,8 +111,7 @@ namespace Controllers
                 {
                     return BadRequest("Failed to get user.");
                 }
-                //skicka med team och profile? profile och include team?
-                var foundTeam = await _teamService.GetByCodeAsync(code);
+                var foundTeam = await _teamService.GetByCodeAsync(request.Code);
 
                 if (foundTeam == null)
                 {
@@ -121,7 +122,7 @@ namespace Controllers
                     var createdProfile = await _profileService.CreateProfile(
                         loggedInUser,
                         false,
-                        role,
+                        request.Role,
                         foundTeam
                     );
                     // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
