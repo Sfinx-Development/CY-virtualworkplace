@@ -138,8 +138,9 @@ namespace Controllers
         [Authorize]
         [HttpPost("Leave")]
 
-        public async Task<ActionResult> Post([FromBody] LeaveRequestDTO request )
+        public async Task<ActionResult> Post(string profileId)
         {
+            //om profilen som ska raderas är isowner true, då ska det inte funka
             try
             {
                 var jwt = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
@@ -156,21 +157,20 @@ namespace Controllers
                 }
 
                
-                var userProfile = await _profileService.GetProfileByUserId(loggedInUser);
+                var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
 
-                if (userProfile == null)
+                if (userProfiles == null || userProfiles.Count < 1) 
                 {
                     return BadRequest("User profile not found.");
                 }
 
-            
-                if (userProfile.Team == null)
-                {
-                    return BadRequest("User is not a member of any team.");
+                var profileToDelete = userProfiles.Find(p => p.Id == profileId);
+
+                if(profileToDelete == null){
+                     return BadRequest("User profile not found.");
                 }
 
-              
-                await _profileService.DeleteProfile(userProfile);
+                await _profileService.DeleteProfile(profileToDelete);
 
                 return Ok("Successfully left the team.");
             }

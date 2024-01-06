@@ -34,9 +34,9 @@ public class ProfileService
         return createdProfile;
     }
 
-    public async Task<Profile> GetProfileByUserId(User user)
+    public async Task<List<Profile>> GetProfilesByUserId(User user)
     {
-        return new Profile();
+        return new List<Profile>();
     }
 
     public async Task<Profile> UpdateProfile(Profile profile)
@@ -44,7 +44,16 @@ public class ProfileService
         return new Profile();
     }
 
-    public async Task DeleteProfile(Profile profile) { }
+    public async Task DeleteProfile(Profile profile) { 
+        
+        try{
+            if(profile != null){
+             await _profileRepository.DeleteByIdAsync(profile.Id);
+            }
+        }catch(Exception){
+            throw new Exception();
+        }
+    }
 
     public static string GenerateRandomId(int length = 8)
     {
