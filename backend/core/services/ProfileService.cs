@@ -91,4 +91,29 @@ public class ProfileService
 
         return new string(idArray);
     }
+
+    public async Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO)
+    {
+
+        try
+        {
+           var profile = await _profileRepository.GetByIdAsync(deleteTeamDTO.ProfileId);
+
+           if(profile.IsOwner == true)
+           {
+             var team = await _teamRepository.GetByIdAsync(deleteTeamDTO.TeamId);
+             var profilesInTeam = await _profileRepository.GetProfilesInTeamAsync(deleteTeamDTO.TeamId);
+
+             foreach(var p in profilesInTeam  ){
+                await _profileRepository.DeleteByIdAsync(p.Id);
+             }   
+             await _teamRepository.DeleteByIdAsync(team.Id);
+
+           }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
 }
