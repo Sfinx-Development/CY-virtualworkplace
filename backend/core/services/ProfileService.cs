@@ -34,7 +34,7 @@ public class ProfileService
         return createdProfile;
     }
 
-    public async Task<Profile> GetProfileByUserId()
+    public async Task<Profile> GetProfileByUserId(User user)
     {
         return new Profile();
     }
@@ -44,7 +44,7 @@ public class ProfileService
         return new Profile();
     }
 
-    public async Task DeleteProfile() { }
+    public async Task DeleteProfile(Profile profile) { }
 
     public static string GenerateRandomId(int length = 8)
     {

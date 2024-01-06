@@ -19,12 +19,12 @@ namespace Controllers
 
         public TeamController(
             JwtService jwtService,
-            TeamService teamServie,
+            TeamService teamService,
             ProfileService profileService
         )
         {
             _jwtService = jwtService;
-            _teamService = teamServie;
+            _teamService = teamService;
             _profileService = profileService;
         }
 
@@ -135,6 +135,61 @@ namespace Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("Leave")]
+
+        public async Task<ActionResult> Post([FromBody] LeaveRequestDTO request )
+        {
+            try
+            {
+                var jwt = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+               
+                var userProfile = await _profileService.GetProfileByUserId(loggedInUser);
+
+                if (userProfile == null)
+                {
+                    return BadRequest("User profile not found.");
+                }
+
+            
+                if (userProfile.Team == null)
+                {
+                    return BadRequest("User is not a member of any team.");
+                }
+
+              
+                await _profileService.DeleteProfile(userProfile);
+
+                return Ok("Successfully left the team.");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+    
+    }
+}
+
+   
+
+    
+
+       
+
+
         //     [HttpPut]
         //     [Authorize]
         //     public async Task<ActionResult<User>> UpdateUser(User user)
@@ -195,5 +250,3 @@ namespace Controllers
         //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         //         }
         //     }
-    }
-}
