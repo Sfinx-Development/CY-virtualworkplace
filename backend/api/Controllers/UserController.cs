@@ -72,13 +72,14 @@ namespace Controllers
         {
             try
             {
+                //KOLLA SÅ INTE SAMMA EMAIL SKAPAS TVÅ GÅNGER
                 var userCreated = _userService.Create(userCreateDto);
 
                 if (userCreated == null)
                 {
-                    return BadRequest("Failed to create movie.");
+                    return BadRequest("Failed to create user.");
                 }
-                return CreatedAtAction(nameof(GetById), new { id = userCreated.Id }, userCreated);
+                return Ok(userCreated);
             }
             catch (Exception e)
             {

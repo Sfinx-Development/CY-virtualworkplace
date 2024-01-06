@@ -1,3 +1,5 @@
+using core.Migrations;
+
 namespace core;
 
 public class ProfileService
@@ -36,7 +38,24 @@ public class ProfileService
 
     public async Task<List<Profile>> GetProfilesByUserId(User user)
     {
-        return new List<Profile>();
+        try
+        {
+            var profiles = await _profileRepository.GetByUserIdAsync(user.Id);
+
+            if (profiles == null || profiles.Count < 1)
+            {
+                throw new Exception("profileId doesnt exist");
+            }
+            else
+            {
+                return profiles;
+            }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+
     }
 
     public async Task<Profile> UpdateProfile(Profile profile)
@@ -44,13 +63,18 @@ public class ProfileService
         return new Profile();
     }
 
-    public async Task DeleteProfile(Profile profile) { 
-        
-        try{
-            if(profile != null){
-             await _profileRepository.DeleteByIdAsync(profile.Id);
+    public async Task DeleteProfile(Profile profile)
+    {
+
+        try
+        {
+            if (profile != null)
+            {
+                await _profileRepository.DeleteByIdAsync(profile.Id);
             }
-        }catch(Exception){
+        }
+        catch (Exception)
+        {
             throw new Exception();
         }
     }

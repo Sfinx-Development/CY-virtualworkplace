@@ -3,6 +3,7 @@ using System.Security.Permissions;
 using System.Threading.Tasks;
 using api;
 using core;
+using core.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -138,11 +139,12 @@ namespace Controllers
         [Authorize]
         [HttpPost("Leave")]
 
-        public async Task<ActionResult> Post(string profileId)
+        public async Task<ActionResult> Post([FromBody]string profileId)
         {
             //om profilen som ska raderas är isowner true, då ska det inte funka
             try
             {
+                Console.WriteLine(profileId + "PROFIL ID KOMMER HÄR");
                 var jwt = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
