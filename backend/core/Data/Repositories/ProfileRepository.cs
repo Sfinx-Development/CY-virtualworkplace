@@ -37,6 +37,55 @@ public class ProfileRepository
         }
     }
 
+     public async Task<List<Profile>> GetProfilesInTeamAsync(string teamId)
+    {
+        try
+        {
+            //hämtar alla profiler och dess team som har det useridt
+            List<Profile> profiles = await _cyDbContext
+                .Profiles.Include(p => p.Team)
+                .Where(p => p.Team.Id == teamId)
+                .ToListAsync();
+
+            if (profiles == null)
+            {
+                throw new Exception();
+            }
+            else
+            {
+                return profiles;
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+     public async Task<Profile> GetByIdAsync(string profileId)
+    {
+        try
+        {
+            //hämtar alla profiler och dess team som har det useridt
+            Profile profile = await _cyDbContext
+                .Profiles
+                .Where(p => p.Id == profileId).FirstAsync();
+
+            if (profile == null)
+            {
+                throw new Exception();
+            }
+            else
+            {
+                return profile;
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
+
     public async Task<Profile> CreateAsync(Profile profile)
     {
         try

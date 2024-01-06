@@ -1,3 +1,5 @@
+using core.Migrations;
+
 namespace core;
 
 public class ProfileService
@@ -34,9 +36,26 @@ public class ProfileService
         return createdProfile;
     }
 
-    public async Task<Profile> GetProfileByUserId()
+    public async Task<List<Profile>> GetProfilesByUserId(User user)
     {
-        return new Profile();
+        try
+        {
+            var profiles = await _profileRepository.GetByUserIdAsync(user.Id);
+
+            if (profiles == null || profiles.Count < 1)
+            {
+                throw new Exception("profileId doesnt exist");
+            }
+            else
+            {
+                return profiles;
+            }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+
     }
 
     public async Task<Profile> UpdateProfile(Profile profile)
@@ -44,7 +63,21 @@ public class ProfileService
         return new Profile();
     }
 
-    public async Task DeleteProfile() { }
+    public async Task DeleteProfile(Profile profile)
+    {
+
+        try
+        {
+            if (profile != null)
+            {
+                await _profileRepository.DeleteByIdAsync(profile.Id);
+            }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
 
     public static string GenerateRandomId(int length = 8)
     {
@@ -57,5 +90,30 @@ public class ProfileService
         }
 
         return new string(idArray);
+    }
+
+    public async Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO)
+    {
+
+        try
+        {
+           var profile = await _profileRepository.GetByIdAsync(deleteTeamDTO.ProfileId);
+
+           if(profile.IsOwner == true)
+           {
+             var team = await _teamRepository.GetByIdAsync(deleteTeamDTO.TeamId);
+             var profilesInTeam = await _profileRepository.GetProfilesInTeamAsync(deleteTeamDTO.TeamId);
+
+             foreach(var p in profilesInTeam  ){
+                await _profileRepository.DeleteByIdAsync(p.Id);
+             }   
+             await _teamRepository.DeleteByIdAsync(team.Id);
+
+           }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
     }
 }

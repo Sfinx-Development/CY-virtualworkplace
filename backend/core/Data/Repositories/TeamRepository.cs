@@ -67,6 +67,26 @@ public class TeamRepository : ITeamRepository
         }
     }
 
+     public async Task<Team> GetByIdAsync(string teamId)
+    {
+        try
+        {
+            Team team = await _cyDbContext.Teams.FirstAsync(t => t.Id == teamId);
+            if (team != null)
+            {
+                return team;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
     public async Task<Team> UpdateAsync(Team team)
     {
         try

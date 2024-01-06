@@ -3,6 +3,7 @@ using System.Security.Permissions;
 using System.Threading.Tasks;
 using api;
 using core;
+using core.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +20,12 @@ namespace Controllers
 
         public TeamController(
             JwtService jwtService,
-            TeamService teamServie,
+            TeamService teamService,
             ProfileService profileService
         )
         {
             _jwtService = jwtService;
-            _teamService = teamServie;
+            _teamService = teamService;
             _profileService = profileService;
         }
 
@@ -135,6 +136,110 @@ namespace Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("Leave")]
+
+        public async Task<ActionResult> Post([FromBody]string profileId)
+        {
+            //om profilen som ska raderas är isowner true, då ska det inte funka
+            try
+            {
+                Console.WriteLine(profileId + "PROFIL ID KOMMER HÄR");
+                var jwt = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+               
+                var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
+
+                if (userProfiles == null || userProfiles.Count < 1) 
+                {
+                    return BadRequest("User profile not found.");
+                }
+
+                var profileToDelete = userProfiles.Find(p => p.Id == profileId);
+
+                if(profileToDelete == null){
+                     return BadRequest("User profile not found.");
+                }
+
+                await _profileService.DeleteProfile(profileToDelete);
+
+                return Ok("Successfully left the team.");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("Delete")]
+
+        public async Task<ActionResult> Post([FromBody] DeleteTeamDTO deleteTeamDTO )
+        {
+            //om profilen som ska raderas är isowner true, då ska det inte funka
+            try
+            {
+                Console.WriteLine(deleteTeamDTO.TeamId + "PROFIL ID KOMMER HÄR");
+                var jwt = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+               
+                var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
+
+                if (userProfiles == null || userProfiles.Count < 1) 
+                {
+                    return BadRequest("User profile not found.");
+                }
+
+                var profileToDelete = userProfiles.Find(p => p.Id == deleteTeamDTO.ProfileId);
+
+                if(profileToDelete == null){
+                     return BadRequest("User profile not found.");
+                }
+
+                await _profileService.DeleteTeamAndProfiles(deleteTeamDTO);
+
+                return Ok("Successfully left the team.");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+    
+    
+    
+    }
+}
+
+   
+
+    
+
+       
+
+
         //     [HttpPut]
         //     [Authorize]
         //     public async Task<ActionResult<User>> UpdateUser(User user)
@@ -195,5 +300,3 @@ namespace Controllers
         //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         //         }
         //     }
-    }
-}
