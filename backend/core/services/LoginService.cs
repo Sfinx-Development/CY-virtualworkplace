@@ -4,10 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Interfaces;
 
 namespace core
 {
-    public class LogInService
+    public class LogInService : ILoginService
     {
         private readonly SymmetricSecurityKey _securityKey;
         private readonly LogInRepository _logInRepository;

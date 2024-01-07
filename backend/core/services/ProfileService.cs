@@ -1,8 +1,9 @@
 using core.Migrations;
+using Interfaces;
 
 namespace core;
 
-public class ProfileService
+public class ProfileService : IProfileService
 {
     private readonly ProfileRepository _profileRepository;
     private readonly TeamRepository _teamRepository;
