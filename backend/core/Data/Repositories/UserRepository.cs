@@ -52,6 +52,18 @@ public class UserRepository : IUserRepository
         }
     }
 
+    public async Task<bool> UserEmailIsRegistered(string email)
+    {
+        try
+        {
+            return await _cyDbContext.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower());
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     public async Task<User> CreateAsync(User user)
     {
         try
@@ -61,7 +73,7 @@ public class UserRepository : IUserRepository
 
             return user;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new Exception();
         }
@@ -71,22 +83,10 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            var userToUpdate = await _cyDbContext.Users.FirstAsync(u => u.Id == u.Id);
+            var userToUpdate =
+                await _cyDbContext.Users.FirstAsync(u => u.Id == u.Id) ?? throw new Exception();
 
-            if (userToUpdate == null)
-            {
-                return null;
-            }
-
-            userToUpdate.FirstName = user.FirstName ?? userToUpdate.FirstName;
-            userToUpdate.LastName = user.LastName ?? userToUpdate.LastName;
-            userToUpdate.Gender = user.Gender ?? userToUpdate.Gender;
-            userToUpdate.Email = user.Email ?? userToUpdate.Email;
-            userToUpdate.Age = user.Age > 0 ? user.Age : userToUpdate.Age;
-            userToUpdate.PhoneNumber = user.PhoneNumber ?? userToUpdate.PhoneNumber;
-            userToUpdate.Password = user.Password ?? userToUpdate.Password;
-
-            _cyDbContext.Users.Update(userToUpdate);
+            _cyDbContext.Users.Update(user);
 
             await _cyDbContext.SaveChangesAsync();
             return userToUpdate;

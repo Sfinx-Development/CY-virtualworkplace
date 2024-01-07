@@ -73,7 +73,7 @@ namespace Controllers
             try
             {
                 //KOLLA SÅ INTE SAMMA EMAIL SKAPAS TVÅ GÅNGER
-                var userCreated = _userService.Create(userCreateDto);
+                var userCreated = await _userService.Create(userCreateDto);
 
                 if (userCreated == null)
                 {
