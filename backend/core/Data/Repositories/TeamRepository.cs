@@ -63,11 +63,11 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception e)
         {
-            return null;
+            throw new Exception();
         }
     }
 
-     public async Task<Team> GetByIdAsync(string teamId)
+    public async Task<Team> GetByIdAsync(string teamId)
     {
         try
         {
@@ -83,7 +83,7 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception e)
         {
-            return null;
+            throw new Exception();
         }
     }
 
@@ -95,7 +95,7 @@ public class TeamRepository : ITeamRepository
 
             if (teamToUpdate == null)
             {
-                return null;
+                throw new Exception();
             }
 
             teamToUpdate.Name = team.Name ?? teamToUpdate.Name;
