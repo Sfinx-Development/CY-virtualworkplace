@@ -48,6 +48,21 @@ public class TeamService
         }
     }
 
+    public async Task<Team> UpdateTeam(Team team)
+    {
+        try
+        {
+            var foundTeam = await _teamRepository.GetByIdAsync(team.Id) ?? throw new Exception();
+            foundTeam.TeamRole = team.TeamRole;
+            var updatedTeam = await _teamRepository.UpdateAsync(foundTeam);
+            return updatedTeam;
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
+
     public static string GenerateRandomCode(int length = 8)
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

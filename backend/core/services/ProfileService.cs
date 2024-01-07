@@ -55,17 +55,26 @@ public class ProfileService
         {
             throw new Exception();
         }
-
     }
 
     public async Task<Profile> UpdateProfile(Profile profile)
     {
-        return new Profile();
+        try
+        {
+            var foundProfile =
+                await _profileRepository.GetByIdAsync(profile.Id) ?? throw new Exception();
+            foundProfile.Role = profile.Role;
+            var updatedProfile = await _profileRepository.UpdateAsync(foundProfile);
+            return updatedProfile;
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
     }
 
     public async Task DeleteProfile(Profile profile)
     {
-
         try
         {
             if (profile != null)
@@ -94,22 +103,23 @@ public class ProfileService
 
     public async Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO)
     {
-
         try
         {
-           var profile = await _profileRepository.GetByIdAsync(deleteTeamDTO.ProfileId);
+            var profile = await _profileRepository.GetByIdAsync(deleteTeamDTO.ProfileId);
 
-           if(profile.IsOwner == true)
-           {
-             var team = await _teamRepository.GetByIdAsync(deleteTeamDTO.TeamId);
-             var profilesInTeam = await _profileRepository.GetProfilesInTeamAsync(deleteTeamDTO.TeamId);
+            if (profile.IsOwner == true)
+            {
+                var team = await _teamRepository.GetByIdAsync(deleteTeamDTO.TeamId);
+                var profilesInTeam = await _profileRepository.GetProfilesInTeamAsync(
+                    deleteTeamDTO.TeamId
+                );
 
-             foreach(var p in profilesInTeam  ){
-                await _profileRepository.DeleteByIdAsync(p.Id);
-             }   
-             await _teamRepository.DeleteByIdAsync(team.Id);
-
-           }
+                foreach (var p in profilesInTeam)
+                {
+                    await _profileRepository.DeleteByIdAsync(p.Id);
+                }
+                await _teamRepository.DeleteByIdAsync(team.Id);
+            }
         }
         catch (Exception)
         {

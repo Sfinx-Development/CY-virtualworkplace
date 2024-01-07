@@ -37,7 +37,7 @@ public class ProfileRepository
         }
     }
 
-     public async Task<List<Profile>> GetProfilesInTeamAsync(string teamId)
+    public async Task<List<Profile>> GetProfilesInTeamAsync(string teamId)
     {
         try
         {
@@ -62,14 +62,14 @@ public class ProfileRepository
         }
     }
 
-     public async Task<Profile> GetByIdAsync(string profileId)
+    public async Task<Profile> GetByIdAsync(string profileId)
     {
         try
         {
             //hämtar alla profiler och dess team som har det useridt
             Profile profile = await _cyDbContext
-                .Profiles
-                .Where(p => p.Id == profileId).FirstAsync();
+                .Profiles.Where(p => p.Id == profileId)
+                .FirstAsync();
 
             if (profile == null)
             {
@@ -109,7 +109,7 @@ public class ProfileRepository
 
             if (profileToUpdate == null)
             {
-                return null;
+                throw new Exception();
             }
 
             profileToUpdate.Role = profile.Role ?? profileToUpdate.Role;

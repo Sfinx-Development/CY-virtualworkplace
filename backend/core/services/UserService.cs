@@ -20,6 +20,13 @@ namespace core
         {
             try
             {
+                bool isMailRegistered = await _userRepository.UserEmailIsRegistered(
+                    userCreateDto.Email
+                );
+                if (isMailRegistered)
+                {
+                    throw new Exception("Email is registered.");
+                }
                 User user = new();
 
                 var generateRandomId = GenerateRandomId();
@@ -39,7 +46,7 @@ namespace core
             }
             catch (Exception)
             {
-                return null;
+                throw new Exception();
             }
         }
 
@@ -47,8 +54,16 @@ namespace core
         {
             try
             {
-                User editedUser = await _userRepository.UpdateAsync(user);
+                var userToUpdate =
+                    await _userRepository.GetByIdAsync(user.Id) ?? throw new Exception();
+                userToUpdate.PhoneNumber = user.PhoneNumber;
+                userToUpdate.FirstName = user.FirstName;
+                userToUpdate.LastName = user.LastName;
+                userToUpdate.Age = user.Age;
+                userToUpdate.Gender = user.Gender;
+                userToUpdate.Email = user.Email;
 
+                User editedUser = await _userRepository.UpdateAsync(userToUpdate);
                 return editedUser;
             }
             catch (Exception)
