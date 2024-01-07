@@ -25,4 +25,6 @@ jobs:
         run: dotnet restore
 
       - name: Run tests
-        run: dotnet test backend/unittest
+        run: |
+          cd backend/UNITTEST
+          dotnet test
