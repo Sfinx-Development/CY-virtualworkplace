@@ -10,6 +10,10 @@ public class UserServiceTests
     public async Task CreateUser_ValidUser_ReturnsUserWithAssignedUserId()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
+        var LogInServiceMock = new Mock<ILoginService>();
+        var userServiceMock = new Mock<IUserService>();
+        var profileServiceMock = new Mock<IProfileService>();
+        var teamServiceMock = new Mock<ITeamService>();
 
         userRepositoryMock
             .Setup(repo => repo.CreateAsync(It.IsAny<User>()))

@@ -1,6 +1,7 @@
 namespace core;
+using Interfaces;
 
-public class TeamService
+public class TeamService : ITeamService
 {
     private readonly ProfileRepository _profileRepository;
     private readonly TeamRepository _teamRepository;
