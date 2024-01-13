@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using api;
 using core;
 using core.Migrations;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,16 +18,19 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly TeamService _teamService;
         private readonly ProfileService _profileService;
+        private readonly IMeetingRoomService _meetingRoomService;
 
         public TeamController(
             JwtService jwtService,
             TeamService teamService,
-            ProfileService profileService
+            ProfileService profileService,
+            IMeetingRoomService meetingRoomService
         )
         {
             _jwtService = jwtService;
             _teamService = teamService;
             _profileService = profileService;
+            _meetingRoomService = meetingRoomService;
         }
 
         [Authorize]
@@ -65,6 +69,16 @@ namespace Controllers
                         incomingCreateTeamDTO.ProfileRole,
                         teamCreated
                     );
+
+                    //hur ska det bli, när det måste skapas samtidigt egetnligen?
+
+                    Cy cy = new();
+
+                    MeetingRoom meetingRoom = await _meetingRoomService.CreateMeetingRoom(
+                        teamCreated,
+                        cy
+                    );
+
                     return createdProfile;
                 }
                 // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
@@ -170,7 +184,6 @@ namespace Controllers
             }
         }
 
-        
         [HttpPut]
         [Authorize]
         public async Task<ActionResult<Team>> Update(Team team)

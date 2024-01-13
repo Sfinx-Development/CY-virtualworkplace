@@ -3,28 +3,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class MeetingRoomRepository
+public class OfficeRepository
 {
     private readonly CyDbContext _cyDbContext;
 
-    public MeetingRoomRepository(CyDbContext cyDbContext)
+    public OfficeRepository(CyDbContext cyDbContext)
     {
         _cyDbContext = cyDbContext;
     }
 
-    public async Task<MeetingRoom> GetById(string id)
+    public async Task<Office> GetById(string id)
     {
         try
         {
-            MeetingRoom room = await _cyDbContext.MeetingRooms.Where(m => m.Id == id).FirstAsync();
+            Office office = await _cyDbContext.Offices.Where(o => o.Id == id).FirstAsync();
 
-            if (room == null)
+            if (office == null)
             {
                 throw new Exception();
             }
             else
             {
-                return room;
+                return office;
             }
         }
         catch (Exception e)
@@ -33,21 +33,21 @@ public class MeetingRoomRepository
         }
     }
 
-    public async Task<MeetingRoom> GetByTeamIdAsync(string teamId)
+    public async Task<Office> GetByProfile(string profileId)
     {
         try
         {
-            MeetingRoom room = await _cyDbContext
-                .MeetingRooms.Where(m => m.Team.Id == teamId)
+            Office office = await _cyDbContext
+                .Offices.Where(o => o.Profile.Id == profileId)
                 .FirstAsync();
 
-            if (room == null)
+            if (office == null)
             {
                 throw new Exception();
             }
             else
             {
-                return room;
+                return office;
             }
         }
         catch (Exception e)
@@ -56,14 +56,14 @@ public class MeetingRoomRepository
         }
     }
 
-    public async Task<MeetingRoom> CreateAsync(MeetingRoom room)
+    public async Task<Office> CreateAsync(Office office)
     {
         try
         {
-            await _cyDbContext.MeetingRooms.AddAsync(room);
+            await _cyDbContext.Offices.AddAsync(office);
             await _cyDbContext.SaveChangesAsync();
 
-            return room;
+            return office;
         }
         catch (Exception e)
         {
@@ -71,23 +71,23 @@ public class MeetingRoomRepository
         }
     }
 
-    public async Task<MeetingRoom> UpdateAsync(MeetingRoom room)
+    public async Task<Office> UpdateAsync(Office office)
     {
         try
         {
-            var roomToUpdate = await _cyDbContext.MeetingRooms.FirstAsync(m => m.Id == room.Id);
+            var officeToUpdate = await _cyDbContext.Offices.FirstAsync(o => o.Id == office.Id);
 
-            if (roomToUpdate == null)
+            if (officeToUpdate == null)
             {
                 throw new Exception();
             }
 
-            roomToUpdate.RoomLayout = room.RoomLayout ?? roomToUpdate.RoomLayout;
+            officeToUpdate.RoomLayout = office.RoomLayout ?? officeToUpdate.RoomLayout;
 
-            _cyDbContext.MeetingRooms.Update(roomToUpdate);
+            _cyDbContext.Offices.Update(officeToUpdate);
 
             await _cyDbContext.SaveChangesAsync();
-            return roomToUpdate;
+            return officeToUpdate;
         }
         catch (Exception e)
         {
@@ -99,11 +99,11 @@ public class MeetingRoomRepository
     {
         try
         {
-            var roomToDelete = await _cyDbContext.MeetingRooms.FindAsync(id);
-            var deletedRoom = roomToDelete;
-            if (roomToDelete != null)
+            var officeToDelete = await _cyDbContext.Offices.FindAsync(id);
+            var deletedRoom = officeToDelete;
+            if (officeToDelete != null)
             {
-                _cyDbContext.MeetingRooms.Remove(roomToDelete);
+                _cyDbContext.Offices.Remove(officeToDelete);
                 await _cyDbContext.SaveChangesAsync();
             }
         }
