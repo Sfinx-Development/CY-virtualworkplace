@@ -34,7 +34,7 @@ builder.Services.AddDbContext<CyDbContext>(
 
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<LogInRepository>();
-builder.Services.AddScoped<ProfileRepository>();
+builder.Services.AddScoped<MeetingRoomRepository>();
 builder.Services.AddScoped<TeamRepository>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<LogInService>();

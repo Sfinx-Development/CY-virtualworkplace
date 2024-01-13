@@ -1,13 +1,14 @@
 namespace core;
+
 using Interfaces;
 
 public class TeamService : ITeamService
 {
-    private readonly ProfileRepository _profileRepository;
+    private readonly MeetingRoomRepository _profileRepository;
     private readonly TeamRepository _teamRepository;
     private static readonly Random random = new Random();
 
-    public TeamService(ProfileRepository profileRepository, TeamRepository teamRepository)
+    public TeamService(MeetingRoomRepository profileRepository, TeamRepository teamRepository)
     {
         _profileRepository = profileRepository;
         _teamRepository = teamRepository;

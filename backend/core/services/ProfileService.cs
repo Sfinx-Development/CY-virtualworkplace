@@ -5,13 +5,13 @@ namespace core;
 
 public class ProfileService : IProfileService
 {
-    private readonly ProfileRepository _profileRepository;
+    private readonly MeetingRoomRepository _profileRepository;
     private readonly TeamRepository _teamRepository;
     private readonly UserRepository _userRepository;
     private static readonly Random random = new Random();
 
     public ProfileService(
-        ProfileRepository profileRepository,
+        MeetingRoomRepository profileRepository,
         UserRepository userRepository,
         TeamRepository teamRepository
     )
