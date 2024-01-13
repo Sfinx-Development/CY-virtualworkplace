@@ -12,8 +12,10 @@ public class MeetingRoomServie : IMeetingRoomService
         _meetingRoomRepository = meetingRoomRepository;
     }
 
-    public async Task<MeetingRoom> CreateMeetingRoom(Team team, Cy cy)
+    public async Task<MeetingRoom> CreateMeetingRoom(Team team)
     {
+        Cy cy = new() { Id = Utils.GenerateRandomId() };
+
         MeetingRoom meetingRoom =
             new()
             {

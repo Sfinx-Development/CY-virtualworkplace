@@ -19,6 +19,7 @@ namespace Controllers
         private readonly TeamService _teamService;
         private readonly ProfileService _profileService;
         private readonly IMeetingRoomService _meetingRoomService;
+        private readonly IOfficeService _officeService;
 
         public TeamController(
             JwtService jwtService,
@@ -72,11 +73,8 @@ namespace Controllers
 
                     //hur ska det bli, när det måste skapas samtidigt egetnligen?
 
-                    Cy cy = new();
-
                     MeetingRoom meetingRoom = await _meetingRoomService.CreateMeetingRoom(
-                        teamCreated,
-                        cy
+                        teamCreated
                     );
 
                     return createdProfile;

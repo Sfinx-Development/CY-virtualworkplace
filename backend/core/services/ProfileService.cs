@@ -7,16 +7,19 @@ public class ProfileService : IProfileService
     private readonly ProfileRepository _profileRepository;
     private readonly TeamRepository _teamRepository;
     private readonly UserRepository _userRepository;
+    private readonly IOfficeService _officeService;
 
     public ProfileService(
         ProfileRepository profileRepository,
         UserRepository userRepository,
-        TeamRepository teamRepository
+        TeamRepository teamRepository,
+        IOfficeService officeService
     )
     {
         _profileRepository = profileRepository;
         _userRepository = userRepository;
         _teamRepository = teamRepository;
+        _officeService = officeService;
     }
 
     public async Task<Profile> CreateProfile(User user, bool isOwner, string role, Team team)
@@ -32,6 +35,7 @@ public class ProfileService : IProfileService
                 Team = team
             };
         Profile createdProfile = await _profileRepository.CreateAsync(newProfile);
+        Office office = await _officeService.CreateOffice(createdProfile);
         return createdProfile;
     }
 
