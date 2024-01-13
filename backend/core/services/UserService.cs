@@ -5,7 +5,7 @@ using Interfaces;
 
 namespace core
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
 

@@ -8,4 +8,6 @@ public class MeetingRoom
     //enum eventuellt
     public string RoomLayout { get; set; }
     public Cy Cy { get; set; }
+
+    public MeetingRoom(){}
 }

@@ -2,7 +2,7 @@ namespace core;
 
 public class Conversation
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     public DateTime DateCreated { get; set; }
     public Profile Creator { get; set; }
     public List<Profile> Participants { get; set; }

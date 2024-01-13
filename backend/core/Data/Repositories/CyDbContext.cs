@@ -35,13 +35,13 @@ public class CyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Office>().HasOne(o => o.User);
+        modelBuilder.Entity<Office>().HasOne(o => o.Profile);
         modelBuilder.Entity<Office>().HasOne(o => o.Cy);
 
         modelBuilder.Entity<MeetingRoom>().HasOne(mr => mr.Team);
         modelBuilder.Entity<MeetingRoom>().HasOne(mr => mr.Cy);
 
-        modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.User);
+        modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Profile);
         modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Meeting);
 
         modelBuilder.Entity<HealthCheck>().HasOne(mo => mo.Cy).WithMany(c => c.HealthChecks);

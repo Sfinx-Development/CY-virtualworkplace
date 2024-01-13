@@ -140,7 +140,6 @@ namespace Controllers
         [HttpDelete]
         public async Task<ActionResult> Post([FromBody] DeleteTeamDTO deleteTeamDTO)
         {
-            //om profilen som ska raderas är isowner true, då ska det inte funka
             try
             {
                 Console.WriteLine(deleteTeamDTO.TeamId + "PROFIL ID KOMMER HÄR");

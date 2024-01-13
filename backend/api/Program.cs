@@ -36,14 +36,23 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<LogInRepository>();
 builder.Services.AddScoped<MeetingRoomRepository>();
 builder.Services.AddScoped<TeamRepository>();
+builder.Services.AddScoped<MeetingRoomRepository>();
+builder.Services.AddScoped<ProfileRepository>();
+
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<LogInService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LogInService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<TeamService>();
+builder.Services.AddScoped<MeetingRoomServie>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
