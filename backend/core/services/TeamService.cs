@@ -1,4 +1,5 @@
 namespace core;
+
 using Interfaces;
 
 public class TeamService : ITeamService
@@ -18,8 +19,8 @@ public class TeamService : ITeamService
         Team team =
             new()
             {
-                Id = GenerateRandomCode(),
-                Code = GenerateRandomCode(),
+                Id = Utils.GenerateRandomId(),
+                Code = Utils.GenerateRandomId(),
                 Name = incomingCreateTeamDTO.TeamName,
                 TeamRole = incomingCreateTeamDTO.TeamRole,
                 CreatedAt = DateTime.UtcNow
@@ -62,18 +63,5 @@ public class TeamService : ITeamService
         {
             throw new Exception();
         }
-    }
-
-    public static string GenerateRandomCode(int length = 8)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        char[] idArray = new char[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            idArray[i] = chars[random.Next(chars.Length)];
-        }
-
-        return new string(idArray);
     }
 }

@@ -8,5 +8,4 @@ public interface IUserService
     Task<User> Edit(User user);
     Task<User> GetById(string id);
     Task<bool> DeleteById(string id);
-    string GenerateRandomId(int length = 8);
 }

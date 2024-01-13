@@ -1,4 +1,3 @@
-using core.Migrations;
 using Interfaces;
 
 namespace core;
@@ -8,17 +7,19 @@ public class ProfileService : IProfileService
     private readonly ProfileRepository _profileRepository;
     private readonly TeamRepository _teamRepository;
     private readonly UserRepository _userRepository;
-    private static readonly Random random = new Random();
+    private readonly IOfficeService _officeService;
 
     public ProfileService(
         ProfileRepository profileRepository,
         UserRepository userRepository,
-        TeamRepository teamRepository
+        TeamRepository teamRepository,
+        IOfficeService officeService
     )
     {
         _profileRepository = profileRepository;
         _userRepository = userRepository;
         _teamRepository = teamRepository;
+        _officeService = officeService;
     }
 
     public async Task<Profile> CreateProfile(User user, bool isOwner, string role, Team team)
@@ -26,7 +27,7 @@ public class ProfileService : IProfileService
         Profile newProfile =
             new()
             {
-                Id = GenerateRandomId(),
+                Id = Utils.GenerateRandomId(),
                 IsOwner = isOwner,
                 User = user,
                 DateCreated = DateTime.UtcNow,
@@ -34,6 +35,7 @@ public class ProfileService : IProfileService
                 Team = team
             };
         Profile createdProfile = await _profileRepository.CreateAsync(newProfile);
+        Office office = await _officeService.CreateOffice(createdProfile);
         return createdProfile;
     }
 
@@ -87,19 +89,6 @@ public class ProfileService : IProfileService
         {
             throw new Exception();
         }
-    }
-
-    public static string GenerateRandomId(int length = 8)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        char[] idArray = new char[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            idArray[i] = chars[random.Next(chars.Length)];
-        }
-
-        return new string(idArray);
     }
 
     public async Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO)

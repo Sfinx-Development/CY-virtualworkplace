@@ -21,9 +21,8 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Conversation", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("CreatorId")
                         .IsRequired()
@@ -41,9 +40,8 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Cy", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("HealthCheckInterval")
                         .HasColumnType("int");
@@ -55,12 +53,12 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.HealthCheck", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<int>("CyId")
-                        .HasColumnType("int");
+                    b.Property<string>("CyId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("HealthAverageStat")
                         .HasColumnType("int");
@@ -77,9 +75,8 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Meeting", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
@@ -105,36 +102,35 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.MeetingOccasion", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsMeetingOwner")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("MeetingId")
-                        .HasColumnType("int");
+                    b.Property<string>("MeetingId")
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("ProfileId")
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MeetingId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("MeetingOccasions");
                 });
 
             modelBuilder.Entity("core.MeetingRoom", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<int>("CyId")
-                        .HasColumnType("int");
+                    b.Property<string>("CyId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("RoomLayout")
                         .IsRequired()
@@ -154,16 +150,16 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Message", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("ConversationId")
-                        .HasColumnType("int");
+                    b.Property<string>("ConversationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateOnly>("DateCreated")
                         .HasColumnType("date");
@@ -182,25 +178,25 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Office", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<int>("CyId")
-                        .HasColumnType("int");
+                    b.Property<string>("CyId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProfileId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("RoomLayout")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CyId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ProfileId");
 
                     b.ToTable("Offices");
                 });
@@ -210,8 +206,8 @@ namespace core.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int?>("ConversationId")
-                        .HasColumnType("int");
+                    b.Property<string>("ConversationId")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
@@ -333,17 +329,15 @@ namespace core.Migrations
                 {
                     b.HasOne("core.Meeting", "Meeting")
                         .WithMany()
-                        .HasForeignKey("MeetingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MeetingId");
 
-                    b.HasOne("core.User", "User")
+                    b.HasOne("core.Profile", "Profile")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("ProfileId");
 
                     b.Navigation("Meeting");
 
-                    b.Navigation("User");
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("core.MeetingRoom", b =>
@@ -388,13 +382,13 @@ namespace core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("core.User", "User")
+                    b.HasOne("core.Profile", "Profile")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("ProfileId");
 
                     b.Navigation("Cy");
 
-                    b.Navigation("User");
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("core.Profile", b =>
