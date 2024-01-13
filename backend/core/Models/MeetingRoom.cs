@@ -2,7 +2,7 @@ namespace core;
 
 public class MeetingRoom
 {
-    public int Id { get; set; }
+    public string Id { get; set; }
     public Team Team { get; set; }
 
     //enum eventuellt

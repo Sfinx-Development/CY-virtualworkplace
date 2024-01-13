@@ -12,6 +12,29 @@ public class MeetingRoomRepository
         _cyDbContext = cyDbContext;
     }
 
+     public async Task<MeetingRoom> GetById(string id)
+    {
+        try
+        {
+            MeetingRoom room = await _cyDbContext
+                .MeetingRooms.Where(m => m.Id == id)
+                .FirstAsync();
+
+            if (room == null)
+            {
+                throw new Exception();
+            }
+            else
+            {
+                return room;
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
+
     public async Task<MeetingRoom> GetByTeamIdAsync(string teamId)
     {
         try

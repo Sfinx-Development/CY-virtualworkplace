@@ -5,13 +5,12 @@ namespace core;
 
 public class ProfileService : IProfileService
 {
-    private readonly MeetingRoomRepository _profileRepository;
+    private readonly ProfileRepository _profileRepository;
     private readonly TeamRepository _teamRepository;
     private readonly UserRepository _userRepository;
-    private static readonly Random random = new Random();
 
     public ProfileService(
-        MeetingRoomRepository profileRepository,
+        ProfileRepository profileRepository,
         UserRepository userRepository,
         TeamRepository teamRepository
     )
@@ -26,7 +25,7 @@ public class ProfileService : IProfileService
         Profile newProfile =
             new()
             {
-                Id = GenerateRandomId(),
+                Id = Utils.GenerateRandomId(),
                 IsOwner = isOwner,
                 User = user,
                 DateCreated = DateTime.UtcNow,
@@ -87,19 +86,6 @@ public class ProfileService : IProfileService
         {
             throw new Exception();
         }
-    }
-
-    public static string GenerateRandomId(int length = 8)
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        char[] idArray = new char[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            idArray[i] = chars[random.Next(chars.Length)];
-        }
-
-        return new string(idArray);
     }
 
     public async Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO)
