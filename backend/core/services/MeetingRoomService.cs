@@ -3,7 +3,7 @@ using Interfaces;
 
 namespace core;
 
-public class MeetingRoomServie
+public class MeetingRoomServie : IMeetingRoomService
 {
     private readonly MeetingRoomRepository _meetingRoomRepository;
     private static readonly Random random = new Random();
