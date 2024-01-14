@@ -67,6 +67,7 @@ public class ProfileRepository
         try
         {
             //hämtar alla profiler och dess team som har det useridt
+            
             Profile profile = await _cyDbContext
                 .Profiles.Where(p => p.Id == profileId)
                 .FirstAsync();

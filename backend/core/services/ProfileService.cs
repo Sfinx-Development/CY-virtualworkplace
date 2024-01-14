@@ -76,6 +76,8 @@ public class ProfileService : IProfileService
         }
     }
 
+    //CantDeleteProfileIfOwner
+
     public async Task DeleteProfile(Profile profile)
     {
         try

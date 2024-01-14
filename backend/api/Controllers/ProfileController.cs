@@ -84,12 +84,17 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
+
+
                 var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
 
                 if (userProfiles == null || userProfiles.Count < 1)
                 {
                     return BadRequest("User profile not found.");
                 }
+
+                // HÄR KOLLAR VI OM CANTDELETEPROFILE ÄR SANN ELLER FALSK, RETURNERAR BAD REQUEST
+                // OM DET ÄR EN OWNER
 
                 var profileToDelete = userProfiles.Find(p => p.Id == profileId);
 
