@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class OfficeRepository
+public class OfficeRepository : IOfficeRepository
 {
     private readonly CyDbContext _cyDbContext;
 

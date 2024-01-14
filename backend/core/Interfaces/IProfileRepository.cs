@@ -4,6 +4,7 @@ namespace Interfaces;
 
 public interface IProfileRepository
 {
+
     Task<List<Profile>> GetByUserIdAsync(string userId);
 
     Task<List<Profile>> GetProfilesInTeamAsync(string teamId);
@@ -16,3 +17,11 @@ public interface IProfileRepository
 
     Task DeleteByIdAsync(string id);
 }
+
+
+
+
+
+}
+
+

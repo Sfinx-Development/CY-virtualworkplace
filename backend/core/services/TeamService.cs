@@ -6,6 +6,7 @@ public class TeamService : ITeamService
 {
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
+
     private readonly IMeetingRoomService _meetingRoomService;
     private static readonly Random random = new Random();
     private static readonly Random anotherrandom = new Random();
@@ -15,6 +16,7 @@ public class TeamService : ITeamService
         ITeamRepository teamRepository,
         IMeetingRoomService meetingRoomService
     )
+
     {
         _profileRepository = profileRepository;
         _teamRepository = teamRepository;
@@ -74,5 +76,24 @@ public class TeamService : ITeamService
         {
             throw new Exception();
         }
+    }
+
+     public async Task<bool> CanDeleteTeam(string ownerId, string teamId)
+    {
+        var owner = await _profileRepository.GetByIdAsync(ownerId);
+
+        if (owner == null)
+        {
+            return false;
+        }
+
+        var team = await _teamRepository.GetByIdAsync(teamId);
+
+        if (team == null)
+        {
+            return false;
+        }
+
+        return owner.Team.Id == teamId;
     }
 }
