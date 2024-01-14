@@ -60,7 +60,7 @@ public class TeamServiceTests
     [Fact]
     public async Task Owner_CannotLeaveTeam()
     {
-       
+
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var teamRepositoryMock = new Mock<ITeamRepository>();
@@ -101,9 +101,86 @@ public class TeamServiceTests
         teamRepositoryMock.Setup(repo => repo.GetByIdAsync(team.Id))
             .ReturnsAsync(team);
 
-      
+
         await Assert.ThrowsAsync<Exception>(async () => await profileService.CantLeaveTeamIfOwner(profile));
     }
+
+    [Fact]
+    public async Task DeleteTeam_DeletesAllProfilesForTeam()
+    {
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var teamRepositoryMock = new Mock<ITeamRepository>();
+        var profileRepositoryMock = new Mock<IProfileRepository>();
+        var userServiceMock = new Mock<IUserService>();
+        var officeServiceMock = new Mock<IOfficeService>();
+
+        var profileService = new ProfileService(profileRepositoryMock.Object, userRepositoryMock.Object, teamRepositoryMock.Object, officeServiceMock.Object);
+        var teamService = new TeamService(profileRepositoryMock.Object, teamRepositoryMock.Object);
+
+        var user = new User
+        {
+            Id = "userId123",
+            FirstName = "Owner",
+            LastName = "User"
+        };
+
+        var team = new Team
+        {
+            Id = "teamId123",
+            Name = "Test Team"
+        };
+
+        teamRepositoryMock.Setup(repo => repo.GetByIdAsync(team.Id))
+            .ReturnsAsync(team);
+
+
+        profileRepositoryMock.Setup(repo => repo.GetProfilesInTeamAsync(team.Id))
+            .ReturnsAsync(new List<Profile>
+            {
+            new Profile
+            {
+                Id = "profileId1",
+                Team = team,
+
+            },
+            new Profile
+            {
+                Id = "profileId2",
+                Team = team,
+
+            }
+
+            });
+
+        var deleteTeamDTO = new DeleteTeamDTO
+        {
+            TeamId = team.Id
+        };
+
+        Console.WriteLine("Before calling DeleteTeamAndProfiles");
+
+        teamRepositoryMock.Verify(repo => repo.DeleteByIdAsync(It.IsAny<string>()), Times.Never); // Teamet ska inte raderas direkt
+
+        profileRepositoryMock.Setup(repo => repo.DeleteByIdAsync(It.IsAny<string>()))
+            .Callback<string>(id => Console.WriteLine($"Deleting profile with Id: {id}"))
+            .Returns(Task.CompletedTask);
+
+        profileRepositoryMock.Verify(repo => repo.DeleteByIdAsync("profileId1"), Times.Never); // Radera specifik profil
+        profileRepositoryMock.Verify(repo => repo.DeleteByIdAsync("profileId2"), Times.Never); // Radera specifik profil
+
+
+        await Assert.ThrowsAsync<Exception>(() => profileService.DeleteTeamAndProfiles(deleteTeamDTO));
+
+
+        teamRepositoryMock.Verify(repo => repo.DeleteByIdAsync(team.Id), Times.Never);
+
+        Console.WriteLine("After calling DeleteTeamAndProfiles");
+    }
+
+
+
+
+
 
 }
 
