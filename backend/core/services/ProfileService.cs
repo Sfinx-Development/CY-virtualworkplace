@@ -4,15 +4,15 @@ namespace core;
 
 public class ProfileService : IProfileService
 {
-    private readonly ProfileRepository _profileRepository;
-    private readonly TeamRepository _teamRepository;
-    private readonly UserRepository _userRepository;
+    private readonly IProfileRepository _profileRepository;
+    private readonly ITeamRepository _teamRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IOfficeService _officeService;
 
     public ProfileService(
-        ProfileRepository profileRepository,
-        UserRepository userRepository,
-        TeamRepository teamRepository,
+        IProfileRepository profileRepository,
+        IUserRepository userRepository,
+        ITeamRepository teamRepository,
         IOfficeService officeService
     )
     {

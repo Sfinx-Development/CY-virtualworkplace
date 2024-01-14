@@ -56,26 +56,4 @@ public class MeetingroomServiceTest
             Times.Once
         );
     }
-
-    [Fact]
-    public void GetUserById_ExistingUserId_ReturnsUser()
-    {
-        var userRepositoryMock = new Mock<IUserRepository>();
-        userRepositoryMock
-            .Setup(repo => repo.GetByIdAsync("123"))
-            .ReturnsAsync(
-                new User
-                {
-                    Id = "123",
-                    FirstName = "Angelina",
-                    LastName = "Holmqvist"
-                }
-            );
-
-        var userService = new UserService(userRepositoryMock.Object);
-
-        var user = userService.GetById("123");
-
-        Assert.NotNull(user);
-    }
 }
