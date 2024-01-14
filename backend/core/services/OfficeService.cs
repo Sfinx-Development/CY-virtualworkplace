@@ -4,9 +4,9 @@ namespace core;
 
 public class OfficeService : IOfficeService
 {
-    private readonly OfficeRepository _officeRepository;
+    private readonly IOfficeRepository _officeRepository;
 
-    public OfficeService(OfficeRepository officeRepository)
+    public OfficeService(IOfficeRepository officeRepository)
     {
         _officeRepository = officeRepository;
     }
@@ -21,7 +21,8 @@ public class OfficeService : IOfficeService
                 Id = Utils.GenerateRandomId(),
                 Profile = profile,
                 RoomLayout = "default",
-                Cy = cy
+                Cy = cy,
+                ProfileId = profile.Id
             };
 
         Office createdOffice = await _officeRepository.CreateAsync(office);

@@ -6,12 +6,21 @@ public class TeamService : ITeamService
 {
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
-    private static readonly Random random = new Random();
 
-    public TeamService(IProfileRepository profileRepository, ITeamRepository teamRepository)
+    private readonly IMeetingRoomService _meetingRoomService;
+    private static readonly Random random = new Random();
+    private static readonly Random anotherrandom = new Random();
+
+    public TeamService(
+        IProfileRepository profileRepository,
+        ITeamRepository teamRepository,
+        IMeetingRoomService meetingRoomService
+    )
+
     {
         _profileRepository = profileRepository;
         _teamRepository = teamRepository;
+        _meetingRoomService = meetingRoomService;
     }
 
     public async Task<Team> CreateAsync(IncomingCreateTeamDTO incomingCreateTeamDTO)
@@ -27,6 +36,10 @@ public class TeamService : ITeamService
             };
 
         Team createdTeam = await _teamRepository.CreateAsync(team);
+
+        //mötesrum skapas också som hör till teamet
+        await _meetingRoomService.CreateMeetingRoom(createdTeam);
+
         if (createdTeam != null)
         {
             return createdTeam;

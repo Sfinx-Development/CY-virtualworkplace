@@ -21,6 +21,7 @@ public class MeetingRoomServie : IMeetingRoomService
             {
                 Id = Utils.GenerateRandomId(),
                 Team = team,
+                TeamId = team.Id,
                 RoomLayout = "default",
                 Cy = cy
             };
