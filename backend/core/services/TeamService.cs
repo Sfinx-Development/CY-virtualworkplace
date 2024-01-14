@@ -8,6 +8,7 @@ public class TeamService : ITeamService
     private readonly ITeamRepository _teamRepository;
     private readonly IMeetingRoomService _meetingRoomService;
     private static readonly Random random = new Random();
+    private static readonly Random anotherrandom = new Random();
 
     public TeamService(
         IProfileRepository profileRepository,
