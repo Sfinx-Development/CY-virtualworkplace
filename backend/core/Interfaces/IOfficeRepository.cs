@@ -4,6 +4,7 @@ namespace Interfaces;
 
 public interface IOfficeRepository
 {
+
     Task<Office> GetById(string id);
 
     Task<Office> GetByProfile(string profileId);
@@ -14,3 +15,8 @@ public interface IOfficeRepository
 
     Task DeleteByIdAsync(string id);
 }
+
+
+}
+
+

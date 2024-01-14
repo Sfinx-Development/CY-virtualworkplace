@@ -76,6 +76,26 @@ public class ProfileService : IProfileService
         }
     }
 
+ public async Task CantLeaveTeamIfOwner(Profile profile)
+{
+    try
+    {
+        var foundProfile = await _profileRepository.GetByIdAsync(profile.Id) ?? throw new Exception();
+
+        if (foundProfile.IsOwner)
+        {
+            throw new Exception("Team owner cannot leave the team.");
+        }
+
+        await DeleteProfile(profile);
+    }
+    catch (Exception ex)
+    {
+        throw new Exception("Failed to leave the team.", ex);
+    }
+}
+
+
     public async Task DeleteProfile(Profile profile)
     {
         try
