@@ -18,20 +18,17 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly TeamService _teamService;
         private readonly ProfileService _profileService;
-        private readonly IMeetingRoomService _meetingRoomService;
         private readonly IOfficeService _officeService;
 
         public TeamController(
             JwtService jwtService,
             TeamService teamService,
-            ProfileService profileService,
-            IMeetingRoomService meetingRoomService
+            ProfileService profileService
         )
         {
             _jwtService = jwtService;
             _teamService = teamService;
             _profileService = profileService;
-            _meetingRoomService = meetingRoomService;
         }
 
         [Authorize]
@@ -72,11 +69,6 @@ namespace Controllers
                     );
 
                     //hur ska det bli, när det måste skapas samtidigt egetnligen?
-
-                    MeetingRoom meetingRoom = await _meetingRoomService.CreateMeetingRoom(
-                        teamCreated
-                    );
-
                     return createdProfile;
                 }
                 // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
