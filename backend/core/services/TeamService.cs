@@ -71,7 +71,6 @@ public class TeamService : ITeamService
 
         if (owner == null)
         {
-            // Om ägaren inte finns, kan de inte ta bort teamet
             return false;
         }
 
@@ -79,11 +78,9 @@ public class TeamService : ITeamService
 
         if (team == null)
         {
-            // Om teamet inte finns, kan det inte heller tas bort
             return false;
         }
 
-        // Endast ägaren får ta bort teamet
         return owner.Team.Id == teamId;
     }
 }

@@ -65,7 +65,6 @@ namespace Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete([FromBody] string profileId)
         {
-            //om profilen som ska raderas är isowner true, då ska det inte funka
             try
             {
                 var jwt = HttpContext
@@ -93,7 +92,7 @@ namespace Controllers
                     return BadRequest("User profile not found.");
                 }
 
-                // HÄR KOLLAR VI OM CANTDELETEPROFILE ÄR SANN ELLER FALSK, RETURNERAR BAD REQUEST
+                // HÄR KOLLAR VI OM CANTLeavePROFILE ÄR SANN ELLER FALSK, RETURNERAR BAD REQUEST
                 // OM DET ÄR EN OWNER
 
                 var profileToDelete = userProfiles.Find(p => p.Id == profileId);
@@ -101,6 +100,15 @@ namespace Controllers
                 if (profileToDelete == null)
                 {
                     return BadRequest("User profile not found.");
+                }
+
+                try
+                {
+                    await _profileService.CantLeaveTeamIfOwner(profileToDelete);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
                 }
 
                 await _profileService.DeleteProfile(profileToDelete);

@@ -56,6 +56,55 @@ public class TeamServiceTests
         Assert.True(canDelete);
 
     }
+
+    [Fact]
+    public async Task Owner_CannotLeaveTeam()
+    {
+       
+        var profileRepositoryMock = new Mock<IProfileRepository>();
+        var userRepositoryMock = new Mock<IUserRepository>();
+        var teamRepositoryMock = new Mock<ITeamRepository>();
+        var officeServiceMock = new Mock<IOfficeService>();
+
+        var profileService = new ProfileService(profileRepositoryMock.Object, userRepositoryMock.Object, teamRepositoryMock.Object, officeServiceMock.Object);
+
+
+        var user = new User
+        {
+            Id = "userId123",
+            FirstName = "Owner",
+            LastName = "User"
+        };
+
+        var team = new Team
+        {
+            Id = "teamId123",
+            Name = "Test Team"
+        };
+
+        var profile = new Profile
+        {
+            Id = "ownerProfile123",
+            Role = "Team Owner",
+            IsOwner = true,
+            DateCreated = DateTime.UtcNow,
+            Team = team,
+            User = user
+        };
+
+        userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id))
+            .ReturnsAsync(user);
+
+        profileRepositoryMock.Setup(repo => repo.GetByIdAsync(profile.Id))
+            .ReturnsAsync(profile);
+
+        teamRepositoryMock.Setup(repo => repo.GetByIdAsync(team.Id))
+            .ReturnsAsync(team);
+
+      
+        await Assert.ThrowsAsync<Exception>(async () => await profileService.CantLeaveTeamIfOwner(profile));
+    }
+
 }
 
 
