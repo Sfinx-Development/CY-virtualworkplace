@@ -4,15 +4,15 @@ namespace core;
 
 public class ProfileService : IProfileService
 {
-    private readonly ProfileRepository _profileRepository;
-    private readonly TeamRepository _teamRepository;
-    private readonly UserRepository _userRepository;
+    private readonly IProfileRepository _profileRepository;
+    private readonly ITeamRepository _teamRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IOfficeService _officeService;
 
     public ProfileService(
-        ProfileRepository profileRepository,
-        UserRepository userRepository,
-        TeamRepository teamRepository,
+        IProfileRepository profileRepository,
+        IUserRepository userRepository,
+        ITeamRepository teamRepository,
         IOfficeService officeService
     )
     {
@@ -75,6 +75,26 @@ public class ProfileService : IProfileService
             throw new Exception();
         }
     }
+
+ public async Task CantLeaveTeamIfOwner(Profile profile)
+{
+    try
+    {
+        var foundProfile = await _profileRepository.GetByIdAsync(profile.Id) ?? throw new Exception();
+
+        if (foundProfile.IsOwner)
+        {
+            throw new Exception("Team owner cannot leave the team.");
+        }
+
+        await DeleteProfile(profile);
+    }
+    catch (Exception ex)
+    {
+        throw new Exception("Failed to leave the team.", ex);
+    }
+}
+
 
     public async Task DeleteProfile(Profile profile)
     {

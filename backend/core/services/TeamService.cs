@@ -4,11 +4,11 @@ using Interfaces;
 
 public class TeamService : ITeamService
 {
-    private readonly ProfileRepository _profileRepository;
-    private readonly TeamRepository _teamRepository;
+    private readonly IProfileRepository _profileRepository;
+    private readonly ITeamRepository _teamRepository;
     private static readonly Random random = new Random();
 
-    public TeamService(ProfileRepository profileRepository, TeamRepository teamRepository)
+    public TeamService(IProfileRepository profileRepository, ITeamRepository teamRepository)
     {
         _profileRepository = profileRepository;
         _teamRepository = teamRepository;
@@ -63,5 +63,24 @@ public class TeamService : ITeamService
         {
             throw new Exception();
         }
+    }
+
+     public async Task<bool> CanDeleteTeam(string ownerId, string teamId)
+    {
+        var owner = await _profileRepository.GetByIdAsync(ownerId);
+
+        if (owner == null)
+        {
+            return false;
+        }
+
+        var team = await _teamRepository.GetByIdAsync(teamId);
+
+        if (team == null)
+        {
+            return false;
+        }
+
+        return owner.Team.Id == teamId;
     }
 }
