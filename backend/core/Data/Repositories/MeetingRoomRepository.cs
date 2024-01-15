@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class MeetingRoomRepository
+public class MeetingRoomRepository : IMeetingRoomRepository
 {
     private readonly CyDbContext _cyDbContext;
 
