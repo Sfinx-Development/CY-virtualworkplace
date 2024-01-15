@@ -47,13 +47,20 @@ namespace Controllers
                 }
 
                 //I CREATE MEETING ISERVICE SKA OCCASION OCKSÅ SKAPAS FÖR ÄGAREN AV MÖTET DIREKT
-                var meetingCreated = await _meetingService.CreateAsync(incomingMeetingDTO);
-
-                if (meetingCreated == null)
+                if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
                 {
-                    return BadRequest("Failed to create team.");
+                    var meetingCreated = await _meetingService.CreateAsync(incomingMeetingDTO);
+
+                    if (meetingCreated == null)
+                    {
+                        return BadRequest("Failed to create team.");
+                    }
+                    return meetingCreated;
                 }
-                return meetingCreated;
+                else
+                {
+                    throw new Exception("The owner of meeting is not in line with the JWT bearer.");
+                }
             }
             catch (Exception e)
             {

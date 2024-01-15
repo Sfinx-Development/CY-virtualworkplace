@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
 namespace core
@@ -6,9 +7,9 @@ namespace core
     public class JwtService
     {
         // IDataToObject<User, User> _userDataToObject;
-        private readonly UserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
 
-        public JwtService(UserRepository userRepository)
+        public JwtService(IUserRepository userRepository)
         {
             // _userDataToObject = userDataToObject;
             _userRepository = userRepository;

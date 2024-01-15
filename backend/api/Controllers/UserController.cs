@@ -3,6 +3,7 @@ using System.Security.Permissions;
 using System.Threading.Tasks;
 using api;
 using core;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,9 @@ namespace Controllers
     public class UserController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UserController(JwtService jwtService, UserService userService)
+        public UserController(JwtService jwtService, IUserService userService)
         {
             _jwtService = jwtService;
             _userService = userService;

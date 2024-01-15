@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class ProfileRepository
+public class ProfileRepository : IProfileRepository
 {
     private readonly CyDbContext _cyDbContext;
 
@@ -67,7 +67,7 @@ public class ProfileRepository
         try
         {
             //hämtar alla profiler och dess team som har det useridt
-            
+
             Profile profile = await _cyDbContext
                 .Profiles.Where(p => p.Id == profileId)
                 .FirstAsync();

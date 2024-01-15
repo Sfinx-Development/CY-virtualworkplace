@@ -16,14 +16,13 @@ namespace Controllers
     public class TeamController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly TeamService _teamService;
-        private readonly ProfileService _profileService;
-        private readonly IOfficeService _officeService;
+        private readonly ITeamService _teamService;
+        private readonly IProfileService _profileService;
 
         public TeamController(
             JwtService jwtService,
-            TeamService teamService,
-            ProfileService profileService
+            ITeamService teamService,
+            IProfileService profileService
         )
         {
             _jwtService = jwtService;

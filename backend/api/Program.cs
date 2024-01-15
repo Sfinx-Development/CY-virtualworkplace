@@ -32,23 +32,11 @@ builder.Services.AddDbContext<CyDbContext>(
         )
 );
 
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<LogInRepository>();
-builder.Services.AddScoped<MeetingRoomRepository>();
-builder.Services.AddScoped<TeamRepository>();
-builder.Services.AddScoped<MeetingRoomRepository>();
-builder.Services.AddScoped<ProfileRepository>();
-builder.Services.AddScoped<CyRepository>();
-builder.Services.AddScoped<OfficeRepository>();
-
-builder.Services.AddScoped<JwtService>();
-builder.Services.AddScoped<LogInService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<LogInService>();
-builder.Services.AddScoped<ProfileService>();
-builder.Services.AddScoped<TeamService>();
-builder.Services.AddScoped<MeetingRoomServie>();
-builder.Services.AddScoped<OfficeService>();
+// builder.Services.AddScoped<UserService>();
+// builder.Services.AddScoped<IProfileService,ProfileService>();
+// builder.Services.AddScoped<TeamService>();
+// builder.Services.AddScoped<MeetingRoomServie>();
+// builder.Services.AddScoped<OfficeService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -56,12 +44,17 @@ builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository
 builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
 builder.Services.AddScoped<IMeetingRoomRepository, MeetingRoomRepository>();
 builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<LogInRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
 builder.Services.AddScoped<IOfficeService, OfficeService>();
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<ILoginService, LogInService>();
+builder.Services.AddScoped<RoomService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
