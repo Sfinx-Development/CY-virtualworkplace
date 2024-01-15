@@ -9,6 +9,7 @@ public class Meeting
     public int Minutes { get; set; }
     public bool IsRepeating { get; set; }
     public Room Room { get; set; }
+    public string OwnerId { get; set; }
 
     public Meeting() { }
 }
