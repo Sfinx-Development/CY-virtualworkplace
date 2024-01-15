@@ -55,6 +55,7 @@ builder.Services.AddScoped<IOfficeService, OfficeService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ILoginService, LogInService>();
 builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<MeetingService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

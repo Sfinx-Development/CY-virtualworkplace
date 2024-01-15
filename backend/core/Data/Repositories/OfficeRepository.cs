@@ -16,7 +16,10 @@ public class OfficeRepository : IOfficeRepository
     {
         try
         {
-            Office office = await _cyDbContext.Offices.Where(o => o.Id == id).FirstAsync();
+            Office office = await _cyDbContext
+                .Offices.Include(m => m.Cy)
+                .Where(o => o.Id == id)
+                .FirstAsync();
 
             if (office == null)
             {

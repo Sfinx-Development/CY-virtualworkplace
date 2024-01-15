@@ -31,7 +31,10 @@ public class MeetingRepository : IMeetingRepository
     {
         try
         {
-            Meeting meeting = await _cyDbContext.Meetings.FirstAsync(m => m.Id == id);
+            Meeting meeting = await _cyDbContext
+                .Meetings.Include(m => m.Room)
+                .ThenInclude(r => r.Cy)
+                .FirstAsync(m => m.Id == id);
             if (meeting != null)
             {
                 return meeting;
@@ -51,24 +54,10 @@ public class MeetingRepository : IMeetingRepository
     {
         try
         {
-            var meetingToUpdate = await _cyDbContext.Meetings.FirstAsync(m => m.Id == meeting.Id);
-
-            if (meetingToUpdate == null)
-            {
-                throw new Exception();
-            }
-
-            meetingToUpdate.Name = meeting.Name ?? meetingToUpdate.Name;
-            meetingToUpdate.Description = meeting.Description ?? meetingToUpdate.Description;
-            meetingToUpdate.Date = meetingToUpdate.Date;
-            meetingToUpdate.Minutes = meetingToUpdate.Minutes;
-            meetingToUpdate.IsRepeating = meetingToUpdate.IsRepeating;
-            meetingToUpdate.Room = meeting.Room ?? meetingToUpdate.Room;
-
-            _cyDbContext.Meetings.Update(meetingToUpdate);
+            _cyDbContext.Meetings.Update(meeting);
 
             await _cyDbContext.SaveChangesAsync();
-            return meetingToUpdate;
+            return meeting;
         }
         catch (Exception e)
         {

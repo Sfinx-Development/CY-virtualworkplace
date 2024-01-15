@@ -67,6 +67,14 @@ public class MeetingService
         {
             var foundMeeting =
                 await _meetingRepository.GetByIdAsync(meeting.Id) ?? throw new Exception();
+
+            foundMeeting.Name = meeting.Name ?? foundMeeting.Name;
+            foundMeeting.Description = meeting.Description ?? foundMeeting.Description;
+            foundMeeting.Date = meeting.Date;
+            foundMeeting.Minutes = meeting.Minutes;
+            foundMeeting.IsRepeating = meeting.IsRepeating;
+            foundMeeting.Room = meeting.Room ?? foundMeeting.Room;
+
             var updatedMeeting = await _meetingRepository.UpdateAsync(foundMeeting);
             return updatedMeeting;
         }

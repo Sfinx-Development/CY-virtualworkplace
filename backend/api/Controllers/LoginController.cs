@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using api;
 using core;
+using Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +12,9 @@ namespace Controllers
     [Route("[controller]")]
     public class LogInController : ControllerBase
     {
-        private readonly LogInService _logInService;
+        private readonly ILoginService _logInService;
 
-        public LogInController(LogInService logInService)
+        public LogInController(ILoginService logInService)
         {
             _logInService = logInService;
         }
