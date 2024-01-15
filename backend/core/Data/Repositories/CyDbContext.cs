@@ -54,5 +54,7 @@ public class CyDbContext : DbContext
 
         modelBuilder.Entity<Profile>().HasOne(p => p.User).WithMany(u => u.Profiles);
         modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);
+
+        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
     }
 }

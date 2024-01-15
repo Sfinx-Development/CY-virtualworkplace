@@ -8,6 +8,7 @@ public class Meeting
     public DateTime Date { get; set; }
     public int Minutes { get; set; }
     public bool IsRepeating { get; set; }
+    public Room Room { get; set; }
 
     public Meeting() { }
 }
