@@ -7,13 +7,13 @@ public class MeetingService
     private readonly IMeetingRepository _meetingRepository;
     private readonly IProfileRepository _profileRepository;
     private readonly RoomService _roomService;
-    private readonly MeetingOccasionRepository _meetingOccasionRepository;
+    private readonly IMeetingOccasionRepository _meetingOccasionRepository;
 
     public MeetingService(
         IMeetingRepository meetingRepository,
         IProfileRepository profileRepository,
         RoomService roomService,
-        MeetingOccasionRepository meetingOccasionRepository
+        IMeetingOccasionRepository meetingOccasionRepository
     )
     {
         _meetingRepository = meetingRepository;
@@ -27,6 +27,7 @@ public class MeetingService
         try
         {
             Room room = await _roomService.GetRoomById(incomingMeetingDTO.RoomId);
+            Profile profile = await _profileRepository.GetByIdAsync(incomingMeetingDTO.OwnerId);
 
             Meeting meeting =
                 new()
@@ -37,10 +38,20 @@ public class MeetingService
                     Date = incomingMeetingDTO.Date,
                     Minutes = incomingMeetingDTO.Minutes,
                     IsRepeating = incomingMeetingDTO.IsRepeating,
-                    Room = room
+                    Room = room,
+                    OwnerId = incomingMeetingDTO.OwnerId
                 };
 
             Meeting createdMeeting = await _meetingRepository.CreateAsync(meeting);
+
+            MeetingOccasion ownersOccasion =
+                new()
+                {
+                    Id = Utils.GenerateRandomId(),
+                    Profile = profile,
+                    Meeting = meeting
+                };
+            await _meetingOccasionRepository.CreateAsync(ownersOccasion);
 
             return createdMeeting;
         }

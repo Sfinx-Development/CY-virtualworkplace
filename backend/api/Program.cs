@@ -51,6 +51,11 @@ builder.Services.AddScoped<MeetingRoomServie>();
 builder.Services.AddScoped<OfficeService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository>();
+builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
+builder.Services.AddScoped<IMeetingRoomRepository, MeetingRoomRepository>();
+builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();

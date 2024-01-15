@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class MeetingOccasionRepository
+public class MeetingOccasionRepository : IMeetingOccasionRepository
 {
     private readonly CyDbContext _cyDbContext;
 
@@ -12,20 +12,20 @@ public class MeetingOccasionRepository
         _cyDbContext = cyDbContext;
     }
 
-    // public async Task<Meeting> CreateAsync(Meeting meeting)
-    // {
-    //     try
-    //     {
-    //         await _cyDbContext.Meetings.AddAsync(meeting);
-    //         await _cyDbContext.SaveChangesAsync();
+    public async Task<MeetingOccasion> CreateAsync(MeetingOccasion occasion)
+    {
+        try
+        {
+            await _cyDbContext.MeetingOccasions.AddAsync(occasion);
+            await _cyDbContext.SaveChangesAsync();
 
-    //         return meeting;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception();
-    //     }
-    // }
+            return occasion;
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
 
     // public async Task<MeetingOccasion> GetByIdAsync(string id)
     // {

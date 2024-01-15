@@ -8,4 +8,5 @@ public class IncomingMeetingDTO
     public int Minutes { get; set; }
     public bool IsRepeating { get; set; }
     public string RoomId { get; set; }
+    public string OwnerId { get; set; }
 }
