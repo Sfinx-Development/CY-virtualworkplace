@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using core;
 
@@ -10,9 +11,11 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    partial class CyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240115181445_roomtomeeting")]
+    partial class roomtomeeting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,10 +98,6 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("OwnerId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("RoomId")
                         .HasColumnType("varchar(255)");
 
@@ -113,6 +112,9 @@ namespace core.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("IsMeetingOwner")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("MeetingId")
                         .HasColumnType("varchar(255)");

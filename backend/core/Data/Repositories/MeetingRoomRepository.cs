@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class MeetingRoomRepository
+public class MeetingRoomRepository : IMeetingRoomRepository
 {
     private readonly CyDbContext _cyDbContext;
 
@@ -16,7 +16,10 @@ public class MeetingRoomRepository
     {
         try
         {
-            MeetingRoom room = await _cyDbContext.MeetingRooms.Where(m => m.Id == id).FirstAsync();
+            MeetingRoom room = await _cyDbContext
+                .MeetingRooms.Include(m => m.Cy)
+                .Where(m => m.Id == id)
+                .FirstAsync();
 
             if (room == null)
             {

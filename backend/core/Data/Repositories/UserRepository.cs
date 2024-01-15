@@ -36,7 +36,9 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            User user = await _cyDbContext.Users.FirstAsync(u => u.Id == id);
+            User user = await _cyDbContext
+                .Users.Include(u => u.Profiles)
+                .FirstAsync(u => u.Id == id);
             if (user != null)
             {
                 return user;

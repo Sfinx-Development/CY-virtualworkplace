@@ -4,10 +4,9 @@ namespace core;
 
 public class MeetingRoomServie : IMeetingRoomService
 {
-    private readonly MeetingRoomRepository _meetingRoomRepository;
-    private static readonly Random random = new Random();
+    private readonly IMeetingRoomRepository _meetingRoomRepository;
 
-    public MeetingRoomServie(MeetingRoomRepository meetingRoomRepository)
+    public MeetingRoomServie(IMeetingRoomRepository meetingRoomRepository)
     {
         _meetingRoomRepository = meetingRoomRepository;
     }

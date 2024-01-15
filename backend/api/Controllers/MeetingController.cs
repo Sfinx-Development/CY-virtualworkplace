@@ -3,6 +3,7 @@ using System.Security.Permissions;
 using System.Threading.Tasks;
 using api;
 using core;
+using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,75 +13,86 @@ namespace Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class MeetingController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly IUserService _userService;
+        private readonly MeetingService _meetingService;
 
-        public UserController(JwtService jwtService, IUserService userService)
+        public MeetingController(JwtService jwtService, MeetingService meetingService)
         {
             _jwtService = jwtService;
-            _userService = userService;
+            _meetingService = meetingService;
         }
 
-        [HttpPost]
         [Authorize]
-        public async Task<ActionResult<User>> GetUserDTO()
+        [HttpPost("Create")]
+        public async Task<ActionResult<Meeting>> Post(IncomingMeetingDTO incomingMeetingDTO)
         {
             try
             {
-                Console.WriteLine("INNE I USER CONTROLLERN");
                 var jwt = HttpContext
                     .Request.Headers["Authorization"]
                     .ToString()
                     .Replace("Bearer ", string.Empty);
 
-                Console.WriteLine(jwt);
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
                 }
-                var loggedInUser = _jwtService.GetByJWT(jwt);
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)
                 {
                     return BadRequest("Failed to get user.");
                 }
-                return Ok(loggedInUser);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
 
-        [HttpGet]
-        public async Task<ActionResult<User>> GetById(string id)
-        {
-            try
-            {
-                User foundUser = await _userService.GetById(id);
-                return foundUser;
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        [HttpPost("Create")]
-        public async Task<ActionResult<User>> Post(UserCreateDTO userCreateDto)
-        {
-            try
-            {
-                //KOLLA SÅ INTE SAMMA EMAIL SKAPAS TVÅ GÅNGER
-                var userCreated = await _userService.Create(userCreateDto);
-
-                if (userCreated == null)
+                //I CREATE MEETING ISERVICE SKA OCCASION OCKSÅ SKAPAS FÖR ÄGAREN AV MÖTET DIREKT
+                if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
                 {
-                    return BadRequest("Failed to create user.");
+                    var meetingCreated = await _meetingService.CreateAsync(incomingMeetingDTO);
+
+                    if (meetingCreated == null)
+                    {
+                        return BadRequest("Failed to create team.");
+                    }
+                    return meetingCreated;
                 }
-                return Ok(userCreated);
+                else
+                {
+                    throw new Exception("The owner of meeting is not in line with the JWT bearer.");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromBody] DeleteMeetingDTO deleteMeetingDTO)
+        {
+            try
+            {
+                var jwt = HttpContext
+                    .Request.Headers["Authorization"]
+                    .ToString()
+                    .Replace("Bearer ", string.Empty);
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                await _meetingService.DeleteMeetingAndOccasions(deleteMeetingDTO);
+
+                return Ok("Successfully deleted meeting.");
             }
             catch (Exception e)
             {
@@ -90,7 +102,7 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<User>> UpdateUser(User user)
+        public async Task<ActionResult<Meeting>> Update(Meeting meeting)
         {
             try
             {
@@ -103,45 +115,22 @@ namespace Controllers
                 {
                     return BadRequest("JWT token is missing.");
                 }
-                var loggedInUser = _jwtService.GetByJWT(jwt);
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)
                 {
                     return BadRequest("JWT token is missing.");
                 }
 
-                User updatedUser = await _userService.Edit(user);
-                return Ok(updatedUser);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        [HttpDelete]
-        [Authorize]
-        public async Task<ActionResult<User>> DeleteUser(string id)
-        {
-            try
-            {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
-
-                if (string.IsNullOrWhiteSpace(jwt))
+                if (loggedInUser.Profiles.Any(p => p.Id == meeting.OwnerId))
                 {
-                    return BadRequest("JWT token is missing.");
+                    Meeting updatedMeeting = await _meetingService.UpdateMeeting(meeting);
+                    return Ok(updatedMeeting);
                 }
-                var loggedInUser = _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
+                else
                 {
-                    return BadRequest("JWT token is missing.");
+                    return BadRequest("Profile not owner of meeting.");
                 }
-                await _userService.DeleteById(id);
-                return NoContent();
             }
             catch (Exception e)
             {
