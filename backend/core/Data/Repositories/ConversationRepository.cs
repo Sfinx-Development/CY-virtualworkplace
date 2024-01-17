@@ -5,7 +5,6 @@ namespace core;
 
 public class ConversationRepository : IConversationRepository
 {
-
      private readonly CyDbContext _cyDbContext;
 
     public ConversationRepository(CyDbContext cyDbContext)
@@ -53,29 +52,31 @@ public class ConversationRepository : IConversationRepository
         }
     }
 
-    public async Task<Conversation> GetConversationById(string id)
+  public async Task<Conversation> GetConversationById(string id)
+{
+    try
     {
-        try
-        {
-            Conversation conversation = await _cyDbContext
-                .Conversations.Include(c => c.Participants)
-                .Where(c => c.Id == id)
-                .FirstAsync();
+        Conversation conversation = await _cyDbContext
+            .Conversations.Include(c => c.Participants)
+            .Include(c => c.Messages)  
+            .Where(c => c.Id == id)
+            .FirstOrDefaultAsync();
 
-            if (conversation == null)
-            {
-                throw new Exception();
-            }
-            else
-            {
-                return conversation;
-            }
-        }
-        catch (Exception e)
+        if (conversation == null)
         {
-            throw new Exception();
+            throw new Exception("Conversation not found");
+        }
+        else
+        {
+            return conversation;
         }
     }
+    catch (Exception e)
+    {
+        throw new Exception("Error fetching conversation", e);
+    }
+}
+
       public async Task DeleteConversationByIdAsync(string id)
     {
         try
