@@ -27,25 +27,27 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
         }
     }
 
-    // public async Task<MeetingOccasion> GetByIdAsync(string id)
-    // {
-    //     try
-    //     {
-    //         MeetingOccasion meetingOccasion = await _cyDbContext.Meetings.FirstAsync(m => m.Id == id);
-    //         if (meeting != null)
-    //         {
-    //             return meeting;
-    //         }
-    //         else
-    //         {
-    //             throw new Exception();
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception();
-    //     }
-    // }
+    public async Task<List<MeetingOccasion>> GetAllOccasionsByProfileId(string profileId)
+    {
+        try
+        {
+            List<MeetingOccasion> occasions = await _cyDbContext
+                .MeetingOccasions.Where(m => m.Profile.Id == profileId)
+                .ToListAsync();
+            if (occasions != null)
+            {
+                return occasions;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
 
     // public async Task<Meeting> UpdateAsync(Meeting meeting)
     // {
@@ -81,7 +83,8 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
         try
         {
             List<MeetingOccasion> occasions = await _cyDbContext
-                .MeetingOccasions.Where(mo => mo.Meeting.Id == id)
+                .MeetingOccasions.Include(m => m.Meeting)
+                .Where(mo => mo.Meeting.Id == id)
                 .ToListAsync();
             return occasions;
         }
