@@ -32,7 +32,9 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
         try
         {
             List<MeetingOccasion> occasions = await _cyDbContext
-                .MeetingOccasions.Where(m => m.Profile.Id == profileId)
+                .MeetingOccasions.Include(o => o.Meeting)
+                .ThenInclude(m => m.Room)
+                .Where(m => m.Profile.Id == profileId)
                 .ToListAsync();
             if (occasions != null)
             {
@@ -84,6 +86,7 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
         {
             List<MeetingOccasion> occasions = await _cyDbContext
                 .MeetingOccasions.Include(m => m.Meeting)
+                .ThenInclude(m => m.Room)
                 .Where(mo => mo.Meeting.Id == id)
                 .ToListAsync();
             return occasions;

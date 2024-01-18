@@ -29,7 +29,7 @@ namespace Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<List<MeetingOccasion>>> Get(string profileId)
+        public async Task<ActionResult<List<MeetingOccasion>>> Get([FromBody] string profileId)
         {
             try
             {
