@@ -73,7 +73,7 @@ public class MeetingService
             foundMeeting.Date = meeting.Date;
             foundMeeting.Minutes = meeting.Minutes;
             foundMeeting.IsRepeating = meeting.IsRepeating;
-            foundMeeting.Room = meeting.Room ?? foundMeeting.Room;
+            // foundMeeting.Room = meeting.Room ?? foundMeeting.Room;
 
             var updatedMeeting = await _meetingRepository.UpdateAsync(foundMeeting);
             return updatedMeeting;
