@@ -111,4 +111,31 @@ public class MeetingService
             throw new Exception();
         }
     }
+
+    public async Task<Meeting> GetById(string meetingId, string userId)
+    {
+        //om man har ett mötestillfälle i mötet så får man tillgång att hämta mötet
+        var profiles = await _profileRepository.GetByUserIdAsync(userId);
+        var profileIds = profiles.Select(p => p.Id).ToList();
+
+        try
+        {
+            var meeting = await _meetingRepository.GetByIdAsync(meetingId);
+            var occasions = await _meetingOccasionRepository.GetAllOccasionsByMeetingId(meeting.Id);
+            bool anyMatch = occasions.Any(occasion => profileIds.Contains(occasion.Profile.Id));
+
+            if (anyMatch)
+            {
+                return meeting;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
 }
