@@ -1,3 +1,4 @@
+using System.Security;
 using Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,22 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
             return occasion;
         }
         catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
+
+    public async Task<MeetingOccasion> GetOccasionById(string id)
+    {
+        try
+        {
+            MeetingOccasion occasion = await _cyDbContext
+                .MeetingOccasions.Include(o => o.Meeting)
+                .ThenInclude(m => m.Room)
+                .FirstAsync();
+            return occasion;
+        }
+        catch (Exception)
         {
             throw new Exception();
         }

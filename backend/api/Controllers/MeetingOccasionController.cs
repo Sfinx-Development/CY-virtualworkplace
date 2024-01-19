@@ -67,5 +67,75 @@ namespace Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromBody] string id)
+        {
+            try
+            {
+                var jwt = HttpContext
+                    .Request.Headers["Authorization"]
+                    .ToString()
+                    .Replace("Bearer ", string.Empty);
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                await _meetingOccasionService.DeleteOccasion(id, loggedInUser.Id);
+
+                return Ok("Deleted meeting occasion.");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        //ägaren kan lägga till någon till mötestillfället
+        public async Task<ActionResult<MeetingOccasion>> Post(
+            [FromBody] AddToMeetingDTO addToMeetingDTO
+        )
+        {
+            try
+            {
+                var jwt = HttpContext
+                    .Request.Headers["Authorization"]
+                    .ToString()
+                    .Replace("Bearer ", string.Empty);
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                var occasionCreated = await _meetingOccasionService.AddOccasion(
+                    addToMeetingDTO,
+                    loggedInUser.Id
+                );
+
+                return Ok(occasionCreated);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
     }
 }
