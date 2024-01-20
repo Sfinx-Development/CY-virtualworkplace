@@ -2,7 +2,7 @@ using Interfaces;
 
 namespace core;
 
-public class RoomService
+public class RoomService : IRoomService
 {
     private readonly IMeetingRoomRepository _meetingRoomRepository;
     private readonly IOfficeRepository _officeRepository;

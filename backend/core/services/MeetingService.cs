@@ -6,13 +6,13 @@ public class MeetingService
 {
     private readonly IMeetingRepository _meetingRepository;
     private readonly IProfileRepository _profileRepository;
-    private readonly RoomService _roomService;
+    private readonly IRoomService _roomService;
     private readonly IMeetingOccasionRepository _meetingOccasionRepository;
 
     public MeetingService(
         IMeetingRepository meetingRepository,
         IProfileRepository profileRepository,
-        RoomService roomService,
+        IRoomService roomService,
         IMeetingOccasionRepository meetingOccasionRepository
     )
     {

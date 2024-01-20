@@ -56,7 +56,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ILoginService, LogInService>();
 builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository>();
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();
-builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<MeetingService>();
 
 builder.Services.AddEndpointsApiExplorer();
