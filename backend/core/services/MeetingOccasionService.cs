@@ -57,9 +57,9 @@ public class MeetingOccasionService : IMeetingOccasionService
                 }
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
 

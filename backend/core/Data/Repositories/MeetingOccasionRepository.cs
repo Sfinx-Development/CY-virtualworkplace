@@ -33,8 +33,10 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
         try
         {
             MeetingOccasion occasion = await _cyDbContext
-                .MeetingOccasions.Include(o => o.Meeting)
+                .MeetingOccasions.Include(o => o.Profile)
+                .Include(o => o.Meeting)
                 .ThenInclude(m => m.Room)
+                .Where(o => o.Id == id)
                 .FirstAsync();
             return occasion;
         }
