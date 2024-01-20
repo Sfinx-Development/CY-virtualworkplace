@@ -37,9 +37,11 @@ public class MeetingService
                     Description = incomingMeetingDTO.Description,
                     Date = incomingMeetingDTO.Date,
                     Minutes = incomingMeetingDTO.Minutes,
-                    IsRepeating = incomingMeetingDTO.IsRepeating,
                     Room = room,
-                    OwnerId = incomingMeetingDTO.OwnerId
+                    OwnerId = incomingMeetingDTO.OwnerId,
+                    IsRepeating = incomingMeetingDTO.IsRepeating,
+                    Interval = incomingMeetingDTO.Interval,
+                    EndDate = incomingMeetingDTO.EndDate
                 };
 
             Meeting createdMeeting = await _meetingRepository.CreateAsync(meeting);
@@ -73,8 +75,8 @@ public class MeetingService
             foundMeeting.Date = meeting.Date;
             foundMeeting.Minutes = meeting.Minutes;
             foundMeeting.IsRepeating = meeting.IsRepeating;
-            // foundMeeting.Room = meeting.Room ?? foundMeeting.Room;
-
+            foundMeeting.Interval = meeting.Interval;
+            foundMeeting.EndDate = meeting.EndDate;
             var updatedMeeting = await _meetingRepository.UpdateAsync(foundMeeting);
             return updatedMeeting;
         }
