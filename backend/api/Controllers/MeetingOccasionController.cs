@@ -29,6 +29,7 @@ namespace Controllers
 
         [Authorize]
         [HttpGet]
+        //när vi hämtar alla ens KOMMANDE mötestillfällen så uppdateras mötet till senaste tiden om återkommande
         public async Task<ActionResult<List<MeetingOccasion>>> Get([FromBody] string profileId)
         {
             try

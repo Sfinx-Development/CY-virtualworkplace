@@ -24,12 +24,53 @@ public class MeetingOccasionService : IMeetingOccasionService
         try
         {
             var occasions = await _meetingOccasionRepository.GetAllOccasionsByProfileId(profileId);
-            return occasions;
+            var occasionsNotPast = new List<MeetingOccasion>();
+            foreach (var occasion in occasions)
+            {
+                if (IsDatePast(occasion.Meeting))
+                {
+                    //HÄMTA RECURRENCEINFO MED MEETING O UPPDATERA DB
+                    var newDateSet = await SetNewDateForMeeting(occasion.Meeting);
+                    if (newDateSet)
+                    {
+                        occasionsNotPast.Add(occasion);
+                    }
+                }
+                else
+                {
+                    occasionsNotPast.Add(occasion);
+                }
+            }
+            return occasionsNotPast;
         }
         catch (Exception)
         {
             throw new Exception();
         }
+    }
+
+    public static bool IsDatePast(Meeting meeting)
+    {
+        return DateTime.Now >= meeting.Date;
+    }
+
+    public async Task<bool> SetNewDateForMeeting(Meeting meeting)
+    {
+        //om det är återkommande möte och datumet har gått ut
+        if (meeting.IsRepeating && IsDatePast(meeting) && DateTime.Now <= meeting.EndDate)
+        {
+            var nextDate = meeting.Date.AddDays(meeting.Interval);
+            if (DateTime.Now <= nextDate)
+            {
+                meeting.Date = nextDate;
+                var updatedMeeting = await _meetingRepository.UpdateAsync(meeting);
+                if (updatedMeeting != null)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public async Task DeleteOccasion(string id, string userId)
