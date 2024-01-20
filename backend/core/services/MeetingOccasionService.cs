@@ -16,6 +16,7 @@ public class MeetingOccasionService : IMeetingOccasionService
     {
         _meetingOccasionRepository = meetingOccasionRepository;
         _profileRepository = profileRepository;
+        _meetingRepository = meetingRepository;
     }
 
     public async Task<List<MeetingOccasion>> GetOccasionsByProfileId(string profileId)
@@ -71,7 +72,7 @@ public class MeetingOccasionService : IMeetingOccasionService
             //jag som lägger till henne i mötet:
             var profile = await _profileRepository.GetByIdAsync(addToMeetingDTO.InviterId);
             //är det kakans userid som stämmer med invitern?
-            if (profile.User.Id == userId)
+            if (profile.User.Id != userId)
             {
                 throw new Exception("The inviter id does not seem to be the user.");
             }

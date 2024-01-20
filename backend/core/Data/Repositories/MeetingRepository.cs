@@ -34,14 +34,16 @@ public class MeetingRepository : IMeetingRepository
             Meeting meeting = await _cyDbContext
                 .Meetings.Include(m => m.Room)
                 .ThenInclude(r => r.Cy)
-                .FirstAsync(m => m.Id == id);
+                .Where(m => m.Id == id)
+                .FirstAsync();
+
             if (meeting != null)
             {
                 return meeting;
             }
             else
             {
-                throw new Exception();
+                throw new Exception("Meeting not found.");
             }
         }
         catch (Exception e)
