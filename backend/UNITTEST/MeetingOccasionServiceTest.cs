@@ -7,53 +7,43 @@ using Xunit;
 public class MeetingOccasionServiceTest
 {
     [Fact]
-    public async Task MeetingDateUpdatesWhenGettingOccasions()
+    public async Task EmptyListIfOccasionMeetingIsPastDate()
     {
-        // mocka
-        var teamRepositoryMock = new Mock<ITeamRepository>();
+        var meetingOccasionRepositoryMock = new Mock<IMeetingOccasionRepository>();
+        var meetingRepositoryMock = new Mock<IMeetingRepository>();
         var profileRepositoryMock = new Mock<IProfileRepository>();
-        var meetingRoomServiceMock = new Mock<IMeetingRoomService>();
 
-        // bestäm vad createasync ska returnera sen
-        teamRepositoryMock
-            .Setup(repo => repo.CreateAsync(It.IsAny<Team>()))
-            .ReturnsAsync(
-                (Team team) =>
-                {
-                    team.Id = "123";
-                    return team;
-                }
-            );
-
-        meetingRoomServiceMock
-            .Setup(service => service.CreateMeetingRoom(It.IsAny<Team>()))
-            .ReturnsAsync(
-                (Team team) =>
-                {
-                    var meetingRoom = new MeetingRoom { TeamId = team.Id };
-                    return meetingRoom;
-                }
-            );
-
-        var teamService = new TeamService(
+        var meetingOccasionService = new MeetingOccasionService(
+            meetingOccasionRepositoryMock.Object,
             profileRepositoryMock.Object,
-            teamRepositoryMock.Object,
-            meetingRoomServiceMock.Object
+            meetingRepositoryMock.Object
         );
 
-        var createTeamDTO = new IncomingCreateTeamDTO
+        var meeting = new Meeting
         {
-            TeamName = "TestTeam",
-            TeamRole = "TestRole"
+            Id = "Meeting123",
+            Date = DateTime.Now.AddDays(-1),
+            IsRepeating = false
+        };
+        var profile = new Profile() { Id = "Profile123" };
+        var pastNonRecurringMeetings = new List<MeetingOccasion>
+        {
+            new MeetingOccasion
+            {
+                Id = "Occasion123",
+                Profile = profile,
+                Meeting = meeting
+            }
         };
 
-        var createdTeam = await teamService.CreateAsync(createTeamDTO);
+        meetingOccasionRepositoryMock
+            .Setup(x => x.GetAllOccasionsByProfileId(profile.Id))
+            .ReturnsAsync(pastNonRecurringMeetings);
 
-        Assert.NotNull(createdTeam);
+        // ACT
+        var result = await meetingOccasionService.GetOccasionsByProfileId(profile.Id);
 
-        meetingRoomServiceMock.Verify(
-            service => service.CreateMeetingRoom(It.Is<Team>(t => t.Id == createdTeam.Id)),
-            Times.Once
-        );
+        // ASSERT
+        Assert.Empty(result);
     }
 }
