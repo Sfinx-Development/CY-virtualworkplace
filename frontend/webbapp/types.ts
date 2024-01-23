@@ -80,7 +80,7 @@ export interface Message {
   content: string;
   dateCreated: Date;
   senderId: string /* (profileId) */;
-  conversationId: string;
+  conversationToParticipantId: string;
 }
 
 export interface Conversation {
