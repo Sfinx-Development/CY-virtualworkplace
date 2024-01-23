@@ -18,7 +18,6 @@ export interface Profile {
   teamId: string;
   userId: string;
 }
-// public List<Conversation> Conversations = new();
 
 export interface Team {
   id: string;
@@ -27,7 +26,6 @@ export interface Team {
   createdAt: Date;
   teamRole: string;
 }
-// public List<Profile> Profiles = new();
 
 export interface Room {
   id: string;
@@ -47,7 +45,6 @@ export interface Cy {
   id: string;
   healthCheckInterval: number;
 }
-// public List<HealthCheck> HealthChecks { get; set; } = new();
 
 export interface HealthCheck {
   id: string;
@@ -88,7 +85,6 @@ export interface Conversation {
   dateCreated: Date;
   creatorId: string /* (profileId) */;
 }
-// public List<Message> Messages { get; set; } = new();
 
 export interface ConversationParticipant {
   id: string;
