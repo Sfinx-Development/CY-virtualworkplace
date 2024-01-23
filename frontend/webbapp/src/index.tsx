@@ -6,8 +6,8 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import IndexPage from "./IndexPage";
-import RootLayout from "./RootLayout";
+import IndexPage from "./pages/NotSignedIn/IndexPage";
+import RootLayout from "./pages/RootLayout";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
