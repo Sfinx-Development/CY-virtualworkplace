@@ -1,6 +1,6 @@
 import { Container } from "@mui/material";
 
-export default function IndexPage() {
+export default function Index() {
   return (
     <Container sx={{ padding: "20px" }}>
       <div
