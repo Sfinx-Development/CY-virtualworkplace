@@ -85,13 +85,10 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            var userToUpdate =
-                await _cyDbContext.Users.FirstAsync(u => u.Id == u.Id) ?? throw new Exception();
-
             _cyDbContext.Users.Update(user);
 
             await _cyDbContext.SaveChangesAsync();
-            return userToUpdate;
+            return user;
         }
         catch (Exception e)
         {

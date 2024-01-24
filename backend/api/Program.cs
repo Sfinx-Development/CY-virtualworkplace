@@ -53,6 +53,7 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
 builder.Services.AddScoped<IOfficeService, OfficeService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ILoginService, LogInService>();
 builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository>();
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();
