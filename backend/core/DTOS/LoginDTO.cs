@@ -8,3 +8,9 @@ public class LogInDTO
 
     public LogInDTO() { }
 }
+
+public class LogInDTONoJwt
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+}
