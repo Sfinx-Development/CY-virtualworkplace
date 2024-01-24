@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import {
@@ -20,6 +21,7 @@ import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import EnterHouse from "./pages/StartSignedIn/EnterHousePage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
+import { theme1 } from "./theme";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -47,6 +49,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider theme={theme1}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>
 );
