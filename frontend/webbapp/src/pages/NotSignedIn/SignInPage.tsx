@@ -5,6 +5,7 @@ import { FetchSignIn } from "../../api/logIn";
 
 export default function SignIn() {
   const [loggedInUser, setLoggedInUser] = useState<LogInWithJwt>();
+
   const handleSignIn = async () => {
     try {
       const response = await FetchSignIn("angelinaholmqvist@live.se", "Hej123");
@@ -25,7 +26,7 @@ export default function SignIn() {
           alignItems: "center",
         }}
       >
-        <h1>SIGN IN PAGE</h1>
+        <Typography variant="h4">SIGN IN PAGE</Typography>
         <Button variant="contained" onClick={handleSignIn}>
           Sign In
         </Button>
