@@ -16,6 +16,7 @@ public class CyDbContext : DbContext
     public DbSet<Cy> Cys { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Conversation> Conversations { get; set; }
+    public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
 
     public CyDbContext() { }
 
@@ -56,5 +57,20 @@ public class CyDbContext : DbContext
         modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);
 
         modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
+
+        modelBuilder.Entity<ConversationParticipant>()
+                .HasOne(cp => cp.Profile)
+                .WithMany(p => p.ConversationParticipants)
+                .HasForeignKey(cp => cp.ProfileId);
+
+            modelBuilder.Entity<ConversationParticipant>()
+                .HasOne(cp => cp.Conversation)
+                .WithMany(c => c.Participants)
+                .HasForeignKey(cp => cp.ConversationId);
+
+     
+        
+
+        
     }
 }

@@ -2,13 +2,14 @@ namespace core;
 
 public class Profile
 {
-    public string Id { get; set; }
-    public string Role { get; set; }
-    public bool IsOwner { get; set; }
-    public DateTime DateCreated { get; set; }
-    public Team Team { get; set; }
-    public User User { get; set; } = new();
-    public List<Conversation> Conversations = new();
+   public string Id { get; set; }
+        public string Role { get; set; }
+        public bool IsOwner { get; set; }
+        public Team Team { get; set; }
+        public User User { get; set; } = new();
+          public DateTime DateCreated { get; set; }
+        public List<Conversation> Conversations { get; set; }
+        public List<ConversationParticipant> ConversationParticipants { get; set; }
 
     public Profile() { }
 }

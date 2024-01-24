@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240113171422_newdb")]
-    partial class newdb
+    [Migration("20240124213220_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,6 +39,28 @@ namespace core.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConversationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProfileId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("ConversationParticipants");
                 });
 
             modelBuilder.Entity("core.Cy", b =>
@@ -98,7 +120,16 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RoomId")
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Meetings");
                 });
@@ -107,9 +138,6 @@ namespace core.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
-
-                    b.Property<bool>("IsMeetingOwner")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("MeetingId")
                         .HasColumnType("varchar(255)");
@@ -124,31 +152,6 @@ namespace core.Migrations
                     b.HasIndex("ProfileId");
 
                     b.ToTable("MeetingOccasions");
-                });
-
-            modelBuilder.Entity("core.MeetingRoom", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("CyId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("RoomLayout")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TeamId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CyId");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("MeetingRooms");
                 });
 
             modelBuilder.Entity("core.Message", b =>
@@ -179,37 +182,12 @@ namespace core.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("core.Office", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("CyId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ProfileId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("RoomLayout")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CyId");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("Offices");
-                });
-
             modelBuilder.Entity("core.Profile", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("ConversationId")
+                    b.Property<string>("ConversationParticipantId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("DateCreated")
@@ -232,13 +210,41 @@ namespace core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConversationId");
+                    b.HasIndex("ConversationParticipantId");
 
                     b.HasIndex("TeamId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Profiles");
+                });
+
+            modelBuilder.Entity("core.Room", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("CyId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RoomLayout")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CyId");
+
+                    b.ToTable("Room");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Room");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("core.Team", b =>
@@ -306,6 +312,32 @@ namespace core.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("core.MeetingRoom", b =>
+                {
+                    b.HasBaseType("core.Room");
+
+                    b.Property<string>("TeamId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasDiscriminator().HasValue("MeetingRoom");
+                });
+
+            modelBuilder.Entity("core.Office", b =>
+                {
+                    b.HasBaseType("core.Room");
+
+                    b.Property<string>("ProfileId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasIndex("ProfileId");
+
+                    b.HasDiscriminator().HasValue("Office");
+                });
+
             modelBuilder.Entity("core.Conversation", b =>
                 {
                     b.HasOne("core.Profile", "Creator")
@@ -317,6 +349,25 @@ namespace core.Migrations
                     b.Navigation("Creator");
                 });
 
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.HasOne("core.Conversation", "Conversation")
+                        .WithMany("Participants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("core.Profile", "Profile")
+                        .WithMany("ConversationParticipants")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("core.HealthCheck", b =>
                 {
                     b.HasOne("core.Cy", "Cy")
@@ -326,6 +377,15 @@ namespace core.Migrations
                         .IsRequired();
 
                     b.Navigation("Cy");
+                });
+
+            modelBuilder.Entity("core.Meeting", b =>
+                {
+                    b.HasOne("core.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("core.MeetingOccasion", b =>
@@ -341,23 +401,6 @@ namespace core.Migrations
                     b.Navigation("Meeting");
 
                     b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("core.MeetingRoom", b =>
-                {
-                    b.HasOne("core.Cy", "Cy")
-                        .WithMany()
-                        .HasForeignKey("CyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("core.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId");
-
-                    b.Navigation("Cy");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("core.Message", b =>
@@ -377,28 +420,11 @@ namespace core.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("core.Office", b =>
-                {
-                    b.HasOne("core.Cy", "Cy")
-                        .WithMany()
-                        .HasForeignKey("CyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("core.Profile", "Profile")
-                        .WithMany()
-                        .HasForeignKey("ProfileId");
-
-                    b.Navigation("Cy");
-
-                    b.Navigation("Profile");
-                });
-
             modelBuilder.Entity("core.Profile", b =>
                 {
-                    b.HasOne("core.Conversation", null)
+                    b.HasOne("core.ConversationParticipant", null)
                         .WithMany("Participants")
-                        .HasForeignKey("ConversationId");
+                        .HasForeignKey("ConversationParticipantId");
 
                     b.HasOne("core.Team", "Team")
                         .WithMany("Profiles")
@@ -417,10 +443,48 @@ namespace core.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("core.Room", b =>
+                {
+                    b.HasOne("core.Cy", "Cy")
+                        .WithMany()
+                        .HasForeignKey("CyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cy");
+                });
+
+            modelBuilder.Entity("core.MeetingRoom", b =>
+                {
+                    b.HasOne("core.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("core.Office", b =>
+                {
+                    b.HasOne("core.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("core.Conversation", b =>
                 {
                     b.Navigation("Messages");
 
+                    b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
                     b.Navigation("Participants");
                 });
 
@@ -431,6 +495,8 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Profile", b =>
                 {
+                    b.Navigation("ConversationParticipants");
+
                     b.Navigation("Conversations");
                 });
 

@@ -38,6 +38,28 @@ namespace core.Migrations
                     b.ToTable("Conversations");
                 });
 
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConversationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProfileId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("ConversationParticipants");
+                });
+
             modelBuilder.Entity("core.Cy", b =>
                 {
                     b.Property<string>("Id")
@@ -162,7 +184,7 @@ namespace core.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("ConversationId")
+                    b.Property<string>("ConversationParticipantId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("DateCreated")
@@ -185,7 +207,7 @@ namespace core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConversationId");
+                    b.HasIndex("ConversationParticipantId");
 
                     b.HasIndex("TeamId");
 
@@ -324,6 +346,25 @@ namespace core.Migrations
                     b.Navigation("Creator");
                 });
 
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.HasOne("core.Conversation", "Conversation")
+                        .WithMany("Participants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("core.Profile", "Profile")
+                        .WithMany("ConversationParticipants")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("core.HealthCheck", b =>
                 {
                     b.HasOne("core.Cy", "Cy")
@@ -378,9 +419,9 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Profile", b =>
                 {
-                    b.HasOne("core.Conversation", null)
+                    b.HasOne("core.ConversationParticipant", null)
                         .WithMany("Participants")
-                        .HasForeignKey("ConversationId");
+                        .HasForeignKey("ConversationParticipantId");
 
                     b.HasOne("core.Team", "Team")
                         .WithMany("Profiles")
@@ -439,6 +480,11 @@ namespace core.Migrations
                     b.Navigation("Participants");
                 });
 
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.Navigation("Participants");
+                });
+
             modelBuilder.Entity("core.Cy", b =>
                 {
                     b.Navigation("HealthChecks");
@@ -446,6 +492,8 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Profile", b =>
                 {
+                    b.Navigation("ConversationParticipants");
+
                     b.Navigation("Conversations");
                 });
 
