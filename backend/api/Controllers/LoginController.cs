@@ -20,14 +20,25 @@ namespace Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<LogInDTO>> LogInUser([FromBody] LogInDTO logInDTO)
+        public async Task<ActionResult<LogInDTO>> LogInUser([FromBody] LogInDTONoJwt logInDTONoJwt)
         {
             try
             {
                 LogInDTO logInDTOWithJwt = await _logInService.LogIn(
-                    logInDTO.Email,
-                    logInDTO.Password
+                    logInDTONoJwt.Email,
+                    logInDTONoJwt.Password
                 );
+
+                //SKA SKICKAS SOM KAKA SEN
+                //       Response.Cookies.Append("jwtToken", logInDTOWithJwt.JWT, new CookieOptions
+                // {
+                //     HttpOnly = true, // Förhindrar JavaScript från att komma åt cookien
+                //     Secure = true,   // Kräver HTTPS för att skicka cookien (om det inte är lokal utveckling)
+                //     SameSite = SameSiteMode.Strict // Skydd mot CSRF-attacker
+                // });
+
+                // return Ok(logInDTOWithJwt);
+
                 return logInDTOWithJwt;
             }
             catch (Exception e)

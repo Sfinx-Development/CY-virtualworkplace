@@ -10,6 +10,13 @@ export interface User {
 }
 //jwtn endast i cookie ju
 
+//denna inte finnas sen
+export interface LogInWithJwt {
+  email: string;
+  password: string;
+  jwt: string;
+}
+
 export interface Profile {
   id: string;
   role: string;
