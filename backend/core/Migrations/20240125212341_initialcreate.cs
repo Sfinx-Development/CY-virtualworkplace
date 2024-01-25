@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace core.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -99,23 +99,6 @@ namespace core.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ConversationParticipants",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ConversationId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ProfileId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Profiles",
                 columns: table => new
                 {
@@ -128,18 +111,11 @@ namespace core.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    ConversationParticipantId = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Profiles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Profiles_ConversationParticipants_ConversationParticipantId",
-                        column: x => x.ConversationParticipantId,
-                        principalTable: "ConversationParticipants",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Profiles_Teams_TeamId",
                         column: x => x.TeamId,
@@ -213,6 +189,35 @@ namespace core.Migrations
                         name: "FK_Room_Teams_TeamId",
                         column: x => x.TeamId,
                         principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ConversationParticipants",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ConversationId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProfileId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipants_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipants_Profiles_ProfileId",
+                        column: x => x.ProfileId,
+                        principalTable: "Profiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -351,11 +356,6 @@ namespace core.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Profiles_ConversationParticipantId",
-                table: "Profiles",
-                column: "ConversationParticipantId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Profiles_TeamId",
                 table: "Profiles",
                 column: "TeamId");
@@ -379,34 +379,13 @@ namespace core.Migrations
                 name: "IX_Room_TeamId",
                 table: "Room",
                 column: "TeamId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ConversationParticipants_Conversations_ConversationId",
-                table: "ConversationParticipants",
-                column: "ConversationId",
-                principalTable: "Conversations",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ConversationParticipants_Profiles_ProfileId",
-                table: "ConversationParticipants",
-                column: "ProfileId",
-                principalTable: "Profiles",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_ConversationParticipants_Conversations_ConversationId",
-                table: "ConversationParticipants");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ConversationParticipants_Profiles_ProfileId",
-                table: "ConversationParticipants");
+            migrationBuilder.DropTable(
+                name: "ConversationParticipants");
 
             migrationBuilder.DropTable(
                 name: "HealthChecks");
@@ -421,19 +400,16 @@ namespace core.Migrations
                 name: "Meetings");
 
             migrationBuilder.DropTable(
+                name: "Conversations");
+
+            migrationBuilder.DropTable(
                 name: "Room");
 
             migrationBuilder.DropTable(
                 name: "Cys");
 
             migrationBuilder.DropTable(
-                name: "Conversations");
-
-            migrationBuilder.DropTable(
                 name: "Profiles");
-
-            migrationBuilder.DropTable(
-                name: "ConversationParticipants");
 
             migrationBuilder.DropTable(
                 name: "Teams");

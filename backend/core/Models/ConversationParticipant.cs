@@ -7,6 +7,6 @@ namespace core
         public string ProfileId { get; set; }
         public Profile Profile { get; set; }
         public Conversation Conversation { get; set; }
-        public List<Profile> Participants { get; set; }
+    
     }
 }

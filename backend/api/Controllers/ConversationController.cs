@@ -31,7 +31,7 @@ namespace Controllers
 
   [Authorize]
 [HttpPost("Create")]
-public async Task<ActionResult<Conversation>> CreateConversation()
+public async Task<ActionResult<Conversation>> CreateConversation([FromBody]string teamId)
 {
     try
     {
@@ -49,25 +49,9 @@ public async Task<ActionResult<Conversation>> CreateConversation()
             return BadRequest("Failed to get user.");
         }
 
-        // Implementera logik för att hämta ytterligare användarids från samma team
-        var additionalUserIds = await _profileService.GetProfilesByUserId(loggedInUser);
-
         // Skapa konversation
-        var createdConversation = await _conversationService.CreateConversationAsync(loggedInUser.Id);
-
-        // Skapa ConversationParticipant-objekt och spara i databasen
-        foreach (var userId in additionalUserIds)
-        {
-            var participant = new ConversationParticipant
-            {
-                Id = Guid.NewGuid().ToString(),
-                ConversationId = createdConversation.Id,
-                ProfileId = userId.Id
-            };
-
-            // Lägg till logik för att spara i databasen här (t.ex. anropa en metod i _conversationService)
-        }
-
+        var createdConversation = await _conversationService.CreateConversationAsync(loggedInUser.Id, teamId);
+      
         return createdConversation;
     }
     catch (Exception e)

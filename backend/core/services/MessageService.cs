@@ -3,7 +3,7 @@ namespace core;
 
 using Interfaces;
 
-public class MessageService
+public class MessageService : IMessageService
 {
     private readonly IConversationRepository _conversationRepository;
     private readonly IMessageRepository _messageRepository;

@@ -7,9 +7,8 @@ public class Profile
         public bool IsOwner { get; set; }
         public Team Team { get; set; }
         public User User { get; set; } = new();
+        public string UserId {get; set;}
           public DateTime DateCreated { get; set; }
-        public List<Conversation> Conversations { get; set; }
-        public List<ConversationParticipant> ConversationParticipants { get; set; }
 
     public Profile() { }
 }

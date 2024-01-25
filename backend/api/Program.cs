@@ -45,6 +45,9 @@ builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
 builder.Services.AddScoped<IMeetingRoomRepository, MeetingRoomRepository>();
 builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IConversationParticipantRepository, ConversationParticipantRepository>();
 builder.Services.AddScoped<LogInRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -52,6 +55,8 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
 builder.Services.AddScoped<IOfficeService, OfficeService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<ConversationService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ILoginService, LogInService>();
 builder.Services.AddScoped<RoomService>();
