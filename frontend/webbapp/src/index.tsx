@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -23,7 +24,6 @@ import EnterHouse from "./pages/StartSignedIn/EnterHousePage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import store from "./slices/store";
 import { theme1 } from "./theme";
-import { Provider } from "react-redux";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
