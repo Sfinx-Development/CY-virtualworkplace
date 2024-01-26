@@ -14,13 +14,17 @@ export const FetchSignIn = async (
       },
       body: JSON.stringify({ email, password }),
     });
+    console.log(response);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid inloggningen");
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as LogInWithJwt;
 
+    console.log("Response data:", data);
+    // Hämta JWT-cookie från responsens headers
+    // const jwtCookie = response.headers.get("Set-Cookie");
     // hantera cookien här - spara jwtn ?
 
     return data;

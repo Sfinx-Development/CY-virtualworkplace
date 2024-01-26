@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240125212341_initialcreate")]
-    partial class initialcreate
+    [Migration("20240126095543_newnewinitial")]
+    partial class newnewinitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -110,6 +110,12 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Interval")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsRepeating")
                         .HasColumnType("tinyint(1)");
 
@@ -125,6 +131,7 @@ namespace core.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("RoomId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -164,20 +171,20 @@ namespace core.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ConversationId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConversationParticipantId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateOnly>("DateCreated")
                         .HasColumnType("date");
 
-                    b.Property<string>("SenderId")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationId");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("ConversationParticipantId");
 
                     b.ToTable("Messages");
                 });
@@ -347,7 +354,7 @@ namespace core.Migrations
             modelBuilder.Entity("core.ConversationParticipant", b =>
                 {
                     b.HasOne("core.Conversation", "Conversation")
-                        .WithMany("Participants")
+                        .WithMany()
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -378,7 +385,9 @@ namespace core.Migrations
                 {
                     b.HasOne("core.Room", "Room")
                         .WithMany()
-                        .HasForeignKey("RoomId");
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Room");
                 });
@@ -400,19 +409,17 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Message", b =>
                 {
-                    b.HasOne("core.Conversation", "Conversation")
+                    b.HasOne("core.Conversation", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationId")
+                        .HasForeignKey("ConversationId");
+
+                    b.HasOne("core.ConversationParticipant", "ConversationParticipant")
+                        .WithMany()
+                        .HasForeignKey("ConversationParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("core.Profile", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId");
-
-                    b.Navigation("Conversation");
-
-                    b.Navigation("Sender");
+                    b.Navigation("ConversationParticipant");
                 });
 
             modelBuilder.Entity("core.Profile", b =>
@@ -470,8 +477,6 @@ namespace core.Migrations
             modelBuilder.Entity("core.Conversation", b =>
                 {
                     b.Navigation("Messages");
-
-                    b.Navigation("Participants");
                 });
 
             modelBuilder.Entity("core.Cy", b =>

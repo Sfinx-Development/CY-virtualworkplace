@@ -1,17 +1,19 @@
 import { Button, Container, Typography } from "@mui/material";
-import { useState } from "react";
-import { LogInWithJwt } from "../../../types";
-import { FetchSignIn } from "../../api/logIn";
+import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { logInUserAsync } from "../../slices/userSlice";
 
 export default function SignIn() {
-  const [loggedInUser, setLoggedInUser] = useState<LogInWithJwt>();
+  const user = useAppSelector((state) => state.userSlice.user);
+  const dispatch = useAppDispatch();
 
   const handleSignIn = async () => {
     try {
-      const response = await FetchSignIn("angelinaholmqvist@live.se", "Hej123");
-      if (response) {
-        setLoggedInUser(response);
-      }
+      await dispatch(
+        logInUserAsync({
+          email: "angelinaholmqvist@live.se",
+          password: "Hej123",
+        })
+      );
     } catch (error) {
       console.error("Sign in error:", error);
     }
@@ -30,9 +32,7 @@ export default function SignIn() {
         <Button variant="contained" onClick={handleSignIn}>
           Sign In
         </Button>
-        {loggedInUser ? (
-          <Typography>{loggedInUser.email} är inloggad</Typography>
-        ) : null}
+        {user ? <Typography>{user.firstName} är inloggad</Typography> : null}
       </div>
     </Container>
   );
