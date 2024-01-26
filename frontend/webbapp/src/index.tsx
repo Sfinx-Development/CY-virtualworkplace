@@ -21,7 +21,9 @@ import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import EnterHouse from "./pages/StartSignedIn/EnterHousePage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
+import store from "./slices/store";
 import { theme1 } from "./theme";
+import { Provider } from "react-redux";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -49,8 +51,10 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme1}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme1}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
   </React.StrictMode>
 );

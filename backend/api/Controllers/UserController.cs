@@ -23,7 +23,7 @@ namespace Controllers
             _userService = userService;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         public async Task<ActionResult<User>> GetUserDTO()
         {
@@ -40,7 +40,7 @@ namespace Controllers
                 {
                     return BadRequest("JWT token is missing.");
                 }
-                var loggedInUser = _jwtService.GetByJWT(jwt);
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)
                 {
@@ -54,7 +54,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetById(string id)
         {
             try
