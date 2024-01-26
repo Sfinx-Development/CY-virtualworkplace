@@ -44,7 +44,6 @@ namespace core
                     Id = Utils.GenerateRandomId(),
                     DateCreated = DateTime.Now,
                     CreatorId = creatorProfile.Id,
-                    Messages = new List<Message>()
                 };
 
                 var createdConversation = await _conversationRepository.Create(newConversation);

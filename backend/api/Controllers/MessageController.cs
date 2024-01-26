@@ -14,9 +14,9 @@ namespace Controllers
     public class MessageController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly MessageService _messageService;
+        private readonly IMessageService _messageService;
 
-        public MessageController(JwtService jwtService, MessageService messageService)
+        public MessageController(JwtService jwtService, IMessageService messageService)
         {
             _jwtService = jwtService;
             _messageService = messageService;
@@ -24,7 +24,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Send")]
-        public async Task<ActionResult<Message>> SendMessage(IncomingMessageDTO incomingMessageDTO)
+        public async Task<ActionResult<Message>> CreateMessage(IncomingMessageDTO incomingMessageDTO)
         {
             try
             {
@@ -45,14 +45,8 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                // Your authorization logic based on the user can be added here if needed
 
-                var message = new Message
-                {
-                    // Populate Message properties from incomingMessageDTO or other sources
-                };
-
-                var createdMessage = await _messageService.Create(message);
+                var createdMessage = await _messageService.CreateMessageInConversation(incomingMessageDTO, loggedInUser.Id);
 
                 if (createdMessage == null)
                 {

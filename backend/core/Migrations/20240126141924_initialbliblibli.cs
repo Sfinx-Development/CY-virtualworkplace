@@ -6,12 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace core.Migrations
 {
     /// <inheritdoc />
-    public partial class newnewinitial : Migration
+    public partial class initialbliblibli : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Conversations",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -132,21 +148,28 @@ namespace core.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Conversations",
+                name: "ConversationParticipants",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CreatorId = table.Column<string>(type: "varchar(255)", nullable: false)
+                    ConversationId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProfileId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Conversations", x => x.Id);
+                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Conversations_Profiles_CreatorId",
-                        column: x => x.CreatorId,
+                        name: "FK_ConversationParticipants_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipants_Profiles_ProfileId",
+                        column: x => x.ProfileId,
                         principalTable: "Profiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -195,29 +218,24 @@ namespace core.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ConversationParticipants",
+                name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ConversationId = table.Column<string>(type: "varchar(255)", nullable: false)
+                    Content = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ProfileId = table.Column<string>(type: "varchar(255)", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ConversationParticipantId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ConversationParticipants_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ConversationParticipants_Profiles_ProfileId",
-                        column: x => x.ProfileId,
-                        principalTable: "Profiles",
+                        name: "FK_Messages_ConversationParticipants_ConversationParticipantId",
+                        column: x => x.ConversationParticipantId,
+                        principalTable: "ConversationParticipants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -252,37 +270,6 @@ namespace core.Migrations
                         principalTable: "Room",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Messages",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Content = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    DateCreated = table.Column<DateOnly>(type: "date", nullable: false),
-                    ConversationParticipantId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ConversationId = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Messages_ConversationParticipants_ConversationParticipantId",
-                        column: x => x.ConversationParticipantId,
-                        principalTable: "ConversationParticipants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Messages_Conversations_ConversationId",
-                        column: x => x.ConversationId,
-                        principalTable: "Conversations",
-                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -324,11 +311,6 @@ namespace core.Migrations
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Conversations_CreatorId",
-                table: "Conversations",
-                column: "CreatorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HealthChecks_CyId",
                 table: "HealthChecks",
                 column: "CyId");
@@ -347,11 +329,6 @@ namespace core.Migrations
                 name: "IX_Meetings_RoomId",
                 table: "Meetings",
                 column: "RoomId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Messages_ConversationId",
-                table: "Messages",
-                column: "ConversationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_ConversationParticipantId",

@@ -52,30 +52,30 @@ public class ConversationParticipantRepository : IConversationParticipantReposit
 //         }
 //     }
 
-//   public async Task<Conversation> GetConversationById(string id)
-// {
-//     try
-//     {
-//         Conversation conversation = await _cyDbContext
-//             .Conversations.Include(c => c.Participants)
-//             .Include(c => c.Messages)  
-//             .Where(c => c.Id == id)
-//             .FirstOrDefaultAsync();
+  public async Task<ConversationParticipant> GetConversationById(string conversationParticipantId)
+{
+    try
+    {
+        ConversationParticipant conversationParticipant = await _cyDbContext
+            .ConversationParticipants.Where(c => c.Id == conversationParticipantId)
+            .Include(c => c.Profile)  
+            .Where(c => c.Id == conversationParticipantId)
+            .FirstAsync();
 
-//         if (conversation == null)
-//         {
-//             throw new Exception("Conversation not found");
-//         }
-//         else
-//         {
-//             return conversation;
-//         }
-//     }
-//     catch (Exception e)
-//     {
-//         throw new Exception("Error fetching conversation", e);
-//     }
-// }
+        if (conversationParticipant == null)
+        {
+            throw new Exception();
+        }
+        else
+        {
+            return conversationParticipant;
+        }
+    }
+    catch (Exception e)
+    {
+        throw new Exception();
+    }
+}
 
 //       public async Task DeleteConversationByIdAsync(string id)
 //     {

@@ -21,7 +21,7 @@ public class MessageRepository: IMessageRepository
 
             return message;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new Exception();
         }
