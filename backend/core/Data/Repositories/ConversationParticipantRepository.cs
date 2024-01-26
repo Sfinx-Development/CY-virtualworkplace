@@ -3,23 +3,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class ConversationRepository : IConversationRepository
+public class ConversationParticipantRepository : IConversationParticipantRepository
 {
      private readonly CyDbContext _cyDbContext;
 
-    public ConversationRepository(CyDbContext cyDbContext)
+    public ConversationParticipantRepository(CyDbContext cyDbContext)
     {
         _cyDbContext = cyDbContext;
     }
 
- public async Task<Conversation> Create(Conversation conversation)
+ public async Task<ConversationParticipant> Create(ConversationParticipant conversationParticipant)
     {
       try
         {
-            await _cyDbContext.Conversations.AddAsync(conversation);
+            await _cyDbContext.ConversationParticipants.AddAsync(conversationParticipant);
             await _cyDbContext.SaveChangesAsync();
 
-            return conversation;
+            return conversationParticipant;
         }
         catch (Exception)
         {
@@ -124,4 +124,3 @@ public class ConversationRepository : IConversationRepository
 //             return conversation?.Participants;
 //         }
     }
-    

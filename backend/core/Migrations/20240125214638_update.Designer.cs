@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240115181445_roomtomeeting")]
-    partial class roomtomeeting
+    [Migration("20240125214638_update")]
+    partial class update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,6 +39,28 @@ namespace core.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConversationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProfileId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("ConversationParticipants");
                 });
 
             modelBuilder.Entity("core.Cy", b =>
@@ -98,6 +120,10 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("RoomId")
                         .HasColumnType("varchar(255)");
 
@@ -112,9 +138,6 @@ namespace core.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
-
-                    b.Property<bool>("IsMeetingOwner")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("MeetingId")
                         .HasColumnType("varchar(255)");
@@ -141,20 +164,20 @@ namespace core.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ConversationId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConversationParticipantId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateOnly>("DateCreated")
                         .HasColumnType("date");
 
-                    b.Property<string>("SenderId")
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationId");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("ConversationParticipantId");
 
                     b.ToTable("Messages");
                 });
@@ -162,9 +185,6 @@ namespace core.Migrations
             modelBuilder.Entity("core.Profile", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ConversationId")
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("DateCreated")
@@ -186,8 +206,6 @@ namespace core.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ConversationId");
 
                     b.HasIndex("TeamId");
 
@@ -318,12 +336,31 @@ namespace core.Migrations
             modelBuilder.Entity("core.Conversation", b =>
                 {
                     b.HasOne("core.Profile", "Creator")
-                        .WithMany("Conversations")
+                        .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.HasOne("core.Conversation", "Conversation")
+                        .WithMany()
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("core.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("core.HealthCheck", b =>
@@ -363,27 +400,21 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Message", b =>
                 {
-                    b.HasOne("core.Conversation", "Conversation")
+                    b.HasOne("core.Conversation", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationId")
+                        .HasForeignKey("ConversationId");
+
+                    b.HasOne("core.ConversationParticipant", "ConversationParticipant")
+                        .WithMany()
+                        .HasForeignKey("ConversationParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("core.Profile", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId");
-
-                    b.Navigation("Conversation");
-
-                    b.Navigation("Sender");
+                    b.Navigation("ConversationParticipant");
                 });
 
             modelBuilder.Entity("core.Profile", b =>
                 {
-                    b.HasOne("core.Conversation", null)
-                        .WithMany("Participants")
-                        .HasForeignKey("ConversationId");
-
                     b.HasOne("core.Team", "Team")
                         .WithMany("Profiles")
                         .HasForeignKey("TeamId")
@@ -437,18 +468,11 @@ namespace core.Migrations
             modelBuilder.Entity("core.Conversation", b =>
                 {
                     b.Navigation("Messages");
-
-                    b.Navigation("Participants");
                 });
 
             modelBuilder.Entity("core.Cy", b =>
                 {
                     b.Navigation("HealthChecks");
-                });
-
-            modelBuilder.Entity("core.Profile", b =>
-                {
-                    b.Navigation("Conversations");
                 });
 
             modelBuilder.Entity("core.Team", b =>

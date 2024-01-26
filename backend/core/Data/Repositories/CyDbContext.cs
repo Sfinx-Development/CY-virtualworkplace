@@ -16,6 +16,7 @@ public class CyDbContext : DbContext
     public DbSet<Cy> Cys { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Conversation> Conversations { get; set; }
+    public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
 
     public CyDbContext() { }
 
@@ -46,15 +47,24 @@ public class CyDbContext : DbContext
 
         modelBuilder.Entity<HealthCheck>().HasOne(mo => mo.Cy).WithMany(c => c.HealthChecks);
 
-        modelBuilder.Entity<Message>().HasOne(me => me.Sender);
-        modelBuilder.Entity<Message>().HasOne(me => me.Conversation).WithMany(c => c.Messages);
-
-        modelBuilder.Entity<Conversation>().HasOne(c => c.Creator).WithMany(c => c.Conversations);
-        modelBuilder.Entity<Conversation>().HasMany(c => c.Participants);
-
         modelBuilder.Entity<Profile>().HasOne(p => p.User).WithMany(u => u.Profiles);
         modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);
 
         modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
+
+        
+        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
+
+        modelBuilder.Entity<ConversationParticipant>()
+                .HasOne(cp => cp.Profile);
+
+            modelBuilder.Entity<ConversationParticipant>()
+                .HasOne(cp => cp.Conversation);
+                
+
+     
+        
+
+        
     }
 }
