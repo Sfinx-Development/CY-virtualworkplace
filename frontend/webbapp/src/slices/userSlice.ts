@@ -98,6 +98,7 @@ const userSlice = createSlice({
         }
       })
       .addCase(logInUserAsync.rejected, (state) => {
+        state.user = undefined;
         state.error = "Användarnamn eller lösenord är felaktigt.";
       });
   },
