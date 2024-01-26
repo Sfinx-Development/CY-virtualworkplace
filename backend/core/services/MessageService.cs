@@ -7,37 +7,55 @@ public class MessageService : IMessageService
 {
     private readonly IConversationRepository _conversationRepository;
     private readonly IMessageRepository _messageRepository;
-    private readonly IProfileRepository _profileRepository;
-    private readonly IMeetingRepository _meetingRepository;
-    private readonly IMeetingOccasionRepository _meetingOccasionRepository;
+    private readonly IConversationParticipantRepository _conversationParticipantRepository;
 
     public MessageService(
         IConversationRepository conversationRepository,
         IMessageRepository messageRepository,
-        IProfileRepository profileRepository,
-        IMeetingRepository meetingRepository,
-        IMeetingOccasionRepository meetingOccasionRepository)
+        IConversationParticipantRepository conversationParticipantRepository)
     {
         _conversationRepository = conversationRepository;
         _messageRepository = messageRepository;
-        _profileRepository = profileRepository;
-        _meetingRepository = meetingRepository;
-        _meetingOccasionRepository = meetingOccasionRepository;
+        _conversationParticipantRepository = conversationParticipantRepository;
     }
 
-    public async Task<Message> Create(Message message)
-    {
-        try
-        {
-            Message createdMessage = await _messageRepository.CreateAsync(message);
-            return createdMessage;
-        }
-        catch (Exception)
-        {
 
+public async Task<Message> CreateMessageInConversation(IncomingMessageDTO incomingMessageDTO, string loggedInUserId)
+{
+    try
+    {
+        var conversationParticipant = await _conversationParticipantRepository.GetConversationById(incomingMessageDTO.ConversationParticipantId);
+
+        if (conversationParticipant == null)
+        {
+            throw new Exception("Conversation participant not found.");
+        }
+
+        if (conversationParticipant.Profile.UserId == loggedInUserId)
+        {
+         
+            var newMessage = new Message
+            {
+                Id = Utils.GenerateRandomId(),
+                ConversationParticipantId = conversationParticipant.Id,
+                Content = incomingMessageDTO.Content,
+                DateCreated = DateTime.Now
+            };
+
+            
+            return await _messageRepository.CreateAsync(newMessage);
+        }
+        else
+        {
             throw new Exception();
         }
     }
+    catch (Exception)
+    {
+        throw new Exception();
+    }
+}
+
 
     // public async List<Message> GetAll(Conversation conversation, User user)
     // {

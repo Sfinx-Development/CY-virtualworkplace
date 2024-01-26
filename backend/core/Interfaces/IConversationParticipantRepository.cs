@@ -6,11 +6,12 @@ namespace core;
 public interface IConversationParticipantRepository
 {
     Task<ConversationParticipant> Create(ConversationParticipant conversationPartisipant);
+    Task<ConversationParticipant> GetConversationById(string conversationParticipantId);
 }
 
 
 
- 
+
 //     public async Task<Conversation> Update(Conversation conversation)
 //     {
 //          try
@@ -24,7 +25,7 @@ public interface IConversationParticipantRepository
 
 //             conversationToUpdate.Messages = conversation.Messages ?? conversationToUpdate.Messages;
 //             conversationToUpdate.Participants = conversation.Participants ?? conversationToUpdate.Participants;
-           
+
 
 //             _cyDbContext.Conversations.Update(conversationToUpdate);
 
@@ -108,4 +109,3 @@ public interface IConversationParticipantRepository
 //             var conversation = await _dbContext.Conversations.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == conversationId);
 //             return conversation?.Participants;
 //         }
-    

@@ -26,14 +26,12 @@ namespace core.Migrations
 
                     b.Property<string>("CreatorId")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
 
                     b.ToTable("Conversations");
                 });
@@ -167,19 +165,14 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ConversationId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("ConversationParticipantId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<DateOnly>("DateCreated")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ConversationId");
 
                     b.HasIndex("ConversationParticipantId");
 
@@ -337,17 +330,6 @@ namespace core.Migrations
                     b.HasDiscriminator().HasValue("Office");
                 });
 
-            modelBuilder.Entity("core.Conversation", b =>
-                {
-                    b.HasOne("core.Profile", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
             modelBuilder.Entity("core.ConversationParticipant", b =>
                 {
                     b.HasOne("core.Conversation", "Conversation")
@@ -406,10 +388,6 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Message", b =>
                 {
-                    b.HasOne("core.Conversation", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("ConversationId");
-
                     b.HasOne("core.ConversationParticipant", "ConversationParticipant")
                         .WithMany()
                         .HasForeignKey("ConversationParticipantId")
@@ -469,11 +447,6 @@ namespace core.Migrations
                         .IsRequired();
 
                     b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("core.Conversation", b =>
-                {
-                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("core.Cy", b =>

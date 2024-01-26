@@ -53,7 +53,8 @@ public class CyDbContext : DbContext
         modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
 
         
-        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
+        modelBuilder.Entity<Message>().HasOne(m => m.ConversationParticipant);
+        
 
         modelBuilder.Entity<ConversationParticipant>()
                 .HasOne(cp => cp.Profile);
