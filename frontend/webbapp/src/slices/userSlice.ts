@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User } from "../../types";
 import { FetchSignIn } from "../api/logIn";
-import { FetchGetUseer } from "../api/user";
+import { FetchCreateUseer, FetchGetUseer } from "../api/user";
 
 interface UserState {
   user: User | undefined;
@@ -13,22 +13,23 @@ export const initialState: UserState = {
   error: null,
 };
 
-// export const addUserAsync = createAsyncThunk<
-//   User,
-//   UserCreate,
-//   { rejectValue: string }
-// >("user/addUser", async (user, thunkAPI) => {
-//   try {
-//     const addedUser = await addUserToDB(user);
-//     if (addedUser) {
-//       return addedUser;
-//     } else {
-//       return thunkAPI.rejectWithValue("failed to add user");
-//     }
-//   } catch (error: any) {
-//     return thunkAPI.rejectWithValue(error.message);
-//   }
-// });
+export const createUserAsync = createAsyncThunk<
+  User,
+  User,
+  { rejectValue: string }
+>("user/addUser", async (user, thunkAPI) => {
+  try {
+    const createdUser = await FetchCreateUseer(user);
+    if (createdUser) {
+      console.log("created user: ", createdUser)
+      return createdUser;
+    } else {
+      return thunkAPI.rejectWithValue("failed to add user");
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Något gick fel.");
+  }
+});
 
 export const logInUserAsync = createAsyncThunk<
   User,
@@ -100,6 +101,16 @@ const userSlice = createSlice({
       .addCase(logInUserAsync.rejected, (state) => {
         state.user = undefined;
         state.error = "Användarnamn eller lösenord är felaktigt.";
+      })
+      .addCase(createUserAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          // state.user = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(createUserAsync.rejected, (state) => {
+        state.user = undefined;
+        state.error = "Något gick fel med skapandet av konto.";
       });
   },
 });
