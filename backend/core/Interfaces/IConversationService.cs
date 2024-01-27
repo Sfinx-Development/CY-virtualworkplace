@@ -2,9 +2,11 @@ using core;
 
 namespace Interfaces;
 
-public interface IConversation
+public interface IConversationService
 {
-    Task<Conversation> CreateAsync(Conversation conversation);
+    
+     Task<Conversation> CreateConversationAsync(string creatorUserId, string teamId);
+     Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId);
     // Task<Conversation> UpdateAsync(Conversation conversation);
     // Task<Conversation> GetByIdAsync(string id);
     // Task DeleteByIdAsync(string id);

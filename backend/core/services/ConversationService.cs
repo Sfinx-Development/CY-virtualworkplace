@@ -1,10 +1,8 @@
 using Interfaces;
 
-
-
 namespace core
 {
-    public class ConversationService
+    public class ConversationService : IConversationService
     {
         private readonly IConversationRepository _conversationRepository;
         private readonly IProfileRepository _profileRepository;
