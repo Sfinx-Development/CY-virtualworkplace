@@ -56,7 +56,7 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
 builder.Services.AddScoped<IOfficeService, OfficeService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
-builder.Services.AddScoped<ConversationService>();
+builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ILoginService, LogInService>();
