@@ -69,25 +69,36 @@ namespace core
             }
         }
 
-   public async Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId)
+public async Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId)
 {
     try
     {
-        var conversationParticipant = await _conversationParticipantRepository.GetConversationById(conversationParticipantId);
         
+        Console.WriteLine($"Start GetConversationWithAllMessages for conversationParticipantId: {conversationParticipantId}");
+
+        var conversationParticipant = await _conversationParticipantRepository.GetConversationById(conversationParticipantId);
+
         if (conversationParticipant == null)
         {
+            Console.WriteLine("Conversation participant not found.");
             throw new Exception("Conversation participant not found.");
         }
 
+        Console.WriteLine($"Found conversation participant: {conversationParticipant.Id}");
+
         var messages = await _messageRepository.GetAllMessagesInConversation(conversationParticipant.ConversationId);
+        
+        Console.WriteLine($"Number of messages in conversation: {messages?.Count ?? 0}");
+
         return messages.ToList();
     }
-    catch (Exception)
+    catch (Exception ex)
     {
-        throw new Exception("Failed to retrieve conversation with messages.");
+        Console.WriteLine($"Exception: {ex.Message}");
+        throw new Exception("Failed to retrieve conversation with messages.", ex);
     }
 }
+
 
 
 

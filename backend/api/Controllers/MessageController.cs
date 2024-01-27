@@ -63,9 +63,9 @@ namespace Controllers
             }
         }
 
-        [Authorize]
-[HttpGet("GetMessagesInConversation/{conversationParticipantId}")]
-public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation(string conversationParticipantId)
+[Authorize]
+[HttpGet("GetMessagesInConversation")]
+public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation([FromBody] string conversationParticipantId)
 {
     try
     {
