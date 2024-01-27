@@ -3,6 +3,7 @@ import { useState } from "react";
 import { forgotPasswordAsync } from "../../slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 
+
 export default function ForgotPassword() {
   const success = useAppSelector((state) => state.authSlice.success);
   const error = useAppSelector((state) => state.authSlice.error);
