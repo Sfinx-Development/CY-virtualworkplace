@@ -45,8 +45,15 @@ namespace Controllers
                 {
                     return BadRequest("Wrong email.");
                 }
-                await _authService.SetNewRandomPassword(loggedInUser);
-                return Ok();
+                var isPasswordSent = await _authService.SetNewRandomPassword(loggedInUser);
+                if (isPasswordSent)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    throw new Exception("Email couldn't be sent.");
+                }
             }
             catch (Exception e)
             {
