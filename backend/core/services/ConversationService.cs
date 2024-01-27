@@ -1,4 +1,5 @@
 using Interfaces;
+using System.Linq;
 
 namespace core
 {
@@ -69,35 +70,39 @@ namespace core
             }
         }
 
-public async Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId)
-{
-    try
-    {
-        
-        Console.WriteLine($"Start GetConversationWithAllMessages for conversationParticipantId: {conversationParticipantId}");
-
-        var conversationParticipant = await _conversationParticipantRepository.GetConversationById(conversationParticipantId);
-
-        if (conversationParticipant == null)
+        public async Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId, User user)
         {
-            Console.WriteLine("Conversation participant not found.");
-            throw new Exception("Conversation participant not found.");
+            try
+            {
+
+                var conversationParticipant = await _conversationParticipantRepository.GetConversationById(conversationParticipantId);
+
+                if (conversationParticipant == null)
+                {
+                    throw new Exception("Conversation participant not found.");
+                }
+
+                if (user.Id == conversationParticipant.Profile.UserId)
+                {
+                    var participants = await _conversationParticipantRepository.GetAllByConversation(conversationParticipant.ConversationId);
+                    // var messages = await _messageRepository.GetAllMessagesInConversation(conversationParticipantId);
+                    var allMessages = participants.SelectMany(p => p.Messages).ToList();
+                    if(allMessages == null)
+                    {
+                        return new List<Message>();
+                    }
+
+                    return allMessages.ToList();
+                }
+                else{
+                    throw new Exception("Den som gör anropet är inte rätt profil");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception( ex.Message);
+            }
         }
-
-        Console.WriteLine($"Found conversation participant: {conversationParticipant.Id}");
-
-        var messages = await _messageRepository.GetAllMessagesInConversation(conversationParticipant.ConversationId);
-        
-        Console.WriteLine($"Number of messages in conversation: {messages?.Count ?? 0}");
-
-        return messages.ToList();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Exception: {ex.Message}");
-        throw new Exception("Failed to retrieve conversation with messages.", ex);
-    }
-}
 
 
 

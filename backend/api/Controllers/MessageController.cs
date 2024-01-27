@@ -64,7 +64,7 @@ namespace Controllers
         }
 
 [Authorize]
-[HttpGet("GetMessagesInConversation")]
+[HttpPost("GetMessagesInConversation")]
 public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation([FromBody] string conversationParticipantId)
 {
     try
@@ -79,14 +79,15 @@ public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation(
             return BadRequest("JWT token is missing.");
         }
 
-        var loggedInUser = await _jwtService.GetByJWT(jwt);
+       var loggedInUser = await _jwtService.GetByJWT(jwt);
 
         if (loggedInUser == null)
         {
             return BadRequest("Failed to get user.");
         }
 
-        var messages = await _conversationService.GetConversationWithAllMessages(conversationParticipantId);
+
+        var messages = await _conversationService.GetConversationWithAllMessages(conversationParticipantId, loggedInUser);
 
         if (messages == null || !messages.Any())
         {
