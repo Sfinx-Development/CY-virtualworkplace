@@ -24,6 +24,7 @@ import EnterHouse from "./pages/StartSignedIn/EnterHousePage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import store from "./slices/store";
 import { theme1 } from "./theme";
+import ForgotPassword from "./pages/NotSignedIn/ForgotPasswordPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       {/* dessa ska man bara kunna nå om man inte är inloggad : */}
       <Route path="signin" element={<SignIn />}></Route>
       <Route path="createaccount" element={<CreateAccount />}></Route>
+      <Route path="forgotpassword" element={<ForgotPassword />}></Route>
       {/* dessa kommer man till när man har loggat in: */}
       <Route path="chooseteam" element={<ChooseTeam />}></Route>
       <Route path="createteam" element={<CreateTeam />}></Route>

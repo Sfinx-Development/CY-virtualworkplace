@@ -18,7 +18,6 @@ import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { logInUserAsync } from "../../slices/userSlice";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
-  const user = useAppSelector((state) => state.userSlice.user);
   const error = useAppSelector((state) => state.userSlice.error);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -39,10 +38,7 @@ export default function SignIn() {
           email: email,
           password: password,
         })
-      );
-      if(user){
-        navigate("/chooseteam");
-      }
+      ).then(() => navigate("/chooseteam"));
     } catch (error) {
       console.error("Sign in error:", error);
     }
@@ -127,7 +123,7 @@ export default function SignIn() {
         >
           Logga in
         </Button>
-        <Link href="#" underline="hover">
+        <Link href="forgotpassword" underline="hover">
           Glömt lösenord?
         </Link>
 
