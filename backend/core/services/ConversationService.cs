@@ -10,13 +10,15 @@ namespace core
         private readonly IProfileRepository _profileRepository;
         private readonly ITeamRepository _teamRepository;
         private readonly IConversationParticipantRepository _conversationParticipantRepository;
+        private readonly IMessageRepository _messageRepository;
 
-        public ConversationService(IConversationRepository conversationRepository, IProfileRepository profileRepository, ITeamRepository teamRepository, IConversationParticipantRepository conversationParticipantRepository)
+        public ConversationService(IConversationRepository conversationRepository, IProfileRepository profileRepository, ITeamRepository teamRepository, IConversationParticipantRepository conversationParticipantRepository, IMessageRepository messageRepository)
         {
             _conversationRepository = conversationRepository;
             _profileRepository = profileRepository;
             _teamRepository = teamRepository;
             _conversationParticipantRepository = conversationParticipantRepository;
+            _messageRepository = messageRepository;
         }
 
         public async Task<Conversation> CreateConversationAsync(string creatorUserId, string teamId)
@@ -68,6 +70,27 @@ namespace core
                 throw new Exception("Failed to create conversation.");
             }
         }
+
+   public async Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId)
+{
+    try
+    {
+        var conversationParticipant = await _conversationParticipantRepository.GetConversationById(conversationParticipantId);
+        
+        if (conversationParticipant == null)
+        {
+            throw new Exception("Conversation participant not found.");
+        }
+
+        var messages = await _messageRepository.GetAllMessagesInConversation(conversationParticipant.ConversationId);
+        return messages.ToList();
+    }
+    catch (Exception)
+    {
+        throw new Exception("Failed to retrieve conversation with messages.");
+    }
+}
+
 
 
 

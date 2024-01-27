@@ -26,6 +26,23 @@ public class MessageRepository: IMessageRepository
             throw new Exception();
         }
     }
+
+public async Task<List<Message>> GetAllMessagesInConversation(string conversationParticipantId)
+{
+    try
+    {
+        var messages = await _cyDbContext.Messages
+            .Where(m => m.ConversationParticipantId == conversationParticipantId)
+            .ToListAsync();
+
+        return messages;
+    }
+    catch (Exception)
+    {
+        throw new Exception("Failed to retrieve messages in conversation.");
+    }
+}
+
 //   public async Task<Message> GetByIdAsync(string messageId)
 //     {
 //         try
