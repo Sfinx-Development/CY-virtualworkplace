@@ -15,15 +15,15 @@ public class AuthService
         _userService = userService;
     }
 
-    public async Task SetNewRandomPassword(User user)
+    public async Task<bool> SetNewRandomPassword(User user)
     {
         user.Password = Utils.GenerateRandomId();
         var updatedUser = await _userService.Edit(user);
         //skicka mail till användaren med nya lösenordet
-        await SendEmail(updatedUser.Password);
+        return SendEmail(updatedUser.Password);
     }
 
-    public async Task SendEmail(string newPassword)
+    public bool SendEmail(string newPassword)
     {
         string smtpServer = "sandbox.smtp.mailtrap.io";
         int smtpPort = 2525;
@@ -45,7 +45,6 @@ public class AuthService
         // Skicka e-post
         client.Send(fromEmail, toEmail, subject, body);
 
-        Console.WriteLine("Sent");
-        Console.ReadLine();
+        return true;
     }
 }

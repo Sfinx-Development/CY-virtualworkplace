@@ -12,13 +12,13 @@ export const initialState: AuthState = {
 };
 
 export const forgotPasswordAsync = createAsyncThunk<
-  string,
+  boolean,
   { email: string },
   { rejectValue: string }
 >("user/forgotPassword", async ({ email }, thunkAPI) => {
   try {
-    const response = await FetchForgotPassword(email);
-    return response;
+    const isOk = await FetchForgotPassword(email);
+    return isOk;
   } catch (error) {
     return thunkAPI.rejectWithValue("Utskick av nytt lösenord misslyckades.");
   }
