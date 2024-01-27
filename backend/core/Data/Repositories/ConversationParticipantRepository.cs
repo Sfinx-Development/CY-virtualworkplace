@@ -51,20 +51,32 @@ public class ConversationParticipantRepository : IConversationParticipantReposit
 //             throw new Exception();
 //         }
 //     }
+public async Task <List<ConversationParticipant>> GetAllByConversation(string conversationId)
+{
+    try{
+        var conversationParticipant = await _cyDbContext
+            .ConversationParticipants.Include(c => c.Messages).Where(c => c.ConversationId == conversationId)
+           .ToListAsync();
+           return conversationParticipant;
+    }
+    catch{
+           throw new Exception();
+    }
+}
 
   public async Task<ConversationParticipant> GetConversationById(string conversationParticipantId)
 {
     try
     {
         ConversationParticipant conversationParticipant = await _cyDbContext
-            .ConversationParticipants.Where(c => c.Id == conversationParticipantId)
+            .ConversationParticipants
             .Include(c => c.Profile)  
             .Where(c => c.Id == conversationParticipantId)
             .FirstAsync();
 
         if (conversationParticipant == null)
         {
-            throw new Exception();
+            throw new Exception("HITTADE INTE PARTICIPANT");
         }
         else
         {

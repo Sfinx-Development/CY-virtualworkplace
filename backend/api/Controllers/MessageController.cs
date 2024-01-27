@@ -15,11 +15,13 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly IMessageService _messageService;
+        private readonly IConversationService _conversationService;
 
-        public MessageController(JwtService jwtService, IMessageService messageService)
+        public MessageController(JwtService jwtService, IMessageService messageService, IConversationService conversationService)
         {
             _jwtService = jwtService;
             _messageService = messageService;
+            _conversationService = conversationService;
         }
 
         [Authorize]
@@ -60,6 +62,46 @@ namespace Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+[Authorize]
+[HttpPost("GetMessagesInConversation")]
+public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation([FromBody] string conversationParticipantId)
+{
+    try
+    {
+        var jwt = HttpContext
+            .Request.Headers["Authorization"]
+            .ToString()
+            .Replace("Bearer ", string.Empty);
+
+        if (string.IsNullOrWhiteSpace(jwt))
+        {
+            return BadRequest("JWT token is missing.");
+        }
+
+       var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+        if (loggedInUser == null)
+        {
+            return BadRequest("Failed to get user.");
+        }
+
+
+        var messages = await _conversationService.GetConversationWithAllMessages(conversationParticipantId, loggedInUser);
+
+        if (messages == null || !messages.Any())
+        {
+            return NotFound("No messages found in the conversation.");
+        }
+
+        return Ok(messages);
+    }
+    catch (Exception e)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+    }
+}
+
 
 //         [Authorize]
 // [HttpDelete]

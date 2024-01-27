@@ -1,22 +1,23 @@
 using Interfaces;
-
-
+using System.Linq;
 
 namespace core
 {
-    public class ConversationService
+    public class ConversationService : IConversationService
     {
         private readonly IConversationRepository _conversationRepository;
         private readonly IProfileRepository _profileRepository;
         private readonly ITeamRepository _teamRepository;
         private readonly IConversationParticipantRepository _conversationParticipantRepository;
+        private readonly IMessageRepository _messageRepository;
 
-        public ConversationService(IConversationRepository conversationRepository, IProfileRepository profileRepository, ITeamRepository teamRepository, IConversationParticipantRepository conversationParticipantRepository)
+        public ConversationService(IConversationRepository conversationRepository, IProfileRepository profileRepository, ITeamRepository teamRepository, IConversationParticipantRepository conversationParticipantRepository, IMessageRepository messageRepository)
         {
             _conversationRepository = conversationRepository;
             _profileRepository = profileRepository;
             _teamRepository = teamRepository;
             _conversationParticipantRepository = conversationParticipantRepository;
+            _messageRepository = messageRepository;
         }
 
         public async Task<Conversation> CreateConversationAsync(string creatorUserId, string teamId)
@@ -68,6 +69,42 @@ namespace core
                 throw new Exception("Failed to create conversation.");
             }
         }
+
+        public async Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId, User user)
+        {
+            try
+            {
+
+                var conversationParticipant = await _conversationParticipantRepository.GetConversationById(conversationParticipantId);
+
+                if (conversationParticipant == null)
+                {
+                    throw new Exception("Conversation participant not found.");
+                }
+
+                if (user.Id == conversationParticipant.Profile.UserId)
+                {
+                    var participants = await _conversationParticipantRepository.GetAllByConversation(conversationParticipant.ConversationId);
+                    // var messages = await _messageRepository.GetAllMessagesInConversation(conversationParticipantId);
+                    var allMessages = participants.SelectMany(p => p.Messages).ToList();
+                    if(allMessages == null)
+                    {
+                        return new List<Message>();
+                    }
+
+                    return allMessages.ToList();
+                }
+                else{
+                    throw new Exception("Den som gör anropet är inte rätt profil");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception( ex.Message);
+            }
+        }
+
+
 
 
 
