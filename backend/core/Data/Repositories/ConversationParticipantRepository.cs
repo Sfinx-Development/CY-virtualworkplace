@@ -89,6 +89,40 @@ public async Task <List<ConversationParticipant>> GetAllByConversation(string co
     }
 }
 
+public async Task<ConversationParticipant> AddProfileToConversation(string conversationParticipantId, string profileId)
+{
+    try
+    {
+        var conversationParticipant = await _cyDbContext
+            .ConversationParticipants
+            .Include(c => c.Profile)  
+            .FirstOrDefaultAsync(c => c.Id == conversationParticipantId);
+
+        if (conversationParticipant == null)
+        {
+            throw new Exception("HITTADE INTE PARTICIPANT");
+        }
+
+        var profile = await _cyDbContext.Profiles.FindAsync(profileId);
+
+        if (profile == null)
+        {
+            throw new Exception("HITTADE INTE PROFIL");
+        }
+
+        conversationParticipant.Profile = profile;
+
+        await _cyDbContext.SaveChangesAsync();
+
+        return conversationParticipant;
+    }
+    catch (Exception e)
+    {
+        throw new Exception("Ett fel uppstod när profilen lades till i konversationen.", e);
+    }
+}
+
+
 //       public async Task DeleteConversationByIdAsync(string id)
 //     {
 //         try
