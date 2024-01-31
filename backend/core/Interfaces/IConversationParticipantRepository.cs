@@ -8,6 +8,10 @@ public interface IConversationParticipantRepository
     Task<ConversationParticipant> Create(ConversationParticipant conversationPartisipant);
     Task<ConversationParticipant> GetConversationById(string conversationParticipantId);
     Task <List<ConversationParticipant>> GetAllByConversation(string conversationId);
+
+ Task<ConversationParticipant> AddToConversation( string conversationId, string profileId);
+ Task<ConversationParticipant> AddManualToConversation(string conversationParticipantId, string profileId);
+    
 }
 
 

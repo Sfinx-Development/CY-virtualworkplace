@@ -89,38 +89,80 @@ public async Task <List<ConversationParticipant>> GetAllByConversation(string co
     }
 }
 
-public async Task<ConversationParticipant> AddProfileToConversation(string conversationParticipantId, string profileId)
-{
-    try
+ public async Task<ConversationParticipant> AddManualToConversation(string conversationParticipantId, string profileId)
     {
-        var conversationParticipant = await _cyDbContext
-            .ConversationParticipants
-            .Include(c => c.Profile)  
-            .FirstOrDefaultAsync(c => c.Id == conversationParticipantId);
-
-        if (conversationParticipant == null)
+        try
         {
-            throw new Exception("HITTADE INTE PARTICIPANT");
+            var conversationParticipant = await _cyDbContext
+                .ConversationParticipants
+                .Include(c => c.Profile)
+                .Include(c => c.Conversation)
+                .FirstOrDefaultAsync(c => c.Id == conversationParticipantId);
+
+            if (conversationParticipant == null)
+            {
+                throw new Exception("Conversation participant not found.");
+            }
+
+            var profile = await _cyDbContext.Profiles.FindAsync(profileId);
+
+            if (profile == null)
+            {
+                throw new Exception("Profile not found.");
+            }
+           
+           var newConversationParticipant = new ConversationParticipant()
+           {
+                Id = Utils.GenerateRandomId(),
+                Profile = profile,
+                Conversation = conversationParticipant.Conversation,
+           };
+           
+            // lägg till denna senare
+        //    var welcomeMessage = new Message
+        //     {
+        //         Id = Utils.GenerateRandomId(),
+        //         Content = "Välkommen till konversationen!",
+        //         // Fler egenskaper...
+        //     };
+
+         
+           
+            await _cyDbContext.SaveChangesAsync();
+
+            return newConversationParticipant;
         }
-
-        var profile = await _cyDbContext.Profiles.FindAsync(profileId);
-
-        if (profile == null)
+        catch (Exception e)
         {
-            throw new Exception("HITTADE INTE PROFIL");
+            throw new Exception("Ett fel uppstod när profilen lades till i konversationen.", e);
         }
-
-        conversationParticipant.Profile = profile;
-
-        await _cyDbContext.SaveChangesAsync();
-
-        return conversationParticipant;
     }
-    catch (Exception e)
+
+     public async Task<ConversationParticipant> AddToConversation(string conversationId, string profileId)
     {
-        throw new Exception("Ett fel uppstod när profilen lades till i konversationen.", e);
+        try
+        {
+            var getProfile = await _cyDbContext.Profiles.Where(p => p.Id == profileId).FirstAsync();
+           var getConversation = await _cyDbContext.Conversations.Where(c => c.Id == conversationId).FirstAsync();
+           var newConversationParticipant = new ConversationParticipant()
+           {
+                Id = Utils.GenerateRandomId(),
+                Profile = getProfile,
+                Conversation = getConversation,
+           };
+
+           await _cyDbContext.SaveChangesAsync();
+           return newConversationParticipant;
+        }
+        catch(Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
-}
+    // Andra metoder för att hantera ConversationParticipant-relationer om det behövs
+
+
+
 
 
 //       public async Task DeleteConversationByIdAsync(string id)

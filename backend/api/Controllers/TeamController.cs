@@ -32,7 +32,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<Profile>> Post(IncomingCreateTeamDTO incomingCreateTeamDTO)
+        public async Task<ActionResult<Team>> Post(IncomingCreateTeamDTO incomingCreateTeamDTO)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                var teamCreated = await _teamService.CreateAsync(incomingCreateTeamDTO);
+                var teamCreated = await _teamService.CreateAsync(incomingCreateTeamDTO, loggedInUser);
 
                 if (teamCreated == null)
                 {
@@ -60,15 +60,8 @@ namespace Controllers
                 }
                 else
                 {
-                    Profile createdProfile = await _profileService.CreateProfile(
-                        loggedInUser,
-                        true,
-                        incomingCreateTeamDTO.ProfileRole,
-                        teamCreated
-                    );
-
                     //hur ska det bli, när det måste skapas samtidigt egetnligen?
-                    return createdProfile;
+                    return teamCreated;
                 }
                 // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
             }
