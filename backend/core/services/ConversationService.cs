@@ -20,7 +20,7 @@ namespace core
             _messageRepository = messageRepository;
         }
 
-        public async Task<Conversation> CreateConversationAsync(string profileId, string teamId)
+        public async Task<Conversation> CreateTeamConversationAsync(string profileId, string teamId)
         {
             try
             {

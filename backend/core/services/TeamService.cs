@@ -51,7 +51,7 @@ public class TeamService : ITeamService
                     );
 
 
-        Conversation createdConversation = await _conversationService.CreateConversationAsync(createdProfile.Id, createdTeam.Id);
+        Conversation createdConversation = await _conversationService.CreateTeamConversationAsync(createdProfile.Id, createdTeam.Id);
 
         if (createdTeam != null && createdProfile != null && createdConversation != null)
         {

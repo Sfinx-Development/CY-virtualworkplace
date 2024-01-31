@@ -50,7 +50,7 @@ public async Task<ActionResult<Conversation>> CreateConversation([FromBody]strin
             return BadRequest("Failed to get user.");
         }
 
-        var createdConversation = await _conversationService.CreateConversationAsync(loggedInUser.Id, teamId);
+        var createdConversation = await _conversationService.CreateTeamConversationAsync(loggedInUser.Id, teamId);
       
         return createdConversation;
     }
