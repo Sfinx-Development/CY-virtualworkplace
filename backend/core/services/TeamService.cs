@@ -7,20 +7,26 @@ public class TeamService : ITeamService
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly IMeetingRoomService _meetingRoomService;
+    private readonly IConversationService _conversationService;
+    private readonly IProfileService _profileService;
 
     public TeamService(
         IProfileRepository profileRepository,
         ITeamRepository teamRepository,
-        IMeetingRoomService meetingRoomService
+        IMeetingRoomService meetingRoomService,
+        IConversationService conversationService,
+        IProfileService profileService
     )
 
     {
         _profileRepository = profileRepository;
         _teamRepository = teamRepository;
         _meetingRoomService = meetingRoomService;
+        _conversationService = conversationService;
+        _profileService = profileService;
     }
 
-    public async Task<Team> CreateAsync(IncomingCreateTeamDTO incomingCreateTeamDTO)
+    public async Task<Team> CreateAsync(IncomingCreateTeamDTO incomingCreateTeamDTO, User loggedInUser)
     {
         Team team =
             new()
@@ -37,7 +43,17 @@ public class TeamService : ITeamService
         //mötesrum skapas också som hör till teamet
         await _meetingRoomService.CreateMeetingRoom(createdTeam);
 
-        if (createdTeam != null)
+        Profile createdProfile = await _profileService.CreateProfile(
+                        loggedInUser,
+                        true,
+                        incomingCreateTeamDTO.ProfileRole,
+                        createdTeam
+                    );
+
+
+        Conversation createdConversation = await _conversationService.CreateTeamConversationAsync(createdProfile.Id, createdTeam.Id);
+
+        if (createdTeam != null && createdProfile != null && createdConversation != null)
         {
             return createdTeam;
         }

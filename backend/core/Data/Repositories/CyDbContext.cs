@@ -57,7 +57,7 @@ public class CyDbContext : DbContext
         
 
         modelBuilder.Entity<ConversationParticipant>()
-                .HasOne(cp => cp.Profile);
+                .HasOne(cp => cp.Profile).WithMany(p => p.ConversationParticipants);
 
             modelBuilder.Entity<ConversationParticipant>()
                 .HasOne(cp => cp.Conversation);

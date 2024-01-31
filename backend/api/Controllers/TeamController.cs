@@ -18,21 +18,24 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly ITeamService _teamService;
         private readonly IProfileService _profileService;
+        private readonly IConversationService _conversationService;
 
         public TeamController(
             JwtService jwtService,
             ITeamService teamService,
-            IProfileService profileService
+            IProfileService profileService,
+            IConversationService conversationService
         )
         {
             _jwtService = jwtService;
             _teamService = teamService;
             _profileService = profileService;
+            _conversationService = conversationService;
         }
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<Profile>> Post(IncomingCreateTeamDTO incomingCreateTeamDTO)
+        public async Task<ActionResult<Team>> Post(IncomingCreateTeamDTO incomingCreateTeamDTO)
         {
             try
             {
@@ -52,7 +55,7 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                var teamCreated = await _teamService.CreateAsync(incomingCreateTeamDTO);
+                var teamCreated = await _teamService.CreateAsync(incomingCreateTeamDTO, loggedInUser);
 
                 if (teamCreated == null)
                 {
@@ -60,15 +63,8 @@ namespace Controllers
                 }
                 else
                 {
-                    Profile createdProfile = await _profileService.CreateProfile(
-                        loggedInUser,
-                        true,
-                        incomingCreateTeamDTO.ProfileRole,
-                        teamCreated
-                    );
-
                     //hur ska det bli, när det måste skapas samtidigt egetnligen?
-                    return createdProfile;
+                    return teamCreated;
                 }
                 // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
             }
@@ -115,6 +111,8 @@ namespace Controllers
                         request.Role,
                         foundTeam
                     );
+
+                    await _conversationService.AddParticipantToTeamConversation(createdProfile, foundTeam.Id);
                     // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
                     return createdProfile;
                 }

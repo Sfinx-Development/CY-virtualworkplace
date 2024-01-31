@@ -8,7 +8,10 @@ public class Profile
         public Team Team { get; set; }
         public User User { get; set; } = new();
         public string UserId {get; set;}
+        public string TeamId { get; set; }
           public DateTime DateCreated { get; set; }
+          public List<ConversationParticipant> ConversationParticipants { get; set;}
+
 
     public Profile() { }
 }
