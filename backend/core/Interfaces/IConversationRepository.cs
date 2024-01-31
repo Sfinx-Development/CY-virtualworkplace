@@ -8,6 +8,7 @@ public interface IConversationRepository
     // Task<Conversation> GetConversationOwnerAsync(string conversationId);
     
     Task<string> GetConversationByProfiles(Team team, string myId);
+    Task<Conversation> GetConversationByTeamId(string teamId);
     
     
     // Task<Conversation> Update(Conversation conversation);

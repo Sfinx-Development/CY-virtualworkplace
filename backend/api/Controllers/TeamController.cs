@@ -18,16 +18,19 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly ITeamService _teamService;
         private readonly IProfileService _profileService;
+        private readonly IConversationService _conversationService;
 
         public TeamController(
             JwtService jwtService,
             ITeamService teamService,
-            IProfileService profileService
+            IProfileService profileService,
+            IConversationService conversationService
         )
         {
             _jwtService = jwtService;
             _teamService = teamService;
             _profileService = profileService;
+            _conversationService = conversationService;
         }
 
         [Authorize]
@@ -108,6 +111,8 @@ namespace Controllers
                         request.Role,
                         foundTeam
                     );
+
+                    await _conversationService.AddParticipantToTeamConversation(createdProfile, foundTeam.Id);
                     // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
                     return createdProfile;
                 }

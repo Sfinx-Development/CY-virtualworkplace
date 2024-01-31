@@ -52,18 +52,18 @@ namespace core
 
                 var createdConversation = await _conversationRepository.Create(newConversation);
 
-        
-                    var participant = new ConversationParticipant
-                    {
-                        Id = Utils.GenerateRandomId(),
-                        Profile = profile,
-                        Conversation = createdConversation
-                    };
 
-                    var createdParticipant = await _conversationParticipantRepository.Create(participant);
+                var participant = new ConversationParticipant
+                {
+                    Id = Utils.GenerateRandomId(),
+                    Profile = profile,
+                    Conversation = createdConversation
+                };
 
-                    // Lägg till logik för att spara i databasen här (t.ex. anropa en metod i _conversationService)
-                
+                var createdParticipant = await _conversationParticipantRepository.Create(participant);
+
+                // Lägg till logik för att spara i databasen här (t.ex. anropa en metod i _conversationService)
+
                 return createdConversation;
             }
             catch (Exception)
@@ -89,64 +89,86 @@ namespace core
                     var participants = await _conversationParticipantRepository.GetAllByConversation(conversationParticipant.ConversationId);
                     // var messages = await _messageRepository.GetAllMessagesInConversation(conversationParticipantId);
                     var allMessages = participants.SelectMany(p => p.Messages).ToList();
-                    if(allMessages == null)
+                    if (allMessages == null)
                     {
                         return new List<Message>();
                     }
 
                     return allMessages.ToList();
                 }
-                else{
+                else
+                {
                     throw new Exception("Den som gör anropet är inte rätt profil");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception( ex.Message);
+                throw new Exception(ex.Message);
             }
         }
 
-public async Task<ConversationParticipant> AddAutomaticProfileToConversationAsync( string profileId, Team team)
-{
-    try
-    {
-        var Profiles = team.Profiles;
-       var getConversatonId = await _conversationRepository.GetConversationByProfiles(team, profileId);
-       Console.WriteLine("CONVERSATIONSid" + getConversatonId  );
-        
-        var conversationParticipant = await _conversationParticipantRepository.AddToConversation(getConversatonId, profileId);
-
-        if (conversationParticipant == null)
+        public async Task<ConversationParticipant> AddAutomaticProfileToConversationAsync(string profileId, Team team)
         {
-            throw new Exception("Failed to add profile to conversation.");
+            try
+            {
+                var Profiles = team.Profiles;
+                var getConversatonId = await _conversationRepository.GetConversationByProfiles(team, profileId);
+                Console.WriteLine("CONVERSATIONSid" + getConversatonId);
+
+                var conversationParticipant = await _conversationParticipantRepository.AddToConversation(getConversatonId, profileId);
+
+                if (conversationParticipant == null)
+                {
+                    throw new Exception("Failed to add profile to conversation.");
+                }
+
+                return conversationParticipant;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to add profile to conversation.", ex);
+            }
         }
 
-        return conversationParticipant;
-    }
-    catch (Exception ex)
-    {
-        throw new Exception("Failed to add profile to conversation.", ex);
-    }
-}
-
-public async Task<ConversationParticipant> ManualAddProfileToConversationAsync(string conversationParticipantId, string profileId)
-{
-    try
-    {
-        var conversationParticipant = await _conversationParticipantRepository.AddManualToConversation(conversationParticipantId, profileId);
-
-        if (conversationParticipant == null)
+        public async Task<ConversationParticipant> ManualAddProfileToConversationAsync(string conversationParticipantId, string profileId)
         {
-            throw new Exception("Failed to add profile to conversation.");
+            try
+            {
+                var conversationParticipant = await _conversationParticipantRepository.AddManualToConversation(conversationParticipantId, profileId);
+
+                if (conversationParticipant == null)
+                {
+                    throw new Exception("Failed to add profile to conversation.");
+                }
+
+                return conversationParticipant;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to add profile to conversation.", ex);
+            }
         }
 
-        return conversationParticipant;
-    }
-    catch (Exception ex)
-    {
-        throw new Exception("Failed to add profile to conversation.", ex);
-    }
-}
+        public async Task<ConversationParticipant> AddParticipantToTeamConversation(Profile profile, string teamId)
+        {
+            try
+            {
+                var conversation = await _conversationRepository.GetConversationByTeamId(teamId);
+
+                var newParticipant = new ConversationParticipant
+                {
+                    Id = Utils.GenerateRandomId(),
+                    Profile = profile,
+                    Conversation = conversation
+                };
+                var createdParticipant = await _conversationParticipantRepository.Create(newParticipant);
+                return createdParticipant;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to add profile to conversation.", ex);
+            }
+        }
 
 
 

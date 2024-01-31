@@ -65,6 +65,19 @@ public class ConversationRepository : IConversationRepository
             throw new Exception();
         }
     }
+
+    public async Task<Conversation> GetConversationByTeamId(string teamId)
+    {
+         try
+           {
+              var conversation = await _cyDbContext.Conversations.Where(c =>c.TeamId == teamId).FirstAsync();
+                return conversation;
+            }
+            catch (Exception e)
+            {
+                throw new Exception();
+            }
+    }
     //     public async Task<Conversation> Update(Conversation conversation)
     //     {
     //          try
