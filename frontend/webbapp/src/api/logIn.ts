@@ -1,14 +1,13 @@
-import { LogInWithJwt } from "../../types";
-
 const apiUrl = `http://${window.location.hostname}:5290/login`;
 
 export const FetchSignIn = async (
   email: string,
   password: string
-): Promise<LogInWithJwt> => {
+): Promise<boolean> => {
   try {
     const response = await fetch(apiUrl, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -20,14 +19,7 @@ export const FetchSignIn = async (
       throw new Error("Något gick fel vid inloggningen");
     }
 
-    const data = (await response.json()) as LogInWithJwt;
-
-    console.log("Response data:", data);
-    // Hämta JWT-cookie från responsens headers
-    // const jwtCookie = response.headers.get("Set-Cookie");
-    // hantera cookien här - spara jwtn ?
-
-    return data;
+    return true;
   } catch (error) {
     console.error(error);
     throw error;

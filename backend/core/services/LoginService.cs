@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using Interfaces;
+using Microsoft.IdentityModel.Tokens;
 
 namespace core
 {
@@ -19,11 +19,12 @@ namespace core
             _logInRepository = logInRepository;
         }
 
-        public async Task<LogInDTO> LogIn(string email, string password)
+        public async Task<string> LogIn(string email, string password)
         {
             try
             {
                 User foundUser = await _logInRepository.GetByLogIn(email, password);
+                Console.WriteLine("FOUNDUSER: " + foundUser.FirstName);
                 if (foundUser == null)
                 {
                     return null;
@@ -31,14 +32,7 @@ namespace core
 
                 string jwtToken = GenerateJwtToken(foundUser);
 
-                LogInDTO logInDTO = new LogInDTO
-                {
-                    Email = foundUser.Email,
-                    Password = foundUser.Password,
-                    JWT = jwtToken
-                };
-
-                return logInDTO;
+                return jwtToken;
             }
             catch (InvalidOperationException)
             {

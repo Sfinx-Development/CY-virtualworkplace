@@ -1,13 +1,10 @@
-using System.Text;
+using System.Net;
 using core;
 using Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5290");
@@ -21,10 +18,6 @@ builder.Services.AddSingleton(securityKey);
 
 builder.Services.AddControllers();
 
-// builder.Services.AddScoped<ILogInDB<User>, LogInDB>();
-// builder.Services.AddScoped<IDataToObject<User, User>, UsersDB>();
-// builder.Services.AddScoped<ILogInManager<OutgoingLogInDTO>, LogInServiceForDTO>();
-
 builder.Services.AddDbContext<CyDbContext>(
     options =>
         options.UseMySql(
@@ -33,11 +26,14 @@ builder.Services.AddDbContext<CyDbContext>(
         )
 );
 
-// builder.Services.AddScoped<UserService>();
-// builder.Services.AddScoped<IProfileService,ProfileService>();
-// builder.Services.AddScoped<TeamService>();
-// builder.Services.AddScoped<MeetingRoomServie>();
-// builder.Services.AddScoped<OfficeService>();
+// if (!builder.Environment.IsDevelopment())
+// {
+//     builder.Services.AddHttpsRedirection(options =>
+//     {
+//         options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
+//         options.HttpsPort = 443;
+//     });
+// }
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -69,10 +65,17 @@ builder.Services.AddScoped<MeetingService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddControllersWithViews().AddJsonOptions(options =>
-{
-options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-});
+builder
+    .Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System
+            .Text
+            .Json
+            .Serialization
+            .ReferenceHandler
+            .Preserve;
+    });
 
 builder.Services.AddCors(options =>
 {
@@ -84,30 +87,41 @@ builder.Services.AddCors(options =>
                 .WithOrigins("http://localhost:5173")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .AllowCredentials(); // If you need to include credentials like cookies
+                .AllowCredentials();
         }
     );
 });
 
 builder
-    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
+    .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(
+        "Cookies",
+        options =>
         {
-            ValidateIssuerSigningKey = true,
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            IssuerSigningKey = securityKey,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"]
-        };
-    });
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+            options.SlidingExpiration = true;
+            options.AccessDeniedPath = "/signin";
+        }
+    );
 
-// builder.Services.AddScoped<ILogInManager<OutgoingLogInDTO>>(
-//     provider => new LogInServiceForDTO(provider.GetRequiredService<ILogInDB<User>>(), securityKey)
-// );
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(
+        "Bearer",
+        options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                IssuerSigningKey = securityKey,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"]
+            };
+        }
+    );
 
 builder.Services.AddAuthorization();
 
@@ -115,14 +129,19 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    // app.UseExceptionHandler("/Error");
+    // app.UseHsts();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseCors("AllowAll");
+
+app.MapControllers();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapDefaultControllerRoute();
 
 app.Run();

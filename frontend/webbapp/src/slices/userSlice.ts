@@ -21,7 +21,7 @@ export const createUserAsync = createAsyncThunk<
   try {
     const createdUser = await FetchCreateUseer(user);
     if (createdUser) {
-      console.log("created user: ", createdUser)
+      console.log("created user: ", createdUser);
       return createdUser;
     } else {
       return thunkAPI.rejectWithValue("failed to add user");
@@ -37,10 +37,15 @@ export const logInUserAsync = createAsyncThunk<
   { rejectValue: string }
 >("user/logInUser", async ({ email, password }, thunkAPI) => {
   try {
-    const response = await FetchSignIn(email, password);
-    if (response.jwt) {
-      const user = await FetchGetUseer(response.jwt);
-      return user;
+    const isAuthenticated = await FetchSignIn(email, password);
+    if (isAuthenticated) {
+      const user = await FetchGetUseer();
+      if (user) {
+        return user;
+      }
+      return thunkAPI.rejectWithValue(
+        "Inloggningen misslyckades. Felaktiga uppgifter."
+      );
     } else {
       return thunkAPI.rejectWithValue(
         "Inloggningen misslyckades. Felaktiga uppgifter."
@@ -104,7 +109,6 @@ const userSlice = createSlice({
       })
       .addCase(createUserAsync.fulfilled, (state, action) => {
         if (action.payload) {
-          // state.user = action.payload;
           state.error = null;
         }
       })
