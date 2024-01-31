@@ -14,11 +14,6 @@ public class MeetingServiceTest
         _output = output;
     }
 
-    public void WriteLine(string message)
-    {
-        Console.WriteLine(message);
-    }
-
     [Fact]
     public async Task OccasionCreatesWhenCreatingMeeting()
     {

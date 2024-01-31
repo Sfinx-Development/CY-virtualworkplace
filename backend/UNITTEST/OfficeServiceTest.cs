@@ -15,6 +15,7 @@ public class OfficeServiceTest
         var userRepositoryMock = new Mock<IUserRepository>();
         var officeRepositoryMock = new Mock<IOfficeRepository>();
         var teamRepositoryMock = new Mock<ITeamRepository>();
+        var conversationServiceMock = new Mock<IConversationService>();
 
         // bestäm vad createasync ska returnera sen
         profileRepositoryMock
@@ -41,7 +42,8 @@ public class OfficeServiceTest
             profileRepositoryMock.Object,
             userRepositoryMock.Object,
             teamRepositoryMock.Object,
-            officeServiceMock.Object
+            officeServiceMock.Object,
+            conversationServiceMock.Object
         );
 
         var team = new Team() { Id = "123" };
