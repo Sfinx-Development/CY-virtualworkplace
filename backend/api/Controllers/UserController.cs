@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using api;
 using core;
 using Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,24 +24,33 @@ namespace Controllers
             _userService = userService;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Authorize]
+        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
+        [AllowAnonymous]
         public async Task<ActionResult<User>> GetUserDTO()
         {
             try
             {
                 Console.WriteLine("INNE I USER CONTROLLERN");
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
 
-                Console.WriteLine(jwt);
-                if (string.IsNullOrWhiteSpace(jwt))
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (jwtCookie != null)
+                {
+                    // Cookien existerar, logga ut värdet för felsökning
+                    Console.WriteLine("JWT Cookie Value: " + jwtCookie);
+                }
+                else
+                {
+                    Console.WriteLine("JWT Cookie is not set or not available.");
+                }
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
                 {
                     return BadRequest("JWT token is missing.");
                 }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
 
                 if (loggedInUser == null)
                 {
@@ -88,16 +98,15 @@ namespace Controllers
             }
         }
 
-        [HttpPut]
         [Authorize]
+        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
+        [AllowAnonymous]
+        [HttpPut]
         public async Task<ActionResult<User>> UpdateUser(User user)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
 
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
@@ -121,14 +130,13 @@ namespace Controllers
 
         [HttpDelete]
         [Authorize]
+        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
+        [AllowAnonymous]
         public async Task<ActionResult<User>> DeleteUser(string id)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
 
                 if (string.IsNullOrWhiteSpace(jwt))
                 {

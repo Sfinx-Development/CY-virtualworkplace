@@ -4,8 +4,5 @@ namespace Interfaces;
 
 public interface ILoginService
 {
-
-       Task<LogInDTO> LogIn(string email, string password);
-      
-  
+    Task<string> LogIn(string email, string password);
 }

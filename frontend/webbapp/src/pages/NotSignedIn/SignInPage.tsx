@@ -12,13 +12,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { logInUserAsync } from "../../slices/userSlice";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
   const error = useAppSelector((state) => state.userSlice.error);
+  const user = useAppSelector((state) => state.userSlice.user);
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -38,11 +40,17 @@ export default function SignIn() {
           email: email,
           password: password,
         })
-      ).then(() => navigate("/chooseteam"));
+      );
     } catch (error) {
       console.error("Sign in error:", error);
     }
   };
+
+  useEffect(() => {
+    if (user != undefined) {
+      navigate("/chooseteam");
+    }
+  }, [user]);
 
   return (
     <Container

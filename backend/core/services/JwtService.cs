@@ -6,12 +6,10 @@ namespace core
 {
     public class JwtService
     {
-        // IDataToObject<User, User> _userDataToObject;
         private readonly IUserRepository _userRepository;
 
         public JwtService(IUserRepository userRepository)
         {
-            // _userDataToObject = userDataToObject;
             _userRepository = userRepository;
         }
 
@@ -39,7 +37,6 @@ namespace core
             }
             catch (SecurityTokenException)
             {
-                // Tokenet är ogiltigt
                 return null;
             }
         }

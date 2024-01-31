@@ -6,7 +6,6 @@ public class Conversation
         public DateTime DateCreated { get; set; }
         public string CreatorId { get; set; }
         public string? TeamId { get; set; }
-     
 
     public Conversation() { }
 }
