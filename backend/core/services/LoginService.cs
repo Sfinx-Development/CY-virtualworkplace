@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace core
@@ -12,11 +13,17 @@ namespace core
     {
         private readonly SymmetricSecurityKey _securityKey;
         private readonly LogInRepository _logInRepository;
+        private readonly IConfiguration _configuration;
 
-        public LogInService(SymmetricSecurityKey securityKey, LogInRepository logInRepository)
+        public LogInService(
+            SymmetricSecurityKey securityKey,
+            LogInRepository logInRepository,
+            IConfiguration configuration
+        )
         {
             _securityKey = securityKey;
             _logInRepository = logInRepository;
+            _configuration = configuration;
         }
 
         public async Task<string> LogIn(string email, string password)
@@ -49,8 +56,8 @@ namespace core
                 Console.WriteLine("USERN: " + user.Email + user.Id);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Issuer = "CY-VirtualWorkplace",
-                    Audience = "api",
+                    Issuer = _configuration["Jwt:Issuer"],
+                    Audience = _configuration["Jwt:Audience"],
                     Subject = new ClaimsIdentity(
                         new Claim[]
                         {
