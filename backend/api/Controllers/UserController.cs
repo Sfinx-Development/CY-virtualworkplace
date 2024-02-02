@@ -26,8 +26,6 @@ namespace Controllers
 
         [HttpPost]
         [Authorize]
-        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
-        [AllowAnonymous]
         public async Task<ActionResult<User>> GetUserDTO()
         {
             try
@@ -35,6 +33,7 @@ namespace Controllers
                 Console.WriteLine("INNE I USER CONTROLLERN");
 
                 var jwtCookie = Request.Cookies["jwttoken"];
+                Request.Cookies.ToList().ForEach(c => Console.WriteLine("Cookie: " + c));
 
                 if (jwtCookie != null)
                 {

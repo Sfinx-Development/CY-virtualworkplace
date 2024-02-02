@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5290");
 
@@ -55,8 +54,6 @@ builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
 builder.Services.AddScoped<IOfficeService, OfficeService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 
-
-
 builder.Services.AddScoped<IConversationService, ConversationService>();
 
 builder.Services.AddScoped<JwtService>();
@@ -66,7 +63,6 @@ builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<MeetingService>();
- 
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -99,18 +95,6 @@ builder.Services.AddCors(options =>
 });
 
 builder
-    .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(
-        "Cookies",
-        options =>
-        {
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
-            options.SlidingExpiration = true;
-            options.AccessDeniedPath = "/signin";
-        }
-    );
-
-builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(
         "Bearer",
@@ -126,8 +110,33 @@ builder
                 ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidAudience = builder.Configuration["Jwt:Audience"]
             };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    // hämtar jwtn från kakan
+                    context.Token = context.Request.Cookies["jwttoken"];
+                    return Task.CompletedTask;
+                }
+            };
         }
     );
+
+// builder
+//     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         options.Events = new JwtBearerEvents
+//         {
+//             OnMessageReceived = context =>
+//             {
+//                 // hämtar jwtn från kakan
+//                 context.Token = context.Request.Cookies["jwttoken"];
+//                 return Task.CompletedTask;
+//             }
+//         };
+//     });
 
 builder.Services.AddAuthorization();
 
