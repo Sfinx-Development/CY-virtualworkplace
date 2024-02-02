@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CreateTeamDTO } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
 import { createTeamAsync } from "../../slices/themeSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateTeam() {
   const dispatch = useAppDispatch();
@@ -10,6 +11,7 @@ export default function CreateTeam() {
   const [teamRole, setTeamRole] = useState("");
   const [profileRole, setProfileRole] = useState("");
   const [fieldError, setFieldError] = useState(false);
+  const navigate = useNavigate();
 
   const handleCreateTeam = async () => {
     if (teamName != "" && teamRole != "" && profileRole != "") {
@@ -19,7 +21,9 @@ export default function CreateTeam() {
         teamRole: teamRole,
         profileRole: profileRole,
       };
-      await dispatch(createTeamAsync(team));
+      await dispatch(createTeamAsync(team)).then(() => {
+        navigate("/chooseteam");
+      });
     } else {
       setFieldError(true);
     }

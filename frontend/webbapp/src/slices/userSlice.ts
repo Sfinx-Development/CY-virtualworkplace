@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User } from "../../types";
-import { FetchSignIn } from "../api/logIn";
+import { FetchLogOut, FetchSignIn } from "../api/logIn";
 import { FetchCreateUseer, FetchGetUseer } from "../api/user";
 
 interface UserState {
@@ -28,6 +28,16 @@ export const createUserAsync = createAsyncThunk<
     }
   } catch (error) {
     return thunkAPI.rejectWithValue("Något gick fel.");
+  }
+});
+
+export const logOutUserAsync = createAsyncThunk("user/logOutUser", async () => {
+  try {
+    const isLoggedOut = await FetchLogOut();
+    return isLoggedOut;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Ett fel uppstod vid utloggningen.");
   }
 });
 
@@ -100,11 +110,7 @@ export const getUserAsync = createAsyncThunk<User>("user/getUser", async () => {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    logOutUser: (state) => {
-      state.user = undefined;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(logInUserAsync.fulfilled, (state, action) => {
@@ -116,6 +122,16 @@ const userSlice = createSlice({
       .addCase(logInUserAsync.rejected, (state) => {
         state.user = undefined;
         state.error = "Användarnamn eller lösenord är felaktigt.";
+      })
+      .addCase(logOutUserAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user = undefined;
+          state.error = null;
+        }
+      })
+      .addCase(logOutUserAsync.rejected, (state) => {
+        state.user = undefined; //den får vara undefined antar jag ändå eller?
+        state.error = "Något gick fel vid utloggningen.";
       })
       .addCase(getUserAsync.fulfilled, (state, action) => {
         if (action.payload) {
@@ -140,4 +156,3 @@ const userSlice = createSlice({
 });
 
 export const userReducer = userSlice.reducer;
-export const { logOutUser } = userSlice.actions;

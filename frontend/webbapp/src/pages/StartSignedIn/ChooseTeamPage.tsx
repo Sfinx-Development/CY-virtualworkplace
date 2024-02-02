@@ -1,3 +1,5 @@
+import AddIcon from "@mui/icons-material/Add";
+import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import {
   Box,
   Button,
@@ -54,10 +56,16 @@ export default function ChooseTeam() {
           color="primary"
           size="large"
           fullWidth
-          style={{ margin: "10px 0", width: "40%" }}
+          style={{
+            margin: "10px 0",
+            width: "40%",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
           onClick={() => navigate("/createteam")}
         >
-          Skapa team
+          <AddIcon sx={{ padding: 1 }} />{" "}
+          <Typography sx={{ padding: 1 }}>Skapa team</Typography>
         </Button>
 
         <Button
@@ -65,10 +73,16 @@ export default function ChooseTeam() {
           color="primary"
           size="large"
           fullWidth
-          style={{ margin: "10px 0", width: "40%" }}
+          style={{
+            margin: "10px 0",
+            width: "40%",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
           onClick={() => navigate("/jointeam")}
         >
-          Gå med i team
+          <ConnectWithoutContactIcon sx={{ padding: 1 }} />{" "}
+          <Typography sx={{ padding: 1 }}>Gå med i team</Typography>
         </Button>
       </div>
 
