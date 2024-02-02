@@ -69,16 +69,13 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Join")]
-        public async Task<ActionResult<Profile>> Post([FromBody] JoinRequestDTO request)
+        public async Task<ActionResult<Team>> Post([FromBody] JoinRequestDTO request)
         {
             //ATT GÖRA: kolla villkor så man inte kan gå med flera gånger i samma team
 
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
 
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
@@ -110,7 +107,7 @@ namespace Controllers
                         foundTeam.Id
                     );
                     // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
-                    return createdProfile;
+                    return createdProfile.Team;
                 }
             }
             catch (Exception e)

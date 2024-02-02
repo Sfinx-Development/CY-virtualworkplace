@@ -149,7 +149,9 @@ export default function SignIn() {
         <Button
           variant="contained"
           sx={{ marginTop: 2 }}
-          onClick={handleSignIn}
+          onClick={() => {
+            navigate("/createaccount");
+          }}
         >
           Skapa Konto
         </Button>

@@ -57,6 +57,16 @@ export const logInUserAsync = createAsyncThunk<
   }
 });
 
+export const getUserAsync = createAsyncThunk<User>("user/getUser", async () => {
+  try {
+    const user = await FetchGetUseer();
+    return user;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Ett fel uppstod vid inloggningen.");
+  }
+});
+
 // export const deleteUserAsync = createAsyncThunk<
 //   boolean,
 //   UserCreate,
@@ -106,6 +116,16 @@ const userSlice = createSlice({
       .addCase(logInUserAsync.rejected, (state) => {
         state.user = undefined;
         state.error = "Användarnamn eller lösenord är felaktigt.";
+      })
+      .addCase(getUserAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(getUserAsync.rejected, (state) => {
+        state.user = undefined;
+        state.error = "Auth is not correct.";
       })
       .addCase(createUserAsync.fulfilled, (state, action) => {
         if (action.payload) {
