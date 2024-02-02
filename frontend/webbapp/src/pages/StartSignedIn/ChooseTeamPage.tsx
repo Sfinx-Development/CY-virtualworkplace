@@ -18,10 +18,10 @@ export default function ChooseTeam() {
   const navigate = useNavigate();
 
   const handleNavigateToMenu = (teamId: string) => {
-    //hämta saker kanske?
+    //hämta saker kanske? nja kanske inte va
     //navigera till teamets meny
     console.log("TEAMID: ", teamId);
-    navigate("/menu");
+    navigate("/menu/" + teamId);
   };
 
   useEffect(() => {
