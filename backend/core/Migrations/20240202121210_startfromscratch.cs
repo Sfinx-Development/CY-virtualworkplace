@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace core.Migrations
 {
     /// <inheritdoc />
-    public partial class initialbliblibli : Migration
+    public partial class startfromscratch : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +22,8 @@ namespace core.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreatorId = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TeamId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -123,9 +125,9 @@ namespace core.Migrations
                     Role = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IsOwner = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    TeamId = table.Column<string>(type: "varchar(255)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TeamId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },

@@ -47,19 +47,12 @@ public class TeamRepository : ITeamRepository
         }
     }
 
-    public async Task<Team> GetByUserIdAsync(string code)
+    public async Task<List<Team>> GetByUserIdAsync(string userId)
     {
         try
         {
-            Team team = await _cyDbContext.Teams.FirstAsync(t => t.Code == code);
-            if (team != null)
-            {
-                return team;
-            }
-            else
-            {
-                throw new Exception();
-            }
+            var teams = await _cyDbContext.Teams.Where(t => t.Profiles.Any(p => p.UserId == userId)).ToListAsync();
+            return teams;
         }
         catch (Exception e)
         {

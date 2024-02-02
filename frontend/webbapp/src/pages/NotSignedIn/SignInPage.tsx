@@ -15,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { GetMyTeamsAsync } from "../../slices/themeSlice";
 import { logInUserAsync } from "../../slices/userSlice";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
@@ -33,6 +34,7 @@ export default function SignIn() {
   ) => {
     event.preventDefault();
   };
+
   const handleSignIn = async () => {
     try {
       await dispatch(
@@ -41,16 +43,25 @@ export default function SignIn() {
           password: password,
         })
       );
+
+      await dispatch(GetMyTeamsAsync());
     } catch (error) {
       console.error("Sign in error:", error);
     }
   };
 
   useEffect(() => {
-    if (user != undefined) {
+    // Navigera när användar- och teaminformation har hämtats
+    if (user) {
       navigate("/chooseteam");
     }
   }, [user]);
+
+  // useEffect(() => {
+  //   if (user != undefined) {
+  //     navigate("/chooseteam");
+  //   }
+  // }, [user]);
 
   return (
     <Container

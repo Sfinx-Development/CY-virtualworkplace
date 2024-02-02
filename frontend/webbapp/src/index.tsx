@@ -41,7 +41,7 @@ const router = createBrowserRouter(
       <Route path="jointeam" element={<JoinTeam />}></Route>
       <Route path="enterhouse" element={<EnterHouse />}></Route>
       {/* dessa kommer man till när man valt ett team: */}
-      <Route path="menu" element={<Menu />}></Route>
+      <Route path="menu/:id" element={<Menu />}></Route>
       <Route path="meetingroom" element={<MeetingRoom />}></Route>
       <Route path="office" element={<Office />}></Route>
       <Route path="chatroom" element={<ChatRoom />}></Route>
