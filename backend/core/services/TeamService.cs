@@ -17,7 +17,6 @@ public class TeamService : ITeamService
         IConversationService conversationService,
         IProfileService profileService
     )
-
     {
         _profileRepository = profileRepository;
         _teamRepository = teamRepository;
@@ -26,13 +25,16 @@ public class TeamService : ITeamService
         _profileService = profileService;
     }
 
-    public async Task<Team> CreateAsync(IncomingCreateTeamDTO incomingCreateTeamDTO, User loggedInUser)
+    public async Task<Team> CreateAsync(
+        IncomingCreateTeamDTO incomingCreateTeamDTO,
+        User loggedInUser
+    )
     {
         Team team =
             new()
             {
                 Id = Utils.GenerateRandomId(),
-                Code = Utils.GenerateRandomId(),
+                Code = Utils.GenerateRandomId(6),
                 Name = incomingCreateTeamDTO.TeamName,
                 TeamRole = incomingCreateTeamDTO.TeamRole,
                 CreatedAt = DateTime.UtcNow
@@ -44,14 +46,16 @@ public class TeamService : ITeamService
         await _meetingRoomService.CreateMeetingRoom(createdTeam);
 
         Profile createdProfile = await _profileService.CreateProfile(
-                        loggedInUser,
-                        true,
-                        incomingCreateTeamDTO.ProfileRole,
-                        createdTeam
-                    );
+            loggedInUser,
+            true,
+            incomingCreateTeamDTO.ProfileRole,
+            createdTeam
+        );
 
-
-        Conversation createdConversation = await _conversationService.CreateTeamConversationAsync(createdProfile.Id, createdTeam.Id);
+        Conversation createdConversation = await _conversationService.CreateTeamConversationAsync(
+            createdProfile.Id,
+            createdTeam.Id
+        );
 
         if (createdTeam != null && createdProfile != null && createdConversation != null)
         {
@@ -91,16 +95,19 @@ public class TeamService : ITeamService
         }
     }
 
-    public async Task<List<Team>> GetTeamsByUserId(string userId){
-        try{
-            return  await _teamRepository.GetByUserIdAsync(userId);
+    public async Task<List<Team>> GetTeamsByUserId(string userId)
+    {
+        try
+        {
+            return await _teamRepository.GetByUserIdAsync(userId);
         }
-        catch(Exception e){
+        catch (Exception e)
+        {
             throw new Exception(e.Message);
         }
     }
 
-     public async Task<bool> CanDeleteTeam(string ownerId, string teamId)
+    public async Task<bool> CanDeleteTeam(string ownerId, string teamId)
     {
         var owner = await _profileRepository.GetByIdAsync(ownerId);
 
