@@ -32,7 +32,7 @@ public class MessageServiceTests
         var conversationParticipant = new ConversationParticipant
         {
             Id = "participantId123",
-            Profile = new Profile { UserId = loggedInUserId } n
+            Profile = new Profile { UserId = loggedInUserId } 
         };
 
         conversationParticipantRepositoryMock.Setup(repo => repo.GetConversationById(It.IsAny<string>()))
