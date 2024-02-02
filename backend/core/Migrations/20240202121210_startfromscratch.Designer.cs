@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240126141924_initialbliblibli")]
-    partial class initialbliblibli
+    [Migration("20240202121210_startfromscratch")]
+    partial class startfromscratch
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,9 @@ namespace core.Migrations
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("TeamId")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -342,7 +345,7 @@ namespace core.Migrations
                         .IsRequired();
 
                     b.HasOne("core.Profile", "Profile")
-                        .WithMany()
+                        .WithMany("ConversationParticipants")
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -391,13 +394,11 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.Message", b =>
                 {
-                    b.HasOne("core.ConversationParticipant", "ConversationParticipant")
-                        .WithMany()
+                    b.HasOne("core.ConversationParticipant", null)
+                        .WithMany("Messages")
                         .HasForeignKey("ConversationParticipantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ConversationParticipant");
                 });
 
             modelBuilder.Entity("core.Profile", b =>
@@ -452,9 +453,19 @@ namespace core.Migrations
                     b.Navigation("Profile");
                 });
 
+            modelBuilder.Entity("core.ConversationParticipant", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("core.Cy", b =>
                 {
                     b.Navigation("HealthChecks");
+                });
+
+            modelBuilder.Entity("core.Profile", b =>
+                {
+                    b.Navigation("ConversationParticipants");
                 });
 
             modelBuilder.Entity("core.Team", b =>

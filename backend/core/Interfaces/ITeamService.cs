@@ -8,5 +8,5 @@ public interface ITeamService
     Task<Team> GetByCodeAsync(string code);
     Task<Team> UpdateTeam(Team team);
     Task<bool> CanDeleteTeam(string ownerId, string teamId);
-   
+    Task<List<Team>> GetTeamsByUserId(string userId);
 }

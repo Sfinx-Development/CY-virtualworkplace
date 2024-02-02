@@ -91,6 +91,15 @@ public class TeamService : ITeamService
         }
     }
 
+    public async Task<List<Team>> GetTeamsByUserId(string userId){
+        try{
+            return  await _teamRepository.GetByUserIdAsync(userId);
+        }
+        catch(Exception e){
+            throw new Exception(e.Message);
+        }
+    }
+
      public async Task<bool> CanDeleteTeam(string ownerId, string teamId)
     {
         var owner = await _profileRepository.GetByIdAsync(ownerId);

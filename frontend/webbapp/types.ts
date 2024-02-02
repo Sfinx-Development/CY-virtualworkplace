@@ -33,6 +33,12 @@ export interface Team {
   teamRole: string;
 }
 
+export interface CreateTeamDTO {
+  teamName: string;
+  teamRole: string;
+  profileRole: string;
+}
+
 export interface Room {
   id: string;
   roomLayout: string;
