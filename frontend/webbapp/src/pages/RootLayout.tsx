@@ -36,7 +36,7 @@ const RootLayout = () => {
             fontSize="large"
             sx={{ paddingRight: 2, paddingLeft: 2 }}
           />
-          <Typography variant={isMobile ? "h6" : "h4"}>
+          <Typography sx={{ fontSize: isMobile ? 16 : 35 }}>
             CY Virtual Workplace
           </Typography>
         </div>
