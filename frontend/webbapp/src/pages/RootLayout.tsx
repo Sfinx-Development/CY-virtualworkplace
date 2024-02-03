@@ -1,13 +1,14 @@
 import ComputerIcon from "@mui/icons-material/Computer";
 import { AppBar, Button, Typography } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../slices/store";
+import { useAppDispatch, useAppSelector } from "../slices/store";
 import { logOutUserAsync } from "../slices/userSlice";
 
 const RootLayout = () => {
   const isMobile = window.innerWidth <= 500;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const user = useAppSelector((state) => state.userSlice.user);
   const handleSignOut = async () => {
     await dispatch(logOutUserAsync()).then(() => {
       navigate("/signin");
@@ -40,14 +41,18 @@ const RootLayout = () => {
             CY Virtual Workplace
           </Typography>
         </div>
-        <div>
-          <Button
-            sx={{ paddingRight: 2, paddingLeft: 2 }}
-            onClick={handleSignOut}
-          >
-            Logga ut
-          </Button>
-        </div>
+
+        {user ? (
+          <div>
+            {" "}
+            <Button
+              sx={{ paddingRight: 2, paddingLeft: 2 }}
+              onClick={handleSignOut}
+            >
+              Logga ut
+            </Button>{" "}
+          </div>
+        ) : null}
       </AppBar>
 
       <main className="bg-neutral-100 flex flex-1 flex-col">

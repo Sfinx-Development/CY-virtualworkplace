@@ -66,6 +66,28 @@ public class ProfileService : IProfileService
         return createdProfile;
     }
 
+    public async Task<Profile> GetProfileByAuthAndTeam(User user, string teamId)
+    {
+        try
+        {
+            var profiles = await _profileRepository.GetByUserIdAsync(user.Id);
+            var profileInTeam = profiles.Where(p => p.TeamId == teamId).First();
+
+            if (profileInTeam == null)
+            {
+                throw new Exception("profile doesnt exist");
+            }
+            else
+            {
+                return profileInTeam;
+            }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
+
     public async Task<List<Profile>> GetProfilesByUserId(User user)
     {
         try

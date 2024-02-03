@@ -57,12 +57,6 @@ export default function SignIn() {
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   if (user != undefined) {
-  //     navigate("/chooseteam");
-  //   }
-  // }, [user]);
-
   return (
     <Container
       sx={{
@@ -71,19 +65,6 @@ export default function SignIn() {
         width: "100%",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          flex: 1,
-          backgroundColor: "pink",
-          padding: 50,
-        }}
-      >
-        EN LOGGA KANSKE OCH NÅGOT KUL?
-      </div>
-
       <div
         style={{
           display: "flex",

@@ -60,9 +60,6 @@ export default function Menu() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         minHeight: "100vh",
-        // display: "flex",
-        // flexDirection: "column",
-        // alignItems: "center",
       }}
     >
       <div
@@ -88,7 +85,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              minWidth: isMobile ? "40px" : "300px",
+              width: isMobile ? "40px" : "200px",
               marginTop: isMobile ? 10 : 20,
               marginBottom: 4,
               backgroundColor: meetingRoomColor,
@@ -116,7 +113,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              minWidth: isMobile ? "40px" : "300px",
+              width: isMobile ? "40px" : "200px",
               backgroundColor: chatRoomColor,
             }}
           >
@@ -181,7 +178,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              minWidth: isMobile ? "40px" : "300px",
+              width: isMobile ? "40px" : "200px",
               marginTop: isMobile ? 5 : 15,
               marginBottom: 4,
               backgroundColor: officeColor,
@@ -208,7 +205,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              minWidth: isMobile ? "40px" : "300px",
+              width: isMobile ? "40px" : "200px",
               backgroundColor: leaveColor,
             }}
           >
