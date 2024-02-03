@@ -3,12 +3,14 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { userReducer } from "./userSlice";
 import { authReducer } from "./authSlice";
 import { teamReducer } from "./themeSlice";
+import { profileReducer } from "./profileSlice";
 
 const store = configureStore({
   reducer: {
     userSlice: userReducer,
     authSlice: authReducer,
     teamSlice: teamReducer,
+    profileSlice: profileReducer
   },
 });
 
