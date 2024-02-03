@@ -10,6 +10,5 @@ public interface IProfileService
     Task CantLeaveTeamIfOwner(Profile profile);
     Task DeleteProfile(Profile profile);
     Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO);
-
+    Task<List<Profile>> GetProfilesByTeamId(string userId, string teamId);
 }
-

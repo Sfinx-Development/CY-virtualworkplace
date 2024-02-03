@@ -115,6 +115,7 @@ public class ProfileRepository : IProfileRepository
                 throw new Exception();
             }
 
+            profileToUpdate.FullName = profile.FullName ?? profileToUpdate.FullName;
             profileToUpdate.Role = profile.Role ?? profileToUpdate.Role;
             profileToUpdate.IsOwner = profile.IsOwner;
 

@@ -25,22 +25,44 @@ public class ProfileService : IProfileService
         _conversationService = conversationService;
     }
 
+    public async Task<List<Profile>> GetProfilesByTeamId(string userId, string teamId)
+    {
+        try
+        {
+            var team = await _teamRepository.GetByIdAsync(teamId);
+
+            if (team.Profiles.Any(p => p.UserId == userId))
+            {
+                return await _profileRepository.GetProfilesInTeamAsync(teamId);
+            }
+            else
+            {
+                throw new Exception("user is not registered as a team member");
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     public async Task<Profile> CreateProfile(User user, bool isOwner, string role, Team team)
     {
         Profile newProfile =
             new()
             {
                 Id = Utils.GenerateRandomId(),
+                FullName = user.FirstName + " " + user.LastName,
                 IsOwner = isOwner,
                 User = user,
                 DateCreated = DateTime.UtcNow,
                 Role = role,
                 Team = team
             };
-        
+
         Profile createdProfile = await _profileRepository.CreateAsync(newProfile);
         Office office = await _officeService.CreateOffice(createdProfile);
-        
+
         return createdProfile;
     }
 

@@ -18,6 +18,7 @@ export interface LogIn {
 
 export interface Profile {
   id: string;
+  fullName: string;
   role: string;
   isOwner: boolean;
   dateCreated: Date;
