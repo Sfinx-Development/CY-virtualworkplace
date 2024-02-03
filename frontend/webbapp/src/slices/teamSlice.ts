@@ -4,11 +4,21 @@ import { FetchCreateTeam, FetchGetMyTeams, FetchJoinTeam } from "../api/team";
 
 interface TeamState {
   teams: Team[] | undefined;
+  activeTeam: Team | undefined;
   error: string | null;
 }
 
+const saveTeamToLocalStorage = (activeTeam: Team) => {
+  localStorage.setItem("activeTeam", JSON.stringify(activeTeam));
+};
+const loadTeamFromLocalStorage = (): Team | undefined => {
+  const storedTeam = localStorage.getItem("activeTeam");
+  return storedTeam ? JSON.parse(storedTeam) : undefined;
+};
+
 export const initialState: TeamState = {
   teams: undefined,
+  activeTeam: undefined,
   error: null,
 };
 
@@ -71,7 +81,22 @@ export const GetMyTeamsAsync = createAsyncThunk<
 const teamSlice = createSlice({
   name: "team",
   initialState,
-  reducers: {},
+  reducers: {
+    setActiveTeam: (state, action) => {
+      const teamId = action.payload;
+      const activeTeam = state.teams?.find((team) => team.id === teamId);
+      if (activeTeam) {
+        state.activeTeam = activeTeam;
+        saveTeamToLocalStorage(activeTeam);
+      }
+    },
+    getActiveTeam: (state) => {
+      const activeTeam = loadTeamFromLocalStorage();
+      if (activeTeam) {
+        state.activeTeam = activeTeam;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createTeamAsync.fulfilled, (state, action) => {
@@ -106,4 +131,5 @@ const teamSlice = createSlice({
   },
 });
 
+export const { setActiveTeam, getActiveTeam } = teamSlice.actions;
 export const teamReducer = teamSlice.reducer;

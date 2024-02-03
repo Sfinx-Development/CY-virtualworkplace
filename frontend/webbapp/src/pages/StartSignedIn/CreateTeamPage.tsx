@@ -1,9 +1,9 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CreateTeamDTO } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
-import { createTeamAsync } from "../../slices/themeSlice";
-import { useNavigate } from "react-router-dom";
+import { createTeamAsync } from "../../slices/teamSlice";
 
 export default function CreateTeam() {
   const dispatch = useAppDispatch();

@@ -7,8 +7,16 @@ interface ProfileState {
   error: string | null;
 }
 
+const saveProfilesToLocalStorage = (profiles: Profile[]) => {
+  localStorage.setItem("profiles", JSON.stringify(profiles));
+};
+const loadProfilesFromLocalStorage = (): Profile[] | undefined => {
+  const storedProfiles = localStorage.getItem("profiles");
+  return storedProfiles ? JSON.parse(storedProfiles) : undefined;
+};
+
 export const initialState: ProfileState = {
-  profiles: undefined,
+  profiles: loadProfilesFromLocalStorage(),
   error: null,
 };
 
@@ -21,6 +29,7 @@ export const GetTeamProfiles = createAsyncThunk<
     const teamProfiles = await FetchGetTeamProfiles(teamId);
     if (teamProfiles) {
       console.log("profiler hämtade:", teamProfiles);
+      saveProfilesToLocalStorage(teamProfiles);
       return teamProfiles;
     } else {
       return thunkAPI.rejectWithValue(

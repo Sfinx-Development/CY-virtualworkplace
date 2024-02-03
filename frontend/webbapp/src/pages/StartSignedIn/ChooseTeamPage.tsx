@@ -12,7 +12,7 @@ import {
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { GetMyTeamsAsync } from "../../slices/themeSlice";
+import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
 import { getUserAsync } from "../../slices/userSlice";
 import { theme1 } from "../../theme";
 
@@ -26,8 +26,8 @@ export default function ChooseTeam() {
   const handleNavigateToMenu = (teamId: string) => {
     //hämta saker kanske? nja kanske inte va
     //navigera till teamets meny
-    console.log("TEAMID: ", teamId);
-    navigate("/menu/" + teamId);
+    dispatch(setActiveTeam(teamId));
+    navigate("/menu");
   };
 
   useEffect(() => {

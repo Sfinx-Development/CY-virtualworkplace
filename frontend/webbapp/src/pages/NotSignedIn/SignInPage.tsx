@@ -15,7 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { GetMyTeamsAsync } from "../../slices/themeSlice";
+import { GetMyTeamsAsync } from "../../slices/teamSlice";
 import { logInUserAsync } from "../../slices/userSlice";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {

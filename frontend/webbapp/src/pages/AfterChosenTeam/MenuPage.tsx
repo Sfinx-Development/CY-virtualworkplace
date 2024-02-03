@@ -9,20 +9,20 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Team } from "../../../types";
+import { useNavigate } from "react-router-dom";
 import { GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 
 export default function Menu() {
-  const { id } = useParams<{ id: string }>();
+  // const { id } = useParams<{ id: string }>();
   const [profileDropdown, setProfileDropdown] = useState(false);
-  const teams = useAppSelector((state) => state.teamSlice.teams);
+  // const teams = useAppSelector((state) => state.teamSlice.teams);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   // const profiles = useAppSelector((state) => state.profileSlice.profiles);
-  const activeTeam: Team | undefined = teams?.find((t) => String(t.id) === id);
-  const primaryColor = theme1.palette.primary.main;
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  // const primaryColor = theme1.palette.primary.main;
   const officeColor = theme1.palette.office.main;
   const meetingRoomColor = theme1.palette.room.main;
   const chatRoomColor = theme1.palette.chat.main;
@@ -31,11 +31,15 @@ export default function Menu() {
   const navigate = useNavigate();
   //sätta activeteam i reducer? ls? koolla det
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
+
   useEffect(() => {
-    if (id) {
-      dispatch(GetTeamProfiles(id));
+    dispatch(getActiveTeam());
+  }, []);
+  useEffect(() => {
+    if (activeTeam) {
+      dispatch(GetTeamProfiles(activeTeam?.id));
     }
-  }, [id]);
+  }, [activeTeam]);
 
   //löser inte denna typningen - ska kolla på det - elina hjälp
   const handleMouseEnter = (event) => {
