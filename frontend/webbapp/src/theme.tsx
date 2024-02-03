@@ -11,6 +11,7 @@ interface CustomPalette {
   primary: SimplePaletteColorOptions;
   office: SimplePaletteColorOptions;
   room: SimplePaletteColorOptions;
+  chat: SimplePaletteColorOptions;
   leave: SimplePaletteColorOptions;
   warning: SimplePaletteColorOptions;
 }
@@ -30,6 +31,9 @@ export const theme1 = createTheme({
     },
     room: {
       main: "#E2F2FC",
+    },
+    chat: {
+      main: "#f3e4fa",
     },
     leave: {
       main: "#FFE8C5",
