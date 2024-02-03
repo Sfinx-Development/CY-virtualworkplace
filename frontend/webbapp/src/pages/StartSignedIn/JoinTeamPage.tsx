@@ -1,5 +1,6 @@
 import { Container, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../slices/store";
 import { createJoinAsync } from "../../slices/themeSlice";
 import { theme1 } from "../../theme";
@@ -7,21 +8,30 @@ import { theme1 } from "../../theme";
 export default function JoinTeam() {
   const [letters, setLetters] = useState(["", "", "", "", "", ""]);
   const textFieldsRef = useRef<Array<HTMLInputElement | null>>([]);
-  //                                            ^^^^^^^^^^^^^^^^^
+  const [fieldError, setFieldError] = useState(false);
   const [role, setRole] = useState("");
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   const primaryColor = theme1.palette.primary.main;
 
   useEffect(() => {
-    if (letters.every((letter) => letter !== "") && role !== "") {
+    if (letters.every((letter) => letter !== "")) {
       handleJoinTeam();
     }
   }, [letters]);
 
   const handleJoinTeam = async () => {
     console.log(letters.join(""));
-    await dispatch(createJoinAsync({ code: letters.join(""), role: role }));
+    if (letters.every((letter) => letter !== "") && role != "") {
+      setFieldError(false);
+      await dispatch(
+        createJoinAsync({ code: letters.join(""), role: role })
+      ).then(() => {
+        navigate("/chooseteam");
+      });
+    } else {
+      setFieldError(true);
+    }
   };
 
   const handleLetterChange = (index: number, value: string) => {
@@ -47,6 +57,9 @@ export default function JoinTeam() {
           marginTop: 20,
         }}
       >
+        {fieldError ? (
+          <Typography>Alla fält måste vara ifyllda</Typography>
+        ) : null}
         <TextField
           variant="outlined"
           label="Din roll i teamet"
