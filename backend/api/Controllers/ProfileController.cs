@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using api;
 using core;
 using core.Migrations;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,72 @@ namespace Controllers
     public class ProfileController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly ProfileService _profileService;
+        private readonly IProfileService _profileService;
 
-        public ProfileController(JwtService jwtService, ProfileService profileService)
+        public ProfileController(JwtService jwtService, IProfileService profileService)
         {
             _jwtService = jwtService;
             _profileService = profileService;
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Profile>>> GetProfilesByTeamId(
+            [FromBody] string teamId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var profiles = await _profileService.GetProfilesByTeamId(loggedInUser.Id, teamId);
+
+                return Ok(profiles);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("byauth")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Profile>>> GetProfileByAuthAndTeam(
+            [FromBody] string teamId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var profile = await _profileService.GetProfileByAuthAndTeam(loggedInUser, teamId);
+
+                return Ok(profile);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
         [HttpPut]
@@ -82,8 +143,6 @@ namespace Controllers
                 {
                     return BadRequest("Failed to get user.");
                 }
-
-
 
                 var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
 

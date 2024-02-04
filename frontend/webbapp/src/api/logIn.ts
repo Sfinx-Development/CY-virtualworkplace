@@ -25,3 +25,25 @@ export const FetchSignIn = async (
     throw error;
   }
 };
+
+export const FetchLogOut = async () => {
+  try {
+    const response = await fetch(apiUrl + "/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid utloggning av användare.");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -1,8 +1,19 @@
 import ComputerIcon from "@mui/icons-material/Computer";
-import { AppBar, Typography } from "@mui/material";
-import { Outlet } from "react-router-dom";
-export default function RootLayout() {
+import { AppBar, Button, Typography } from "@mui/material";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../slices/store";
+import { logOutUserAsync } from "../slices/userSlice";
+
+const RootLayout = () => {
   const isMobile = window.innerWidth <= 500;
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const user = useAppSelector((state) => state.userSlice.user);
+  const handleSignOut = async () => {
+    await dispatch(logOutUserAsync()).then(() => {
+      navigate("/signin");
+    });
+  };
   return (
     <div className="flex flex-col h-screen">
       <AppBar
@@ -13,15 +24,35 @@ export default function RootLayout() {
           flexDirection: "row",
           backdropFilter: "blur(10px)",
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <ComputerIcon
-          fontSize="large"
-          sx={{ paddingRight: 2, paddingLeft: 2 }}
-        />
-        <Typography variant={isMobile ? "h6" : "h4"}>
-          CY Virtual Workplace
-        </Typography>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <ComputerIcon
+            fontSize="large"
+            sx={{ paddingRight: 2, paddingLeft: 2 }}
+          />
+          <Typography sx={{ fontSize: isMobile ? 16 : 35 }}>
+            CY Virtual Workplace
+          </Typography>
+        </div>
+
+        {user ? (
+          <div>
+            {" "}
+            <Button
+              sx={{ paddingRight: 2, paddingLeft: 2 }}
+              onClick={handleSignOut}
+            >
+              Logga ut
+            </Button>{" "}
+          </div>
+        ) : null}
       </AppBar>
 
       <main className="bg-neutral-100 flex flex-1 flex-col">
@@ -31,4 +62,6 @@ export default function RootLayout() {
       <footer className="flex bg-neutral-900"></footer>
     </div>
   );
-}
+};
+
+export default RootLayout;

@@ -15,7 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { GetMyTeamsAsync } from "../../slices/themeSlice";
+import { GetMyTeamsAsync } from "../../slices/teamSlice";
 import { logInUserAsync } from "../../slices/userSlice";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
@@ -57,12 +57,6 @@ export default function SignIn() {
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   if (user != undefined) {
-  //     navigate("/chooseteam");
-  //   }
-  // }, [user]);
-
   return (
     <Container
       sx={{
@@ -71,19 +65,6 @@ export default function SignIn() {
         width: "100%",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          flex: 1,
-          backgroundColor: "pink",
-          padding: 50,
-        }}
-      >
-        EN LOGGA KANSKE OCH NÅGOT KUL?
-      </div>
-
       <div
         style={{
           display: "flex",
@@ -149,7 +130,9 @@ export default function SignIn() {
         <Button
           variant="contained"
           sx={{ marginTop: 2 }}
-          onClick={handleSignIn}
+          onClick={() => {
+            navigate("/createaccount");
+          }}
         >
           Skapa Konto
         </Button>

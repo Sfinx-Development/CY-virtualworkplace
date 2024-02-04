@@ -8,8 +8,8 @@ public interface IProfileService
     Task<List<Profile>> GetProfilesByUserId(User user);
     Task<Profile> UpdateProfile(Profile profile);
     Task CantLeaveTeamIfOwner(Profile profile);
+    Task<Profile> GetProfileByAuthAndTeam(User user, string teamId);
     Task DeleteProfile(Profile profile);
     Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO);
-
+    Task<List<Profile>> GetProfilesByTeamId(string userId, string teamId);
 }
-

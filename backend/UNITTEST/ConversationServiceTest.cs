@@ -7,7 +7,7 @@ using Xunit;
 
 public class ConversationServiceTests
 {
-  [Fact]
+    [Fact]
     public async Task CreateTeamConversationAsync_SimpleTest()
     {
         var teamRepositoryMock = new Mock<ITeamRepository>();
@@ -23,10 +23,17 @@ public class ConversationServiceTests
             IsOwner = true,
             DateCreated = DateTime.UtcNow,
             Team = new Team { Id = "teamId123", Name = "Test Team" },
-            User = new User { Id = "userId123", FirstName = "Owner", LastName = "User" }
+            User = new User
+            {
+                Id = "userId123",
+                FirstName = "Owner",
+                LastName = "User"
+            }
         };
 
-        teamRepositoryMock.Setup(repo => repo.GetByIdAsync(profile.Team.Id)).ReturnsAsync(profile.Team);
+        teamRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(profile.Team.Id))
+            .ReturnsAsync(profile.Team);
         profileRepositoryMock.Setup(repo => repo.GetByIdAsync(profile.Id)).ReturnsAsync(profile);
 
         conversationRepositoryMock
@@ -41,21 +48,12 @@ public class ConversationServiceTests
             messageRepositoryMock.Object
         );
 
-    
-        var createdConversation = await conversationService.CreateTeamConversationAsync(profile.Id, profile.Team.Id);
+        var createdConversation = await conversationService.CreateTeamConversationAsync(
+            profile.Id,
+            profile.Team.Id
+        );
 
-     
         Assert.NotNull(createdConversation);
         Assert.Equal(profile.Id, createdConversation.CreatorId);
     }
-
 }
-
-
-
-
-
-
-
-   
-
