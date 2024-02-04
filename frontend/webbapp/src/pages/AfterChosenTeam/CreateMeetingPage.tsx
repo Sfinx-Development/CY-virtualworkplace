@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Container, Typography, TextField, Button } from "@mui/material";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+
+} from "@mui/material";
 import { useAppDispatch } from "../../slices/store";
 import { createMeetingAsync } from "../../slices/meetingSlice";
 import { CreateMeetingDTO } from "../../../types";
@@ -47,10 +55,8 @@ export default function CreateMeetingPage() {
         endDate: parsedEndDate,
       };
 
-      
       await dispatch(createMeetingAsync(meetingDto));
 
-     
       setNewMeetingName("");
       setNewMeetingDescription("");
       setNewMeetingDate("");
@@ -108,18 +114,38 @@ export default function CreateMeetingPage() {
           variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
-        <TextField
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={newMeetingIsRepeating}
+              onChange={() =>
+                setNewMeetingIsRepeating(!newMeetingIsRepeating)
+              }
+            />
+          }
           label="Repeating"
-          type="checkbox"
-          value={newMeetingIsRepeating}
-          onChange={(e) => {
-            if (e.target instanceof HTMLInputElement) {
-              setNewMeetingIsRepeating(e.target.checked);
-            }
-          }}
-          variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
+        {newMeetingIsRepeating && (
+          <>
+            <TextField
+              label="Interval"
+              type="number"
+              value={newMeetingInterval}
+              onChange={(e) => setNewMeetingInterval(parseInt(e.target.value, 10))}
+              variant="outlined"
+              sx={{ width: "250px", marginTop: 2 }}
+            />
+            <TextField
+              label="End Date"
+              type="datetime-local"
+              value={newMeetingEndDate}
+              onChange={(e) => setNewMeetingEndDate(e.target.value)}
+              variant="outlined"
+              sx={{ width: "250px", marginTop: 2 }}
+            />
+          </>
+        )}
         <TextField
           label="Room ID"
           value={newMeetingRoomId}
@@ -134,26 +160,10 @@ export default function CreateMeetingPage() {
           variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
-        <TextField
-          label="Interval"
-          type="number"
-          value={newMeetingInterval}
-          onChange={(e) => setNewMeetingInterval(parseInt(e.target.value, 10))}
-          variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
-        <TextField
-          label="End Date"
-          type="datetime-local"
-          value={newMeetingEndDate}
-          onChange={(e) => setNewMeetingEndDate(e.target.value)}
-          variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
         <Button variant="contained" onClick={handleCreateMeeting}>
           Create Meeting
         </Button>
-       
+
         {meetings && (
           <div>
             <Typography variant="h6">Latest Meeting:</Typography>
@@ -166,6 +176,8 @@ export default function CreateMeetingPage() {
     </Container>
   );
 }
+
+
 
 
 

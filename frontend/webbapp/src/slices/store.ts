@@ -10,13 +10,14 @@ import { teamReducer } from "./teamSlice";
 import { userReducer } from "./userSlice";
 
 
+
 const store = configureStore({
   reducer: {
     userSlice: userReducer,
     authSlice: authReducer,
     teamSlice: teamReducer,
 
-    meetingSlice: meetingReducer
+    meetingSlice: meetingReducer,
 
     profileSlice: profileReducer,
 
