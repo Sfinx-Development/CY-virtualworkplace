@@ -37,7 +37,7 @@ const Navigation = () => {
           <Route path="createteam" element={<CreateTeam />} />
           <Route path="jointeam" element={<JoinTeam />} />
           <Route path="enterhouse" element={<EnterHouse />} />
-          <Route path="menu/:id" element={<Menu />} />
+          <Route path="menu" element={<Menu />} />
           <Route path="meetingroom" element={<MeetingRoom />} />
           <Route path="office" element={<Office />} />
           <Route path="chatroom" element={<ChatRoom />} />

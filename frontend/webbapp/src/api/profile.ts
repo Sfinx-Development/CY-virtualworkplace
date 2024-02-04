@@ -27,3 +27,26 @@ export const FetchGetTeamProfiles = async (
     throw error;
   }
 };
+
+export const FetchMyProfile = async (teamId: string): Promise<Profile> => {
+  try {
+    const response = await fetch(apiUrl + "/byauth", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(teamId),
+    });
+    const responseBody = await response.json();
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av min profil");
+    }
+    const data = responseBody as Profile;
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -2,7 +2,7 @@ import { Container, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../slices/store";
-import { createJoinAsync } from "../../slices/themeSlice";
+import { createJoinAsync } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 
 export default function JoinTeam() {

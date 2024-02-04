@@ -12,7 +12,7 @@ import {
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { GetMyTeamsAsync } from "../../slices/themeSlice";
+import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
 import { getUserAsync } from "../../slices/userSlice";
 import { theme1 } from "../../theme";
 
@@ -26,8 +26,8 @@ export default function ChooseTeam() {
   const handleNavigateToMenu = (teamId: string) => {
     //hämta saker kanske? nja kanske inte va
     //navigera till teamets meny
-    console.log("TEAMID: ", teamId);
-    navigate("/menu/" + teamId);
+    dispatch(setActiveTeam(teamId));
+    navigate("/menu");
   };
 
   useEffect(() => {
@@ -36,6 +36,7 @@ export default function ChooseTeam() {
     dispatch(GetMyTeamsAsync());
     console.log("MY TEAMS:", myTeams);
   }, []);
+  const isMobile = window.innerWidth <= 500;
 
   return (
     <Container
@@ -58,14 +59,14 @@ export default function ChooseTeam() {
           fullWidth
           style={{
             margin: "10px 0",
-            width: "40%",
+            width: "30%",
             flexDirection: "row",
             justifyContent: "center",
           }}
           onClick={() => navigate("/createteam")}
         >
-          <AddIcon sx={{ padding: 1 }} />{" "}
-          <Typography sx={{ padding: 1 }}>Skapa team</Typography>
+          <AddIcon sx={{ padding: 0.5 }} />{" "}
+          <Typography sx={{ padding: 0.5 }}>Skapa team</Typography>
         </Button>
 
         <Button
@@ -75,14 +76,14 @@ export default function ChooseTeam() {
           fullWidth
           style={{
             margin: "10px 0",
-            width: "40%",
+            width: "30%",
             flexDirection: "row",
             justifyContent: "center",
           }}
           onClick={() => navigate("/jointeam")}
         >
-          <ConnectWithoutContactIcon sx={{ padding: 1 }} />{" "}
-          <Typography sx={{ padding: 1 }}>Gå med i team</Typography>
+          <ConnectWithoutContactIcon sx={{ padding: 0.5 }} />{" "}
+          <Typography sx={{ padding: 0.5 }}>Gå med i team</Typography>
         </Button>
       </div>
 
@@ -94,14 +95,14 @@ export default function ChooseTeam() {
           alignItems: "center",
         }}
       >
-        <Typography variant="h4"> Välkommen {user?.firstName}!</Typography>
+        <Typography variant="h5"> Välkommen {user?.firstName}!</Typography>
         {Array.isArray(myTeams) &&
           myTeams?.map((team) => (
             <Card
               key={team.id}
               sx={{
                 display: "flex",
-                minWidth: "300px",
+                minWidth: isMobile ? "100px" : "250px",
                 backgroundColor: primaryColor,
               }}
             >
