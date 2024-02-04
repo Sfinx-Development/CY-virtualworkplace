@@ -40,6 +40,19 @@ export interface CreateTeamDTO {
   profileRole: string;
 }
 
+export interface CreateMeetingDTO{
+  name: string,
+  description: string,
+  date: Date,
+  minutes: string,
+  isRepeating: boolean; 
+  roomId: string,
+  ownerId: string,
+  interval: string,
+  endDate: Date
+  
+}
+
 export interface Room {
   id: string;
   roomLayout: string;
