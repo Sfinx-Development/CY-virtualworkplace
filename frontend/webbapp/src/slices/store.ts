@@ -16,7 +16,7 @@ const store = configureStore({
     authSlice: authReducer,
     teamSlice: teamReducer,
 
-    meetingSlice: meetingReducer
+    meetingSlice: meetingReducer,
 
     profileSlice: profileReducer,
 
