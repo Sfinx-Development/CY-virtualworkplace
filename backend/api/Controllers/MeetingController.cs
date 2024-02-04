@@ -17,11 +17,13 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly MeetingService _meetingService;
+        private readonly MeetingRoomServie _meetingRoomService;
 
-        public MeetingController(JwtService jwtService, MeetingService meetingService)
+        public MeetingController(JwtService jwtService, MeetingService meetingService, MeetingRoomServie meetingRoomService)
         {
             _jwtService = jwtService;
             _meetingService = meetingService;
+            _meetingRoomService = meetingRoomService;
         }
 
         [Authorize]
@@ -63,6 +65,44 @@ namespace Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+     [HttpGet]
+[Authorize]
+public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody]string teamId)
+{
+    try
+    {
+        var jwt = Request.Cookies["jwttoken"];
+        if (string.IsNullOrWhiteSpace(jwt))
+        {
+            return BadRequest("JWT token is missing.");
+        }
+
+        var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+        if (loggedInUser == null)
+        {
+            return BadRequest("Failed to get user.");
+        }
+
+        if (loggedInUser.Profiles.Any(p => p.Id == teamId))
+        {
+            // Anropa din MeetingService för att hämta mötesrumet baserat på teamets ID
+            MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
+                return Ok(meetingRoom);
+        }
+        else
+        {
+            throw new Exception("The owner of meeting is not in line with the JWT bearer.");
+        }
+    }
+    catch (Exception e)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+    }
+}
+
+
 
         [Authorize]
         [HttpDelete]
