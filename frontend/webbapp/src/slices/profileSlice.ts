@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Profile } from "../../types";
-import { FetchGetTeamProfiles, FetchMyProfile } from "../api/profile";
+import {
+  FetchGetTeamProfiles,
+  FetchMyProfile,
+  FetchUpdateProfile,
+} from "../api/profile";
 
 interface ProfileState {
   profiles: Profile[] | undefined;
@@ -75,6 +79,29 @@ export const GetMyProfileAsync = createAsyncThunk<
   }
 });
 
+export const UpdateProfileAsync = createAsyncThunk<
+  Profile,
+  Profile,
+  { rejectValue: string }
+>("profile/updateProfile", async (profile, thunkAPI) => {
+  try {
+    const myProfile = await FetchUpdateProfile(profile);
+    if (myProfile) {
+      console.log("profil uppdaterad:", myProfile);
+      saveActiveProfileToLocalStorage(myProfile);
+      return myProfile;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av profiler."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtning av profiler."
+    );
+  }
+});
+
 const profileSlice = createSlice({
   name: "profile",
   initialState,
@@ -117,6 +144,16 @@ const profileSlice = createSlice({
         }
       })
       .addCase(GetMyProfileAsync.rejected, (state) => {
+        state.activeProfile = undefined;
+        state.error = "Något gick fel med hämtandet av aktiv profil.";
+      })
+      .addCase(UpdateProfileAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeProfile = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(UpdateProfileAsync.rejected, (state) => {
         state.activeProfile = undefined;
         state.error = "Något gick fel med hämtandet av aktiv profil.";
       });

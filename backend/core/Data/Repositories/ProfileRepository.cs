@@ -118,6 +118,7 @@ public class ProfileRepository : IProfileRepository
             profileToUpdate.FullName = profile.FullName ?? profileToUpdate.FullName;
             profileToUpdate.Role = profile.Role ?? profileToUpdate.Role;
             profileToUpdate.IsOwner = profile.IsOwner;
+            profileToUpdate.IsOnline = profile.IsOnline;
 
             _cyDbContext.Profiles.Update(profileToUpdate);
 

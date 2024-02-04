@@ -194,6 +194,9 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool?>("IsOnline")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsOwner")
                         .HasColumnType("tinyint(1)");
 

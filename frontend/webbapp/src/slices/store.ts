@@ -2,13 +2,11 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { authReducer } from "./authSlice";
 
-
 import { meetingReducer } from "./meetingSlice";
 
 import { profileReducer } from "./profileSlice";
 import { teamReducer } from "./teamSlice";
 import { userReducer } from "./userSlice";
-
 
 const store = configureStore({
   reducer: {
@@ -16,10 +14,9 @@ const store = configureStore({
     authSlice: authReducer,
     teamSlice: teamReducer,
 
-    meetingSlice: meetingReducer
+    meetingSlice: meetingReducer,
 
     profileSlice: profileReducer,
-
   },
 });
 
