@@ -41,7 +41,6 @@ export const GetTeamProfiles = createAsyncThunk<
   try {
     const teamProfiles = await FetchGetTeamProfiles(teamId);
     if (teamProfiles) {
-      console.log("profiler hämtade:", teamProfiles);
       saveProfilesToLocalStorage(teamProfiles);
       return teamProfiles;
     } else {
@@ -64,7 +63,6 @@ export const GetMyProfileAsync = createAsyncThunk<
   try {
     const myProfile = await FetchMyProfile(teamId);
     if (myProfile) {
-      console.log("profil hämtade:", myProfile);
       saveActiveProfileToLocalStorage(myProfile);
       return myProfile;
     } else {
@@ -87,7 +85,6 @@ export const UpdateProfileAsync = createAsyncThunk<
   try {
     const myProfile = await FetchUpdateProfile(profile);
     if (myProfile) {
-      console.log("profil uppdaterad:", myProfile);
       saveActiveProfileToLocalStorage(myProfile);
       return myProfile;
     } else {
@@ -126,7 +123,6 @@ const profileSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(GetTeamProfiles.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           state.profiles = action.payload;
           state.error = null;
@@ -137,7 +133,6 @@ const profileSlice = createSlice({
         state.error = "Något gick fel med hämtandet av profiler.";
       })
       .addCase(GetMyProfileAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           state.activeProfile = action.payload;
           state.error = null;

@@ -104,7 +104,7 @@ public class ProfileRepository : IProfileRepository
         }
     }
 
-    public async Task<Profile> UpdateAsync(Profile profile)
+    public async Task<Profile> UpdateAsync(ProfileUpdateDTO profile)
     {
         try
         {

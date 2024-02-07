@@ -86,7 +86,7 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<Profile>> UpdateProfile(Profile profile)
+        public async Task<ActionResult<Profile>> UpdateProfile(ProfileUpdateDTO profileUpdateDTO)
         {
             try
             {
@@ -98,20 +98,20 @@ namespace Controllers
                 }
                 var loggedInUser = await _jwtService.GetByJWT(jwt);
 
+                Console.WriteLine("LOGGED IN: ", loggedInUser.Id);
+
                 if (loggedInUser == null)
                 {
                     return BadRequest("JWT token is missing.");
                 }
 
-                if (loggedInUser.Profiles.Any(p => p.Id == profile.Id))
+                if (profileUpdateDTO.UserId != loggedInUser.Id)
                 {
-                    Profile updatedProfile = await _profileService.UpdateProfile(profile);
-                    return Ok(updatedProfile);
+                    return BadRequest("Profile doesn't belong to user.");
                 }
-                else
-                {
-                    return BadRequest("Profile not found.");
-                }
+
+                Profile updatedProfile = await _profileService.UpdateProfile(profileUpdateDTO);
+                return Ok(updatedProfile);
             }
             catch (Exception e)
             {

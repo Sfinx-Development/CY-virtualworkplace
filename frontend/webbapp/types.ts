@@ -24,6 +24,7 @@ export interface Profile {
   dateCreated: Date;
   teamId: string;
   userId: string;
+  isOnline?:boolean;
 }
 
 export interface Team {

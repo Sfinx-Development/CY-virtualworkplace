@@ -109,14 +109,14 @@ public class ProfileService : IProfileService
         }
     }
 
-    public async Task<Profile> UpdateProfile(Profile profile)
+    public async Task<Profile> UpdateProfile(ProfileUpdateDTO profile)
     {
         try
         {
-            var foundProfile =
-                await _profileRepository.GetByIdAsync(profile.Id) ?? throw new Exception();
-            foundProfile.Role = profile.Role;
-            var updatedProfile = await _profileRepository.UpdateAsync(foundProfile);
+            // var foundProfile =
+            //     await _profileRepository.GetByIdAsync(profile.Id) ?? throw new Exception();
+            // foundProfile.Role = profile.Role;
+            var updatedProfile = await _profileRepository.UpdateAsync(profile);
             return updatedProfile;
         }
         catch (Exception)

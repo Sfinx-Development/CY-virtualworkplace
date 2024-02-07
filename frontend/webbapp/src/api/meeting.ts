@@ -12,7 +12,6 @@ export const FetchGetMyMeetings = async (): Promise<Meeting[]> => {
       },
     });
     const responseBody = await response.json();
-    console.log("RESPONSE från get meetings: ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av meetings");
@@ -30,7 +29,6 @@ export const FetchCreateMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<Meeting> => {
   try {
-    console.log("MÖTET SOM SKA SKAPAS: ", newMeeting);
     const response = await fetch(apiUrl + "/create", {
       method: "POST",
       headers: {

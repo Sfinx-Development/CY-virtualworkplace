@@ -6,29 +6,118 @@ import {
   Container,
   Typography,
 } from "@mui/material";
-import { useEffect } from "react";
-import { GetMyProfileAsync } from "../../slices/profileSlice";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import { useNavigate } from "react-router-dom";
+import Connector from "./signalRConnection";
+import * as signalR from "@microsoft/signalr";
 
 export default function MeetingRoom() {
   const dispatch = useAppDispatch();
-  // const activeProfile = useAppSelector(
-  //   (state) => state.profileSlice.activeProfile
-  // );
+
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
+
+  const [profilesInRoom, setProfilesInRoom] = useState<string[]>([]);
 
   useEffect(() => {
     dispatch(getActiveTeam());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
+      dispatch(GetTeamProfiles(activeTeam?.id));
     }
-  }, [activeTeam]);
+  }, [dispatch, activeTeam]);
+
+  useEffect(() => {
+    const connection = Connector.getInstance();
+
+    // Prenumerera på händelser
+    connection.events = {
+      profileOnline: (profileId: string) => {
+        setProfilesInRoom((prevProfiles) => [...prevProfiles, profileId]);
+      },
+      profileOffline: (profileId: string) => {
+        setProfilesInRoom((prevProfiles) =>
+          prevProfiles.filter((id) => id !== profileId)
+        );
+      },
+    };
+
+    // Komponentrensning
+    return () => {
+      if (connection) {
+        Connector.getInstance().events = {
+          profileOnline: () => {},
+          profileOffline: () => {},
+        };
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const enterMeetingRoom = async () => {
+      const connection = Connector.getInstance();
+      try {
+        if (
+          connection.getConnectionState() !==
+          signalR.HubConnectionState.Connected
+        ) {
+          // Starta anslutningen om den inte redan är igång
+          await connection.start();
+        }
+        if (activeProfile) {
+          await connection.invokeHubMethod<string>(
+            "ProfileEnterMeetingRoom",
+            activeProfile.id
+          );
+          console.log("Profil gick in i mötesrummet");
+        }
+      } catch (error) {
+        console.error("Error sending enter meeting room request:", error);
+      }
+    };
+
+    const leaveMeetingRoom = async () => {
+      if (activeProfile) {
+        const connection = Connector.getInstance();
+        if (
+          connection.getConnectionState() ===
+          signalR.HubConnectionState.Disconnected
+        ) {
+          try {
+            await connection.start();
+          } catch (error) {
+            console.error("Error starting connection:", error);
+            return;
+          }
+        }
+
+        try {
+          connection.invokeHubMethod<string>(
+            "ProfileLeavingMeetingRoom",
+            activeProfile.id
+          );
+        } catch (error) {
+          console.error("Error invoking hub method:", error);
+        }
+      }
+    };
+
+    enterMeetingRoom();
+
+    // Komponentrensning
+    return () => {
+      leaveMeetingRoom();
+    };
+  }, [activeProfile]);
 
   const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
   const isMobile = window.innerWidth <= 500;
@@ -48,6 +137,7 @@ export default function MeetingRoom() {
     >
       <Card sx={{ padding: 2, backgroundColor: meetingRoomColor }}>
         <Typography> {activeTeam?.name}'s mötesrum</Typography>
+        <Typography>{profilesInRoom ? profilesInRoom : "ingen"}</Typography>
       </Card>
       <div
         style={{

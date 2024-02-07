@@ -13,7 +13,6 @@ export const FetchSignIn = async (
       },
       body: JSON.stringify({ email, password }),
     });
-    console.log(response);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid inloggningen");
