@@ -24,7 +24,7 @@ export interface Profile {
   dateCreated: Date;
   teamId: string;
   userId: string;
-  isOnline?:boolean;
+  isOnline?: boolean;
 }
 
 export interface Team {
@@ -41,17 +41,16 @@ export interface CreateTeamDTO {
   profileRole: string;
 }
 
-export interface CreateMeetingDTO{
-  name: string,
-  description: string,
-  date: Date,
-  minutes: string,
-  isRepeating: boolean; 
-  roomId: string,
-  ownerId: string,
-  interval: string,
-  endDate: Date
-  
+export interface CreateMeetingDTO {
+  name: string;
+  description: string;
+  date: Date;
+  minutes: string;
+  isRepeating: boolean;
+  roomId: string;
+  ownerId: string;
+  interval: string;
+  endDate: Date;
 }
 
 export interface Room {
@@ -117,4 +116,13 @@ export interface ConversationParticipant {
   id: string;
   conversationId: string;
   profileId: string;
+}
+
+export interface ProfileHubDTO {
+  profileId: string;
+  fullName: string;
+  teamId: string;
+  isOnline: boolean;
+  lastOnline: boolean;
+  lastActive: boolean;
 }

@@ -1,4 +1,5 @@
 import * as signalR from "@microsoft/signalr";
+import { ProfileHubDTO } from "../../../types";
 
 // Define your hub URL
 const hubUrl = `http://${window.location.hostname}:5290/meetingroomhub`; // Update with your hub URL
@@ -6,8 +7,9 @@ const hubUrl = `http://${window.location.hostname}:5290/meetingroomhub`; // Upda
 class Connector {
   private connection: signalR.HubConnection;
   public events: {
-    profileOnline: (profileId: string) => void;
+    profileOnline: (profile: ProfileHubDTO) => void;
     profileOffline: (profileId: string) => void;
+    profileOnlineInTeams: (onlineProfiles:ProfileHubDTO[]) => void;
   };
   static instance: Connector;
 
@@ -16,6 +18,7 @@ class Connector {
     this.events = {
       profileOnline: () => {},
       profileOffline: () => {},
+      profileOnlineInTeams: () => {},
     };
 
     this.connection = new signalR.HubConnectionBuilder()
@@ -23,9 +26,14 @@ class Connector {
       .withAutomaticReconnect()
       .build();
 
-    this.connection.on("profileOnline", (profileId: string) => {
-      this.events.profileOnline(profileId);
+    this.connection.on("profileOnline", (profile: ProfileHubDTO) => {
+      this.events.profileOnline(profile);
     });
+
+    this.connection.on("profileOnlineInTeams", (onlineProfiles: ProfileHubDTO[]) => {
+      this.events.profileOnlineInTeams(onlineProfiles);
+    });
+
 
     this.connection.on("profileOffline", (profileId: string) => {
       this.events.profileOffline(profileId);

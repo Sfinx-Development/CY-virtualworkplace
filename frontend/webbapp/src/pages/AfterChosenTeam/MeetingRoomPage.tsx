@@ -1,3 +1,5 @@
+import * as signalR from "@microsoft/signalr";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import {
   Box,
   Card,
@@ -8,12 +10,12 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ProfileHubDTO } from "../../../types";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 import Connector from "./signalRConnection";
-import * as signalR from "@microsoft/signalr";
 
 export default function MeetingRoom() {
   const dispatch = useAppDispatch();
@@ -23,7 +25,7 @@ export default function MeetingRoom() {
     (state) => state.profileSlice.activeProfile
   );
 
-  const [profilesInRoom, setProfilesInRoom] = useState<string[]>([]);
+  const [profilesInRoom, setProfilesInRoom] = useState<ProfileHubDTO[]>([]);
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -41,13 +43,16 @@ export default function MeetingRoom() {
 
     // Prenumerera på händelser
     connection.events = {
-      profileOnline: (profileId: string) => {
-        setProfilesInRoom((prevProfiles) => [...prevProfiles, profileId]);
+      profileOnline: (profile: ProfileHubDTO) => {
+        setProfilesInRoom((prevProfiles) => [...prevProfiles, profile]);
       },
       profileOffline: (profileId: string) => {
         setProfilesInRoom((prevProfiles) =>
-          prevProfiles.filter((id) => id !== profileId)
+          prevProfiles.filter((p) => p.profileId !== profileId)
         );
+      },
+      profileOnlineInTeams: (onlineProfiles: ProfileHubDTO[]) => {
+        setProfilesInRoom(onlineProfiles);
       },
     };
 
@@ -57,6 +62,7 @@ export default function MeetingRoom() {
         Connector.getInstance().events = {
           profileOnline: () => {},
           profileOffline: () => {},
+          profileOnlineInTeams: () => {},
         };
       }
     };
@@ -137,7 +143,33 @@ export default function MeetingRoom() {
     >
       <Card sx={{ padding: 2, backgroundColor: meetingRoomColor }}>
         <Typography> {activeTeam?.name}'s mötesrum</Typography>
-        <Typography>{profilesInRoom ? profilesInRoom : "ingen"}</Typography>
+        {profilesInRoom && profilesInRoom.length > 0 ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              // alignItems: "center",
+            }}
+          >
+            {profilesInRoom.map((profile) => (
+              <div
+                key={profile.profileId}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "5px",
+                }}
+              >
+                <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
+                <Typography key={profile.profileId}>
+                  {profile.fullName}
+                </Typography>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Typography>Inga profiler online</Typography>
+        )}
       </Card>
       <div
         style={{

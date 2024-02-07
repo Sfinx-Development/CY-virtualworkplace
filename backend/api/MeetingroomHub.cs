@@ -20,9 +20,7 @@ public class MeetingRoomHub : Hub
         var profileToUpdate = await _profileRepository.GetByIdAsync(profileId);
         if (profileToUpdate != null)
         {
-            var profileToUpdateDTO = new ProfileUpdateDTO();
-            profileToUpdateDTO.Id = profileId;
-            profileToUpdateDTO.IsOnline = true;
+            var profileToUpdateDTO = new ProfileUpdateDTO { Id = profileId, IsOnline = true };
             var onlineProfile = await _profileRepository.UpdateAsync(profileToUpdateDTO);
             var profileHubDTO = new ProfileHboDTO(
                 onlineProfile.Id,
@@ -32,14 +30,17 @@ public class MeetingRoomHub : Hub
                 onlineProfile.LastOnline,
                 onlineProfile.LastActive
             );
+            await Clients.All.SendAsync("profileOnline", profileHubDTO);
         }
-        await Clients.All.SendAsync("profileOnline", profileId);
     }
 
     public async Task ProfileLeavingMeetingRoom(string profileId)
     {
         Console.WriteLine("-------------------LEAVING");
         //spara en ProfileHubDTO och sätt isonline false och skicka iväg den hela istället?
+        var profileToUpdateDTO = new ProfileUpdateDTO { Id = profileId, IsOnline = false };
+        var onlineProfile = await _profileRepository.UpdateAsync(profileToUpdateDTO);
+        //behövs returnera den eller?
         await Clients.All.SendAsync("profileOffline", profileId);
     }
 
