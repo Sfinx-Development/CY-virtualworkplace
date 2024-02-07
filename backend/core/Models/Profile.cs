@@ -12,6 +12,8 @@ public class Profile
     public string TeamId { get; set; }
     public DateTime DateCreated { get; set; }
     public bool? IsOnline { get; set; }
+    public DateTime? LastOnline { get; set; }
+    public DateTime? LastActive { get; set; }
 
     //den sätts OM MAN VÄLJER DET I TEAMET SEN? om profilen är inne i mötesrummet typ?
     public List<ConversationParticipant> ConversationParticipants { get; set; }
