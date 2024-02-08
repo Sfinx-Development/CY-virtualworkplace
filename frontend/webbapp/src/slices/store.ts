@@ -8,6 +8,7 @@ import { profileReducer } from "./profileSlice";
 import { teamReducer } from "./teamSlice";
 import { userReducer } from "./userSlice";
 
+
 const store = configureStore({
   reducer: {
     userSlice: userReducer,
