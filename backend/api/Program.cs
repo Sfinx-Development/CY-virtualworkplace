@@ -7,6 +7,23 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSignalR();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowAll",
+        builder =>
+        {
+            builder
+                .WithOrigins("http://localhost:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+    );
+});
+
 builder.WebHost.UseUrls("http://0.0.0.0:5290");
 
 builder.Configuration.AddJsonFile("appsettings.json");
@@ -17,6 +34,7 @@ var securityKey = new SymmetricSecurityKey(securityKeyBytes);
 builder.Services.AddSingleton(securityKey);
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<CyDbContext>(
     options =>
@@ -79,21 +97,6 @@ builder
             .Preserve;
     });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        "AllowAll",
-        builder =>
-        {
-            builder
-                .WithOrigins("http://localhost:5173")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-        }
-    );
-});
-
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(
@@ -123,29 +126,13 @@ builder
         }
     );
 
-// builder
-//     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//     .AddJwtBearer(options =>
-//     {
-//         options.Events = new JwtBearerEvents
-//         {
-//             OnMessageReceived = context =>
-//             {
-//                 // hämtar jwtn från kakan
-//                 context.Token = context.Request.Cookies["jwttoken"];
-//                 return Task.CompletedTask;
-//             }
-//         };
-//     });
-
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
+app.UseRouting();
+app.MapHub<MeetingRoomHub>("/meetingroomhub");
 if (app.Environment.IsDevelopment())
 {
-    // app.UseExceptionHandler("/Error");
-    // app.UseHsts();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

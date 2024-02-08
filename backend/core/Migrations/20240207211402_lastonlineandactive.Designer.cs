@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240203114935_fullname")]
-    partial class fullname
+    [Migration("20240207211402_lastonlineandactive")]
+    partial class lastonlineandactive
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -197,8 +197,17 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool?>("IsOnline")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsOwner")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastActive")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("LastOnline")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Role")
                         .IsRequired()

@@ -21,7 +21,6 @@ export default function JoinTeam() {
   }, [letters]);
 
   const handleJoinTeam = async () => {
-    console.log(letters.join(""));
     if (letters.every((letter) => letter !== "") && role != "") {
       setFieldError(false);
       await dispatch(
