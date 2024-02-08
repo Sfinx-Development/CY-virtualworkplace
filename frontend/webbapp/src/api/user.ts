@@ -11,7 +11,6 @@ export const FetchGetUseer = async (): Promise<User> => {
         "Content-Type": "application/json",
       },
     });
-    console.log("RESPONSE från get user: ", response);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av user");
@@ -48,5 +47,3 @@ export const FetchCreateUseer = async (newUser: User): Promise<User> => {
     throw error;
   }
 };
-
-

@@ -30,7 +30,6 @@ export const createTeamAsync = createAsyncThunk<
   try {
     const createdTeam = await FetchCreateTeam(team);
     if (createdTeam) {
-      console.log("created team: ", createdTeam);
       return createdTeam;
     } else {
       return thunkAPI.rejectWithValue("failed to add team");
@@ -48,7 +47,6 @@ export const createJoinAsync = createAsyncThunk<
   try {
     const joinedTeam = await FetchJoinTeam({ code, role });
     if (joinedTeam) {
-      console.log("joined team: ", joinedTeam);
       return joinedTeam;
     } else {
       return thunkAPI.rejectWithValue("failed to join team");
@@ -66,7 +64,6 @@ export const GetMyTeamsAsync = createAsyncThunk<
   try {
     const myTeams = await FetchGetMyTeams();
     if (myTeams) {
-      console.log("Teams hämtade:", myTeams);
       return myTeams;
     } else {
       return thunkAPI.rejectWithValue(
@@ -118,7 +115,6 @@ const teamSlice = createSlice({
         state.error = "Något gick fel med att gå med i team.";
       })
       .addCase(GetMyTeamsAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           state.teams = action.payload;
           state.error = null;

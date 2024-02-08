@@ -194,8 +194,17 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool?>("IsOnline")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsOwner")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastActive")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("LastOnline")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Role")
                         .IsRequired()

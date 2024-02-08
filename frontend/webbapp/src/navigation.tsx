@@ -24,10 +24,17 @@ const Navigation = () => {
   const user = useAppSelector((state) => state.userSlice.user);
   console.log("User:", user);
   const dispatch = useAppDispatch();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getUserAsync());
   }, []);
+
+  // useEffect(() => {
+  //   if(!user){
+  //     navigate("/signin")
+  //   }
+  // },[user])
 
   return (
     <Routes>

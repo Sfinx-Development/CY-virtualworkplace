@@ -17,11 +17,13 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly MeetingService _meetingService;
+        private readonly IMeetingRoomService _meetingRoomService;
 
-        public MeetingController(JwtService jwtService, MeetingService meetingService)
+        public MeetingController(JwtService jwtService, MeetingService meetingService, IMeetingRoomService meetingRoomService)
         {
             _jwtService = jwtService;
             _meetingService = meetingService;
+            _meetingRoomService = meetingRoomService;
         }
 
         [Authorize]
@@ -63,6 +65,37 @@ namespace Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+     [HttpPost("meetingroom")]
+[Authorize]
+public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody]string teamId)
+{
+    try
+    {
+        var jwt = Request.Cookies["jwttoken"];
+        if (string.IsNullOrWhiteSpace(jwt))
+        {
+            return BadRequest("JWT token is missing.");
+        }
+
+        var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+        if (loggedInUser == null)
+        {
+            return BadRequest("Failed to get user.");
+        }
+
+            MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
+            return Ok(meetingRoom);
+  
+    }
+    catch (Exception e)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+    }
+}
+
+
 
         [Authorize]
         [HttpDelete]

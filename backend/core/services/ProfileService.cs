@@ -109,14 +109,46 @@ public class ProfileService : IProfileService
         }
     }
 
-    public async Task<Profile> UpdateProfile(Profile profile)
+    public async Task<List<ProfileHboDTO>> GetOnlineProfilesByTeam(User user, string teamId)
     {
         try
         {
-            var foundProfile =
-                await _profileRepository.GetByIdAsync(profile.Id) ?? throw new Exception();
-            foundProfile.Role = profile.Role;
-            var updatedProfile = await _profileRepository.UpdateAsync(foundProfile);
+            var team = await _teamRepository.GetByIdAsync(teamId);
+            if (team.Profiles.Any(p => p.UserId == user.Id))
+            {
+                var onlineProfiles = await _profileRepository.GetOnlineProfilesInTeamAsync(team.Id);
+                List<ProfileHboDTO> onlineProfilesDTO = new();
+                onlineProfilesDTO = onlineProfiles
+                    .Select(
+                        p =>
+                            new ProfileHboDTO(
+                                p.Id,
+                                p.FullName,
+                                p.TeamId,
+                                p.IsOnline,
+                                p.LastOnline,
+                                p.LastActive
+                            )
+                    )
+                    .ToList();
+                return onlineProfilesDTO;
+            }
+            throw new Exception("Endast team medlem kan hämta info om online profiler.");
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
+
+    public async Task<Profile> UpdateProfile(ProfileUpdateDTO profile)
+    {
+        try
+        {
+            // var foundProfile =
+            //     await _profileRepository.GetByIdAsync(profile.Id) ?? throw new Exception();
+            // foundProfile.Role = profile.Role;
+            var updatedProfile = await _profileRepository.UpdateAsync(profile);
             return updatedProfile;
         }
         catch (Exception)

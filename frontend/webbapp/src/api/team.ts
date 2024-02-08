@@ -12,7 +12,6 @@ export const FetchGetMyTeams = async (): Promise<Team[]> => {
       },
     });
     const responseBody = await response.json();
-    console.log("RESPONSE från get teams: ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av teams");
@@ -30,7 +29,6 @@ export const FetchCreateTeam = async (
   newTeam: CreateTeamDTO
 ): Promise<Team> => {
   try {
-    console.log("TEAMET SOM SKA SKAPAS: ", newTeam);
     const response = await fetch(apiUrl + "/create", {
       method: "POST",
       headers: {

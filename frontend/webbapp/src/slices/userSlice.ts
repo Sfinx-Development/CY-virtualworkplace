@@ -21,7 +21,6 @@ export const createUserAsync = createAsyncThunk<
   try {
     const createdUser = await FetchCreateUseer(user);
     if (createdUser) {
-      console.log("created user: ", createdUser);
       return createdUser;
     } else {
       return thunkAPI.rejectWithValue("failed to add user");
