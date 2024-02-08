@@ -11,8 +11,13 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
+<<<<<<<< HEAD:backend/core/Migrations/20240204133601_initialwithnewconfig.Designer.cs
     [Migration("20240204133601_initialwithnewconfig")]
     partial class initialwithnewconfig
+========
+    [Migration("20240208205749_againnew123")]
+    partial class againnew123
+>>>>>>>> 2a4b8b5497a6d97bacd89127c02018499f9b0620:backend/core/Migrations/20240208205749_againnew123.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,6 +207,12 @@ namespace core.Migrations
 
                     b.Property<bool>("IsOwner")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastActive")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("LastOnline")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Role")
                         .IsRequired()

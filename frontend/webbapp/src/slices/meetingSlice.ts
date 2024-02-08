@@ -1,14 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateMeetingDTO, Meeting } from "../../types";
-import { FetchCreateMeeting, FetchGetMyMeetings } from "../api/meeting";
+import { CreateMeetingDTO, Meeting, Team, MeetingRoom } from "../../types";
+import { FetchCreateMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam } from "../api/meeting";
+
 
 interface MeetingState {
   meetings: Meeting[] | undefined;
+  teams: Team[] | undefined;
+  meetingroom: MeetingRoom | undefined;
   error: string | null;
 }
 
 export const initialState: MeetingState = {
   meetings: undefined,
+  teams: undefined,
+  meetingroom: undefined,
   error: null,
 };
 
@@ -49,6 +54,28 @@ export const GetMyMeetingsAsync = createAsyncThunk<
   }
 });
 
+export const Getmyactiveroom = createAsyncThunk<
+  MeetingRoom,
+  string,
+  { rejectValue: string }
+>("meetingroom/getmyactiveroom", async (teamId, thunkAPI) => {
+  try {
+    const myActiveRoom = await FetchGetMeetingRoomByTeam(teamId);
+    if (myActiveRoom) {
+      console.log("Room hämtade:", myActiveRoom);
+      return myActiveRoom;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av lag."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av team.");
+  }
+});
+
+
+
 const meetingSlice = createSlice({
   name: "meeting",
   initialState,
@@ -73,7 +100,21 @@ const meetingSlice = createSlice({
       .addCase(GetMyMeetingsAsync.rejected, (state) => {
         state.meetings = undefined;
         state.error = "Något gick fel med hämtandet av möte.";
+      })
+      .addCase(Getmyactiveroom.fulfilled, (state, action) => {
+        console.log("Fulfilled action payload:", action.payload);
+        if (action.payload) {
+          console.log(action.payload)
+          state.meetingroom = action.payload; // Uppdatera meetingroom i state
+          state.error = null;
+        }
+      })
+      .addCase(Getmyactiveroom.rejected, (state) => {
+        state.meetingroom = undefined;
+        state.error = "Något gick fel med hämtandet av mötesrum.";
       });
+   
+    
   },
 });
 
