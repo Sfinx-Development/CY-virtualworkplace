@@ -12,4 +12,5 @@ public interface IProfileService
     Task DeleteProfile(Profile profile);
     Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO);
     Task<List<Profile>> GetProfilesByTeamId(string userId, string teamId);
+    Task<List<ProfileHboDTO>> GetOnlineProfilesByTeam(User user, string teamId);
 }

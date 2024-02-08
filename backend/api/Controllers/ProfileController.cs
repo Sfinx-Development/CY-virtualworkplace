@@ -54,6 +54,36 @@ namespace Controllers
             }
         }
 
+        [HttpPost("online")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Profile>>> GetOnlineProfilesByTeamId(
+            [FromBody] string teamId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var profiles = await _profileService.GetOnlineProfilesByTeam(loggedInUser, teamId);
+                profiles.ForEach(p => Console.WriteLine("ONLIINE: " + p.FullName));
+                return Ok(profiles);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         [HttpPost("byauth")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Profile>>> GetProfileByAuthAndTeam(

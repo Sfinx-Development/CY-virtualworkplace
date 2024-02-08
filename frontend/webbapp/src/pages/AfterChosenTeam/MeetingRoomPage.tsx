@@ -11,7 +11,11 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileHubDTO } from "../../../types";
-import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+import {
+  GetMyProfileAsync,
+  GetOnlineProfiles,
+  GetTeamProfiles,
+} from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -24,45 +28,68 @@ export default function MeetingRoom() {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
+  const [loadedOnlineProfiles, setLoadedOnlineProfiles] = useState(false);
+  const onlineProfiles = useAppSelector(
+    (state) => state.profileSlice.onlineProfiles
+  );
 
   const [profilesInRoom, setProfilesInRoom] = useState<ProfileHubDTO[]>([]);
+
+  const addNewProfilesToRoom = (newProfiles: ProfileHubDTO[]) => {
+    setProfilesInRoom((prevProfiles) => {
+      const profilesToSetInRoom: ProfileHubDTO[] = [];
+      newProfiles.forEach((p) => {
+        const profileExistsInRoom = prevProfiles.some(
+          (pr) => pr.profileId === p.profileId
+        );
+        if (!profileExistsInRoom) {
+          profilesToSetInRoom.push(p);
+        }
+      });
+      return [...prevProfiles, ...profilesToSetInRoom];
+    });
+  };
 
   useEffect(() => {
     dispatch(getActiveTeam());
   }, [dispatch]);
 
   useEffect(() => {
-    if (activeTeam) {
+    if (activeTeam && !loadedOnlineProfiles) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
+      dispatch(GetOnlineProfiles(activeTeam?.id));
     }
-  }, [dispatch, activeTeam]);
+  }, [dispatch, activeTeam, loadedOnlineProfiles]);
+
+  useEffect(() => {
+    if (onlineProfiles && onlineProfiles.length > 0) {
+      setLoadedOnlineProfiles(true);
+      addNewProfilesToRoom(onlineProfiles);
+    }
+  }, [onlineProfiles]);
 
   useEffect(() => {
     const connection = Connector.getInstance();
 
-    // Prenumerera på händelser
     connection.events = {
       profileOnline: (profile: ProfileHubDTO) => {
-        setProfilesInRoom((prevProfiles) => [...prevProfiles, profile]);
+        if (!profilesInRoom.some((p) => p.profileId == profile.profileId)) {
+          setProfilesInRoom((prevProfiles) => [...prevProfiles, profile]);
+        }
       },
       profileOffline: (profileId: string) => {
         setProfilesInRoom((prevProfiles) =>
           prevProfiles.filter((p) => p.profileId !== profileId)
         );
       },
-      profileOnlineInTeams: (onlineProfiles: ProfileHubDTO[]) => {
-        setProfilesInRoom(onlineProfiles);
-      },
     };
 
-    // Komponentrensning
     return () => {
       if (connection) {
         Connector.getInstance().events = {
           profileOnline: () => {},
           profileOffline: () => {},
-          profileOnlineInTeams: () => {},
         };
       }
     };
@@ -76,7 +103,6 @@ export default function MeetingRoom() {
           connection.getConnectionState() !==
           signalR.HubConnectionState.Connected
         ) {
-          // Starta anslutningen om den inte redan är igång
           await connection.start();
         }
         if (activeProfile) {
@@ -119,7 +145,6 @@ export default function MeetingRoom() {
 
     enterMeetingRoom();
 
-    // Komponentrensning
     return () => {
       leaveMeetingRoom();
     };
@@ -127,7 +152,6 @@ export default function MeetingRoom() {
 
   const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
   const isMobile = window.innerWidth <= 500;
-  // const isMobile = window.innerWidth <= 500;
   const meetingRoomColor = theme1.palette.room.main;
   const leaveColor = theme1.palette.leave.main;
   const navigate = useNavigate();

@@ -7,6 +7,7 @@ public interface IProfileRepository
     Task<List<Profile>> GetByUserIdAsync(string userId);
 
     Task<List<Profile>> GetProfilesInTeamAsync(string teamId);
+    Task<List<Profile>> GetOnlineProfilesInTeamAsync(string teamId);
 
     Task<Profile> GetByIdAsync(string profileId);
 

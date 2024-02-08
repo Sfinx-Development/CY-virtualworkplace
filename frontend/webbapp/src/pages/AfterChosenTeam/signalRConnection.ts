@@ -9,7 +9,7 @@ class Connector {
   public events: {
     profileOnline: (profile: ProfileHubDTO) => void;
     profileOffline: (profileId: string) => void;
-    profileOnlineInTeams: (onlineProfiles:ProfileHubDTO[]) => void;
+    // teamProfilesOnline: (onlineProfiles: ProfileHubDTO[]) => void;
   };
   static instance: Connector;
 
@@ -18,7 +18,7 @@ class Connector {
     this.events = {
       profileOnline: () => {},
       profileOffline: () => {},
-      profileOnlineInTeams: () => {},
+      // teamProfilesOnline: () => {},
     };
 
     this.connection = new signalR.HubConnectionBuilder()
@@ -30,10 +30,13 @@ class Connector {
       this.events.profileOnline(profile);
     });
 
-    this.connection.on("profileOnlineInTeams", (onlineProfiles: ProfileHubDTO[]) => {
-      this.events.profileOnlineInTeams(onlineProfiles);
-    });
-
+    // this.connection.on(
+    //   "teamProfilesOnline",
+    //   (onlineProfiles: ProfileHubDTO[]) => {
+    //     this.events.teamProfilesOnline(onlineProfiles);
+    //     console.log(onlineProfiles);
+    //   }
+    // );
 
     this.connection.on("profileOffline", (profileId: string) => {
       this.events.profileOffline(profileId);

@@ -45,19 +45,17 @@ public class MeetingRoomHub : Hub
     }
 
     //OJ HUB INTE HBO HEHE ändra sen ok angelina
-    public async Task<List<ProfileHboDTO>> GetOnlineProfilesInTeam(string teamId)
+    public async Task<List<ProfileHboDTO>> ProfileOnlineInTeams(string teamId)
     {
         // alla som är onliine i teamet redan
-        var profilesInTeam = await _profileRepository.GetProfilesInTeamAsync(teamId);
-        List<Profile> onlineProfiles = new();
+        var onlineProfilesInTeam = await _profileRepository.GetOnlineProfilesInTeamAsync(teamId);
+
         List<ProfileHboDTO> onlineHubProfiles = new();
-        if (profilesInTeam != null)
+
+        if (onlineProfilesInTeam != null && onlineProfilesInTeam.Count > 0)
         {
-            onlineProfiles = profilesInTeam.Where(p => p.IsOnline == true).ToList();
-        }
-        if (onlineProfiles != null && onlineProfiles.Count > 0)
-        {
-            onlineHubProfiles = onlineProfiles
+            Console.WriteLine("HÄR");
+            onlineHubProfiles = onlineProfilesInTeam
                 .Select(
                     p =>
                         new ProfileHboDTO(
@@ -71,6 +69,7 @@ public class MeetingRoomHub : Hub
                 )
                 .ToList();
         }
+        onlineHubProfiles.ForEach(p => Console.WriteLine("ONLINE:   " + p.FullName));
         return onlineHubProfiles;
     }
 }

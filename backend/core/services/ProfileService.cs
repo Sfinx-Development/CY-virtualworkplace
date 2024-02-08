@@ -109,6 +109,38 @@ public class ProfileService : IProfileService
         }
     }
 
+    public async Task<List<ProfileHboDTO>> GetOnlineProfilesByTeam(User user, string teamId)
+    {
+        try
+        {
+            var team = await _teamRepository.GetByIdAsync(teamId);
+            if (team.Profiles.Any(p => p.UserId == user.Id))
+            {
+                var onlineProfiles = await _profileRepository.GetOnlineProfilesInTeamAsync(team.Id);
+                List<ProfileHboDTO> onlineProfilesDTO = new();
+                onlineProfilesDTO = onlineProfiles
+                    .Select(
+                        p =>
+                            new ProfileHboDTO(
+                                p.Id,
+                                p.FullName,
+                                p.TeamId,
+                                p.IsOnline,
+                                p.LastOnline,
+                                p.LastActive
+                            )
+                    )
+                    .ToList();
+                return onlineProfilesDTO;
+            }
+            throw new Exception("Endast team medlem kan hämta info om online profiler.");
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
+
     public async Task<Profile> UpdateProfile(ProfileUpdateDTO profile)
     {
         try

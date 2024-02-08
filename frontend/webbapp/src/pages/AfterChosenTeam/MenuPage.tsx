@@ -1,6 +1,7 @@
 import GroupsIcon from "@mui/icons-material/Groups";
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -22,7 +23,7 @@ export default function Menu() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   // const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  // const primaryColor = theme1.palette.primary.main;
+  const primaryColor = theme1.palette.primary.main;
   const officeColor = theme1.palette.office.main;
   const meetingRoomColor = theme1.palette.room.main;
   const chatRoomColor = theme1.palette.chat.main;
@@ -31,6 +32,7 @@ export default function Menu() {
   const navigate = useNavigate();
   //sätta activeteam i reducer? ls? koolla det
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -40,6 +42,14 @@ export default function Menu() {
       dispatch(GetTeamProfiles(activeTeam?.id));
     }
   }, [activeTeam]);
+
+  const copyCodeToClipboard = () => {
+    if (activeTeam) {
+      navigator.clipboard.writeText(activeTeam.code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
 
   //löser inte denna typningen - ska kolla på det - elina hjälp
   const handleMouseEnter = (event) => {
@@ -69,9 +79,24 @@ export default function Menu() {
           alignItems: "center",
         }}
       >
-        <Typography variant={isMobile ? "h6" : "h4"}>
-          {activeTeam?.name}
-        </Typography>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h4" sx={{ textAlign: "center" }}>
+            {activeTeam?.name}
+          </Typography>
+          <Button
+            onClick={copyCodeToClipboard}
+            variant="contained"
+            sx={{ mt: 2 }}
+          >
+            Kod: {activeTeam?.code}
+          </Button>
+        </div>
       </div>
       <div
         style={{
