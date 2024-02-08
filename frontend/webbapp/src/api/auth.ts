@@ -10,7 +10,6 @@ export const FetchForgotPassword = async (email: string): Promise<boolean> => {
       },
       body: JSON.stringify(email),
     });
-    console.log("response: ", response);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid mailutskick av nytt lösenord.");

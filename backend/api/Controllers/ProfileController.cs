@@ -54,6 +54,36 @@ namespace Controllers
             }
         }
 
+        [HttpPost("online")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Profile>>> GetOnlineProfilesByTeamId(
+            [FromBody] string teamId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var profiles = await _profileService.GetOnlineProfilesByTeam(loggedInUser, teamId);
+                profiles.ForEach(p => Console.WriteLine("ONLIINE: " + p.FullName));
+                return Ok(profiles);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         [HttpPost("byauth")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Profile>>> GetProfileByAuthAndTeam(
@@ -86,14 +116,11 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<Profile>> UpdateProfile(Profile profile)
+        public async Task<ActionResult<Profile>> UpdateProfile(ProfileUpdateDTO profileUpdateDTO)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
 
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
@@ -101,20 +128,20 @@ namespace Controllers
                 }
                 var loggedInUser = await _jwtService.GetByJWT(jwt);
 
+                Console.WriteLine("LOGGED IN: ", loggedInUser.Id);
+
                 if (loggedInUser == null)
                 {
                     return BadRequest("JWT token is missing.");
                 }
 
-                if (loggedInUser.Profiles.Any(p => p.Id == profile.Id))
+                if (profileUpdateDTO.UserId != loggedInUser.Id)
                 {
-                    Profile updatedProfile = await _profileService.UpdateProfile(profile);
-                    return Ok(updatedProfile);
+                    return BadRequest("Profile doesn't belong to user.");
                 }
-                else
-                {
-                    return BadRequest("Profile not found.");
-                }
+
+                Profile updatedProfile = await _profileService.UpdateProfile(profileUpdateDTO);
+                return Ok(updatedProfile);
             }
             catch (Exception e)
             {

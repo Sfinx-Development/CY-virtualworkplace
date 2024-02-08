@@ -62,6 +62,30 @@ public class ProfileRepository : IProfileRepository
         }
     }
 
+   public async Task<List<Profile>> GetOnlineProfilesInTeamAsync(string teamId)
+    {
+        try
+        {
+            List<Profile> profiles = await _cyDbContext
+                .Profiles.Include(p => p.Team)
+                .Where(p => p.Team.Id == teamId && p.IsOnline == true)
+                .ToListAsync();
+
+            if (profiles == null)
+            {
+                throw new Exception();
+            }
+            else
+            {
+                return profiles;
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
     public async Task<Profile> GetByIdAsync(string profileId)
     {
         try
@@ -104,7 +128,7 @@ public class ProfileRepository : IProfileRepository
         }
     }
 
-    public async Task<Profile> UpdateAsync(Profile profile)
+    public async Task<Profile> UpdateAsync(ProfileUpdateDTO profile)
     {
         try
         {
@@ -118,6 +142,7 @@ public class ProfileRepository : IProfileRepository
             profileToUpdate.FullName = profile.FullName ?? profileToUpdate.FullName;
             profileToUpdate.Role = profile.Role ?? profileToUpdate.Role;
             profileToUpdate.IsOwner = profile.IsOwner;
+            profileToUpdate.IsOnline = profile.IsOnline;
 
             _cyDbContext.Profiles.Update(profileToUpdate);
 

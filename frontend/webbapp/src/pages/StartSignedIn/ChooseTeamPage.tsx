@@ -34,7 +34,6 @@ export default function ChooseTeam() {
     //hämtar usern så att den är uppdaterad med jwtn - måste fixa så att om inte usern finns så loggas man ut
     dispatch(getUserAsync());
     dispatch(GetMyTeamsAsync());
-    console.log("MY TEAMS:", myTeams);
   }, []);
   const isMobile = window.innerWidth <= 500;
 

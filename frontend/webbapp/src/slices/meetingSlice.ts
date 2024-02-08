@@ -25,7 +25,6 @@ export const createMeetingAsync = createAsyncThunk<
   try {
     const createdMeeting = await FetchCreateMeeting(meeting);
     if (createdMeeting) {
-      console.log("created meeting: ", createdMeeting);
       return createdMeeting;
     } else {
       return thunkAPI.rejectWithValue("failed to add meeting");
@@ -36,16 +35,14 @@ export const createMeetingAsync = createAsyncThunk<
   }
 });
 
-
 export const GetMyMeetingsAsync = createAsyncThunk<
-    Meeting[],
+  Meeting[],
   void,
   { rejectValue: string }
 >("meeting/getmymeetings", async (_, thunkAPI) => {
   try {
     const myMeetings = await FetchGetMyMeetings();
     if (myMeetings) {
-      console.log("Möten hämtade:", myMeetings);
       return myMeetings;
     } else {
       return thunkAPI.rejectWithValue(
@@ -95,7 +92,6 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med skapandet av team.";
       })
       .addCase(GetMyMeetingsAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           state.meetings = action.payload;
           state.error = null;

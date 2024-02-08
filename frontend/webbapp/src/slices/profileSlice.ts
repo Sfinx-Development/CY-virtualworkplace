@@ -1,11 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Profile } from "../../types";
-import { FetchGetTeamProfiles, FetchMyProfile } from "../api/profile";
+import { Profile, ProfileHubDTO } from "../../types";
+import {
+  FetchGetTeamProfiles,
+  FetchMyProfile,
+  FetchOnlineProfiles,
+  FetchUpdateProfile,
+} from "../api/profile";
 
 interface ProfileState {
   profiles: Profile[] | undefined;
   activeProfile: Profile | undefined;
   error: string | null;
+  onlineProfiles: ProfileHubDTO[] | undefined;
 }
 
 const saveProfilesToLocalStorage = (profiles: Profile[]) => {
@@ -27,6 +33,7 @@ export const initialState: ProfileState = {
   profiles: loadProfilesFromLocalStorage(),
   activeProfile: loadActiveProfileFromLocalStorage(),
   error: null,
+  onlineProfiles: [],
 };
 
 export const GetTeamProfiles = createAsyncThunk<
@@ -37,7 +44,6 @@ export const GetTeamProfiles = createAsyncThunk<
   try {
     const teamProfiles = await FetchGetTeamProfiles(teamId);
     if (teamProfiles) {
-      console.log("profiler hämtade:", teamProfiles);
       saveProfilesToLocalStorage(teamProfiles);
       return teamProfiles;
     } else {
@@ -52,6 +58,28 @@ export const GetTeamProfiles = createAsyncThunk<
   }
 });
 
+export const GetOnlineProfiles = createAsyncThunk<
+  ProfileHubDTO[],
+  string,
+  { rejectValue: string }
+>("profile/getOnlineProfiles", async (teamId, thunkAPI) => {
+  try {
+    const onlineProfiles = await FetchOnlineProfiles(teamId);
+    if (onlineProfiles) {
+      console.log("ONLINEEEEEEEEEEEEEEEE:: ", onlineProfiles);
+      return onlineProfiles;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av online profiler."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtning av online profiler."
+    );
+  }
+});
+
 export const GetMyProfileAsync = createAsyncThunk<
   Profile,
   string,
@@ -60,7 +88,28 @@ export const GetMyProfileAsync = createAsyncThunk<
   try {
     const myProfile = await FetchMyProfile(teamId);
     if (myProfile) {
-      console.log("profil hämtade:", myProfile);
+      saveActiveProfileToLocalStorage(myProfile);
+      return myProfile;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av profiler."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtning av profiler."
+    );
+  }
+});
+
+export const UpdateProfileAsync = createAsyncThunk<
+  Profile,
+  Profile,
+  { rejectValue: string }
+>("profile/updateProfile", async (profile, thunkAPI) => {
+  try {
+    const myProfile = await FetchUpdateProfile(profile);
+    if (myProfile) {
       saveActiveProfileToLocalStorage(myProfile);
       return myProfile;
     } else {
@@ -99,7 +148,6 @@ const profileSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(GetTeamProfiles.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           state.profiles = action.payload;
           state.error = null;
@@ -107,16 +155,35 @@ const profileSlice = createSlice({
       })
       .addCase(GetTeamProfiles.rejected, (state) => {
         state.profiles = undefined;
-        state.error = "Något gick fel med hämtandet av profiler.";
+        state.error = "Något gick fel med hämtandet av online profiler.";
+      })
+      .addCase(GetOnlineProfiles.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.onlineProfiles = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetOnlineProfiles.rejected, (state) => {
+        state.onlineProfiles = undefined;
+        state.error = "Något gick fel med hämtandet av online profiler.";
       })
       .addCase(GetMyProfileAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           state.activeProfile = action.payload;
           state.error = null;
         }
       })
       .addCase(GetMyProfileAsync.rejected, (state) => {
+        state.activeProfile = undefined;
+        state.error = "Något gick fel med hämtandet av aktiv profil.";
+      })
+      .addCase(UpdateProfileAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeProfile = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(UpdateProfileAsync.rejected, (state) => {
         state.activeProfile = undefined;
         state.error = "Något gick fel med hämtandet av aktiv profil.";
       });

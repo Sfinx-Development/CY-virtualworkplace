@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240202143536_again")]
-    partial class again
+    [Migration("20240204133601_initialwithnewconfig")]
+    partial class initialwithnewconfig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -192,6 +192,13 @@ namespace core.Migrations
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool?>("IsOnline")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsOwner")
                         .HasColumnType("tinyint(1)");
