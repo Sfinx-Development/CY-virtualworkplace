@@ -66,7 +66,7 @@ namespace Controllers
             }
         }
 
-     [HttpGet]
+     [HttpPost("meetingroom")]
 [Authorize]
 public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody]string teamId)
 {

@@ -9,16 +9,18 @@ import {
 
 } from "@mui/material";
 import { useAppDispatch } from "../../slices/store";
-import { createMeetingAsync } from "../../slices/meetingSlice";
+import { createMeetingAsync, Getmyactiveroom } from "../../slices/meetingSlice";
 import { CreateMeetingDTO } from "../../../types";
 import { useAppSelector } from "../../slices/store";
-import { getActiveTeam } from "../../slices/teamSlice";
+import { getActiveTeam} from "../../slices/teamSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
+
 
 
 export default function CreateMeetingPage() {
   const dispatch = useAppDispatch();
   const meetings = useAppSelector((state) => state.meetingSlice.meetings);
+  const meetingroom = useAppSelector((state) => state.meetingSlice.meetingroom);
   const error = useAppSelector((state) => state.meetingSlice.error);
 
   const [newMeetingName, setNewMeetingName] = useState("");
@@ -27,7 +29,7 @@ export default function CreateMeetingPage() {
   const [newMeetingMinutes, setNewMeetingMinutes] = useState(0);
   const [newMeetingIsRepeating, setNewMeetingIsRepeating] = useState(false);
   const [newMeetingRoomId, setNewMeetingRoomId] = useState("");
-  const [owner, setOwner] = useState("");
+  const [, setOwner] = useState("");
   const [newMeetingInterval, setNewMeetingInterval] = useState(0);
   const [newMeetingEndDate, setNewMeetingEndDate] = useState("");
   const [fieldError, setFieldError] = useState(false);
@@ -37,14 +39,16 @@ export default function CreateMeetingPage() {
 
     useEffect(() => {
       dispatch(getActiveTeam());
+     
     }, []);
-  
+
     useEffect(() => {
-      if (activeTeam) {
-        ("hämtar profilen");
-        dispatch(GetMyProfileAsync(activeTeam?.id));
-      }
-    }, [activeTeam]);
+     if(activeTeam){
+      dispatch(GetMyProfileAsync(activeTeam?.id));
+      
+      dispatch(Getmyactiveroom(activeTeam.id));
+     }
+  },[activeTeam] );
  
   const handleCreateMeeting = async () => {
     console.log("name: ", newMeetingName);
@@ -57,7 +61,7 @@ export default function CreateMeetingPage() {
       newMeetingName !== "" &&
       newMeetingDescription !== "" &&
       newMeetingDate !== "" &&
-      activeProfile
+      activeProfile && meetingroom
     ) {
       setFieldError(false);
   
@@ -71,7 +75,7 @@ export default function CreateMeetingPage() {
         date: parsedDate,
         minutes: newMeetingMinutes.toString(),
         isRepeating: newMeetingIsRepeating,
-        roomId: newMeetingRoomId, // Non-null assertion operator
+        roomId: meetingroom.id, // Non-null assertion operator
         ownerId: activeProfile.id,
         interval: intervalAsString,
         endDate: parsedEndDate,
@@ -168,20 +172,16 @@ export default function CreateMeetingPage() {
             />
           </>
         )}
-        <TextField
-          label="Room ID"
-          value={newMeetingRoomId}
-          onChange={(e) => setNewMeetingRoomId(e.target.value)}
-          variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
-        <TextField
-          label="Owner"
-          value={owner}
-          onChange={(e) => setOwner(e.target.value)}
-          variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
+<TextField
+  type="hidden"
+  value={newMeetingRoomId}
+  onChange={(e) => setNewMeetingRoomId(e.target.value)} // Använd 'e' här
+/>
+<TextField
+  type="hidden"
+  value={activeProfile?.id || ""}
+  onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
+/>
         <Button variant="contained" onClick={handleCreateMeeting}>
           Create Meeting
         </Button>
