@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-
-} from "@mui/material";
+import React, { useState } from "react";
+import { Container, Typography, TextField, Button } from "@mui/material";
 import { useAppDispatch } from "../../slices/store";
-import { createMeetingAsync, Getmyactiveroom } from "../../slices/meetingSlice";
+import { createMeetingAsync } from "../../slices/meetingSlice";
 import { CreateMeetingDTO } from "../../../types";
 import { useAppSelector } from "../../slices/store";
-import { getActiveTeam} from "../../slices/teamSlice";
-import { GetMyProfileAsync } from "../../slices/profileSlice";
-
-
 
 export default function CreateMeetingPage() {
   const dispatch = useAppDispatch();
   const meetings = useAppSelector((state) => state.meetingSlice.meetings);
-  const meetingroom = useAppSelector((state) => state.meetingSlice.meetingroom);
   const error = useAppSelector((state) => state.meetingSlice.error);
 
   const [newMeetingName, setNewMeetingName] = useState("");
@@ -29,73 +16,54 @@ export default function CreateMeetingPage() {
   const [newMeetingMinutes, setNewMeetingMinutes] = useState(0);
   const [newMeetingIsRepeating, setNewMeetingIsRepeating] = useState(false);
   const [newMeetingRoomId, setNewMeetingRoomId] = useState("");
-  const [, setOwner] = useState("");
+  const [owner, setOwner] = useState("");
   const [newMeetingInterval, setNewMeetingInterval] = useState(0);
   const [newMeetingEndDate, setNewMeetingEndDate] = useState("");
   const [fieldError, setFieldError] = useState(false);
-  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const activeProfile = useAppSelector((state) => state.profileSlice.activeProfile);
 
-
-    useEffect(() => {
-      dispatch(getActiveTeam());
-     
-    }, []);
-
-    useEffect(() => {
-     if(activeTeam){
-      dispatch(GetMyProfileAsync(activeTeam?.id));
-      
-      dispatch(Getmyactiveroom(activeTeam.id));
-     }
-  },[activeTeam] );
- 
   const handleCreateMeeting = async () => {
-    console.log("name: ", newMeetingName);
-    console.log("des: ", newMeetingDescription);
-    console.log("date: ", newMeetingDate);
-    console.log("nmin: ", newMeetingMinutes);
-    console.log("activeprofile id: ", activeProfile?.id);
-    console.log("roomid: ", newMeetingRoomId);
     if (
       newMeetingName !== "" &&
       newMeetingDescription !== "" &&
       newMeetingDate !== "" &&
-      activeProfile && meetingroom
+      newMeetingRoomId !== "" &&
+      owner !== ""
     ) {
       setFieldError(false);
-  
+
       const intervalAsString = newMeetingInterval.toString();
       const parsedDate = new Date(newMeetingDate);
       const parsedEndDate = new Date(newMeetingEndDate);
-  
+
       const meetingDto: CreateMeetingDTO = {
         name: newMeetingName,
         description: newMeetingDescription,
         date: parsedDate,
         minutes: newMeetingMinutes.toString(),
         isRepeating: newMeetingIsRepeating,
-        roomId: meetingroom.id, // Non-null assertion operator
-        ownerId: activeProfile.id,
+        roomId: newMeetingRoomId,
+        ownerId: owner,
         interval: intervalAsString,
         endDate: parsedEndDate,
       };
-  
+
+      
       await dispatch(createMeetingAsync(meetingDto));
-  
+
+     
       setNewMeetingName("");
       setNewMeetingDescription("");
       setNewMeetingDate("");
       setNewMeetingMinutes(0);
       setNewMeetingIsRepeating(false);
+      setNewMeetingRoomId("");
+      setOwner("");
       setNewMeetingInterval(0);
       setNewMeetingEndDate("");
-      setOwner(""); // Återställ owner-fältet
     } else {
       setFieldError(true);
     }
   };
-  
 
   return (
     <Container sx={{ padding: "20px" }}>
@@ -140,52 +108,52 @@ export default function CreateMeetingPage() {
           variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={newMeetingIsRepeating}
-              onChange={() =>
-                setNewMeetingIsRepeating(!newMeetingIsRepeating)
-              }
-            />
-          }
+        <TextField
           label="Repeating"
+          type="checkbox"
+          value={newMeetingIsRepeating}
+          onChange={(e) => {
+            if (e.target instanceof HTMLInputElement) {
+              setNewMeetingIsRepeating(e.target.checked);
+            }
+          }}
+          variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
-        {newMeetingIsRepeating && (
-          <>
-            <TextField
-              label="Interval"
-              type="number"
-              value={newMeetingInterval}
-              onChange={(e) => setNewMeetingInterval(parseInt(e.target.value, 10))}
-              variant="outlined"
-              sx={{ width: "250px", marginTop: 2 }}
-            />
-            <TextField
-              label="End Date"
-              type="datetime-local"
-              value={newMeetingEndDate}
-              onChange={(e) => setNewMeetingEndDate(e.target.value)}
-              variant="outlined"
-              sx={{ width: "250px", marginTop: 2 }}
-            />
-          </>
-        )}
-<TextField
-  type="hidden"
-  value={newMeetingRoomId}
-  onChange={(e) => setNewMeetingRoomId(e.target.value)} // Använd 'e' här
-/>
-<TextField
-  type="hidden"
-  value={activeProfile?.id || ""}
-  onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
-/>
+        <TextField
+          label="Room ID"
+          value={newMeetingRoomId}
+          onChange={(e) => setNewMeetingRoomId(e.target.value)}
+          variant="outlined"
+          sx={{ width: "250px", marginTop: 2 }}
+        />
+        <TextField
+          label="Owner"
+          value={owner}
+          onChange={(e) => setOwner(e.target.value)}
+          variant="outlined"
+          sx={{ width: "250px", marginTop: 2 }}
+        />
+        <TextField
+          label="Interval"
+          type="number"
+          value={newMeetingInterval}
+          onChange={(e) => setNewMeetingInterval(parseInt(e.target.value, 10))}
+          variant="outlined"
+          sx={{ width: "250px", marginTop: 2 }}
+        />
+        <TextField
+          label="End Date"
+          type="datetime-local"
+          value={newMeetingEndDate}
+          onChange={(e) => setNewMeetingEndDate(e.target.value)}
+          variant="outlined"
+          sx={{ width: "250px", marginTop: 2 }}
+        />
         <Button variant="contained" onClick={handleCreateMeeting}>
           Create Meeting
         </Button>
-
+       
         {meetings && (
           <div>
             <Typography variant="h6">Latest Meeting:</Typography>
@@ -198,8 +166,6 @@ export default function CreateMeetingPage() {
     </Container>
   );
 }
-
-
 
 
 
