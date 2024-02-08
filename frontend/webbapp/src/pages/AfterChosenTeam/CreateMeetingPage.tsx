@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -12,6 +12,9 @@ import { useAppDispatch } from "../../slices/store";
 import { createMeetingAsync } from "../../slices/meetingSlice";
 import { CreateMeetingDTO } from "../../../types";
 import { useAppSelector } from "../../slices/store";
+import { getActiveTeam } from "../../slices/teamSlice";
+import { GetMyProfileAsync } from "../../slices/profileSlice";
+
 
 export default function CreateMeetingPage() {
   const dispatch = useAppDispatch();
@@ -28,48 +31,67 @@ export default function CreateMeetingPage() {
   const [newMeetingInterval, setNewMeetingInterval] = useState(0);
   const [newMeetingEndDate, setNewMeetingEndDate] = useState("");
   const [fieldError, setFieldError] = useState(false);
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const activeProfile = useAppSelector((state) => state.profileSlice.activeProfile);
 
+
+    useEffect(() => {
+      dispatch(getActiveTeam());
+    }, []);
+  
+    useEffect(() => {
+      if (activeTeam) {
+        ("hämtar profilen");
+        dispatch(GetMyProfileAsync(activeTeam?.id));
+      }
+    }, [activeTeam]);
+ 
   const handleCreateMeeting = async () => {
+    console.log("name: ", newMeetingName);
+    console.log("des: ", newMeetingDescription);
+    console.log("date: ", newMeetingDate);
+    console.log("nmin: ", newMeetingMinutes);
+    console.log("activeprofile id: ", activeProfile?.id);
+    console.log("roomid: ", newMeetingRoomId);
     if (
       newMeetingName !== "" &&
       newMeetingDescription !== "" &&
       newMeetingDate !== "" &&
-      newMeetingRoomId !== "" &&
-      owner !== ""
+      activeProfile
     ) {
       setFieldError(false);
-
+  
       const intervalAsString = newMeetingInterval.toString();
       const parsedDate = new Date(newMeetingDate);
       const parsedEndDate = new Date(newMeetingEndDate);
-
+  
       const meetingDto: CreateMeetingDTO = {
         name: newMeetingName,
         description: newMeetingDescription,
         date: parsedDate,
         minutes: newMeetingMinutes.toString(),
         isRepeating: newMeetingIsRepeating,
-        roomId: newMeetingRoomId,
-        ownerId: owner,
+        roomId: newMeetingRoomId, // Non-null assertion operator
+        ownerId: activeProfile.id,
         interval: intervalAsString,
         endDate: parsedEndDate,
       };
-
+  
       await dispatch(createMeetingAsync(meetingDto));
-
+  
       setNewMeetingName("");
       setNewMeetingDescription("");
       setNewMeetingDate("");
       setNewMeetingMinutes(0);
       setNewMeetingIsRepeating(false);
-      setNewMeetingRoomId("");
-      setOwner("");
       setNewMeetingInterval(0);
       setNewMeetingEndDate("");
+      setOwner(""); // Återställ owner-fältet
     } else {
       setFieldError(true);
     }
   };
+  
 
   return (
     <Container sx={{ padding: "20px" }}>

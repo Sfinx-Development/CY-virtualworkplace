@@ -17,9 +17,9 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly MeetingService _meetingService;
-        private readonly MeetingRoomServie _meetingRoomService;
+        private readonly IMeetingRoomService _meetingRoomService;
 
-        public MeetingController(JwtService jwtService, MeetingService meetingService, MeetingRoomServie meetingRoomService)
+        public MeetingController(JwtService jwtService, MeetingService meetingService, IMeetingRoomService meetingRoomService)
         {
             _jwtService = jwtService;
             _meetingService = meetingService;
@@ -85,16 +85,9 @@ public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody]st
             return BadRequest("Failed to get user.");
         }
 
-        if (loggedInUser.Profiles.Any(p => p.Id == teamId))
-        {
-            // Anropa din MeetingService för att hämta mötesrumet baserat på teamets ID
             MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
-                return Ok(meetingRoom);
-        }
-        else
-        {
-            throw new Exception("The owner of meeting is not in line with the JWT bearer.");
-        }
+            return Ok(meetingRoom);
+  
     }
     catch (Exception e)
     {
