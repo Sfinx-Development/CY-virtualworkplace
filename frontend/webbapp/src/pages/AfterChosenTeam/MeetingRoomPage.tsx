@@ -244,8 +244,39 @@ export default function MeetingRoom() {
                 </Typography>
               </CardContent>
             </Box>
+            
           </CardActionArea>
         </Card>
+
+        
+        <Card
+          sx={{
+            display: "flex",
+            minWidth: isMobile ? "100px" : "250px",
+            backgroundColor: meetingRoomColor,
+          }}
+        >
+          <CardActionArea
+            onClick={() => {
+              navigate("/meetinginteam");
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <CardContent sx={{ flex: "1 0 auto" }}>
+                <Typography
+                  component="div"
+                  variant="h6"
+                  sx={{ textAlign: "center" }}
+                >
+                Teamets möten
+                </Typography>
+              </CardContent>
+            </Box>
+            
+          </CardActionArea>
+        </Card>
+
+
         <Card
           sx={{
             display: "flex",

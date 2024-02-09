@@ -17,6 +17,7 @@ import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import EnterHouse from "./pages/StartSignedIn/EnterHousePage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
+import MeetingInTeamsPage from "./pages/AfterChosenTeam/MeetingInTeam";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
 
@@ -54,6 +55,7 @@ const Navigation = () => {
           <Route path="signin" element={<SignIn />} />
           <Route path="createaccount" element={<CreateAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
+          <Route path="meetinginteam" element={<MeetingInTeamsPage/>} />
         </Route>
       ) : (
         <Route element={<RootLayout />}>

@@ -11,6 +11,7 @@ import InviteUserToMeetingScreen from "../screens/InviteUsersToMeetingScreen";
 import JoinTeamScreen from "../screens/JoinTeamScreen";
 import SignInScreen from "../screens/SignInScreen";
 
+
 export type RootStackParamList = {
   SignIn: undefined;
   CreateUser: undefined;
