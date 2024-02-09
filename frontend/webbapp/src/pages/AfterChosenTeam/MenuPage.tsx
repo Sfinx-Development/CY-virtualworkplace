@@ -15,6 +15,7 @@ import { GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
+import Connector from "./signalRConnection";
 
 export default function Menu() {
   // const { id } = useParams<{ id: string }>();
@@ -36,6 +37,7 @@ export default function Menu() {
 
   useEffect(() => {
     dispatch(getActiveTeam());
+    Connector.getInstance().start();
   }, []);
   useEffect(() => {
     if (activeTeam) {

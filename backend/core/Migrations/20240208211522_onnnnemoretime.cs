@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace core.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:backend/core/Migrations/20240204133601_initialwithnewconfig.cs
-    public partial class initialwithnewconfig : Migration
-========
-    public partial class againnew123 : Migration
->>>>>>>> 2a4b8b5497a6d97bacd89127c02018499f9b0620:backend/core/Migrations/20240208205749_againnew123.cs
+    public partial class onnnnemoretime : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -136,13 +132,9 @@ namespace core.Migrations
                     TeamId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DateCreated = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-<<<<<<<< HEAD:backend/core/Migrations/20240204133601_initialwithnewconfig.cs
-                    IsOnline = table.Column<bool>(type: "tinyint(1)", nullable: true)
-========
                     IsOnline = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     LastOnline = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     LastActive = table.Column<DateTime>(type: "datetime(6)", nullable: true)
->>>>>>>> 2a4b8b5497a6d97bacd89127c02018499f9b0620:backend/core/Migrations/20240208205749_againnew123.cs
                 },
                 constraints: table =>
                 {
