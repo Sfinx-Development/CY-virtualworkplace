@@ -59,13 +59,20 @@ export default function MeetingRoom() {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
       dispatch(GetOnlineProfiles(activeTeam?.id));
+      setLoadedOnlineProfiles(true);
     }
   }, [dispatch, activeTeam, loadedOnlineProfiles]);
 
   useEffect(() => {
     if (onlineProfiles && onlineProfiles.length > 0) {
-      setLoadedOnlineProfiles(true);
-      addNewProfilesToRoom(onlineProfiles);
+      const allProfilesLoaded = onlineProfiles.every(
+        (profile) => profile.fullName
+      );
+      if (allProfilesLoaded) {
+        setLoadedOnlineProfiles(true);
+        console.log("hämtar rofier on");
+        addNewProfilesToRoom(onlineProfiles);
+      }
     }
   }, [onlineProfiles]);
 
@@ -105,12 +112,21 @@ export default function MeetingRoom() {
         ) {
           await connection.start();
         }
-        if (activeProfile) {
-          await connection.invokeHubMethod<string>(
-            "ProfileEnterMeetingRoom",
-            activeProfile.id
-          );
-          console.log("Profil gick in i mötesrummet");
+        if (
+          connection.getConnectionState() ===
+          signalR.HubConnectionState.Connected
+        ) {
+          // Om den är det, skicka begäran om att gå in i mötesrummet
+          if (activeProfile) {
+            await connection.invokeHubMethod<string>(
+              "ProfileEnterMeetingRoom",
+              activeProfile.id
+            );
+            console.log("Profil gick in i mötesrummet");
+          }
+        } else {
+          // Om anslutningen fortfarande inte är i "Connected" -läget, visa ett felmeddelande
+          console.error("SignalR connection is not in the 'Connected' state.");
         }
       } catch (error) {
         console.error("Error sending enter meeting room request:", error);

@@ -2,7 +2,7 @@ import * as signalR from "@microsoft/signalr";
 import { ProfileHubDTO } from "../../../types";
 
 // Define your hub URL
-const hubUrl = `http://${window.location.hostname}:5290/meetingroomhub`; // Update with your hub URL
+const hubUrl = `http://${window.location.hostname}:5290/meetingroomhub`; 
 
 class Connector {
   private connection: signalR.HubConnection;
@@ -14,7 +14,6 @@ class Connector {
   static instance: Connector;
 
   private constructor() {
-    // Initialize events object
     this.events = {
       profileOnline: () => {},
       profileOffline: () => {},
