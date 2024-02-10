@@ -107,7 +107,7 @@ namespace Controllers
                         foundTeam.Id
                     );
                     // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
-                    return createdProfile.Team;
+                    return Ok(createdProfile.Team);
                 }
             }
             catch (Exception e)

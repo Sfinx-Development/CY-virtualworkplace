@@ -12,50 +12,54 @@ public class MessageService : IMessageService
     public MessageService(
         IConversationRepository conversationRepository,
         IMessageRepository messageRepository,
-        IConversationParticipantRepository conversationParticipantRepository)
+        IConversationParticipantRepository conversationParticipantRepository
+    )
     {
         _conversationRepository = conversationRepository;
         _messageRepository = messageRepository;
         _conversationParticipantRepository = conversationParticipantRepository;
     }
 
-
-public async Task<Message> CreateMessageInConversation(IncomingMessageDTO incomingMessageDTO, string loggedInUserId)
-{
-    try
+    public async Task<Message> CreateMessageInConversation(
+        IncomingMessageDTO incomingMessageDTO,
+        string loggedInUserId
+    )
     {
-        var conversationParticipant = await _conversationParticipantRepository.GetConversationById(incomingMessageDTO.ConversationParticipantId);
-
-        if (conversationParticipant == null)
+        try
         {
-            throw new Exception("Conversation participant not found.");
-        }
+            var conversationParticipant =
+                await _conversationParticipantRepository.GetConversationParticipantById(
+                    incomingMessageDTO.ConversationParticipantId
+                );
 
-        if (conversationParticipant.Profile.UserId == loggedInUserId)
-        {
-         
-            var newMessage = new Message
+            if (conversationParticipant == null)
             {
-                Id = Utils.GenerateRandomId(),
-                ConversationParticipantId = conversationParticipant.Id,
-                Content = incomingMessageDTO.Content,
-                DateCreated = DateTime.Now
-            };
+                throw new Exception("Conversation participant not found.");
+            }
 
-            
-            return await _messageRepository.CreateAsync(newMessage);
+            if (conversationParticipant.Profile.UserId == loggedInUserId)
+            {
+                var newMessage = new Message
+                {
+                    Id = Utils.GenerateRandomId(),
+                    ConversationParticipantId = conversationParticipant.Id,
+                    Content = incomingMessageDTO.Content,
+                    DateCreated = DateTime.Now,
+                    ConversationId = conversationParticipant.ConversationId
+                };
+
+                return await _messageRepository.CreateAsync(newMessage);
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
-        else
+        catch (Exception)
         {
             throw new Exception();
         }
     }
-    catch (Exception)
-    {
-        throw new Exception();
-    }
-}
-
 
     // public async List<Message> GetAll(Conversation conversation, User user)
     // {
@@ -94,4 +98,3 @@ public async Task<Message> CreateMessageInConversation(IncomingMessageDTO incomi
     //     }
     // }
 }
-

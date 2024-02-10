@@ -52,13 +52,13 @@ public class CyDbContext : DbContext
 
         modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
 
-        modelBuilder.Entity<ConversationParticipant>().HasMany(c => c.Messages);
-
         modelBuilder
             .Entity<ConversationParticipant>()
             .HasOne(cp => cp.Profile)
             .WithMany(p => p.ConversationParticipants);
 
         modelBuilder.Entity<ConversationParticipant>().HasOne(cp => cp.Conversation);
+
+        modelBuilder.Entity<Conversation>().HasMany(c => c.Messages);
     }
 }

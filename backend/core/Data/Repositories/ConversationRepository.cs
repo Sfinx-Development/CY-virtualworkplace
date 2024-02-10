@@ -1,7 +1,6 @@
 using Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace core;
 
 public class ConversationRepository : IConversationRepository
@@ -41,24 +40,22 @@ public class ConversationRepository : IConversationRepository
     {
         try
         {
-            var teamet = _cyDbContext.Teams
-                .Include(t => t.Profiles)
+            var teamet = _cyDbContext
+                .Teams.Include(t => t.Profiles)
                 .ThenInclude(p => p.ConversationParticipants)
                 .ThenInclude(cp => cp.Conversation)
                 .FirstOrDefault(t => t.Id == team.Id);
 
-              
+            var profileWithoutMyId = team.Profiles.FirstOrDefault(profile => profile.Id != myId);
+            var conversation = profileWithoutMyId.ConversationParticipants;
 
-                var profileWithoutMyId = team.Profiles.FirstOrDefault(profile => profile.Id != myId);
-                  var conversation = profileWithoutMyId.ConversationParticipants;
-
-//    var commonConversationId = _cyDbContext.ConversationParticipants
-//     .Where(cp => profiles.Contains(cp.Profile))
-//     .GroupBy(cp => cp.ConversationId)
-//     .FirstOrDefault()?.Key;
+            //    var commonConversationId = _cyDbContext.ConversationParticipants
+            //     .Where(cp => profiles.Contains(cp.Profile))
+            //     .GroupBy(cp => cp.ConversationId)
+            //     .FirstOrDefault()?.Key;
 
 
-    return " ";
+            return " ";
         }
         catch (Exception e)
         {
@@ -68,15 +65,19 @@ public class ConversationRepository : IConversationRepository
 
     public async Task<Conversation> GetConversationByTeamId(string teamId)
     {
-         try
-           {
-              var conversation = await _cyDbContext.Conversations.Where(c =>c.TeamId == teamId).FirstAsync();
-                return conversation;
-            }
-            catch (Exception e)
-            {
-                throw new Exception();
-            }
+        try
+        {
+            var conversation = await _cyDbContext
+                .Conversations.Include(c => c.Messages)
+                .ThenInclude(m => m.ConversationParticipant)
+                .Where(c => c.TeamId == teamId)
+                .FirstAsync();
+            return conversation;
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
     }
     //     public async Task<Conversation> Update(Conversation conversation)
     //     {
@@ -110,7 +111,7 @@ public class ConversationRepository : IConversationRepository
     //     {
     //         Conversation conversation = await _cyDbContext
     //             .Conversations.Include(c => c.Participants)
-    //             .Include(c => c.Messages)  
+    //             .Include(c => c.Messages)
     //             .Where(c => c.Id == id)
     //             .FirstOrDefaultAsync();
 
@@ -176,4 +177,3 @@ public class ConversationRepository : IConversationRepository
     //             return conversation?.Participants;
     //         }
 }
-

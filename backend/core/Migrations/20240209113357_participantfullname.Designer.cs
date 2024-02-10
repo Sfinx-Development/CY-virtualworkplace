@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using core;
 
@@ -10,9 +11,11 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    partial class CyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240209113357_participantfullname")]
+    partial class participantfullname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -173,7 +176,6 @@ namespace core.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ConversationId")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("ConversationParticipantId")
@@ -416,9 +418,7 @@ namespace core.Migrations
                 {
                     b.HasOne("core.Conversation", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ConversationId");
 
                     b.HasOne("core.ConversationParticipant", "ConversationParticipant")
                         .WithMany()

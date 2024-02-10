@@ -2,7 +2,8 @@ namespace core
 {
     public class ConversationParticipantDTO
     {
-        public string ProfileCreatorId { get; set; }
-        public string ProfileParticipantId { get; set; }
+        public string Id { get; set; }
+        public string ProfileId { get; set; }
+        public string ConversationId { get; set; }
     }
 }
