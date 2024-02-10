@@ -96,7 +96,13 @@ export interface MeetingOccasion {
   id: string;
   meetingId: string;
   profileId: string;
+  name:string;
+  description:string;
+  date:Date;
+  minutes:number;
+  roomId:string;
 }
+
 
 export interface Message {
   id: string;

@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateMeetingDTO, Meeting, Team, MeetingRoom } from "../../types";
+import { CreateMeetingDTO, Meeting, Team, MeetingRoom, MeetingOccasion } from "../../types";
 import { FetchCreateMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam } from "../api/meeting";
 
 
 interface MeetingState {
   meetings: Meeting[] | undefined;
+  occasions: MeetingOccasion[] | undefined;
   teams: Team[] | undefined;
   meetingroom: MeetingRoom | undefined;
   error: string | null;
@@ -12,6 +13,7 @@ interface MeetingState {
 
 export const initialState: MeetingState = {
   meetings: undefined,
+  occasions: undefined,
   teams: undefined,
   meetingroom: undefined,
   error: null,
@@ -36,12 +38,12 @@ export const createMeetingAsync = createAsyncThunk<
 });
 
 export const GetMyMeetingsAsync = createAsyncThunk<
-  Meeting[],
-  void,
+  MeetingOccasion[],
+  string,
   { rejectValue: string }
->("meeting/getmymeetings", async (_, thunkAPI) => {
+>("meeting/getmymeetings", async (profileId, thunkAPI) => {
   try {
-    const myMeetings = await FetchGetMyMeetings();
+    const myMeetings = await FetchGetMyMeetings(profileId);
     if (myMeetings) {
       return myMeetings;
     } else {
@@ -92,13 +94,15 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med skapandet av team.";
       })
       .addCase(GetMyMeetingsAsync.fulfilled, (state, action) => {
+        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
-          state.meetings = action.payload;
+          console.log(action.payload)
+          state.occasions = action.payload;
           state.error = null;
         }
       })
       .addCase(GetMyMeetingsAsync.rejected, (state) => {
-        state.meetings = undefined;
+        state.occasions = undefined;
         state.error = "Något gick fel med hämtandet av möte.";
       })
       .addCase(Getmyactiveroom.fulfilled, (state, action) => {

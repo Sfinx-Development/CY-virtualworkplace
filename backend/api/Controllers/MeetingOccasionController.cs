@@ -28,21 +28,18 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpGet]
+         [HttpPost("meetingoccasion")]
         //när vi hämtar alla ens KOMMANDE mötestillfällen så uppdateras mötet till senaste tiden om återkommande
-        public async Task<ActionResult<List<MeetingOccasion>>> Get([FromBody] string profileId)
+        public async Task<ActionResult<List<OutgoingOcassionDTO>>> Get([FromBody] string profileId)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
-
+                var jwt = Request.Cookies["jwttoken"];
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
                 }
+
                 var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)
@@ -55,8 +52,25 @@ namespace Controllers
                     var meetingOccasions = await _meetingOccasionService.GetOccasionsByProfileId(
                         profileId
                     );
+                    var outgoingOccasionDtos = new List<OutgoingOcassionDTO>();
 
-                    return Ok(meetingOccasions);
+                            outgoingOccasionDtos = meetingOccasions
+                .Select(
+                    m =>
+                        new OutgoingOcassionDTO(
+                            m.Id,
+                            m.Meeting.Id,
+                            m.Profile.Id,
+                            m.Meeting.Name,
+                            m.Meeting.Description,
+                            m.Meeting.Date,
+                            m.Meeting.Minutes,
+                            m.Meeting.RoomId
+                        )
+                )
+                .ToList();
+
+                    return Ok(outgoingOccasionDtos);
                 }
                 else
                 {
@@ -75,15 +89,12 @@ namespace Controllers
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
-
+                var jwt = Request.Cookies["jwttoken"];
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
                 }
+
                 var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)

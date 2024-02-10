@@ -18,6 +18,7 @@ public class MeetingRepository : IMeetingRepository
         {
             await _cyDbContext.Meetings.AddAsync(meeting);
             await _cyDbContext.SaveChangesAsync();
+            Console.WriteLine("MÖTET HAR SPARATS TILL DATANASEN : ", meeting);
 
             return meeting;
         }

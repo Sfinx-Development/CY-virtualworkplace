@@ -28,11 +28,11 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<Meeting>> Post(IncomingMeetingDTO incomingMeetingDTO)
+        public async Task<ActionResult<Meeting>> Post([FromBody]IncomingMeetingDTO incomingMeetingDTO)
         {
             try
             {
-                   var jwt = Request.Cookies["jwttoken"];
+                var jwt = Request.Cookies["jwttoken"];
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
@@ -66,34 +66,34 @@ namespace Controllers
             }
         }
 
-     [HttpPost("meetingroom")]
-[Authorize]
-public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody]string teamId)
-{
-    try
-    {
-        var jwt = Request.Cookies["jwttoken"];
-        if (string.IsNullOrWhiteSpace(jwt))
+        [HttpPost("meetingroom")]
+        [Authorize]
+        public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody] string teamId)
         {
-            return BadRequest("JWT token is missing.");
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
+                return Ok(meetingRoom);
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
-
-        var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-        if (loggedInUser == null)
-        {
-            return BadRequest("Failed to get user.");
-        }
-
-            MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
-            return Ok(meetingRoom);
-  
-    }
-    catch (Exception e)
-    {
-        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    }
-}
 
 
 
@@ -167,30 +167,32 @@ public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody]st
             }
         }
 
-        [HttpGet]
+        [HttpPost("allmeetings")]
         [Authorize]
         public async Task<ActionResult<Meeting>> Get([FromBody] string meetingId)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
-
+                var jwt = Request.Cookies["jwttoken"];
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
                 }
+
                 var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)
                 {
-                    return BadRequest("JWT token is missing.");
+                    return BadRequest("Failed to get user.");
                 }
+
 
                 Meeting meeting = await _meetingService.GetById(meetingId, loggedInUser.Id);
                 return Ok(meeting);
+
+
+                // MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
+                // return Ok(meetingRoom);
             }
             catch (Exception e)
             {
