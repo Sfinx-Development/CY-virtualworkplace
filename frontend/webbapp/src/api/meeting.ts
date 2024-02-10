@@ -1,23 +1,27 @@
-import { CreateMeetingDTO, Meeting, MeetingRoom, } from "../../types";
+import { CreateMeetingDTO, Meeting, MeetingOccasion, MeetingRoom, } from "../../types";
 
-const apiUrl = `http://${window.location.hostname}:5290/meeting`;
+const meetingapiUrl = `http://${window.location.hostname}:5290/meeting`;
+const meetingOccasionapiUrl = `http://${window.location.hostname}:5290/meetingoccasion`;
 
-export const FetchGetMyMeetings = async (): Promise<Meeting[]> => {
+export const FetchGetMyMeetings = async (profileId: string): Promise<MeetingOccasion[]> => {
   try {
-    const response = await fetch(apiUrl, {
-      method: "GET",
+    const response = await fetch(meetingOccasionapiUrl + "/meetingoccasion", {
+      method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(profileId),
     });
     const responseBody = await response.json();
+    console.log("RESPONSEBODYN : ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av meetings");
     }
     //VAFÖR BEHÖVA GÖRA SÅHÄR??
-    const data = responseBody.$values as Meeting[];
+    const data = responseBody.$values as MeetingOccasion[];
+    console.log("RESPONSE NÄR DEN ÄR TYPAD: ", data);
     return data;
   } catch (error) {
     console.error(error);
@@ -29,7 +33,8 @@ export const FetchCreateMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<Meeting> => {
   try {
-    const response = await fetch(apiUrl + "/create", {
+    console.log("MÖTESDATUM SOM SKICKAS IN I REQUESTEN: ", newMeeting.date);
+    const response = await fetch(meetingapiUrl + "/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -55,7 +60,7 @@ export const FetchCreateMeeting = async (
 
 export const FetchGetMeetingRoomByTeam= async (teamId: string): Promise<MeetingRoom> => {
   try {
-    const response = await fetch(apiUrl + "/meetingroom", {
+    const response = await fetch(meetingapiUrl + "/meetingroom", {
       method: "POST",
       credentials: "include",
       headers: {

@@ -1,6 +1,7 @@
+using Interfaces;
+using System;
 namespace core;
 
-using Interfaces;
 
 public class MeetingService
 {
@@ -29,13 +30,14 @@ public class MeetingService
             Room room = await _roomService.GetRoomById(incomingMeetingDTO.RoomId);
             Profile profile = await _profileRepository.GetByIdAsync(incomingMeetingDTO.OwnerId);
 
+            //add hours är bara SÅLÄNGE tills vi vet hur man serialiserar date -> datetime korrekt
             Meeting meeting =
                 new()
                 {
                     Id = Utils.GenerateRandomId(),
                     Name = incomingMeetingDTO.Name,
                     Description = incomingMeetingDTO.Description,
-                    Date = incomingMeetingDTO.Date,
+                    Date = incomingMeetingDTO.Date.AddHours(1),
                     Minutes = incomingMeetingDTO.Minutes,
                     Room = room,
                     OwnerId = incomingMeetingDTO.OwnerId,

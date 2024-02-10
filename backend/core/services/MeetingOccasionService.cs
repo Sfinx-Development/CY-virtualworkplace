@@ -59,7 +59,9 @@ public class MeetingOccasionService : IMeetingOccasionService
         //om det är återkommande möte och datumet har gått ut
         if (meeting.IsRepeating && IsDatePast(meeting) && DateTime.Now <= meeting.EndDate)
         {
-            var nextDate = meeting.Date.AddDays(meeting.Interval);
+             var nextDate = meeting.Date.AddDays(meeting.Interval);
+            // var nextDate = meeting.Date.AddDays(meeting.Interval).ToUniversalTime();
+
             if (DateTime.Now <= nextDate)
             {
                 meeting.Date = nextDate;
