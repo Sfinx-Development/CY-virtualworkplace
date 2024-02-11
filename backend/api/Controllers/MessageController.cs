@@ -30,7 +30,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Send")]
-        public async Task<ActionResult<Message>> CreateMessage(
+        public async Task<ActionResult<OutgoingMessageDTO>> CreateMessage(
             IncomingMessageDTO incomingMessageDTO
         )
         {
@@ -59,8 +59,16 @@ namespace Controllers
                 {
                     return BadRequest("Failed to send message.");
                 }
+                var outgoingMessageDTO = new OutgoingMessageDTO(
+                    createdMessage.Content,
+                    createdMessage.DateCreated,
+                    createdMessage.ConversationParticipantId,
+                    createdMessage.ConversationId,
+                    createdMessage.ConversationParticipant.FullName,
+                    createdMessage.ConversationParticipant.ProfileId
+                );
 
-                return createdMessage;
+                return outgoingMessageDTO;
             }
             catch (Exception e)
             {

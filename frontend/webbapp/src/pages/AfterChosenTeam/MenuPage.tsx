@@ -112,7 +112,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              width: isMobile ? "40px" : "200px",
+              width: isMobile ? "100px" : "200px",
               marginTop: isMobile ? 10 : 20,
               marginBottom: 4,
               backgroundColor: meetingRoomColor,
@@ -127,8 +127,8 @@ export default function Menu() {
                 <CardContent sx={{ flex: "1 0 auto" }}>
                   <Typography
                     component="div"
-                    variant="h5"
-                    sx={{ textAlign: "center" }}
+                    // variant="h5"
+                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
                   >
                     Mötesrum
                   </Typography>
@@ -140,7 +140,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              width: isMobile ? "40px" : "200px",
+              width: isMobile ? "100px" : "200px",
               backgroundColor: chatRoomColor,
             }}
           >
@@ -153,8 +153,8 @@ export default function Menu() {
                 <CardContent sx={{ flex: "1 0 auto" }}>
                   <Typography
                     component="div"
-                    variant="h5"
-                    sx={{ textAlign: "center" }}
+                    // variant="h5"
+                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
                   >
                     Chattrum
                   </Typography>
@@ -205,7 +205,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              width: isMobile ? "40px" : "200px",
+              width: isMobile ? "100px" : "200px",
               marginTop: isMobile ? 5 : 15,
               marginBottom: 4,
               backgroundColor: officeColor,
@@ -220,8 +220,8 @@ export default function Menu() {
                 <CardContent sx={{ flex: "1 0 auto" }}>
                   <Typography
                     component="div"
-                    variant="h5"
-                    sx={{ textAlign: "center" }}
+                    // variant="h5"
+                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
                   >
                     Mitt Kontor
                   </Typography>
@@ -232,7 +232,7 @@ export default function Menu() {
           <Card
             sx={{
               display: "flex",
-              width: isMobile ? "40px" : "200px",
+              width: isMobile ? "100px" : "200px",
               backgroundColor: leaveColor,
             }}
           >
@@ -245,8 +245,8 @@ export default function Menu() {
                 <CardContent sx={{ flex: "1 0 auto" }}>
                   <Typography
                     component="div"
-                    variant="h5"
-                    sx={{ textAlign: "center" }}
+                    // variant="h5"
+                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
                   >
                     Lämna
                   </Typography>

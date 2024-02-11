@@ -240,15 +240,13 @@ export default function MeetingRoom() {
                   variant="h6"
                   sx={{ textAlign: "center" }}
                 >
-                  Skapa möte i teamet
+                  Skapa möte
                 </Typography>
               </CardContent>
             </Box>
-            
           </CardActionArea>
         </Card>
 
-        
         <Card
           sx={{
             display: "flex",
@@ -268,14 +266,12 @@ export default function MeetingRoom() {
                   variant="h6"
                   sx={{ textAlign: "center" }}
                 >
-                Teamets möten
+                  Teamets möten
                 </Typography>
               </CardContent>
             </Box>
-            
           </CardActionArea>
         </Card>
-
 
         <Card
           sx={{

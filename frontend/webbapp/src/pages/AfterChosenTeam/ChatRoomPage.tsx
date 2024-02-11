@@ -1,6 +1,6 @@
 import { Button, Card, Container, TextField, Typography } from "@mui/material";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MessageInput } from "../../../types";
 import {
   CreateMessageAsync,
@@ -15,6 +15,7 @@ import { theme1 } from "../../theme";
 
 export default function ChatRoom() {
   const dispatch = useAppDispatch();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
 
@@ -41,8 +42,13 @@ export default function ChatRoom() {
   const [content, setContent] = useState("");
 
   useEffect(() => {
+    scrollToBottom();
     dispatch(getActiveTeam());
   }, []);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (activeTeam) {
@@ -72,6 +78,7 @@ export default function ChatRoom() {
         content: content,
       };
       dispatch(CreateMessageAsync(message));
+      setContent("");
     }
   };
 
@@ -93,12 +100,15 @@ export default function ChatRoom() {
       }}
     >
       <Card
+        className="card-content"
         sx={{
           padding: 2,
           backgroundColor: "transparent",
           border: 2,
           borderColor: chatColor,
           flexGrow: 1,
+          height: "350px",
+          overflow: "auto",
         }}
       >
         <Typography>{activeTeam?.name} - chatt </Typography>
@@ -108,51 +118,65 @@ export default function ChatRoom() {
             <Card
               key={message.id}
               sx={{
-                marginTop: 2,
+                padding: 1.5,
+                marginTop: 1,
                 backgroundColor:
                   message.conversationParticipantId === activeParticipant.id
-                    ? "lightgrey"
-                    : chatColor,
+                    ? "rgba(200, 200, 200, 0.4)"
+                    : "rgba(243, 228, 250, 0.4)",
                 display: "flex",
                 flexDirection: "column",
-                alignItems:
-                  message.conversationParticipantId === activeParticipant.id
-                    ? "flex-end"
-                    : "flex-start",
+                // alignItems:
+                //   message.conversationParticipantId === activeParticipant.id
+                //     ? "flex-end"
+                //     : "flex-start",
               }}
             >
               <div style={{ display: "flex", flexDirection: "row" }}>
-                <Typography style={{ fontWeight: "bold", fontSize: 12 }}>
-                  {message.fullName}
-                </Typography>
-                <Typography style={{ marginLeft: "8px", fontSize: 12 }}>
+                {message.fullName && (
+                  <Typography style={{ fontWeight: "bold", fontSize: 11 }}>
+                    {message.fullName}
+                  </Typography>
+                )}
+                <Typography style={{ marginLeft: "8px", fontSize: 11 }}>
                   {formatDate(message.dateCreated)}
                 </Typography>
               </div>
 
-              <Typography>{message.content}</Typography>
+              <Typography style={{ fontSize: 13 }}>
+                {message.content}
+              </Typography>
+              <div ref={messagesEndRef} />
             </Card>
           ))}
+        <Container
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            marginTop: "10px",
+            flex: 1,
+          }}
+        >
+          <TextField
+            label="Skriv meddelande"
+            fullWidth
+            variant="outlined"
+            value={content}
+            type="text"
+            onChange={(e) => setContent(e.target.value)}
+            sx={{ marginRight: "10px" }}
+            onKeyDown={(e) => {
+              if (e.key == "Enter") {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+          />
+          <Button variant="contained" onClick={handleSendMessage}>
+            Skicka
+          </Button>
+        </Container>
       </Card>
-      <Container
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          marginTop: "20px",
-        }}
-      >
-        <TextField
-          label="Skriv meddelande"
-          variant="outlined"
-          value={content}
-          type="text"
-          onChange={(e) => setContent(e.target.value)}
-          sx={{ marginRight: "10px" }}
-        />
-        <Button variant="contained" onClick={handleSendMessage}>
-          Skicka
-        </Button>
-      </Container>
     </Container>
   );
 }
