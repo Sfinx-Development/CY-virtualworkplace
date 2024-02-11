@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateMeetingDTO, Meeting, MeetingRoom, MeetingOccasion } from "../../types";
-import { FetchCreateMeeting,FetchCreateTeamMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam } from "../api/meeting";
+import { FetchCreateMeeting,FetchCreateTeamMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam, FetchGetMyPastMeetings } from "../api/meeting";
 
 
 interface MeetingState {
   meetings: Meeting[] | undefined;
   occasions: MeetingOccasion[] | undefined;
   teamMeetings: Meeting[] | undefined;
+  pastOccasions: MeetingOccasion[] | undefined;
   meetingroom: MeetingRoom | undefined;
   error: string | null;
 }
@@ -15,6 +16,7 @@ export const initialState: MeetingState = {
   meetings: undefined,
   occasions: undefined,
  teamMeetings: undefined,
+ pastOccasions: undefined,
   meetingroom: undefined,
   error: null,
 };
@@ -64,6 +66,25 @@ export const GetMyMeetingsAsync = createAsyncThunk<
     const myMeetings = await FetchGetMyMeetings(profileId);
     if (myMeetings) {
       return myMeetings;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av lag."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av lag.");
+  }
+});
+
+export const GetMyPastMeetingsAsync = createAsyncThunk<
+  MeetingOccasion[],
+  string,
+  { rejectValue: string }
+>("meeting/getmypastmeetings", async (profileId, thunkAPI) => {
+  try {
+    const myPastMeetings = await FetchGetMyPastMeetings(profileId);
+    if (myPastMeetings) {
+      return myPastMeetings;
     } else {
       return thunkAPI.rejectWithValue(
         "Ett fel inträffade vid hämtning av lag."
@@ -130,6 +151,18 @@ const meetingSlice = createSlice({
       })
       .addCase(GetMyMeetingsAsync.rejected, (state) => {
         state.occasions = undefined;
+        state.error = "Något gick fel med hämtandet av möte.";
+      })
+      .addCase(GetMyPastMeetingsAsync.fulfilled, (state, action) => {
+        console.log("Fulfilled action payload:", action.payload);
+        if (action.payload) {
+          console.log(action.payload)
+          state.pastOccasions = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetMyPastMeetingsAsync.rejected, (state) => {
+        state.pastOccasions = undefined;
         state.error = "Något gick fel med hämtandet av möte.";
       })
       .addCase(Getmyactiveroom.fulfilled, (state, action) => {

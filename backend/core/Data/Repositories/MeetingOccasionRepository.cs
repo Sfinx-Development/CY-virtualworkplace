@@ -70,6 +70,8 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
         }
     }
 
+  
+
     // public async Task<Meeting> UpdateAsync(Meeting meeting)
     // {
     //     try

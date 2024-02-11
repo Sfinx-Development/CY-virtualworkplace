@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../slices/store";
-import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
+import { GetMyMeetingsAsync, GetMyPastMeetingsAsync } from "../../slices/meetingSlice";
 import {
   GetMyProfileAsync,
   GetOnlineProfiles,
@@ -33,23 +33,50 @@ export default function MeetingInTeamsPage() {
   useEffect(() => {
     if(activeProfile){
       dispatch(GetMyMeetingsAsync(activeProfile.id));
+      dispatch(GetMyPastMeetingsAsync(activeProfile.id))
     }
   }, [activeProfile]);
 
+  const currentDate = new Date();
+  const upcomingMeetings = occasions
+    ? occasions.filter((occasion) => new Date(occasion.date) >= currentDate)
+    : [];
+  
+  const pastMeetings = useAppSelector((state) => state.meetingSlice.pastOccasions) || [];
+
   return (
     <Container>
-      <Typography variant="h4">Här är dina möten</Typography>
+      <Typography variant="h4">Mötes scheman för {activeTeam?.name}</Typography>
 
       <Box>
-        {occasions && occasions.map((occasion) => (
-          <Card key={occasion.id}>
-            <CardContent>
-              <Typography>{occasion.name
-              } - {occasion.date.toString()}</Typography>
-              {/* Display other meeting details as needed */}
-            </CardContent>
-          </Card>
-        ))}
+        {upcomingMeetings.length > 0 && (
+          <Box>
+            <Typography variant="h5">Kommande möten</Typography>
+            {upcomingMeetings?.map((meeting) => (
+              <Card key={meeting.id} style={{ marginBottom: "15px" }}>
+                <CardContent>
+                  <Typography variant="subtitle1">{meeting.name}</Typography>
+                  <Typography variant="body2">{meeting.date.toString()}</Typography>
+                  <Typography>{meeting.description}</Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        )}
+
+        {pastMeetings.length > 0 && (
+          <Box>
+            <Typography variant="h5">Passerade möten</Typography>
+            {pastMeetings?.map((meeting) => (
+              <Card key={meeting.id} style={{ marginBottom: "15px" }}>
+                <CardContent>
+                  <Typography variant="subtitle1">{meeting.name}</Typography>
+                  <Typography variant="body2">{meeting.date.toString()} - {meeting.description}</Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        )}
       </Box>
     </Container>
   );

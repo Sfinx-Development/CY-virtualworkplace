@@ -29,6 +29,32 @@ export const FetchGetMyMeetings = async (profileId: string): Promise<MeetingOcca
   }
 };
 
+export const FetchGetMyPastMeetings = async (profileId: string): Promise<MeetingOccasion[]> => {
+  try {
+    const response = await fetch(meetingOccasionapiUrl + "/pastmeetingoccasion", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileId),
+    });
+    const responseBody = await response.json();
+    console.log("RESPONSEBODYN : ", responseBody);
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av meetings");
+    }
+    //VAFÖR BEHÖVA GÖRA SÅHÄR??
+    const data = responseBody.$values as MeetingOccasion[];
+    console.log("RESPONSE NÄR DEN ÄR TYPAD: ", data);
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const FetchCreateMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<Meeting> => {
