@@ -160,6 +160,7 @@ export default function CreateAccount() {
           id="password"
           label="Lösenord"
           variant="standard"
+          type="password"
           sx={{ width: "250px", marginTop: 2 }}
           onChange={(event) => {
             setPassword(event.target.value);
@@ -170,6 +171,7 @@ export default function CreateAccount() {
           id="confirmpassword"
           label="Bekräfta lösenord"
           variant="standard"
+          type="password"
           sx={{ width: "250px", marginTop: 2 }}
           onChange={(event) => {
             setConfirmedPassword(event.target.value);
