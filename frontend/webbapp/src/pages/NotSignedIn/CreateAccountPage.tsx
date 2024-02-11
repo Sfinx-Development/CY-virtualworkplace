@@ -1,4 +1,13 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -179,15 +188,23 @@ export default function CreateAccount() {
           }}
         />
 
-        <TextField
-          id="gender"
-          label="Kön"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setGender(event.target.value);
-          }}
-        />
+        <FormControl variant="standard" sx={{ width: "250px", marginTop: 2 }}>
+          <InputLabel id="demo-simple-select-standard-label">Kön</InputLabel>
+          <Select
+            labelId="demo-simple-select-standard-label"
+            id="demo-simple-select-standard"
+            value={gender}
+            onChange={(event) => {
+              setGender(event.target.value);
+            }}
+            sx={{ width: "250px", marginTop: 2 }}
+            label="Kön"
+          >
+            <MenuItem value={"Man"}>Man</MenuItem>
+            <MenuItem value={"Woman"}>Kvinna</MenuItem>
+            <MenuItem value={"Nonbinary"}>Ickebinär</MenuItem>
+          </Select>
+        </FormControl>
 
         <TextField
           id="age"
