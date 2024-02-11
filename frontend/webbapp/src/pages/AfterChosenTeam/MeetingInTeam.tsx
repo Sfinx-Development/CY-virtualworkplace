@@ -8,12 +8,19 @@ import {
 } from "../../slices/profileSlice";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { Typography, Container, Card, CardContent, Box } from "@mui/material";
+import { theme1 } from "../../theme";
 
 export default function MeetingInTeamsPage() {
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const occasions = useAppSelector(state => state.meetingSlice.occasions);
   const activeProfile = useAppSelector((state) => state.profileSlice.activeProfile);
   const [loadedOnlineProfiles, setLoadedOnlineProfiles] = useState(false);
+
+//   const primaryColor = theme1.palette.primary.main;
+  const officeColor = theme1.palette.office.main;
+//   const meetingRoomColor = theme1.palette.room.main;
+  const chatRoomColor = theme1.palette.chat.main;
+//   const leaveColor = theme1.palette.leave.main;
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -53,7 +60,7 @@ export default function MeetingInTeamsPage() {
           <Box>
             <Typography variant="h5">Kommande möten</Typography>
             {upcomingMeetings?.map((meeting) => (
-              <Card key={meeting.id} style={{ marginBottom: "15px" }}>
+              <Card key={meeting.id} style={{ marginBottom: "15px", backgroundColor: officeColor, }}>
                 <CardContent>
                   <Typography variant="subtitle1">{meeting.name}</Typography>
                   <Typography variant="body2">{meeting.date.toString()}</Typography>
@@ -68,10 +75,10 @@ export default function MeetingInTeamsPage() {
           <Box>
             <Typography variant="h5">Passerade möten</Typography>
             {pastMeetings?.map((meeting) => (
-              <Card key={meeting.id} style={{ marginBottom: "15px" }}>
+              <Card key={meeting.id} style={{ marginBottom: "15px", backgroundColor: chatRoomColor, }}>
                 <CardContent>
                   <Typography variant="subtitle1">{meeting.name}</Typography>
-                  <Typography variant="body2">{meeting.date.toString()} - {meeting.description}</Typography>
+                  <Typography variant="body2">{meeting.date.toString()}</Typography>
                 </CardContent>
               </Card>
             ))}
