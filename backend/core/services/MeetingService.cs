@@ -23,7 +23,7 @@ public class MeetingService
         _meetingOccasionRepository = meetingOccasionRepository;
     }
 
-    public async Task<Meeting> CreateAsync(IncomingMeetingDTO incomingMeetingDTO)
+    public async Task<Meeting> CreateTeamMeetingAsync(IncomingMeetingDTO incomingMeetingDTO)
     {
         try
         {
@@ -46,6 +46,63 @@ public class MeetingService
                     EndDate = incomingMeetingDTO.EndDate
                 };
 
+
+            Meeting createdMeeting = await _meetingRepository.CreateAsync(meeting);
+
+            // MeetingOccasion ownersOccasion =
+            //     new()
+            //     {
+            //         Id = Utils.GenerateRandomId(),
+            //         Profile = profile,
+            //         Meeting = meeting
+            //     };
+            // await _meetingOccasionRepository.CreateAsync(ownersOccasion);
+            var profiles = await _profileRepository.GetProfilesInTeamAsync(profile.TeamId);
+
+            foreach(Profile p in profiles)
+            {
+                    MeetingOccasion profileOccasion =
+                new()
+                {
+                    Id = Utils.GenerateRandomId(),
+                    Profile = p,
+                    Meeting = meeting
+                };
+            await _meetingOccasionRepository.CreateAsync(profileOccasion);
+            }
+
+            return createdMeeting;
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
+
+      public async Task<Meeting> CreateAsync(IncomingMeetingDTO incomingMeetingDTO)
+    {
+        try
+        {
+            Room room = await _roomService.GetRoomById(incomingMeetingDTO.RoomId);
+            Profile profile = await _profileRepository.GetByIdAsync(incomingMeetingDTO.OwnerId);
+
+            //add hours är bara SÅLÄNGE tills vi vet hur man serialiserar date -> datetime korrekt
+            Meeting meeting =
+                new()
+                {
+                    Id = Utils.GenerateRandomId(),
+                    Name = incomingMeetingDTO.Name,
+                    Description = incomingMeetingDTO.Description,
+                    Date = incomingMeetingDTO.Date.AddHours(1),
+                    Minutes = incomingMeetingDTO.Minutes,
+                    Room = room,
+                    OwnerId = incomingMeetingDTO.OwnerId,
+                    IsRepeating = incomingMeetingDTO.IsRepeating,
+                    Interval = incomingMeetingDTO.Interval,
+                    EndDate = incomingMeetingDTO.EndDate
+                };
+
+
             Meeting createdMeeting = await _meetingRepository.CreateAsync(meeting);
 
             MeetingOccasion ownersOccasion =
@@ -56,7 +113,7 @@ public class MeetingService
                     Meeting = meeting
                 };
             await _meetingOccasionRepository.CreateAsync(ownersOccasion);
-
+          
             return createdMeeting;
         }
         catch (Exception)

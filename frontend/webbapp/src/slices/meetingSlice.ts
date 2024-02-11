@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateMeetingDTO, Meeting, Team, MeetingRoom, MeetingOccasion } from "../../types";
-import { FetchCreateMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam } from "../api/meeting";
+import { CreateMeetingDTO, Meeting, MeetingRoom, MeetingOccasion } from "../../types";
+import { FetchCreateMeeting,FetchCreateTeamMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam } from "../api/meeting";
 
 
 interface MeetingState {
   meetings: Meeting[] | undefined;
   occasions: MeetingOccasion[] | undefined;
-  teams: Team[] | undefined;
+  teamMeetings: Meeting[] | undefined;
   meetingroom: MeetingRoom | undefined;
   error: string | null;
 }
@@ -14,7 +14,7 @@ interface MeetingState {
 export const initialState: MeetingState = {
   meetings: undefined,
   occasions: undefined,
-  teams: undefined,
+ teamMeetings: undefined,
   meetingroom: undefined,
   error: null,
 };
@@ -26,6 +26,24 @@ export const createMeetingAsync = createAsyncThunk<
 >("meeting/createMeeting", async (meeting, thunkAPI) => {
   try {
     const createdMeeting = await FetchCreateMeeting(meeting);
+    if (createdMeeting) {
+      return createdMeeting;
+    } else {
+      return thunkAPI.rejectWithValue("failed to add meeting");
+    }
+  } catch (error) {
+    console.error("Error creating meeting:", error);
+    return thunkAPI.rejectWithValue("Något gick fel.");
+  }
+});
+
+export const createTeamMeetingAsync = createAsyncThunk<
+  Meeting,
+  CreateMeetingDTO,
+  { rejectValue: string }
+>("meeting/createTeamMeeting", async (meeting, thunkAPI) => {
+  try {
+    const createdMeeting = await FetchCreateTeamMeeting(meeting);
     if (createdMeeting) {
       return createdMeeting;
     } else {
@@ -91,6 +109,15 @@ const meetingSlice = createSlice({
         }
       })
       .addCase(createMeetingAsync.rejected, (state) => {
+        state.error = "Något gick fel med skapandet av team.";
+      })
+      .addCase(createTeamMeetingAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.teamMeetings?.push(action.payload);
+          state.error = null;
+        }
+      })
+      .addCase(createTeamMeetingAsync.rejected, (state) => {
         state.error = "Något gick fel med skapandet av team.";
       })
       .addCase(GetMyMeetingsAsync.fulfilled, (state, action) => {

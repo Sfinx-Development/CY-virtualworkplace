@@ -9,7 +9,7 @@ import {
 
 } from "@mui/material";
 import { useAppDispatch } from "../../slices/store";
-import { createMeetingAsync, Getmyactiveroom } from "../../slices/meetingSlice";
+import { createTeamMeetingAsync, Getmyactiveroom } from "../../slices/meetingSlice";
 import { CreateMeetingDTO } from "../../../types";
 import { useAppSelector } from "../../slices/store";
 import { getActiveTeam} from "../../slices/teamSlice";
@@ -82,7 +82,7 @@ export default function CreateMeetingPage() {
         endDate: parsedEndDate,
       };
   
-      await dispatch(createMeetingAsync(meetingDto));
+      await dispatch(createTeamMeetingAsync(meetingDto));
   
       setNewMeetingName("");
       setNewMeetingDescription("");
