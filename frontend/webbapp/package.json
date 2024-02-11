@@ -22,6 +22,7 @@
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.5",
     "date-fns": "^3.3.1",
+    "google-libphonenumber": "^3.2.34",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
@@ -33,6 +34,7 @@
     "universal-cookie": "^7.0.2"
   },
   "devDependencies": {
+    "@types/google-libphonenumber": "^7.4.30",
     "@types/jwt-decode": "^3.1.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
