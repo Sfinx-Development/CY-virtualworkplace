@@ -65,6 +65,12 @@ export default function SignIn() {
     }
   }, [user, teams, signedIn]);
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSignIn();
+    }
+  };
+
   return (
     <Container
       sx={{
@@ -93,6 +99,7 @@ export default function SignIn() {
           onChange={(event) => {
             setEmail(event.target.value);
           }}
+          onKeyDown={handleKeyPress}
         />
 
         <FormControl sx={{ width: "250px", marginTop: 5 }} variant="standard">
@@ -105,6 +112,7 @@ export default function SignIn() {
             onChange={(event) => {
               setPassword(event.target.value);
             }}
+            onKeyDown={handleKeyPress}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
