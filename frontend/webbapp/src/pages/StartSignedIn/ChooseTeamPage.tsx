@@ -13,7 +13,6 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
-import { getUserAsync } from "../../slices/userSlice";
 import { theme1 } from "../../theme";
 
 export default function ChooseTeam() {
@@ -31,8 +30,8 @@ export default function ChooseTeam() {
   };
 
   useEffect(() => {
-    //hämtar usern så att den är uppdaterad med jwtn - måste fixa så att om inte usern finns så loggas man ut
-    dispatch(getUserAsync());
+    // //hämtar usern så att den är uppdaterad med jwtn - måste fixa så att om inte usern finns så loggas man ut
+    // dispatch(getUserAsync());
     dispatch(GetMyTeamsAsync());
   }, []);
   const isMobile = window.innerWidth <= 500;

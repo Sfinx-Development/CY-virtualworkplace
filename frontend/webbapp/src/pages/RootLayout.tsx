@@ -1,6 +1,6 @@
 import ComputerIcon from "@mui/icons-material/Computer";
 import { AppBar, Button, Typography } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../slices/store";
 import { logOutUserAsync } from "../slices/userSlice";
 
@@ -27,21 +27,25 @@ const RootLayout = () => {
           justifyContent: "space-between",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-          }}
+        <Link
+          to={user ? "/chooseteam" : "/"}
+          style={{ textDecoration: "none", color: "black" }}
         >
-          <ComputerIcon
-            fontSize="large"
-            sx={{ paddingRight: 2, paddingLeft: 2 }}
-          />
-          <Typography sx={{ fontSize: isMobile ? 16 : 35 }}>
-            CY Virtual Workplace
-          </Typography>
-        </div>
-
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <ComputerIcon
+              fontSize="large"
+              sx={{ paddingRight: 2, paddingLeft: 2 }}
+            />
+            <Typography sx={{ fontSize: isMobile ? 16 : 35 }}>
+              CY Virtual Workplace
+            </Typography>
+          </div>
+        </Link>
         {user ? (
           <div>
             {" "}

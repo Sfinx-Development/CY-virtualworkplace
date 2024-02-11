@@ -29,6 +29,7 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -51,17 +52,18 @@ export default function SignIn() {
         })
       );
       await dispatch(GetMyTeamsAsync());
+      setSignedIn(true);
     } catch (error) {
       console.error("Sign in error:", error);
     }
   };
 
   useEffect(() => {
-    if (user && !error && teams) {
+    if (user && !error && teams && signedIn) {
       console.log("HÄR INNE");
       navigate("/chooseteam");
     }
-  }, [user, teams]);
+  }, [user, teams, signedIn]);
 
   return (
     <Container
