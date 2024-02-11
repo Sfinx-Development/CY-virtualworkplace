@@ -3,6 +3,9 @@ namespace core;
 public interface IMeetingOccasionService
 {
     Task<List<MeetingOccasion>> GetOccasionsByProfileId(string profileId);
+    
+     Task<List<MeetingOccasion>> GetPastOccasionsByProfileId(string profileId);
+
 
     Task DeleteOccasion(string id, string userId);
 

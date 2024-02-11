@@ -84,6 +84,62 @@ namespace Controllers
         }
 
         [Authorize]
+         [HttpPost("pastmeetingoccasion")]
+        //när vi hämtar alla ens KOMMANDE mötestillfällen så uppdateras mötet till senaste tiden om återkommande
+        public async Task<ActionResult<List<OutgoingOcassionDTO>>> GetPast([FromBody] string profileId)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                if (loggedInUser.Profiles.Any(p => p.Id == profileId))
+                {
+                    var meetingOccasions = await _meetingOccasionService.GetPastOccasionsByProfileId(
+                        profileId
+                    );
+                    var outgoingOccasionDtos = new List<OutgoingOcassionDTO>();
+
+                            outgoingOccasionDtos = meetingOccasions
+                .Select(
+                    m =>
+                        new OutgoingOcassionDTO(
+                            m.Id,
+                            m.Meeting.Id,
+                            m.Profile.Id,
+                            m.Meeting.Name,
+                            m.Meeting.Description,
+                            m.Meeting.Date,
+                            m.Meeting.Minutes,
+                            m.Meeting.RoomId
+                        )
+                )
+                .ToList();
+
+                    return Ok(outgoingOccasionDtos);
+                }
+                else
+                {
+                    throw new Exception("The owner of meeting is not in line with the JWT bearer.");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [Authorize]
         [HttpDelete]
         public async Task<ActionResult> Delete([FromBody] string id)
         {

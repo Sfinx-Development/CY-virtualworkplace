@@ -49,6 +49,24 @@ public class MeetingOccasionService : IMeetingOccasionService
         }
     }
 
+    public async Task<List<MeetingOccasion>> GetPastOccasionsByProfileId(string profileId)
+{
+    try
+    {
+        var occasions = await _meetingOccasionRepository.GetAllOccasionsByProfileId(profileId);
+        var pastOccasions = occasions
+            .Where(occasion => IsDatePast(occasion.Meeting))
+            .ToList();
+
+        return pastOccasions;
+    }
+    catch (Exception)
+    {
+        throw new Exception("An error occurred while fetching past occasions.");
+    }
+}
+
+
     public static bool IsDatePast(Meeting meeting)
     {
         return DateTime.Now >= meeting.Date;

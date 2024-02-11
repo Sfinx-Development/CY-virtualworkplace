@@ -1,13 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateMeetingDTO, Meeting, MeetingRoom, MeetingOccasion } from "../../types";
-import { FetchCreateMeeting,FetchCreateTeamMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam } from "../api/meeting";
+import { FetchCreateMeeting,FetchCreateTeamMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam, FetchGetMyPastMeetings, FetchDeleteMeeting } from "../api/meeting";
 
 
 interface MeetingState {
   meetings: Meeting[] | undefined;
   occasions: MeetingOccasion[] | undefined;
   teamMeetings: Meeting[] | undefined;
+  pastOccasions: MeetingOccasion[] | undefined;
   meetingroom: MeetingRoom | undefined;
+  deletemeeting: MeetingOccasion | undefined;
   error: string | null;
 }
 
@@ -15,7 +17,9 @@ export const initialState: MeetingState = {
   meetings: undefined,
   occasions: undefined,
  teamMeetings: undefined,
+ pastOccasions: undefined,
   meetingroom: undefined,
+  deletemeeting: undefined,
   error: null,
 };
 
@@ -74,6 +78,25 @@ export const GetMyMeetingsAsync = createAsyncThunk<
   }
 });
 
+export const GetMyPastMeetingsAsync = createAsyncThunk<
+  MeetingOccasion[],
+  string,
+  { rejectValue: string }
+>("meeting/getmypastmeetings", async (profileId, thunkAPI) => {
+  try {
+    const myPastMeetings = await FetchGetMyPastMeetings(profileId);
+    if (myPastMeetings) {
+      return myPastMeetings;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av lag."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av lag.");
+  }
+});
+
 export const Getmyactiveroom = createAsyncThunk<
   MeetingRoom,
   string,
@@ -93,6 +116,22 @@ export const Getmyactiveroom = createAsyncThunk<
     return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av team.");
   }
 });
+
+export const DeleteMeetingAsync = createAsyncThunk<void, string, { rejectValue: string }>(
+  "meeting/deletemeeting",
+  async (meetingId, thunkAPI) => {
+    try {
+      // Call your API function to delete the meeting by ID
+      await FetchDeleteMeeting(meetingId);
+    } catch (error) {
+      console.error("Error deleting meeting:", error);
+      return thunkAPI.rejectWithValue("Något gick fel vid radering av möte.");
+    }
+  }
+);
+
+
+
 
 
 
@@ -132,6 +171,18 @@ const meetingSlice = createSlice({
         state.occasions = undefined;
         state.error = "Något gick fel med hämtandet av möte.";
       })
+      .addCase(GetMyPastMeetingsAsync.fulfilled, (state, action) => {
+        console.log("Fulfilled action payload:", action.payload);
+        if (action.payload) {
+          console.log(action.payload)
+          state.pastOccasions = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetMyPastMeetingsAsync.rejected, (state) => {
+        state.pastOccasions = undefined;
+        state.error = "Något gick fel med hämtandet av möte.";
+      })
       .addCase(Getmyactiveroom.fulfilled, (state, action) => {
         console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
@@ -143,7 +194,17 @@ const meetingSlice = createSlice({
       .addCase(Getmyactiveroom.rejected, (state) => {
         state.meetingroom = undefined;
         state.error = "Något gick fel med hämtandet av mötesrum.";
-      });
+      })
+      .addCase(DeleteMeetingAsync.fulfilled, (state) => {
+        // Since DeleteMeetingAsync is a delete operation, there might not be a payload.
+        state.deletemeeting = undefined;
+        state.error = null;
+      })
+      .addCase(DeleteMeetingAsync.rejected, (state) => {
+        state.occasions = undefined;
+        state.error = "Något gick fel med radering av möte.";
+      })
+      
    
     
   },
