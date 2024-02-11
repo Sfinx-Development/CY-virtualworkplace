@@ -16,11 +16,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
-import { logInUserAsync } from "../../slices/userSlice";
+import { logInUserAsync, logOutUserAsync } from "../../slices/userSlice";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
   const error = useAppSelector((state) => state.userSlice.error);
   const user = useAppSelector((state) => state.userSlice.user);
+  const teams = useAppSelector((state) => state.teamSlice.teams);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -35,27 +37,33 @@ export default function SignIn() {
     event.preventDefault();
   };
 
+  useEffect(() => {
+    console.log("LOGGAR UT");
+    dispatch(logOutUserAsync());
+  }, []);
+
   const handleSignIn = async () => {
     try {
+      console.log("LOGGAR IN");
       await dispatch(
         logInUserAsync({
           email: email,
           password: password,
         })
       );
-
       await dispatch(GetMyTeamsAsync());
+      setSignedIn(true);
     } catch (error) {
       console.error("Sign in error:", error);
     }
   };
 
   useEffect(() => {
-    // Navigera när användar- och teaminformation har hämtats
-    if (user) {
+    if (user && !error && teams && signedIn) {
+      console.log("HÄR INNE");
       navigate("/chooseteam");
     }
-  }, [user]);
+  }, [user, teams, signedIn]);
 
   return (
     <Container

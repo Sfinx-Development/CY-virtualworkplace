@@ -37,10 +37,10 @@ export const FetchLogOut = async () => {
 
     if (!response.ok) {
       throw new Error("Något gick fel vid utloggning av användare.");
+    } else if (response.ok) {
+      return true;
     }
-
-    const data = await response.json();
-    return data;
+    return false;
   } catch (error) {
     console.error(error);
     throw error;

@@ -1,4 +1,14 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { PhoneNumberUtil } from "google-libphonenumber";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "../../../types";
@@ -16,6 +26,7 @@ export default function CreateAccount() {
   const [age, setAge] = useState(0);
   const [passwordError, setPasswordError] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
   const [passwordLengthError, setPasswordLengthError] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -24,6 +35,31 @@ export default function CreateAccount() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     return emailRegex.test(email);
+  };
+
+  const isPhoneNumber = (phone: string): boolean => {
+    const phoneUtil = PhoneNumberUtil.getInstance();
+    try {
+      //gäller bara för sverige nu då - borde kolla vra personen befinner sig
+      //ev ha COUNTRY i usern? - översättning skapa också isåfall överallt till engelska iaf
+      const phoneNumberProto = phoneUtil.parse(`+46${phone}`);
+      const isValid = phoneUtil.isValidNumber(phoneNumberProto);
+
+      if (isValid) {
+        setPhoneError(false);
+        console.log("IS VALID NUMBER");
+        return true;
+      } else {
+        setPhoneError(true);
+        console.log("IS NOT VALID NUMBER");
+        return false;
+      }
+      return false;
+    } catch (e) {
+      console.error("NumberParseException was thrown:", e);
+      //sätt error meddelande - något gick fel? eller vad?
+      return false;
+    }
   };
 
   const handleCreateUser = async () => {
@@ -40,7 +76,8 @@ export default function CreateAccount() {
       if (
         password == confirmedPassword &&
         password.length >= 6 &&
-        isEmail(email)
+        isEmail(email) &&
+        isPhoneNumber(phoneNumber)
       ) {
         const newUser: User = {
           id: "",
@@ -123,6 +160,7 @@ export default function CreateAccount() {
           id="password"
           label="Lösenord"
           variant="standard"
+          type="password"
           sx={{ width: "250px", marginTop: 2 }}
           onChange={(event) => {
             setPassword(event.target.value);
@@ -133,12 +171,15 @@ export default function CreateAccount() {
           id="confirmpassword"
           label="Bekräfta lösenord"
           variant="standard"
+          type="password"
           sx={{ width: "250px", marginTop: 2 }}
           onChange={(event) => {
             setConfirmedPassword(event.target.value);
           }}
         />
-
+        {phoneError ? (
+          <Typography>Ange en giltigt telefonnummer</Typography>
+        ) : null}
         <TextField
           id="phonenumber"
           label="Telefonnummer"
@@ -149,15 +190,23 @@ export default function CreateAccount() {
           }}
         />
 
-        <TextField
-          id="gender"
-          label="Kön"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setGender(event.target.value);
-          }}
-        />
+        <FormControl variant="standard" sx={{ width: "250px", marginTop: 2 }}>
+          <InputLabel id="demo-simple-select-standard-label">Kön</InputLabel>
+          <Select
+            labelId="demo-simple-select-standard-label"
+            id="demo-simple-select-standard"
+            value={gender}
+            onChange={(event) => {
+              setGender(event.target.value);
+            }}
+            sx={{ width: "250px", marginTop: 2 }}
+            label="Kön"
+          >
+            <MenuItem value={"Man"}>Man</MenuItem>
+            <MenuItem value={"Woman"}>Kvinna</MenuItem>
+            <MenuItem value={"Nonbinary"}>Ickebinär</MenuItem>
+          </Select>
+        </FormControl>
 
         <TextField
           id="age"
