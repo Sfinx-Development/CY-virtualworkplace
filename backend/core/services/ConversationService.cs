@@ -1,5 +1,5 @@
-using Interfaces;
 using System.Linq;
+using Interfaces;
 
 namespace core
 {
@@ -11,13 +11,40 @@ namespace core
         private readonly IConversationParticipantRepository _conversationParticipantRepository;
         private readonly IMessageRepository _messageRepository;
 
-        public ConversationService(IConversationRepository conversationRepository, IProfileRepository profileRepository, ITeamRepository teamRepository, IConversationParticipantRepository conversationParticipantRepository, IMessageRepository messageRepository)
+        public ConversationService(
+            IConversationRepository conversationRepository,
+            IProfileRepository profileRepository,
+            ITeamRepository teamRepository,
+            IConversationParticipantRepository conversationParticipantRepository,
+            IMessageRepository messageRepository
+        )
         {
             _conversationRepository = conversationRepository;
             _profileRepository = profileRepository;
             _teamRepository = teamRepository;
             _conversationParticipantRepository = conversationParticipantRepository;
             _messageRepository = messageRepository;
+        }
+
+        public async Task<Conversation> GetTeamConversationWithAllMessages(
+            string teamId,
+            User loggedInUser
+        )
+        {
+            try
+            {
+                var team = await _teamRepository.GetByIdAsync(teamId);
+                if (!team.Profiles.Any(p => p.UserId == loggedInUser.Id))
+                {
+                    throw new Exception("Endast medlem i teamet får tillgång till konversationen");
+                }
+                var conversation = await _conversationRepository.GetConversationByTeamId(team.Id);
+                return conversation;
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         public async Task<Conversation> CreateTeamConversationAsync(string profileId, string teamId)
@@ -27,20 +54,6 @@ namespace core
                 var team = await _teamRepository.GetByIdAsync(teamId);
 
                 var profile = await _profileRepository.GetByIdAsync(profileId);
-
-                // if (!team.Profiles.Any(p => p.UserId == creatorUserId))
-                // {
-                //     throw new Exception();
-                // }
-
-                // var teamProfiles = await _profileRepository.GetProfilesInTeamAsync(teamId);
-
-                // if (teamProfiles == null || !teamProfiles.Any())
-                // {
-                //     throw new Exception();
-                // }
-
-                // var creatorProfile = teamProfiles.Find(p => p.UserId == creatorUserId);
 
                 var newConversation = new Conversation
                 {
@@ -52,15 +65,17 @@ namespace core
 
                 var createdConversation = await _conversationRepository.Create(newConversation);
 
+                var participant = new ConversationParticipant(
+                    createdConversation.Id,
+                    profileId,
+                    profile.FullName,
+                    profile,
+                    createdConversation
+                );
 
-                var participant = new ConversationParticipant
-                {
-                    Id = Utils.GenerateRandomId(),
-                    Profile = profile,
-                    Conversation = createdConversation
-                };
-
-                var createdParticipant = await _conversationParticipantRepository.Create(participant);
+                var createdParticipant = await _conversationParticipantRepository.Create(
+                    participant
+                );
 
                 // Lägg till logik för att spara i databasen här (t.ex. anropa en metod i _conversationService)
 
@@ -72,12 +87,17 @@ namespace core
             }
         }
 
-        public async Task<List<Message>> GetConversationWithAllMessages(string conversationParticipantId, User user)
+        public async Task<List<Message>> GetConversationWithAllMessages(
+            string conversationParticipantId,
+            User user
+        )
         {
             try
             {
-
-                var conversationParticipant = await _conversationParticipantRepository.GetConversationById(conversationParticipantId);
+                var conversationParticipant =
+                    await _conversationParticipantRepository.GetConversationParticipantById(
+                        conversationParticipantId
+                    );
 
                 if (conversationParticipant == null)
                 {
@@ -86,9 +106,13 @@ namespace core
 
                 if (user.Id == conversationParticipant.Profile.UserId)
                 {
-                    var participants = await _conversationParticipantRepository.GetAllByConversation(conversationParticipant.ConversationId);
+                    // var participants =
+                    //     await _conversationParticipantRepository.GetAllByConversation(
+                    //         conversationParticipant.ConversationId
+                    //     );
                     // var messages = await _messageRepository.GetAllMessagesInConversation(conversationParticipantId);
-                    var allMessages = participants.SelectMany(p => p.Messages).ToList();
+                    // var allMessages = conversationParticipant.Conversation.SelectMany(c => c.Messages).ToList();
+                    var allMessages = new List<Message>();
                     if (allMessages == null)
                     {
                         return new List<Message>();
@@ -107,15 +131,55 @@ namespace core
             }
         }
 
-        public async Task<ConversationParticipant> AddAutomaticProfileToConversationAsync(string profileId, Team team)
+        public async Task<ConversationParticipant> GetConversationParticipant(
+            string conversationId,
+            string profileId,
+            User loggedInUser
+        )
+        {
+            try
+            {
+                var profile = await _profileRepository.GetByIdAsync(profileId);
+
+                if (profile.UserId != loggedInUser.Id)
+                {
+                    throw new Exception("not correct user");
+                }
+
+                var conversationParticipant =
+                    await _conversationParticipantRepository.GetByConversationAndProfile(
+                        conversationId,
+                        profileId
+                    );
+                Console.WriteLine("HITTADES CP.ID: " + conversationParticipant.Id);
+
+                return conversationParticipant;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ConversationParticipant> AddAutomaticProfileToConversationAsync(
+            string profileId,
+            Team team
+        )
         {
             try
             {
                 var Profiles = team.Profiles;
-                var getConversatonId = await _conversationRepository.GetConversationByProfiles(team, profileId);
+                var getConversatonId = await _conversationRepository.GetConversationByProfiles(
+                    team,
+                    profileId
+                );
                 Console.WriteLine("CONVERSATIONSid" + getConversatonId);
 
-                var conversationParticipant = await _conversationParticipantRepository.AddToConversation(getConversatonId, profileId);
+                var conversationParticipant =
+                    await _conversationParticipantRepository.AddToConversation(
+                        getConversatonId,
+                        profileId
+                    );
 
                 if (conversationParticipant == null)
                 {
@@ -130,11 +194,18 @@ namespace core
             }
         }
 
-        public async Task<ConversationParticipant> ManualAddProfileToConversationAsync(string conversationParticipantId, string profileId)
+        public async Task<ConversationParticipant> ManualAddProfileToConversationAsync(
+            string conversationParticipantId,
+            string profileId
+        )
         {
             try
             {
-                var conversationParticipant = await _conversationParticipantRepository.AddManualToConversation(conversationParticipantId, profileId);
+                var conversationParticipant =
+                    await _conversationParticipantRepository.AddManualToConversation(
+                        conversationParticipantId,
+                        profileId
+                    );
 
                 if (conversationParticipant == null)
                 {
@@ -149,19 +220,26 @@ namespace core
             }
         }
 
-        public async Task<ConversationParticipant> AddParticipantToTeamConversation(Profile profile, string teamId)
+        public async Task<ConversationParticipant> AddParticipantToTeamConversation(
+            Profile profile,
+            string teamId
+        )
         {
             try
             {
                 var conversation = await _conversationRepository.GetConversationByTeamId(teamId);
 
-                var newParticipant = new ConversationParticipant
-                {
-                    Id = Utils.GenerateRandomId(),
-                    Profile = profile,
-                    Conversation = conversation
-                };
-                var createdParticipant = await _conversationParticipantRepository.Create(newParticipant);
+                var newParticipant = new ConversationParticipant(
+                    conversation.Id,
+                    profile.Id,
+                    profile.FullName,
+                    profile,
+                    conversation
+                );
+
+                var createdParticipant = await _conversationParticipantRepository.Create(
+                    newParticipant
+                );
                 return createdParticipant;
             }
             catch (Exception ex)
@@ -169,17 +247,6 @@ namespace core
                 throw new Exception("Failed to add profile to conversation.", ex);
             }
         }
-
-
-
-
-
-
-
-
-
-
-
 
         // public async Task AddParticipantToConversationAsync(string conversationId, Profile profileToAdd)
         // {
@@ -227,7 +294,3 @@ namespace core
         //     }
     }
 }
-
-
-
-

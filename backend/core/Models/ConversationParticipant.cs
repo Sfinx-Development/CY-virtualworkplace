@@ -7,7 +7,23 @@ namespace core
         public string ProfileId { get; set; }
         public Profile Profile { get; set; }
         public Conversation Conversation { get; set; }
-           public List<Message> Messages { get; set; }
-    
+        public string FullName { get; set; }
+
+        public ConversationParticipant(
+            string conversationId,
+            string profileId,
+            string fullName,
+            Profile profile,
+            Conversation conversation
+        )
+        {
+            Id = Utils.GenerateRandomId();
+            ConversationId = conversationId;
+            FullName = fullName;
+            Profile = profile;
+            Conversation = conversation;
+        }
+
+        public ConversationParticipant() { }
     }
 }

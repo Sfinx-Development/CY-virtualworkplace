@@ -17,7 +17,11 @@ namespace Controllers
         private readonly IMessageService _messageService;
         private readonly IConversationService _conversationService;
 
-        public MessageController(JwtService jwtService, IMessageService messageService, IConversationService conversationService)
+        public MessageController(
+            JwtService jwtService,
+            IMessageService messageService,
+            IConversationService conversationService
+        )
         {
             _jwtService = jwtService;
             _messageService = messageService;
@@ -26,7 +30,49 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Send")]
-        public async Task<ActionResult<Message>> CreateMessage(IncomingMessageDTO incomingMessageDTO)
+        public async Task<ActionResult<Message>> CreateMessage(
+            IncomingMessageDTO incomingMessageDTO
+        )
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                var createdMessage = await _messageService.CreateMessageInConversation(
+                    incomingMessageDTO,
+                    loggedInUser.Id
+                );
+
+                if (createdMessage == null)
+                {
+                    return BadRequest("Failed to send message.");
+                }
+
+                return createdMessage;
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPost("GetMessagesInConversation")]
+        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation(
+            [FromBody] string conversationParticipantId
+        )
         {
             try
             {
@@ -47,15 +93,17 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
+                var messages = await _conversationService.GetConversationWithAllMessages(
+                    conversationParticipantId,
+                    loggedInUser
+                );
 
-                var createdMessage = await _messageService.CreateMessageInConversation(incomingMessageDTO, loggedInUser.Id);
-
-                if (createdMessage == null)
+                if (messages == null || !messages.Any())
                 {
-                    return BadRequest("Failed to send message.");
+                    return NotFound("No messages found in the conversation.");
                 }
 
-                return createdMessage;
+                return Ok(messages);
             }
             catch (Exception e)
             {
@@ -63,93 +111,53 @@ namespace Controllers
             }
         }
 
-[Authorize]
-[HttpPost("GetMessagesInConversation")]
-public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation([FromBody] string conversationParticipantId)
-{
-    try
-    {
-        var jwt = HttpContext
-            .Request.Headers["Authorization"]
-            .ToString()
-            .Replace("Bearer ", string.Empty);
+        //         [Authorize]
+        // [HttpDelete]
+        // public async Task<ActionResult> DeleteMessage([FromBody] DeleteMessageDTO deleteMessageDTO)
+        // {
+        //     try
+        //     {
+        //         var jwt = HttpContext
+        //             .Request.Headers["Authorization"]
+        //             .ToString()
+        //             .Replace("Bearer ", string.Empty);
 
-        if (string.IsNullOrWhiteSpace(jwt))
-        {
-            return BadRequest("JWT token is missing.");
-        }
+        //         if (string.IsNullOrWhiteSpace(jwt))
+        //         {
+        //             return BadRequest("JWT token is missing.");
+        //         }
 
-       var loggedInUser = await _jwtService.GetByJWT(jwt);
+        //         var loggedInUser = await _jwtService.GetByJWT(jwt);
 
-        if (loggedInUser == null)
-        {
-            return BadRequest("Failed to get user.");
-        }
+        //         if (loggedInUser == null)
+        //         {
+        //             return BadRequest("Failed to get user.");
+        //         }
 
+        //         // Your authorization logic based on the user can be added here if needed
 
-        var messages = await _conversationService.GetConversationWithAllMessages(conversationParticipantId, loggedInUser);
+        //         // Extract necessary information from deleteMessageDTO
+        //         var conversationId = deleteMessageDTO.ConversationId;
+        //         var messageId = deleteMessageDTO.MessageId;
 
-        if (messages == null || !messages.Any())
-        {
-            return NotFound("No messages found in the conversation.");
-        }
+        //         var conversation = new Conversation
+        //         {
+        //             Id = conversationId // Populate Conversation properties from deleteMessageDTO or other sources
+        //         };
 
-        return Ok(messages);
-    }
-    catch (Exception e)
-    {
-        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    }
-}
+        //         var message = new Message
+        //         {
+        //             Id = messageId // Populate Message properties from deleteMessageDTO or other sources
+        //         };
 
+        //         await _messageService.RemoveConversationAndMessages(conversation, message);
 
-//         [Authorize]
-// [HttpDelete]
-// public async Task<ActionResult> DeleteMessage([FromBody] DeleteMessageDTO deleteMessageDTO)
-// {
-//     try
-//     {
-//         var jwt = HttpContext
-//             .Request.Headers["Authorization"]
-//             .ToString()
-//             .Replace("Bearer ", string.Empty);
-
-//         if (string.IsNullOrWhiteSpace(jwt))
-//         {
-//             return BadRequest("JWT token is missing.");
-//         }
-
-//         var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-//         if (loggedInUser == null)
-//         {
-//             return BadRequest("Failed to get user.");
-//         }
-
-//         // Your authorization logic based on the user can be added here if needed
-
-//         // Extract necessary information from deleteMessageDTO
-//         var conversationId = deleteMessageDTO.ConversationId;
-//         var messageId = deleteMessageDTO.MessageId;
-
-//         var conversation = new Conversation
-//         {
-//             Id = conversationId // Populate Conversation properties from deleteMessageDTO or other sources
-//         };
-
-//         var message = new Message
-//         {
-//             Id = messageId // Populate Message properties from deleteMessageDTO or other sources
-//         };
-
-//         await _messageService.RemoveConversationAndMessages(conversation, message);
-
-//         return Ok("Successfully deleted message.");
-//     }
-//     catch (Exception e)
-//     {
-//         return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-//     }
-// }
+        //         return Ok("Successfully deleted message.");
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        //     }
+        // }
     }
 }

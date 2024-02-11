@@ -32,23 +32,23 @@ public class MessageServiceTests
         var conversationParticipant = new ConversationParticipant
         {
             Id = "participantId123",
-            Profile = new Profile { UserId = loggedInUserId } 
+            Profile = new Profile { UserId = loggedInUserId }
         };
 
-        conversationParticipantRepositoryMock.Setup(repo => repo.GetConversationById(It.IsAny<string>()))
+        conversationParticipantRepositoryMock
+            .Setup(repo => repo.GetConversationParticipantById(It.IsAny<string>()))
             .ReturnsAsync(conversationParticipant);
 
-        messageRepositoryMock.Setup(repo => repo.CreateAsync(It.IsAny<Message>()))
+        messageRepositoryMock
+            .Setup(repo => repo.CreateAsync(It.IsAny<Message>()))
             .ReturnsAsync((Message newMessage) => newMessage);
 
-  
-        var createdMessage = await messageService.CreateMessageInConversation(incomingMessageDTO, loggedInUserId);
+        var createdMessage = await messageService.CreateMessageInConversation(
+            incomingMessageDTO,
+            loggedInUserId
+        );
 
-       
         Assert.NotNull(createdMessage);
         Assert.Equal(incomingMessageDTO.Content, createdMessage.Content);
     }
 }
-
-
-

@@ -6,12 +6,18 @@ namespace core;
 public interface IConversationParticipantRepository
 {
     Task<ConversationParticipant> Create(ConversationParticipant conversationPartisipant);
-    Task<ConversationParticipant> GetConversationById(string conversationParticipantId);
-    Task <List<ConversationParticipant>> GetAllByConversation(string conversationId);
+    Task<ConversationParticipant> GetConversationParticipantById(string conversationParticipantId);
+    Task<List<ConversationParticipant>> GetAllByConversation(string conversationId);
+    Task<ConversationParticipant> GetByConversationAndProfile(
+        string conversationId,
+        string profileId
+    );
 
- Task<ConversationParticipant> AddToConversation( string conversationId, string profileId);
- Task<ConversationParticipant> AddManualToConversation(string conversationParticipantId, string profileId);
-    
+    Task<ConversationParticipant> AddToConversation(string conversationId, string profileId);
+    Task<ConversationParticipant> AddManualToConversation(
+        string conversationParticipantId,
+        string profileId
+    );
 }
 
 
@@ -49,7 +55,7 @@ public interface IConversationParticipantRepository
 //     {
 //         Conversation conversation = await _cyDbContext
 //             .Conversations.Include(c => c.Participants)
-//             .Include(c => c.Messages)  
+//             .Include(c => c.Messages)
 //             .Where(c => c.Id == id)
 //             .FirstOrDefaultAsync();
 

@@ -5,16 +5,18 @@ namespace core;
 
 public class ConversationParticipantRepository : IConversationParticipantRepository
 {
-     private readonly CyDbContext _cyDbContext;
+    private readonly CyDbContext _cyDbContext;
 
     public ConversationParticipantRepository(CyDbContext cyDbContext)
     {
         _cyDbContext = cyDbContext;
     }
 
- public async Task<ConversationParticipant> Create(ConversationParticipant conversationParticipant)
+    public async Task<ConversationParticipant> Create(
+        ConversationParticipant conversationParticipant
+    )
     {
-      try
+        try
         {
             await _cyDbContext.ConversationParticipants.AddAsync(conversationParticipant);
             await _cyDbContext.SaveChangesAsync();
@@ -26,76 +28,112 @@ public class ConversationParticipantRepository : IConversationParticipantReposit
             throw new Exception();
         }
     }
-//     public async Task<Conversation> Update(Conversation conversation)
-//     {
-//          try
-//         {
-//             var conversationToUpdate = await _cyDbContext.Conversations.FirstAsync(c => c.Id == conversation.Id);
 
-//             if (conversationToUpdate == null)
-//             {
-//                 throw new Exception();
-//             }
+    //     public async Task<Conversation> Update(Conversation conversation)
+    //     {
+    //          try
+    //         {
+    //             var conversationToUpdate = await _cyDbContext.Conversations.FirstAsync(c => c.Id == conversation.Id);
 
-//             conversationToUpdate.Messages = conversation.Messages ?? conversationToUpdate.Messages;
-//             conversationToUpdate.Participants = conversation.Participants ?? conversationToUpdate.Participants;
-           
+    //             if (conversationToUpdate == null)
+    //             {
+    //                 throw new Exception();
+    //             }
 
-//             _cyDbContext.Conversations.Update(conversationToUpdate);
+    //             conversationToUpdate.Messages = conversation.Messages ?? conversationToUpdate.Messages;
+    //             conversationToUpdate.Participants = conversation.Participants ?? conversationToUpdate.Participants;
 
-//             await _cyDbContext.SaveChangesAsync();
-//             return conversationToUpdate;
-//         }
-//         catch (Exception e)
-//         {
-//             throw new Exception();
-//         }
-//     }
-public async Task <List<ConversationParticipant>> GetAllByConversation(string conversationId)
-{
-    try{
-        var conversationParticipant = await _cyDbContext
-            .ConversationParticipants.Include(c => c.Messages).Where(c => c.ConversationId == conversationId)
-           .ToListAsync();
-           return conversationParticipant;
-    }
-    catch{
-           throw new Exception();
-    }
-}
 
-  public async Task<ConversationParticipant> GetConversationById(string conversationParticipantId)
-{
-    try
-    {
-        ConversationParticipant conversationParticipant = await _cyDbContext
-            .ConversationParticipants
-            .Include(c => c.Profile)  
-            .Where(c => c.Id == conversationParticipantId)
-            .FirstAsync();
+    //             _cyDbContext.Conversations.Update(conversationToUpdate);
 
-        if (conversationParticipant == null)
-        {
-            throw new Exception("HITTADE INTE PARTICIPANT");
-        }
-        else
-        {
-            return conversationParticipant;
-        }
-    }
-    catch (Exception e)
-    {
-        throw new Exception();
-    }
-}
-
- public async Task<ConversationParticipant> AddManualToConversation(string conversationParticipantId, string profileId)
+    //             await _cyDbContext.SaveChangesAsync();
+    //             return conversationToUpdate;
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             throw new Exception();
+    //         }
+    //     }
+    public async Task<List<ConversationParticipant>> GetAllByConversation(string conversationId)
     {
         try
         {
             var conversationParticipant = await _cyDbContext
-                .ConversationParticipants
-                .Include(c => c.Profile)
+                .ConversationParticipants.Include(c => c.Conversation)
+                .ThenInclude(c => c.Messages)
+                .Where(c => c.ConversationId == conversationId)
+                .ToListAsync();
+            return conversationParticipant;
+        }
+        catch
+        {
+            throw new Exception();
+        }
+    }
+
+    public async Task<ConversationParticipant> GetByConversationAndProfile(
+        string conversationId,
+        string profileId
+    )
+    {
+        try
+        {
+            Console.WriteLine("OCKSÅ TILL REPOSITORY");
+            ConversationParticipant conversationParticipant = await _cyDbContext
+                .ConversationParticipants.Where(
+                    c => c.ProfileId == profileId && c.ConversationId == conversationId
+                )
+                .FirstAsync();
+
+            if (conversationParticipant == null)
+            {
+                throw new Exception("HITTADE INTE PARTICIPANT");
+            }
+            else
+            {
+                return conversationParticipant;
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Något blev fel i databasanropet");
+        }
+    }
+
+    public async Task<ConversationParticipant> GetConversationParticipantById(
+        string conversationParticipantId
+    )
+    {
+        try
+        {
+            var conversationParticipant = await _cyDbContext
+                .ConversationParticipants.Include(c => c.Profile)
+                .FirstAsync(c => c.Id == conversationParticipantId);
+
+            if (conversationParticipant == null)
+            {
+                throw new Exception("HITTADE INTE PARTICIPANT");
+            }
+            else
+            {
+                return conversationParticipant;
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
+
+    public async Task<ConversationParticipant> AddManualToConversation(
+        string conversationParticipantId,
+        string profileId
+    )
+    {
+        try
+        {
+            var conversationParticipant = await _cyDbContext
+                .ConversationParticipants.Include(c => c.Profile)
                 .Include(c => c.Conversation)
                 .FirstOrDefaultAsync(c => c.Id == conversationParticipantId);
 
@@ -110,24 +148,25 @@ public async Task <List<ConversationParticipant>> GetAllByConversation(string co
             {
                 throw new Exception("Profile not found.");
             }
-           
-           var newConversationParticipant = new ConversationParticipant()
-           {
-                Id = Utils.GenerateRandomId(),
-                Profile = profile,
-                Conversation = conversationParticipant.Conversation,
-           };
-           
-            // lägg till denna senare
-        //    var welcomeMessage = new Message
-        //     {
-        //         Id = Utils.GenerateRandomId(),
-        //         Content = "Välkommen till konversationen!",
-        //         // Fler egenskaper...
-        //     };
 
-         
-           
+            var newConversationParticipant = new ConversationParticipant(
+                conversationParticipant.ConversationId,
+                profileId,
+                profile.FullName,
+                profile,
+                conversationParticipant.Conversation
+            );
+
+            // lägg till denna senare
+            //    var welcomeMessage = new Message
+            //     {
+            //         Id = Utils.GenerateRandomId(),
+            //         Content = "Välkommen till konversationen!",
+            //         // Fler egenskaper...
+            //     };
+
+
+
             await _cyDbContext.SaveChangesAsync();
 
             return newConversationParticipant;
@@ -138,23 +177,29 @@ public async Task <List<ConversationParticipant>> GetAllByConversation(string co
         }
     }
 
-     public async Task<ConversationParticipant> AddToConversation(string conversationId, string profileId)
+    public async Task<ConversationParticipant> AddToConversation(
+        string conversationId,
+        string profileId
+    )
     {
         try
         {
             var getProfile = await _cyDbContext.Profiles.Where(p => p.Id == profileId).FirstAsync();
-           var getConversation = await _cyDbContext.Conversations.Where(c => c.Id == conversationId).FirstAsync();
-           var newConversationParticipant = new ConversationParticipant()
-           {
-                Id = Utils.GenerateRandomId(),
-                Profile = getProfile,
-                Conversation = getConversation,
-           };
+            var getConversation = await _cyDbContext
+                .Conversations.Where(c => c.Id == conversationId)
+                .FirstAsync();
+            var newConversationParticipant = new ConversationParticipant(
+                getConversation.Id,
+                getProfile.Id,
+                getProfile.Id,
+                getProfile,
+                getConversation
+            );
 
-           await _cyDbContext.SaveChangesAsync();
-           return newConversationParticipant;
+            await _cyDbContext.SaveChangesAsync();
+            return newConversationParticipant;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }
@@ -165,50 +210,50 @@ public async Task <List<ConversationParticipant>> GetAllByConversation(string co
 
 
 
-//       public async Task DeleteConversationByIdAsync(string id)
-//     {
-//         try
-//         {
-//             var conversationToDelete = await _cyDbContext.Conversations.FindAsync(id);
-//             if (conversationToDelete != null)
-//             {
-//                 _cyDbContext.Conversations.Remove(conversationToDelete);
-//                 await _cyDbContext.SaveChangesAsync();
-//             }
-//         }
-//         catch (Exception e)
-//         {
-//             throw new Exception(e.Message);
-//         }
-//     }
+    //       public async Task DeleteConversationByIdAsync(string id)
+    //     {
+    //         try
+    //         {
+    //             var conversationToDelete = await _cyDbContext.Conversations.FindAsync(id);
+    //             if (conversationToDelete != null)
+    //             {
+    //                 _cyDbContext.Conversations.Remove(conversationToDelete);
+    //                 await _cyDbContext.SaveChangesAsync();
+    //             }
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             throw new Exception(e.Message);
+    //         }
+    //     }
 
-//         public async Task AddParticipantToConversationAsync(string conversationId, ConversationParticipant participant)
-//         {
-//             var conversation = await _dbContext.Conversations.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == conversationId);
-//             if (conversation != null)
-//             {
-//                 conversation.Participants.Add(participant);
-//                 await _dbContext.SaveChangesAsync();
-//             }
-//         }
+    //         public async Task AddParticipantToConversationAsync(string conversationId, ConversationParticipant participant)
+    //         {
+    //             var conversation = await _dbContext.Conversations.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == conversationId);
+    //             if (conversation != null)
+    //             {
+    //                 conversation.Participants.Add(participant);
+    //                 await _dbContext.SaveChangesAsync();
+    //             }
+    //         }
 
-//         public async Task RemoveParticipantFromConversationAsync(string conversationId, string profileId)
-//         {
-//             var conversation = await _dbContext.Conversations.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == conversationId);
-//             if (conversation != null)
-//             {
-//                 var participantToRemove = conversation.Participants.Find(p => p.ProfileId == profileId);
-//                 if (participantToRemove != null)
-//                 {
-//                     conversation.Participants.Remove(participantToRemove);
-//                     await _dbContext.SaveChangesAsync();
-//                 }
-//             }
-//         }
+    //         public async Task RemoveParticipantFromConversationAsync(string conversationId, string profileId)
+    //         {
+    //             var conversation = await _dbContext.Conversations.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == conversationId);
+    //             if (conversation != null)
+    //             {
+    //                 var participantToRemove = conversation.Participants.Find(p => p.ProfileId == profileId);
+    //                 if (participantToRemove != null)
+    //                 {
+    //                     conversation.Participants.Remove(participantToRemove);
+    //                     await _dbContext.SaveChangesAsync();
+    //                 }
+    //             }
+    //         }
 
-//         public async Task<List<ConversationParticipant>> GetParticipantsByConversationId(string conversationId)
-//         {
-//             var conversation = await _dbContext.Conversations.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == conversationId);
-//             return conversation?.Participants;
-//         }
-    }
+    //         public async Task<List<ConversationParticipant>> GetParticipantsByConversationId(string conversationId)
+    //         {
+    //             var conversation = await _dbContext.Conversations.Include(c => c.Participants).FirstOrDefaultAsync(c => c.Id == conversationId);
+    //             return conversation?.Participants;
+    //         }
+}

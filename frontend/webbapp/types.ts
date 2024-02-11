@@ -108,20 +108,35 @@ export interface Message {
   id: string;
   content: string;
   dateCreated: Date;
-  senderId: string /* (profileId) */;
-  conversationToParticipantId: string;
+  conversationParticipantId: string;
+  conversationId: string;
+  fullName: string;
+  profileId: string;
 }
 
 export interface Conversation {
   id: string;
   dateCreated: Date;
-  creatorId: string /* (profileId) */;
+  creatorId: string;
+  teamId?: string;
 }
+
+// public string Id { get; set; }
+// public string ConversationId { get; set; }
+// public string ProfileId { get; set; }
+// public Profile Profile { get; set; }
+// public Conversation Conversation { get; set; }
+// public string FullName { get; set; }
 
 export interface ConversationParticipant {
   id: string;
-  conversationId: string;
   profileId: string;
+  conversationId: string;
+}
+
+export interface MessageInput {
+  conversationParticipantId: string;
+  content: string;
 }
 
 export interface ProfileHubDTO {
@@ -131,4 +146,11 @@ export interface ProfileHubDTO {
   isOnline: boolean;
   lastOnline: boolean;
   lastActive: boolean;
+}
+
+
+
+export interface GetParticipantDTO{
+  profileId:string;
+  conversationId:string;
 }
