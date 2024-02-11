@@ -56,6 +56,34 @@ export const FetchCreateMeeting = async (
   }
 };
 
+export const FetchCreateTeamMeeting = async (
+  newMeeting: CreateMeetingDTO
+): Promise<Meeting> => {
+  try {
+    console.log("MÖTESDATUM SOM SKICKAS IN I REQUESTEN: ", newMeeting.date);
+    const response = await fetch(meetingapiUrl + "/createteammeeting", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(newMeeting),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid skapandet av meeting.");
+    }
+
+    const data = await response.json();
+
+    return data as Meeting;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
 
 
 export const FetchGetMeetingRoomByTeam= async (teamId: string): Promise<MeetingRoom> => {

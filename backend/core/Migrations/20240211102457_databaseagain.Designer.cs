@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240209113357_participantfullname")]
-    partial class participantfullname
+    [Migration("20240211102457_databaseagain")]
+    partial class databaseagain
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -176,6 +176,7 @@ namespace core.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("ConversationId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("ConversationParticipantId")
@@ -418,7 +419,9 @@ namespace core.Migrations
                 {
                     b.HasOne("core.Conversation", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationId");
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("core.ConversationParticipant", "ConversationParticipant")
                         .WithMany()

@@ -66,6 +66,47 @@ namespace Controllers
             }
         }
 
+                [Authorize]
+        [HttpPost("CreateTeamMeeting")]
+        public async Task<ActionResult<Meeting>> PostTeamMeeting([FromBody]IncomingMeetingDTO incomingMeetingDTO)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                //I CREATE MEETING ISERVICE SKA OCCASION OCKSÅ SKAPAS FÖR ÄGAREN AV MÖTET DIREKT
+                if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
+                {
+                    var meetingCreated = await _meetingService.CreateTeamMeetingAsync(incomingMeetingDTO);
+
+                    if (meetingCreated == null)
+                    {
+                        return BadRequest("Failed to create team.");
+                    }
+                    return meetingCreated;
+                }
+                else
+                {
+                    throw new Exception("The owner of meeting is not in line with the JWT bearer.");
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+
         [HttpPost("meetingroom")]
         [Authorize]
         public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody] string teamId)
