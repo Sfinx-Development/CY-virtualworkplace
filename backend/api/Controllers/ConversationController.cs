@@ -153,7 +153,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("teammessages")]
-        public async Task<ActionResult<List<Message>>> GetMessagesInTeamConversation(
+        public async Task<ActionResult<List<OutgoingMessageDTO>>> GetMessagesInTeamConversation(
             [FromBody] string teamId
         )
         {

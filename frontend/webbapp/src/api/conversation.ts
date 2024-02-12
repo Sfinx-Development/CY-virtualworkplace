@@ -35,9 +35,7 @@ export const FetchGetTeamMessages = async (
     const responseBody = await response.json();
     console.log("REPONSE: ", responseBody);
 
-    const messages = responseBody.$values;
-    // console.log("Parsed conversation:", messagesData);
-
+    const messages = responseBody.$values as Message[];
     return messages;
   } catch (error) {
     console.error(error);
@@ -93,6 +91,7 @@ export const FetchCreateMessage = async (
     }
 
     const data = responseBody as Message;
+    console.log("DATA: ", data);
     return data;
   } catch (error) {
     console.error(error);
