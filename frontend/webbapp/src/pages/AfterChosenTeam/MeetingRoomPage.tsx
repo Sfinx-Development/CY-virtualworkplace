@@ -8,7 +8,7 @@ import {
   Container,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileHubDTO } from "../../../types";
 import {
@@ -28,60 +28,71 @@ export default function MeetingRoom() {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-  const [loadedOnlineProfiles, setLoadedOnlineProfiles] = useState(false);
+
   const onlineProfiles = useAppSelector(
     (state) => state.profileSlice.onlineProfiles
   );
 
   const [profilesInRoom, setProfilesInRoom] = useState<ProfileHubDTO[]>([]);
+  const [signalRConnected, setSignalRConnected] = useState(false);
+  const alreadyFetchedOnlineProfiles = useRef(false);
 
   const addNewProfilesToRoom = (newProfiles: ProfileHubDTO[]) => {
     setProfilesInRoom((prevProfiles) => {
-      const profilesToSetInRoom: ProfileHubDTO[] = [];
+      const profilesToAdd: ProfileHubDTO[] = [];
       newProfiles.forEach((p) => {
         const profileExistsInRoom = prevProfiles.some(
           (pr) => pr.profileId === p.profileId
         );
         if (!profileExistsInRoom) {
-          profilesToSetInRoom.push(p);
+          profilesToAdd.push(p);
         }
       });
-      return [...prevProfiles, ...profilesToSetInRoom];
+      return [...prevProfiles, ...profilesToAdd];
     });
   };
 
   useEffect(() => {
+    console.log("HÄMTAR TEAM");
     dispatch(getActiveTeam());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
-    if (activeTeam && !loadedOnlineProfiles) {
+    if (activeTeam && !alreadyFetchedOnlineProfiles.current) {
+      console.log("HÄMTAR ONLINE");
+      dispatch(GetOnlineProfiles(activeTeam?.id));
+      alreadyFetchedOnlineProfiles.current = true;
+    }
+  }, [activeTeam, dispatch]);
+
+  useEffect(() => {
+    if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
-      dispatch(GetOnlineProfiles(activeTeam?.id));
-      setLoadedOnlineProfiles(true);
     }
-  }, [dispatch, activeTeam, loadedOnlineProfiles]);
+  }, [activeTeam]);
 
   useEffect(() => {
     if (onlineProfiles && onlineProfiles.length > 0) {
-      const allProfilesLoaded = onlineProfiles.every(
-        (profile) => profile.fullName
-      );
-      if (allProfilesLoaded) {
-        setLoadedOnlineProfiles(true);
-        console.log("hämtar rofier on");
-        addNewProfilesToRoom(onlineProfiles);
-      }
+      addNewProfilesToRoom(onlineProfiles);
     }
   }, [onlineProfiles]);
 
   useEffect(() => {
     const connection = Connector.getInstance();
 
+    if (!signalRConnected) {
+      connection.start().then(() => {
+        setSignalRConnected(true);
+      });
+    }
+
     connection.events = {
       profileOnline: (profile: ProfileHubDTO) => {
-        if (!profilesInRoom.some((p) => p.profileId == profile.profileId)) {
+        const profileExistsInRoom = profilesInRoom.some(
+          (p) => p.profileId === profile.profileId
+        );
+        if (!profileExistsInRoom) {
           setProfilesInRoom((prevProfiles) => [...prevProfiles, profile]);
         }
       },
@@ -100,7 +111,7 @@ export default function MeetingRoom() {
         };
       }
     };
-  }, []);
+  }, [signalRConnected]);
 
   useEffect(() => {
     const enterMeetingRoom = async () => {
@@ -171,6 +182,20 @@ export default function MeetingRoom() {
   const meetingRoomColor = theme1.palette.room.main;
   const leaveColor = theme1.palette.leave.main;
   const navigate = useNavigate();
+
+  const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "5px",
+      }}
+    >
+      <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
+      <Typography key={profile.profileId}>{profile.fullName}</Typography>
+    </div>
+  ));
+
   return (
     <Container
       sx={{
@@ -184,27 +209,9 @@ export default function MeetingRoom() {
       <Card sx={{ padding: 2, backgroundColor: meetingRoomColor }}>
         <Typography> {activeTeam?.name}'s mötesrum</Typography>
         {profilesInRoom && profilesInRoom.length > 0 ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              // alignItems: "center",
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {profilesInRoom.map((profile) => (
-              <div
-                key={profile.profileId}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "5px",
-                }}
-              >
-                <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
-                <Typography key={profile.profileId}>
-                  {profile.fullName}
-                </Typography>
-              </div>
+              <ProfileItem key={profile.profileId} profile={profile} />
             ))}
           </div>
         ) : (

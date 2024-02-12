@@ -159,7 +159,10 @@ const profileSlice = createSlice({
       })
       .addCase(GetOnlineProfiles.fulfilled, (state, action) => {
         if (action.payload) {
-          state.onlineProfiles = action.payload;
+          const onlineProfilesWithoutActiveProfile = action.payload.filter(
+            (profile) => profile.profileId !== state.activeProfile?.id
+          );
+          state.onlineProfiles = onlineProfilesWithoutActiveProfile;
           state.error = null;
         }
       })

@@ -9,6 +9,7 @@ import {
   Popper,
   Typography,
 } from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GetTeamProfiles } from "../../slices/profileSlice";
@@ -34,6 +35,10 @@ export default function Menu() {
   //sätta activeteam i reducer? ls? koolla det
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const [copied, setCopied] = useState(false);
+
+  function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -91,6 +96,12 @@ export default function Menu() {
           <Typography variant="h4" sx={{ textAlign: "center" }}>
             {activeTeam?.name}
           </Typography>
+          {copied ? (
+            <Alert variant="outline" severity="success">
+              Du har kopierat koden!
+            </Alert>
+          ) : null}
+
           <Button
             onClick={copyCodeToClipboard}
             variant="contained"
@@ -128,7 +139,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Mötesrum
                   </Typography>
@@ -154,7 +168,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Chattrum
                   </Typography>
@@ -221,7 +238,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Mitt Kontor
                   </Typography>
@@ -246,7 +266,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Lämna
                   </Typography>

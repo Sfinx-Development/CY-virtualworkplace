@@ -27,7 +27,7 @@ export const theme1 = createTheme({
       main: "#E4B7BF",
     },
     office: {
-      main: "#E6FFDD",
+      main: "#FCF3CF",
     },
     room: {
       main: "#E2F2FC",
@@ -36,7 +36,7 @@ export const theme1 = createTheme({
       main: "#f3e4fa",
     },
     leave: {
-      main: "#FFE8C5",
+      main: "#F5CBA7",
     },
     warning: {
       main: "#A4000D",
