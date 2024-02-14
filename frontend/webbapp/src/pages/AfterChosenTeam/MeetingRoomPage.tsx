@@ -1,4 +1,3 @@
-import * as signalR from "@microsoft/signalr";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import {
   Box,
@@ -8,13 +7,17 @@ import {
   Container,
   Typography,
 } from "@mui/material";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileHubDTO } from "../../../types";
 import {
   GetMyProfileAsync,
   GetOnlineProfiles,
   GetTeamProfiles,
+  enterMeetingRoomAsync,
+  leaveMeetingRoomAsync,
+  profileOffline,
+  profileOnline,
 } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -28,29 +31,9 @@ export default function MeetingRoom() {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-
   const onlineProfiles = useAppSelector(
     (state) => state.profileSlice.onlineProfiles
   );
-
-  const [profilesInRoom, setProfilesInRoom] = useState<ProfileHubDTO[]>([]);
-  const [signalRConnected, setSignalRConnected] = useState(false);
-  const alreadyFetchedOnlineProfiles = useRef(false);
-
-  const addNewProfilesToRoom = (newProfiles: ProfileHubDTO[]) => {
-    setProfilesInRoom((prevProfiles) => {
-      const profilesToAdd: ProfileHubDTO[] = [];
-      newProfiles.forEach((p) => {
-        const profileExistsInRoom = prevProfiles.some(
-          (pr) => pr.profileId === p.profileId
-        );
-        if (!profileExistsInRoom) {
-          profilesToAdd.push(p);
-        }
-      });
-      return [...prevProfiles, ...profilesToAdd];
-    });
-  };
 
   useEffect(() => {
     console.log("HÄMTAR TEAM");
@@ -58,48 +41,22 @@ export default function MeetingRoom() {
   }, []);
 
   useEffect(() => {
-    if (activeTeam && !alreadyFetchedOnlineProfiles.current) {
-      console.log("HÄMTAR ONLINE");
-      dispatch(GetOnlineProfiles(activeTeam?.id));
-      alreadyFetchedOnlineProfiles.current = true;
-    }
-  }, [activeTeam, dispatch]);
-
-  useEffect(() => {
     if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
+      dispatch(GetOnlineProfiles(activeTeam.id));
     }
   }, [activeTeam]);
 
   useEffect(() => {
-    if (onlineProfiles && onlineProfiles.length > 0) {
-      addNewProfilesToRoom(onlineProfiles);
-    }
-  }, [onlineProfiles]);
-
-  useEffect(() => {
     const connection = Connector.getInstance();
-
-    if (!signalRConnected) {
-      connection.start().then(() => {
-        setSignalRConnected(true);
-      });
-    }
 
     connection.events = {
       profileOnline: (profile: ProfileHubDTO) => {
-        const profileExistsInRoom = profilesInRoom.some(
-          (p) => p.profileId === profile.profileId
-        );
-        if (!profileExistsInRoom) {
-          setProfilesInRoom((prevProfiles) => [...prevProfiles, profile]);
-        }
+        dispatch(profileOnline(profile));
       },
       profileOffline: (profileId: string) => {
-        setProfilesInRoom((prevProfiles) =>
-          prevProfiles.filter((p) => p.profileId !== profileId)
-        );
+        dispatch(profileOffline(profileId));
       },
     };
 
@@ -111,71 +68,21 @@ export default function MeetingRoom() {
         };
       }
     };
-  }, [signalRConnected]);
+  }, []);
 
   useEffect(() => {
-    const enterMeetingRoom = async () => {
-      const connection = Connector.getInstance();
-      try {
-        if (
-          connection.getConnectionState() !==
-          signalR.HubConnectionState.Connected
-        ) {
-          await connection.start();
-        }
-        if (
-          connection.getConnectionState() ===
-          signalR.HubConnectionState.Connected
-        ) {
-          // Om den är det, skicka begäran om att gå in i mötesrummet
-          if (activeProfile) {
-            await connection.invokeHubMethod<string>(
-              "ProfileEnterMeetingRoom",
-              activeProfile.id
-            );
-            console.log("Profil gick in i mötesrummet");
-          }
-        } else {
-          // Om anslutningen fortfarande inte är i "Connected" -läget, visa ett felmeddelande
-          console.error("SignalR connection is not in the 'Connected' state.");
-        }
-      } catch (error) {
-        console.error("Error sending enter meeting room request:", error);
-      }
-    };
+    // När komponenten monteras, skicka en åtgärd för att gå in i mötesrummet
+    if (activeProfile) {
+      dispatch(enterMeetingRoomAsync(activeProfile.id));
+    }
 
-    const leaveMeetingRoom = async () => {
-      if (activeProfile) {
-        const connection = Connector.getInstance();
-        if (
-          connection.getConnectionState() ===
-          signalR.HubConnectionState.Disconnected
-        ) {
-          try {
-            await connection.start();
-          } catch (error) {
-            console.error("Error starting connection:", error);
-            return;
-          }
-        }
-
-        try {
-          connection.invokeHubMethod<string>(
-            "ProfileLeavingMeetingRoom",
-            activeProfile.id
-          );
-        } catch (error) {
-          console.error("Error invoking hub method:", error);
-        }
-      }
-    };
-
-    enterMeetingRoom();
-
+    // När komponenten avmonteras, skicka en åtgärd för att lämna mötesrummet
     return () => {
-      leaveMeetingRoom();
+      if (activeProfile) {
+        dispatch(leaveMeetingRoomAsync(activeProfile.id));
+      }
     };
-  }, [activeProfile]);
+  }, [dispatch, activeProfile]);
 
   const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
   const isMobile = window.innerWidth <= 500;
@@ -208,9 +115,9 @@ export default function MeetingRoom() {
     >
       <Card sx={{ padding: 2, backgroundColor: meetingRoomColor }}>
         <Typography> {activeTeam?.name}'s mötesrum</Typography>
-        {profilesInRoom && profilesInRoom.length > 0 ? (
+        {onlineProfiles && onlineProfiles.length > 0 ? (
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {profilesInRoom.map((profile) => (
+            {onlineProfiles.map((profile) => (
               <ProfileItem key={profile.profileId} profile={profile} />
             ))}
           </div>

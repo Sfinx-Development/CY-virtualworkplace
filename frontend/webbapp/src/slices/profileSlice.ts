@@ -6,13 +6,9 @@ import {
   FetchOnlineProfiles,
   FetchUpdateProfile,
 } from "../api/profile";
-
-interface ProfileState {
-  profiles: Profile[] | undefined;
-  activeProfile: Profile | undefined;
-  error: string | null;
-  onlineProfiles: ProfileHubDTO[] | undefined;
-}
+import Connector from "../pages/AfterChosenTeam/signalRConnection";
+import store from "./store";
+import * as signalR from "@microsoft/signalr";
 
 const saveProfilesToLocalStorage = (profiles: Profile[]) => {
   localStorage.setItem("profiles", JSON.stringify(profiles));
@@ -29,12 +25,66 @@ const loadActiveProfileFromLocalStorage = (): Profile | undefined => {
   return storedActiveProfile ? JSON.parse(storedActiveProfile) : undefined;
 };
 
+interface ProfileState {
+  profiles: Profile[] | undefined;
+  activeProfile: Profile | undefined;
+  error: string | null;
+  onlineProfiles: ProfileHubDTO[];
+}
 export const initialState: ProfileState = {
   profiles: loadProfilesFromLocalStorage(),
   activeProfile: loadActiveProfileFromLocalStorage(),
   error: null,
   onlineProfiles: [],
 };
+
+export const enterMeetingRoomAsync = createAsyncThunk(
+  "profile/enterMeetingRoom",
+  async (profileId: string, { getState }) => {
+    const connection = Connector.getInstance();
+    try {
+      if (
+        connection.getConnectionState() !== signalR.HubConnectionState.Connected
+      ) {
+        await connection.start();
+      }
+      if (
+        connection.getConnectionState() === signalR.HubConnectionState.Connected
+      ) {
+        await connection.invokeHubMethod<string>(
+          "ProfileEnterMeetingRoom",
+          profileId
+        );
+        console.log("Profil gick in i mötesrummet");
+      } else {
+        console.error("SignalR connection is not in the 'Connected' state.");
+      }
+    } catch (error) {
+      console.error("Error sending enter meeting room request:", error);
+    }
+  }
+);
+
+export const leaveMeetingRoomAsync = createAsyncThunk(
+  "profile/leaveMeetingRoom",
+  async (profileId: string, { getState }) => {
+    const connection = Connector.getInstance();
+    try {
+      if (
+        connection.getConnectionState() ===
+        signalR.HubConnectionState.Disconnected
+      ) {
+        await connection.start();
+      }
+      connection.invokeHubMethod<string>(
+        "ProfileLeavingMeetingRoom",
+        profileId
+      );
+    } catch (error) {
+      console.error("Error invoking hub method:", error);
+    }
+  }
+);
 
 export const GetTeamProfiles = createAsyncThunk<
   Profile[],
@@ -124,6 +174,36 @@ export const UpdateProfileAsync = createAsyncThunk<
   }
 });
 
+const connection = Connector.getInstance();
+
+// Lyssna på SignalR-händelser för online- och offline-profiler
+connection.events = {
+  profileOnline: (profile: ProfileHubDTO) => {
+    // Dispatcha en åtgärd för att uppdatera Redux-store med den nya online-profilen
+    store.dispatch(profileOnline(profile));
+  },
+  profileOffline: (profileId: string) => {
+    // Dispatcha en åtgärd för att ta bort den offline-profilen från Redux-store
+    store.dispatch(profileOffline(profileId));
+  },
+};
+
+// Skapa en async thunk för att uppdatera Redux-store när en profil går online
+export const profileOnline = createAsyncThunk(
+  "profile/profileOnline",
+  (profile: ProfileHubDTO) => {
+    return profile;
+  }
+);
+
+// Skapa en async thunk för att uppdatera Redux-store när en profil går offline
+export const profileOffline = createAsyncThunk(
+  "profile/profileOffline",
+  (profileId: string) => {
+    return profileId;
+  }
+);
+
 const profileSlice = createSlice({
   name: "profile",
   initialState,
@@ -144,6 +224,18 @@ const profileSlice = createSlice({
         state.activeProfile = activeProfile;
       }
     },
+    // profileOnline: createAsyncThunk(
+    //   "profile/profileOnline",
+    //   (profile: ProfileHubDTO) => {
+    //     return profile;
+    //   }
+    // ),
+    // profileOffline: createAsyncThunk(
+    //   "profile/profileOffline",
+    //   (profileId: string) => {
+    //     return profileId;
+    //   }
+    // ),
   },
   extraReducers: (builder) => {
     builder
@@ -167,7 +259,7 @@ const profileSlice = createSlice({
         }
       })
       .addCase(GetOnlineProfiles.rejected, (state) => {
-        state.onlineProfiles = undefined;
+        state.onlineProfiles = [];
         state.error = "Något gick fel med hämtandet av online profiler.";
       })
       .addCase(GetMyProfileAsync.fulfilled, (state, action) => {
@@ -189,6 +281,18 @@ const profileSlice = createSlice({
       .addCase(UpdateProfileAsync.rejected, (state) => {
         state.activeProfile = undefined;
         state.error = "Något gick fel med hämtandet av aktiv profil.";
+      })
+      .addCase(profileOnline.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.onlineProfiles = [...state.onlineProfiles, action.payload];
+        }
+      })
+      .addCase(profileOffline.fulfilled, (state, action) => {
+        if (action.payload && state.onlineProfiles) {
+          state.onlineProfiles = state.onlineProfiles.filter(
+            (profile) => profile.profileId !== action.payload
+          );
+        }
       });
   },
 });
