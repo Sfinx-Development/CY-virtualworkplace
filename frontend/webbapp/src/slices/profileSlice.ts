@@ -1,3 +1,4 @@
+import * as signalR from "@microsoft/signalr";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Profile, ProfileHubDTO } from "../../types";
 import {
@@ -7,8 +8,13 @@ import {
   FetchUpdateProfile,
 } from "../api/profile";
 import Connector from "../pages/AfterChosenTeam/signalRConnection";
-import store from "./store";
-import * as signalR from "@microsoft/signalr";
+
+interface ProfileState {
+  profiles: Profile[] | undefined;
+  activeProfile: Profile | undefined;
+  error: string | null;
+  onlineProfiles: ProfileHubDTO[];
+}
 
 const saveProfilesToLocalStorage = (profiles: Profile[]) => {
   localStorage.setItem("profiles", JSON.stringify(profiles));
@@ -25,12 +31,6 @@ const loadActiveProfileFromLocalStorage = (): Profile | undefined => {
   return storedActiveProfile ? JSON.parse(storedActiveProfile) : undefined;
 };
 
-interface ProfileState {
-  profiles: Profile[] | undefined;
-  activeProfile: Profile | undefined;
-  error: string | null;
-  onlineProfiles: ProfileHubDTO[];
-}
 export const initialState: ProfileState = {
   profiles: loadProfilesFromLocalStorage(),
   activeProfile: loadActiveProfileFromLocalStorage(),
@@ -67,7 +67,7 @@ export const enterMeetingRoomAsync = createAsyncThunk(
 
 export const leaveMeetingRoomAsync = createAsyncThunk(
   "profile/leaveMeetingRoom",
-  async (profileId: StringConstructor) => {
+  async (profileId: string) => {
     const connection = Connector.getInstance();
     try {
       if (
@@ -174,21 +174,6 @@ export const UpdateProfileAsync = createAsyncThunk<
   }
 });
 
-const connection = Connector.getInstance();
-
-// Lyssna på SignalR-händelser för online- och offline-profiler
-connection.events = {
-  profileOnline: (profile: ProfileHubDTO) => {
-    // Dispatcha en åtgärd för att uppdatera Redux-store med den nya online-profilen
-    store.dispatch(profileOnline(profile));
-  },
-  profileOffline: (profileId: string) => {
-    // Dispatcha en åtgärd för att ta bort den offline-profilen från Redux-store
-    store.dispatch(profileOffline(profileId));
-  },
-};
-
-// Skapa en async thunk för att uppdatera Redux-store när en profil går online
 export const profileOnline = createAsyncThunk(
   "profile/profileOnline",
   (profile: ProfileHubDTO) => {
@@ -196,7 +181,6 @@ export const profileOnline = createAsyncThunk(
   }
 );
 
-// Skapa en async thunk för att uppdatera Redux-store när en profil går offline
 export const profileOffline = createAsyncThunk(
   "profile/profileOffline",
   (profileId: string) => {
