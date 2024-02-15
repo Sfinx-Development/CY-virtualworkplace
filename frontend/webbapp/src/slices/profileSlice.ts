@@ -40,7 +40,7 @@ export const initialState: ProfileState = {
 
 export const enterMeetingRoomAsync = createAsyncThunk(
   "profile/enterMeetingRoom",
-  async (profileId: string, { getState }) => {
+  async (profileId: string) => {
     const connection = Connector.getInstance();
     try {
       if (
@@ -67,7 +67,7 @@ export const enterMeetingRoomAsync = createAsyncThunk(
 
 export const leaveMeetingRoomAsync = createAsyncThunk(
   "profile/leaveMeetingRoom",
-  async (profileId: string, { getState }) => {
+  async (profileId: StringConstructor) => {
     const connection = Connector.getInstance();
     try {
       if (
