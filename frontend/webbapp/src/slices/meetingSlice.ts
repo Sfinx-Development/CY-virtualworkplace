@@ -1,7 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateMeetingDTO, Meeting, MeetingRoom, MeetingOccasion } from "../../types";
-import { FetchCreateMeeting,FetchCreateTeamMeeting, FetchGetMyMeetings, FetchGetMeetingRoomByTeam, FetchGetMyPastMeetings, FetchDeleteMeeting } from "../api/meeting";
-
+import {
+  CreateMeetingDTO,
+  Meeting,
+  MeetingRoom,
+  MeetingOccasion,
+} from "../../types";
+import {
+  FetchCreateMeeting,
+  FetchCreateTeamMeeting,
+  FetchGetMyMeetings,
+  FetchGetMeetingRoomByTeam,
+  FetchGetMyPastMeetings,
+  FetchDeleteMeeting,
+} from "../api/meeting";
 
 interface MeetingState {
   meetings: Meeting[] | undefined;
@@ -16,8 +27,8 @@ interface MeetingState {
 export const initialState: MeetingState = {
   meetings: undefined,
   occasions: undefined,
- teamMeetings: undefined,
- pastOccasions: undefined,
+  teamMeetings: undefined,
+  pastOccasions: undefined,
   meetingroom: undefined,
   deletemeeting: undefined,
   error: null,
@@ -65,8 +76,10 @@ export const GetMyMeetingsAsync = createAsyncThunk<
   { rejectValue: string }
 >("meeting/getmymeetings", async (profileId, thunkAPI) => {
   try {
+    console.log("profilid: ", profileId);
     const myMeetings = await FetchGetMyMeetings(profileId);
     if (myMeetings) {
+      console.log("mymeetings: ", myMeetings);
       return myMeetings;
     } else {
       return thunkAPI.rejectWithValue(
@@ -117,23 +130,19 @@ export const Getmyactiveroom = createAsyncThunk<
   }
 });
 
-export const DeleteMeetingAsync = createAsyncThunk<void, string, { rejectValue: string }>(
-  "meeting/deletemeeting",
-  async (meetingId, thunkAPI) => {
-    try {
-      // Call your API function to delete the meeting by ID
-      await FetchDeleteMeeting(meetingId);
-    } catch (error) {
-      console.error("Error deleting meeting:", error);
-      return thunkAPI.rejectWithValue("Något gick fel vid radering av möte.");
-    }
+export const DeleteMeetingAsync = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: string }
+>("meeting/deletemeeting", async (meetingId, thunkAPI) => {
+  try {
+    // Call your API function to delete the meeting by ID
+    await FetchDeleteMeeting(meetingId);
+  } catch (error) {
+    console.error("Error deleting meeting:", error);
+    return thunkAPI.rejectWithValue("Något gick fel vid radering av möte.");
   }
-);
-
-
-
-
-
+});
 
 const meetingSlice = createSlice({
   name: "meeting",
@@ -160,9 +169,8 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med skapandet av team.";
       })
       .addCase(GetMyMeetingsAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
+        console.log("Fulfilled action payload MY MEETINGS:", action.payload);
         if (action.payload) {
-          console.log(action.payload)
           state.occasions = action.payload;
           state.error = null;
         }
@@ -172,9 +180,9 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med hämtandet av möte.";
       })
       .addCase(GetMyPastMeetingsAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
+        console.log("Fulfilled action payload PAST MEETINGS:", action.payload);
         if (action.payload) {
-          console.log(action.payload)
+          console.log(action.payload);
           state.pastOccasions = action.payload;
           state.error = null;
         }
@@ -186,7 +194,7 @@ const meetingSlice = createSlice({
       .addCase(Getmyactiveroom.fulfilled, (state, action) => {
         console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
-          console.log(action.payload)
+          console.log(action.payload);
           state.meetingroom = action.payload; // Uppdatera meetingroom i state
           state.error = null;
         }
@@ -203,10 +211,7 @@ const meetingSlice = createSlice({
       .addCase(DeleteMeetingAsync.rejected, (state) => {
         state.occasions = undefined;
         state.error = "Något gick fel med radering av möte.";
-      })
-      
-   
-    
+      });
   },
 });
 

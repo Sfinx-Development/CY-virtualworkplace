@@ -50,26 +50,24 @@ public class MeetingOccasionService : IMeetingOccasionService
     }
 
     public async Task<List<MeetingOccasion>> GetPastOccasionsByProfileId(string profileId)
-{
-    try
     {
-        var occasions = await _meetingOccasionRepository.GetAllOccasionsByProfileId(profileId);
-        var pastOccasions = occasions
-            .Where(occasion => IsDatePast(occasion.Meeting))
-            .ToList();
+        try
+        {
+            var occasions = await _meetingOccasionRepository.GetAllOccasionsByProfileId(profileId);
+            var pastOccasions = occasions.Where(occasion => IsDatePast(occasion.Meeting)).ToList();
 
-        return pastOccasions;
+            return pastOccasions;
+        }
+        catch (Exception)
+        {
+            throw new Exception("An error occurred while fetching past occasions.");
+        }
     }
-    catch (Exception)
-    {
-        throw new Exception("An error occurred while fetching past occasions.");
-    }
-}
-
 
     public static bool IsDatePast(Meeting meeting)
     {
-        return DateTime.Now >= meeting.Date;
+        DateTime endDate = meeting.Date.AddMinutes(meeting.Minutes);
+        return DateTime.Now >= endDate;
     }
 
     public async Task<bool> SetNewDateForMeeting(Meeting meeting)
@@ -77,7 +75,7 @@ public class MeetingOccasionService : IMeetingOccasionService
         //om det är återkommande möte och datumet har gått ut
         if (meeting.IsRepeating && IsDatePast(meeting) && DateTime.Now <= meeting.EndDate)
         {
-             var nextDate = meeting.Date.AddDays(meeting.Interval);
+            var nextDate = meeting.Date.AddDays(meeting.Interval);
             // var nextDate = meeting.Date.AddDays(meeting.Interval).ToUniversalTime();
 
             if (DateTime.Now <= nextDate)

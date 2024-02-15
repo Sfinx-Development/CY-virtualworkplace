@@ -20,6 +20,7 @@ import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import MeetingInTeamsPage from "./pages/AfterChosenTeam/MeetingInTeam";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
+import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
 
 const Navigation = () => {
   const user = useAppSelector((state) => state.userSlice.user);
@@ -55,7 +56,8 @@ const Navigation = () => {
           <Route path="signin" element={<SignIn />} />
           <Route path="createaccount" element={<CreateAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
-          <Route path="meetinginteam" element={<MeetingInTeamsPage/>} />
+          <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
+          <Route path="joinmeeting" element={<OngoingMeeting />} />
         </Route>
       ) : (
         <Route element={<RootLayout />}>
