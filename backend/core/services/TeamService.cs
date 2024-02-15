@@ -34,7 +34,7 @@ public class TeamService : ITeamService
             new()
             {
                 Id = Utils.GenerateRandomId(),
-                Code = Utils.GenerateRandomId(6),
+                Code = Utils.GenerateRandomId(6, "upper"),
                 Name = incomingCreateTeamDTO.TeamName,
                 TeamRole = incomingCreateTeamDTO.TeamRole,
                 CreatedAt = DateTime.UtcNow

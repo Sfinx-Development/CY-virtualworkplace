@@ -11,13 +11,11 @@ import { conversationReducer } from "./conversationSlice";
 
 const store = configureStore({
   reducer: {
+    profileSlice: profileReducer,
     userSlice: userReducer,
     authSlice: authReducer,
     teamSlice: teamReducer,
-
     meetingSlice: meetingReducer,
-
-    profileSlice: profileReducer,
     conversationSlice: conversationReducer,
   },
 });

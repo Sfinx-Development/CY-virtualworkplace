@@ -1,4 +1,3 @@
-import * as signalR from "@microsoft/signalr";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import {
   Box,
@@ -8,13 +7,17 @@ import {
   Container,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileHubDTO } from "../../../types";
 import {
   GetMyProfileAsync,
   GetOnlineProfiles,
   GetTeamProfiles,
+  enterMeetingRoomAsync,
+  leaveMeetingRoomAsync,
+  profileOffline,
+  profileOnline,
 } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -28,67 +31,32 @@ export default function MeetingRoom() {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-  const [loadedOnlineProfiles, setLoadedOnlineProfiles] = useState(false);
   const onlineProfiles = useAppSelector(
     (state) => state.profileSlice.onlineProfiles
   );
 
-  const [profilesInRoom, setProfilesInRoom] = useState<ProfileHubDTO[]>([]);
-
-  const addNewProfilesToRoom = (newProfiles: ProfileHubDTO[]) => {
-    setProfilesInRoom((prevProfiles) => {
-      const profilesToSetInRoom: ProfileHubDTO[] = [];
-      newProfiles.forEach((p) => {
-        const profileExistsInRoom = prevProfiles.some(
-          (pr) => pr.profileId === p.profileId
-        );
-        if (!profileExistsInRoom) {
-          profilesToSetInRoom.push(p);
-        }
-      });
-      return [...prevProfiles, ...profilesToSetInRoom];
-    });
-  };
-
   useEffect(() => {
+    console.log("HÄMTAR TEAM");
     dispatch(getActiveTeam());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
-    if (activeTeam && !loadedOnlineProfiles) {
+    if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
-      dispatch(GetOnlineProfiles(activeTeam?.id));
-      setLoadedOnlineProfiles(true);
+      dispatch(GetOnlineProfiles(activeTeam.id));
     }
-  }, [dispatch, activeTeam, loadedOnlineProfiles]);
-
-  useEffect(() => {
-    if (onlineProfiles && onlineProfiles.length > 0) {
-      const allProfilesLoaded = onlineProfiles.every(
-        (profile) => profile.fullName
-      );
-      if (allProfilesLoaded) {
-        setLoadedOnlineProfiles(true);
-        console.log("hämtar rofier on");
-        addNewProfilesToRoom(onlineProfiles);
-      }
-    }
-  }, [onlineProfiles]);
+  }, [activeTeam]);
 
   useEffect(() => {
     const connection = Connector.getInstance();
 
     connection.events = {
       profileOnline: (profile: ProfileHubDTO) => {
-        if (!profilesInRoom.some((p) => p.profileId == profile.profileId)) {
-          setProfilesInRoom((prevProfiles) => [...prevProfiles, profile]);
-        }
+        dispatch(profileOnline(profile));
       },
       profileOffline: (profileId: string) => {
-        setProfilesInRoom((prevProfiles) =>
-          prevProfiles.filter((p) => p.profileId !== profileId)
-        );
+        dispatch(profileOffline(profileId));
       },
     };
 
@@ -103,74 +71,38 @@ export default function MeetingRoom() {
   }, []);
 
   useEffect(() => {
-    const enterMeetingRoom = async () => {
-      const connection = Connector.getInstance();
-      try {
-        if (
-          connection.getConnectionState() !==
-          signalR.HubConnectionState.Connected
-        ) {
-          await connection.start();
-        }
-        if (
-          connection.getConnectionState() ===
-          signalR.HubConnectionState.Connected
-        ) {
-          // Om den är det, skicka begäran om att gå in i mötesrummet
-          if (activeProfile) {
-            await connection.invokeHubMethod<string>(
-              "ProfileEnterMeetingRoom",
-              activeProfile.id
-            );
-            console.log("Profil gick in i mötesrummet");
-          }
-        } else {
-          // Om anslutningen fortfarande inte är i "Connected" -läget, visa ett felmeddelande
-          console.error("SignalR connection is not in the 'Connected' state.");
-        }
-      } catch (error) {
-        console.error("Error sending enter meeting room request:", error);
-      }
-    };
+    // När komponenten monteras, skicka en åtgärd för att gå in i mötesrummet
+    if (activeProfile) {
+      dispatch(enterMeetingRoomAsync(activeProfile.id));
+    }
 
-    const leaveMeetingRoom = async () => {
-      if (activeProfile) {
-        const connection = Connector.getInstance();
-        if (
-          connection.getConnectionState() ===
-          signalR.HubConnectionState.Disconnected
-        ) {
-          try {
-            await connection.start();
-          } catch (error) {
-            console.error("Error starting connection:", error);
-            return;
-          }
-        }
-
-        try {
-          connection.invokeHubMethod<string>(
-            "ProfileLeavingMeetingRoom",
-            activeProfile.id
-          );
-        } catch (error) {
-          console.error("Error invoking hub method:", error);
-        }
-      }
-    };
-
-    enterMeetingRoom();
-
+    // När komponenten avmonteras, skicka en åtgärd för att lämna mötesrummet
     return () => {
-      leaveMeetingRoom();
+      if (activeProfile) {
+        dispatch(leaveMeetingRoomAsync(activeProfile.id));
+      }
     };
-  }, [activeProfile]);
+  }, [dispatch, activeProfile]);
 
   const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
   const isMobile = window.innerWidth <= 500;
   const meetingRoomColor = theme1.palette.room.main;
   const leaveColor = theme1.palette.leave.main;
   const navigate = useNavigate();
+
+  const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "5px",
+      }}
+    >
+      <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
+      <Typography key={profile.profileId}>{profile.fullName}</Typography>
+    </div>
+  ));
+
   return (
     <Container
       sx={{
@@ -183,28 +115,10 @@ export default function MeetingRoom() {
     >
       <Card sx={{ padding: 2, backgroundColor: meetingRoomColor }}>
         <Typography> {activeTeam?.name}'s mötesrum</Typography>
-        {profilesInRoom && profilesInRoom.length > 0 ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              // alignItems: "center",
-            }}
-          >
-            {profilesInRoom.map((profile) => (
-              <div
-                key={profile.profileId}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  marginBottom: "5px",
-                }}
-              >
-                <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
-                <Typography key={profile.profileId}>
-                  {profile.fullName}
-                </Typography>
-              </div>
+        {onlineProfiles && onlineProfiles.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {onlineProfiles.map((profile) => (
+              <ProfileItem key={profile.profileId} profile={profile} />
             ))}
           </div>
         ) : (

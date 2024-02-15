@@ -9,6 +9,7 @@ import {
   Popper,
   Typography,
 } from "@mui/material";
+import Alert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GetTeamProfiles } from "../../slices/profileSlice";
@@ -18,20 +19,16 @@ import { theme1 } from "../../theme";
 import Connector from "./signalRConnection";
 
 export default function Menu() {
-  // const { id } = useParams<{ id: string }>();
   const [profileDropdown, setProfileDropdown] = useState(false);
-  // const teams = useAppSelector((state) => state.teamSlice.teams);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  // const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const primaryColor = theme1.palette.primary.main;
+  // const primaryColor = theme1.palette.primary.main;
   const officeColor = theme1.palette.office.main;
   const meetingRoomColor = theme1.palette.room.main;
   const chatRoomColor = theme1.palette.chat.main;
   const leaveColor = theme1.palette.leave.main;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  //sätta activeteam i reducer? ls? koolla det
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const [copied, setCopied] = useState(false);
 
@@ -39,6 +36,7 @@ export default function Menu() {
     dispatch(getActiveTeam());
     Connector.getInstance().start();
   }, []);
+
   useEffect(() => {
     if (activeTeam) {
       dispatch(GetTeamProfiles(activeTeam?.id));
@@ -91,6 +89,12 @@ export default function Menu() {
           <Typography variant="h4" sx={{ textAlign: "center" }}>
             {activeTeam?.name}
           </Typography>
+          {copied ? (
+            <Alert variant="outlined" severity="success">
+              Du har kopierat koden!
+            </Alert>
+          ) : null}
+
           <Button
             onClick={copyCodeToClipboard}
             variant="contained"
@@ -128,7 +132,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Mötesrum
                   </Typography>
@@ -154,7 +161,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Chattrum
                   </Typography>
@@ -221,7 +231,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Mitt Kontor
                   </Typography>
@@ -246,7 +259,10 @@ export default function Menu() {
                   <Typography
                     component="div"
                     // variant="h5"
-                    sx={{ textAlign: "center", fontSize: isMobile ? "10" : "" }}
+                    sx={{
+                      textAlign: "center",
+                      fontSize: isMobile ? "10" : "22",
+                    }}
                   >
                     Lämna
                   </Typography>
