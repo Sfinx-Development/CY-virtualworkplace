@@ -19,18 +19,21 @@ namespace Controllers
         private readonly ITeamService _teamService;
         private readonly IProfileService _profileService;
         private readonly IConversationService _conversationService;
+        private readonly IMeetingOccasionService _meetingOccasionService;
 
         public TeamController(
             JwtService jwtService,
             ITeamService teamService,
             IProfileService profileService,
-            IConversationService conversationService
+            IConversationService conversationService,
+            IMeetingOccasionService meetingOccasionService
         )
         {
             _jwtService = jwtService;
             _teamService = teamService;
             _profileService = profileService;
             _conversationService = conversationService;
+            _meetingOccasionService =meetingOccasionService;
         }
 
         [Authorize]
@@ -106,6 +109,7 @@ namespace Controllers
                         createdProfile,
                         foundTeam.Id
                     );
+                     await _meetingOccasionService.AddOccasionsToNewProfiles(createdProfile.Id, foundTeam.Id);
                     // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
                     return Ok(createdProfile.Team);
                 }

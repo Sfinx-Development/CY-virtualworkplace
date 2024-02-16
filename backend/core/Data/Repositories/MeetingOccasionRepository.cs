@@ -69,6 +69,26 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
             throw new Exception();
         }
     }
+    
+     public async Task<List<Meeting>> GetMeetingsByTeamId(string teamId)
+    {
+
+           
+        try
+        {
+            var meetings = await _cyDbContext.Meetings
+            .Where(m => m.TeamId == teamId)
+            .ToListAsync();
+            
+            return meetings;
+          
+        
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
 
   
 

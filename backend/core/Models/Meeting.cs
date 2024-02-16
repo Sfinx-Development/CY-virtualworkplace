@@ -14,6 +14,7 @@ public class Meeting
     public bool IsRepeating { get; set; }
     public int Interval { get; set; }
     public DateTime? EndDate { get; set; }
+    public string? TeamId { get; set; }
 
     public Meeting() { }
 }

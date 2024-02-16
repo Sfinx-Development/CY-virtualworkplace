@@ -43,7 +43,8 @@ public class MeetingService
                     OwnerId = incomingMeetingDTO.OwnerId,
                     IsRepeating = incomingMeetingDTO.IsRepeating,
                     Interval = incomingMeetingDTO.Interval,
-                    EndDate = incomingMeetingDTO.EndDate
+                    EndDate = incomingMeetingDTO.EndDate,
+                    TeamId = profile.TeamId
                 };
 
 
@@ -138,6 +139,27 @@ public class MeetingService
             foundMeeting.EndDate = meeting.EndDate;
             var updatedMeeting = await _meetingRepository.UpdateAsync(foundMeeting);
             return updatedMeeting;
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
+
+     public async Task<Meeting> GetMeetingByTeamId(string teamId)
+    {
+        try
+        {
+            var meetings = await _meetingRepository.GetByIdAsync(teamId);
+
+            if (meetings == null)
+            {
+                throw new Exception("meetingroom can't be found");
+            }
+            else
+            {
+                return meetings;
+            }
         }
         catch (Exception)
         {

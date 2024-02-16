@@ -160,4 +160,39 @@ public class MeetingOccasionService : IMeetingOccasionService
             throw new Exception(e.Message);
         }
     }
+
+        public async Task AddOccasionsToNewProfiles(string profileId, string teamId)
+    {
+        try
+        {
+                var profile = await _profileRepository.GetByIdAsync(profileId);
+
+                var meetings = await _meetingOccasionRepository.GetMeetingsByTeamId(teamId);
+
+
+     foreach(var meeting in meetings){
+     MeetingOccasion ownersOccasion =
+                new()
+                {
+                    Id = Utils.GenerateRandomId(),
+                    Profile = profile,
+                    Meeting = meeting
+                };
+            await _meetingOccasionRepository.CreateAsync(ownersOccasion);
+       
+     }
+
+       
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+
+
+
+    
+
 }
