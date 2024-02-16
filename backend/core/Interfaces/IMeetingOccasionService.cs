@@ -10,4 +10,6 @@ public interface IMeetingOccasionService
     Task DeleteOccasion(string id, string userId);
 
     Task<MeetingOccasion> AddOccasion(AddToMeetingDTO addToMeetingDTO, string userId);
+
+ Task AddOccasionsToNewProfiles(string profileId, string teamId);
 }

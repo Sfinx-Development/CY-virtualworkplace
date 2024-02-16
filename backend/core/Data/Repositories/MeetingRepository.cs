@@ -53,6 +53,7 @@ public class MeetingRepository : IMeetingRepository
         }
     }
 
+
     public async Task<Meeting> UpdateAsync(Meeting meeting)
     {
         try
@@ -84,4 +85,8 @@ public class MeetingRepository : IMeetingRepository
             throw new Exception(e.Message);
         }
     }
+
+    
+
+    
 }

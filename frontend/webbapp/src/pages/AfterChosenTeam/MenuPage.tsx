@@ -24,7 +24,7 @@ export default function Menu() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   // const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const primaryColor = theme1.palette.primary.main;
+  // const primaryColor = theme1.palette.primary.main;
   const officeColor = theme1.palette.office.main;
   const meetingRoomColor = theme1.palette.room.main;
   const chatRoomColor = theme1.palette.chat.main;
