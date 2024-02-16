@@ -28,7 +28,7 @@ namespace Controllers
         }
 
         [Authorize]
-         [HttpPost("meetingoccasion")]
+        [HttpPost("meetingoccasion")]
         //när vi hämtar alla ens KOMMANDE mötestillfällen så uppdateras mötet till senaste tiden om återkommande
         public async Task<ActionResult<List<OutgoingOcassionDTO>>> Get([FromBody] string profileId)
         {
@@ -54,22 +54,24 @@ namespace Controllers
                     );
                     var outgoingOccasionDtos = new List<OutgoingOcassionDTO>();
 
-                            outgoingOccasionDtos = meetingOccasions
-                .Select(
-                    m =>
-                        new OutgoingOcassionDTO(
-                            m.Id,
-                            m.Meeting.Id,
-                            m.Profile.Id,
-                            m.Meeting.Name,
-                            m.Meeting.Description,
-                            m.Meeting.Date,
-                            m.Meeting.Minutes,
-                            m.Meeting.RoomId
+                    outgoingOccasionDtos = meetingOccasions
+                        .Select(
+                            m =>
+                                new OutgoingOcassionDTO(
+                                    m.Id,
+                                    m.Meeting.Id,
+                                    m.Profile.Id,
+                                    m.Meeting.Name,
+                                    m.Meeting.Description,
+                                    m.Meeting.Date,
+                                    m.Meeting.Minutes,
+                                    m.Meeting.RoomId
+                                )
                         )
-                )
-                .ToList();
-
+                        .ToList();
+                    Console.WriteLine(
+                        "OCCASIONSSSSSSSSSSSSS:" + outgoingOccasionDtos.Count.ToString()
+                    );
                     return Ok(outgoingOccasionDtos);
                 }
                 else
@@ -84,9 +86,11 @@ namespace Controllers
         }
 
         [Authorize]
-         [HttpPost("pastmeetingoccasion")]
+        [HttpPost("pastmeetingoccasion")]
         //när vi hämtar alla ens KOMMANDE mötestillfällen så uppdateras mötet till senaste tiden om återkommande
-        public async Task<ActionResult<List<OutgoingOcassionDTO>>> GetPast([FromBody] string profileId)
+        public async Task<ActionResult<List<OutgoingOcassionDTO>>> GetPast(
+            [FromBody] string profileId
+        )
         {
             try
             {
@@ -105,26 +109,25 @@ namespace Controllers
 
                 if (loggedInUser.Profiles.Any(p => p.Id == profileId))
                 {
-                    var meetingOccasions = await _meetingOccasionService.GetPastOccasionsByProfileId(
-                        profileId
-                    );
+                    var meetingOccasions =
+                        await _meetingOccasionService.GetPastOccasionsByProfileId(profileId);
                     var outgoingOccasionDtos = new List<OutgoingOcassionDTO>();
 
-                            outgoingOccasionDtos = meetingOccasions
-                .Select(
-                    m =>
-                        new OutgoingOcassionDTO(
-                            m.Id,
-                            m.Meeting.Id,
-                            m.Profile.Id,
-                            m.Meeting.Name,
-                            m.Meeting.Description,
-                            m.Meeting.Date,
-                            m.Meeting.Minutes,
-                            m.Meeting.RoomId
+                    outgoingOccasionDtos = meetingOccasions
+                        .Select(
+                            m =>
+                                new OutgoingOcassionDTO(
+                                    m.Id,
+                                    m.Meeting.Id,
+                                    m.Profile.Id,
+                                    m.Meeting.Name,
+                                    m.Meeting.Description,
+                                    m.Meeting.Date,
+                                    m.Meeting.Minutes,
+                                    m.Meeting.RoomId
+                                )
                         )
-                )
-                .ToList();
+                        .ToList();
 
                     return Ok(outgoingOccasionDtos);
                 }

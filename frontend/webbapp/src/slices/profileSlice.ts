@@ -192,16 +192,16 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    // setActiveProfile: (state, action) => {
-    //   const profileId = action.payload;
-    //   const activeProfile = state.profiles?.find(
-    //     (profile: Profile) => profile.id === profileId
-    //   );
-    //   if (activeProfile) {
-    //     state.activeProfile = activeProfile;
-    //     saveActiveProfileToLocalStorage(activeProfile);
-    //   }
-    // },
+    setActiveProfile: (state, action) => {
+      const profileId = action.payload;
+      const activeProfile = state.profiles?.find(
+        (profile: Profile) => profile.id === profileId
+      );
+      if (activeProfile) {
+        state.activeProfile = activeProfile;
+        saveActiveProfileToLocalStorage(activeProfile);
+      }
+    },
     getActiveProfile: (state) => {
       const activeProfile = loadActiveProfileFromLocalStorage();
       if (activeProfile) {

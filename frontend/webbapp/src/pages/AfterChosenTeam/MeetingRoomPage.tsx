@@ -10,6 +10,7 @@ import {
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileHubDTO } from "../../../types";
+import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import {
   GetMyProfileAsync,
   GetOnlineProfiles,
@@ -35,6 +36,19 @@ export default function MeetingRoom() {
     (state) => state.profileSlice.onlineProfiles
   );
 
+  const occasions = useAppSelector((state) => state.meetingSlice.occasions);
+  const now = new Date();
+
+  const ongoingMeeting = occasions
+    ? occasions.find((occasion) => {
+        const startDate = new Date(occasion.date);
+        const endDate = new Date(
+          startDate.getTime() + occasion.minutes * 60000
+        );
+        return startDate <= now && endDate >= now;
+      })
+    : null;
+
   useEffect(() => {
     console.log("HÄMTAR TEAM");
     dispatch(getActiveTeam());
@@ -47,6 +61,12 @@ export default function MeetingRoom() {
       dispatch(GetOnlineProfiles(activeTeam.id));
     }
   }, [activeTeam]);
+
+  useEffect(() => {
+    if (activeProfile) {
+      dispatch(GetMyMeetingsAsync(activeProfile.id));
+    }
+  }, []);
 
   useEffect(() => {
     const connection = Connector.getInstance();
@@ -125,10 +145,36 @@ export default function MeetingRoom() {
           <Typography>Inga profiler online</Typography>
         )}
       </Card>
+      {ongoingMeeting ? (
+        <Card
+          sx={{
+            display: "inline-block",
+            width: "300px",
+            margin: "10px",
+            backgroundColor: meetingRoomColor,
+          }}
+        >
+          <CardActionArea
+            onClick={() => {
+              navigate("/joinmeeting");
+            }}
+          >
+            <CardContent sx={{ flex: "1 0 auto" }}>
+              <Typography
+                component="div"
+                variant="h6"
+                sx={{ textAlign: "center" }}
+              >
+                Gå med i mötet {ongoingMeeting.name}
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+        </Card>
+      ) : null}
       <div
         style={{
           display: "flex",
-          height: "80%",
+          // height: "80%",
           justifyContent: "flex-end",
           alignItems: "flex-end",
           flexDirection: "column",

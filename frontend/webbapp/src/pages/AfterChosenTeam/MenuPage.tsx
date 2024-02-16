@@ -1,4 +1,5 @@
 import GroupsIcon from "@mui/icons-material/Groups";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import {
   Box,
   Button,
@@ -12,7 +13,11 @@ import {
 import Alert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GetTeamProfiles } from "../../slices/profileSlice";
+import {
+  GetMyMeetingsAsync,
+  GetMyPastMeetingsAsync,
+} from "../../slices/meetingSlice";
+import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -27,21 +32,48 @@ export default function Menu() {
   const meetingRoomColor = theme1.palette.room.main;
   const chatRoomColor = theme1.palette.chat.main;
   const leaveColor = theme1.palette.leave.main;
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
   const [copied, setCopied] = useState(false);
+
+  const occasions = useAppSelector((state) => state.meetingSlice.occasions);
+  const now = new Date();
+
+  const ongoingMeeting = occasions
+    ? occasions.find((occasion) => {
+        const startDate = new Date(occasion.date);
+        const endDate = new Date(
+          startDate.getTime() + occasion.minutes * 60000
+        );
+        return startDate <= now && endDate >= now;
+      })
+    : null;
 
   useEffect(() => {
     dispatch(getActiveTeam());
     Connector.getInstance().start();
   }, []);
 
+  //räcker att man köra getmyprofile här och sedan överallt framåt - getactiveprofile för här sätts till localstorage
   useEffect(() => {
     if (activeTeam) {
-      dispatch(GetTeamProfiles(activeTeam?.id));
+      dispatch(GetTeamProfiles(activeTeam.id));
+      dispatch(GetMyProfileAsync(activeTeam.id));
     }
-  }, [activeTeam]);
+  }, []);
+
+  useEffect(() => {
+    if (activeProfile) {
+      console.log("körs");
+      console.log("AKTIVE PROFIL : ", activeProfile);
+      dispatch(GetMyMeetingsAsync(activeProfile.id));
+    }
+  }, []);
 
   const copyCodeToClipboard = () => {
     if (activeTeam) {
@@ -128,7 +160,14 @@ export default function Menu() {
               }}
             >
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <CardContent sx={{ flex: "1 0 auto" }}>
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    flex: "1 0 auto",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}
+                >
                   <Typography
                     component="div"
                     // variant="h5"
@@ -139,6 +178,16 @@ export default function Menu() {
                   >
                     Mötesrum
                   </Typography>
+                  {ongoingMeeting ? (
+                    <NotificationsNoneIcon
+                      sx={{
+                        paddingLeft: 1,
+                        textAlign: "center",
+                        flexDirection: "row",
+                        fontSize: isMobile ? "10" : "22",
+                      }}
+                    />
+                  ) : null}
                 </CardContent>
               </Box>
             </CardActionArea>

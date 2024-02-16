@@ -1,25 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch } from "../../slices/store";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Box,
+  Card,
+  CardContent,
+  Container,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import { useEffect } from "react";
 import {
   GetMyMeetingsAsync,
   GetMyPastMeetingsAsync,
-//   DeleteMeetingAsync,
 } from "../../slices/meetingSlice";
-import {
-  GetMyProfileAsync,
-  GetOnlineProfiles,
-  GetTeamProfiles,
-} from "../../slices/profileSlice";
+import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
-import {
-  Typography,
-  Container,
-  Card,
-  CardContent,
-  Box,
-  IconButton,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 import { theme1 } from "../../theme";
 
@@ -29,7 +24,7 @@ export default function MeetingInTeamsPage() {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-  const [loadedOnlineProfiles, setLoadedOnlineProfiles] = useState(false);
+  // const [loadedOnlineProfiles, setLoadedOnlineProfiles] = useState(false);
 
   //   const primaryColor = theme1.palette.primary.main;
   const officeColor = theme1.palette.office.main;
@@ -43,16 +38,17 @@ export default function MeetingInTeamsPage() {
   }, []);
 
   useEffect(() => {
-    if (activeTeam && !loadedOnlineProfiles) {
+    if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
-      dispatch(GetOnlineProfiles(activeTeam?.id));
-      setLoadedOnlineProfiles(true);
+      // dispatch(GetOnlineProfiles(activeTeam?.id));
+      // setLoadedOnlineProfiles(true);
     }
-  }, [dispatch, activeTeam, loadedOnlineProfiles]);
+  }, [dispatch, activeTeam]);
 
   useEffect(() => {
     if (activeProfile) {
+      console.log("OCH HÄR AKTIV PROFIL: ", activeProfile);
       dispatch(GetMyMeetingsAsync(activeProfile.id));
       dispatch(GetMyPastMeetingsAsync(activeProfile.id));
     }
@@ -66,9 +62,9 @@ export default function MeetingInTeamsPage() {
   const pastMeetings =
     useAppSelector((state) => state.meetingSlice.pastOccasions) || [];
 
-//   const handleDeleteMeeting = (meetingId: string) => {
-//     dispatch(DeleteMeetingAsync(meetingId));
-//   };
+  //   const handleDeleteMeeting = (meetingId: string) => {
+  //     dispatch(DeleteMeetingAsync(meetingId));
+  //   };
 
   return (
     <Container>
@@ -89,7 +85,7 @@ export default function MeetingInTeamsPage() {
                     {meeting.date.toString()}
                     <IconButton
                       style={{ position: "absolute", right: 250 }}
-                    //   onClick={() => handleDeleteMeeting(meeting.id)}
+                      //   onClick={() => handleDeleteMeeting(meeting.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -114,7 +110,7 @@ export default function MeetingInTeamsPage() {
                     {meeting.name}
                     <IconButton
                       style={{ position: "absolute", right: 250 }}
-                    //   onClick={() => handleDeleteMeeting(meeting.id)}
+                      //   onClick={() => handleDeleteMeeting(meeting.id)}
                     >
                       <DeleteIcon />
                     </IconButton>
