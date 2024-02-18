@@ -9,11 +9,9 @@ import {
   ConversationParticipant,
   GetParticipantDTO,
   Message,
-  MessageInput,
 } from "../../types";
 
 const conversationApiUrl = `http://${window.location.hostname}:5290/conversation`;
-const messageApiUrl = `http://${window.location.hostname}:5290/message`;
 
 export const FetchGetTeamMessages = async (
   teamId: string
@@ -65,34 +63,6 @@ export const FetchGetTeamConversation = async (
     const conversation = responseBody as Conversation;
 
     return conversation;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const FetchCreateMessage = async (
-  message: MessageInput
-): Promise<Message> => {
-  try {
-    const response = await fetch(messageApiUrl + "/send", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(message),
-    });
-    const responseBody = await response.json();
-    console.log("RESPONSE från create message: ", responseBody);
-
-    if (!response.ok) {
-      throw new Error("Något gick fel vid skapande av meddelande");
-    }
-
-    const data = responseBody as Message;
-    console.log("DATA: ", data);
-    return data;
   } catch (error) {
     console.error(error);
     throw error;

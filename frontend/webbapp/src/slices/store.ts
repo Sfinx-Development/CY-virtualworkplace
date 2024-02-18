@@ -8,6 +8,7 @@ import { profileReducer } from "./profileSlice";
 import { teamReducer } from "./teamSlice";
 import { userReducer } from "./userSlice";
 import { conversationReducer } from "./conversationSlice";
+import { messageReducer } from "./messageSlice";
 
 const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ const store = configureStore({
     teamSlice: teamReducer,
     meetingSlice: meetingReducer,
     conversationSlice: conversationReducer,
+    messageSlice: messageReducer,
   },
 });
 

@@ -61,17 +61,43 @@ public class MessageService : IMessageService
         }
     }
 
-    // public async List<Message> GetAll(Conversation conversation, User user)
-    // {
-    //     try
-    //     {
-    //          return await _messageRepository.GetByIdAsync(conversation.Id);
-    //     }
-    //     catch (Exception)
-    //     {
-    //         throw new Exception();
-    //     }
-    // }
+    public async Task DeleteAsync(string messageId, User loggedInUser)
+    {
+        try
+        {
+            var message = await _messageRepository.GetByIdAsync(messageId);
+            if (message.ConversationParticipant.Profile.UserId == loggedInUser.Id)
+            {
+                await _messageRepository.DeleteByIdAsync(message.Id);
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<Message> EditAsync(IncomingMessageDTO incomingMessageDTO, User loggedInUser)
+    {
+        try
+        {
+            var messageToEdit = await _messageRepository.GetByIdAsync(incomingMessageDTO.MessageId);
+            if (messageToEdit.ConversationParticipant.Profile.UserId == loggedInUser.Id)
+            {
+                messageToEdit.Content = incomingMessageDTO.Content;
+                var editedMessage = await _messageRepository.Edit(messageToEdit);
+                return editedMessage;
+            }
+            else
+            {
+                throw new Exception("message can't be found");
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 
     // public async Task RemoveConversationAndMessages(Conversation conversation, Message messages)
     // {

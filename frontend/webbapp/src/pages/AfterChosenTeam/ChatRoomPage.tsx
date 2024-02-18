@@ -1,20 +1,27 @@
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import {
+  Avatar,
   Button,
   Card,
   Container,
+  IconButton,
   TextField,
   Typography,
-  Avatar,
 } from "@mui/material";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
-import { MessageInput } from "../../../types";
+import { MessageOutgoing } from "../../../types";
 import {
-  CreateMessageAsync,
   GetConversationParticipant,
   GetTeamConversation,
-  GetTeamConversationMessages,
 } from "../../slices/conversationSlice";
+import {
+  CreateMessageAsync,
+  DeleteMessageAsync,
+  EditMessageAsync,
+  GetTeamConversationMessages,
+} from "../../slices/messageSlice";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -32,7 +39,7 @@ export default function ChatRoom() {
   );
 
   const messagesFromSlice = useAppSelector(
-    (state) => state.conversationSlice.messages
+    (state) => state.messageSlice.messages
   );
   const messages = [...messagesFromSlice].sort(
     (a, b) =>
@@ -48,6 +55,9 @@ export default function ChatRoom() {
   );
 
   const [content, setContent] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [messageIdToEdit, setMessageIdToEdit] = useState("");
+  const [editedContent, setEditedContent] = useState("");
 
   useEffect(() => {
     scrollToBottom();
@@ -56,6 +66,11 @@ export default function ChatRoom() {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    console.log("MESSAGE ID ÄR: ", messageId);
+    dispatch(DeleteMessageAsync(messageId));
   };
 
   useEffect(() => {
@@ -82,12 +97,36 @@ export default function ChatRoom() {
     //just det hur hantera här?!1
     if (activeParticipant && content != "") {
       console.log("PARTICIPANTID: ", activeParticipant.id);
-      const message: MessageInput = {
+      const message: MessageOutgoing = {
         conversationParticipantId: activeParticipant.id,
         content: content,
+        messageId: "",
       };
       dispatch(CreateMessageAsync(message));
       setContent("");
+    }
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleEditMessage();
+      setIsEditMode(false);
+    }
+  };
+
+  const handleEditMessage = () => {
+    if (editedContent && isEditMode && messageIdToEdit) {
+      console.log("REDIGAR TILLLLL: ", editedContent);
+      //dispatcha edit message och stopppa in messageidtoedit samt editedcontent
+      const message = messages.find((m) => m.id == messageIdToEdit);
+      if (message) {
+        const messageToEdit: MessageOutgoing = {
+          conversationParticipantId: message.conversationParticipantId,
+          content: editedContent,
+          messageId: message.id,
+        };
+        dispatch(EditMessageAsync(messageToEdit));
+      }
     }
   };
 
@@ -120,7 +159,7 @@ export default function ChatRoom() {
           padding: 2,
           backgroundColor: "transparent",
           border: 2,
-          borderColor: chatColor,
+          borderColor: "lightgrey",
           flexGrow: 1,
           height: "350px",
           overflow: "auto",
@@ -141,38 +180,89 @@ export default function ChatRoom() {
                     : "rgba(243, 228, 250, 0.4)",
                 display: "flex",
                 flexDirection: "column",
-                // alignItems:
-                //   message.conversationParticipantId === activeParticipant.id
-                //     ? "flex-end"
-                //     : "flex-start",
               }}
             >
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                {message.fullName && (
-                  <Typography
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                  }}
+                >
+                  {message.fullName && (
+                    <Typography
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        fontWeight: "bold",
+                        fontSize: 14,
+                      }}
+                    >
+                      <Avatar
+                        src={getProfilesAvatar(message.profileId)}
+                        sx={{ height: 20, width: 20, marginRight: 1 }}
+                      />
+
+                      {message.fullName}
+                    </Typography>
+                  )}
+                  <Typography style={{ marginLeft: "8px", fontSize: 12 }}>
+                    {formatDate(message.dateCreated)}
+                  </Typography>
+                </div>
+
+                {message.conversationParticipantId === activeParticipant.id ? (
+                  <div
                     style={{
                       display: "flex",
                       flexDirection: "row",
-                      fontWeight: "bold",
-                      fontSize: 14,
                     }}
                   >
-                    <Avatar
-                      src={getProfilesAvatar(message.profileId)}
-                      sx={{ height: 20, width: 20, marginRight: 1 }}
-                    />
-
-                    {message.fullName}
-                  </Typography>
-                )}
-                <Typography style={{ marginLeft: "8px", fontSize: 12 }}>
-                  {formatDate(message.dateCreated)}
-                </Typography>
+                    <IconButton
+                      sx={{ color: "black", padding: 0, marginRight: 0.5 }}
+                      onClick={() => {
+                        handleDeleteMessage(message.id);
+                      }}
+                    >
+                      <DeleteOutlineIcon sx={{ padding: 0, fontSize: 20 }} />
+                    </IconButton>
+                    <IconButton
+                      sx={{
+                        color: "black",
+                        padding: 0,
+                      }}
+                      onClick={() => {
+                        setIsEditMode(true);
+                        setMessageIdToEdit(message.id);
+                        setEditedContent(message.content);
+                      }}
+                    >
+                      <EditIcon sx={{ padding: 0, fontSize: 20 }} />
+                    </IconButton>
+                  </div>
+                ) : null}
               </div>
+              {isEditMode && messageIdToEdit == message.id ? (
+                <TextField
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  onKeyDown={handleKeyPress}
+                />
+              ) : (
+                <Typography style={{ fontSize: 14, marginLeft: 25 }}>
+                  {message.content}
+                </Typography>
+              )}
 
-              <Typography style={{ fontSize: 14, marginLeft: 25 }}>
-                {message.content}
-              </Typography>
               <div ref={messagesEndRef} />
             </Card>
           ))}
@@ -199,7 +289,11 @@ export default function ChatRoom() {
               }
             }}
           />
-          <Button variant="contained" onClick={handleSendMessage}>
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: chatColor }}
+            onClick={handleSendMessage}
+          >
             Skicka
           </Button>
         </Container>
