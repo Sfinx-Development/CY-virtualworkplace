@@ -37,6 +37,7 @@ namespace core
                 user.PhoneNumber = userCreateDto.PhoneNumber;
                 user.DateCreated = DateTime.UtcNow;
                 user.Age = userCreateDto.Age;
+                user.AvatarUrl = userCreateDto.AvatarUrl;
 
                 User createdUser = await _userRepository.CreateAsync(user);
 

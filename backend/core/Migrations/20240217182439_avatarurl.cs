@@ -5,16 +5,16 @@
 namespace core.Migrations
 {
     /// <inheritdoc />
-    public partial class teamidinmeeting : Migration
+    public partial class avatarurl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "TeamId",
-                table: "Meetings",
+                name: "AvatarUrl",
+                table: "Users",
                 type: "longtext",
-                nullable: true)
+                nullable: false)
                 .Annotation("MySql:CharSet", "utf8mb4");
         }
 
@@ -22,8 +22,8 @@ namespace core.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "TeamId",
-                table: "Meetings");
+                name: "AvatarUrl",
+                table: "Users");
         }
     }
 }

@@ -44,6 +44,7 @@ public class ProfileRepository : IProfileRepository
             //hämtar alla profiler och dess team som har det useridt
             List<Profile> profiles = await _cyDbContext
                 .Profiles.Include(p => p.Team)
+                .Include(p => p.User)
                 .Where(p => p.Team.Id == teamId)
                 .ToListAsync();
 
@@ -62,7 +63,7 @@ public class ProfileRepository : IProfileRepository
         }
     }
 
-   public async Task<List<Profile>> GetOnlineProfilesInTeamAsync(string teamId)
+    public async Task<List<Profile>> GetOnlineProfilesInTeamAsync(string teamId)
     {
         try
         {

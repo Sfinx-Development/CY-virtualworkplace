@@ -26,7 +26,7 @@ export default function ChooseTeam() {
     //hämta saker kanske? nja kanske inte va
     //navigera till teamets meny
     dispatch(setActiveTeam(teamId));
-    navigate("/menu");
+    navigate("/enterhouse");
   };
 
   useEffect(() => {

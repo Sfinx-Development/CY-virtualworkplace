@@ -10,6 +10,7 @@ public class User
     public string PhoneNumber { get; set; }
     public string Gender { get; set; }
     public int Age { get; set; }
+    public string AvatarUrl{get;set;}
     public DateTime DateCreated { get; set; }
     public List<Profile> Profiles = new();
 

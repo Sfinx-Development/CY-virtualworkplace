@@ -5,9 +5,11 @@ import { Route, Routes } from "react-router-dom";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
+import MeetingInTeamsPage from "./pages/AfterChosenTeam/MeetingInTeam";
 import MeetingRoom from "./pages/AfterChosenTeam/MeetingRoomPage";
 import Menu from "./pages/AfterChosenTeam/MenuPage";
 import Office from "./pages/AfterChosenTeam/OfficePage";
+import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
 import CreateAccount from "./pages/NotSignedIn/CreateAccountPage";
 import ForgotPassword from "./pages/NotSignedIn/ForgotPasswordPage";
 import IndexPage from "./pages/NotSignedIn/IndexPage";
@@ -15,12 +17,10 @@ import SignIn from "./pages/NotSignedIn/SignInPage";
 import RootLayout from "./pages/RootLayout";
 import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
-import EnterHouse from "./pages/StartSignedIn/EnterHousePage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
-import MeetingInTeamsPage from "./pages/AfterChosenTeam/MeetingInTeam";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
-import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
+import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 
 const Navigation = () => {
   const user = useAppSelector((state) => state.userSlice.user);

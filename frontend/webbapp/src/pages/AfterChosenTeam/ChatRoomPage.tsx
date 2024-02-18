@@ -1,4 +1,11 @@
-import { Button, Card, Container, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  Container,
+  TextField,
+  Typography,
+  Avatar,
+} from "@mui/material";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { MessageInput } from "../../../types";
@@ -8,7 +15,7 @@ import {
   GetTeamConversation,
   GetTeamConversationMessages,
 } from "../../slices/conversationSlice";
-import { GetMyProfileAsync } from "../../slices/profileSlice";
+import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -18,6 +25,7 @@ export default function ChatRoom() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const profilesInTeam = useAppSelector((state) => state.profileSlice.profiles);
 
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
@@ -55,6 +63,7 @@ export default function ChatRoom() {
       dispatch(GetMyProfileAsync(activeTeam.id));
       dispatch(GetTeamConversation(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
+      dispatch(GetTeamProfiles(activeTeam.id));
     }
   }, [activeTeam]);
 
@@ -82,6 +91,12 @@ export default function ChatRoom() {
     }
   };
 
+  const getProfilesAvatar = (profileId: string) => {
+    const profile = profilesInTeam?.find((p) => p.id == profileId);
+    if (profile) {
+      return profile.avatarUrl;
+    }
+  };
   function formatDate(dateString: Date) {
     const date = new Date(dateString);
     return format(date, "yyyy-MM-dd HH:mm");
@@ -134,16 +149,28 @@ export default function ChatRoom() {
             >
               <div style={{ display: "flex", flexDirection: "row" }}>
                 {message.fullName && (
-                  <Typography style={{ fontWeight: "bold", fontSize: 11 }}>
+                  <Typography
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      fontWeight: "bold",
+                      fontSize: 14,
+                    }}
+                  >
+                    <Avatar
+                      src={getProfilesAvatar(message.profileId)}
+                      sx={{ height: 20, width: 20, marginRight: 1 }}
+                    />
+
                     {message.fullName}
                   </Typography>
                 )}
-                <Typography style={{ marginLeft: "8px", fontSize: 11 }}>
+                <Typography style={{ marginLeft: "8px", fontSize: 12 }}>
                   {formatDate(message.dateCreated)}
                 </Typography>
               </div>
 
-              <Typography style={{ fontSize: 13 }}>
+              <Typography style={{ fontSize: 14, marginLeft: 25 }}>
                 {message.content}
               </Typography>
               <div ref={messagesEndRef} />
