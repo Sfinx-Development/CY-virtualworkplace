@@ -9,14 +9,12 @@ import {
   Container,
   Popper,
   Typography,
+  Avatar,
 } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  GetMyMeetingsAsync,
-  GetMyPastMeetingsAsync,
-} from "../../slices/meetingSlice";
+import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -239,7 +237,11 @@ export default function Menu() {
             </CardActionArea>
 
             {profileDropdown && (
-              <Popper open={profileDropdown} anchorEl={anchorEl}>
+              <Popper
+                open={profileDropdown}
+                anchorEl={anchorEl}
+                onMouseLeave={handleMouseLeave}
+              >
                 <Box
                   sx={{
                     border: 1,
@@ -252,7 +254,19 @@ export default function Menu() {
                 >
                   {Array.isArray(profiles) &&
                     profiles.map((profile) => (
-                      <Typography key={profile.id} sx={{ marginBottom: 1 }}>
+                      <Typography
+                        key={profile.id}
+                        sx={{
+                          marginBottom: 1,
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Avatar
+                          src={profile.avatarUrl}
+                          sx={{ height: 25, width: 20, marginRight: 1 }}
+                        />
                         {profile.fullName} - {profile.role}
                       </Typography>
                     ))}

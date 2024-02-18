@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Container,
   FormControl,
@@ -11,6 +12,7 @@ import {
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { avatars } from "../../../avatars";
 import { User } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
 import { createUserAsync } from "../../slices/userSlice";
@@ -24,6 +26,7 @@ export default function CreateAccount() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("");
   const [age, setAge] = useState(0);
+  const [selectedAvatar, setSelectedAvatar] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
@@ -71,7 +74,8 @@ export default function CreateAccount() {
       confirmedPassword &&
       phoneNumber &&
       gender &&
-      age
+      age &&
+      selectedAvatar
     ) {
       if (
         password == confirmedPassword &&
@@ -88,6 +92,7 @@ export default function CreateAccount() {
           gender: gender,
           age: age,
           password: password,
+          avatarUrl: selectedAvatar,
         };
         await dispatch(createUserAsync(newUser));
         navigate("/signin");
@@ -110,122 +115,122 @@ export default function CreateAccount() {
   return (
     <Container
       sx={{
-        padding: "20px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         height: "100vh",
-        width: "100%",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          flex: 1,
-        }}
-      >
+      <div>
+        <Typography variant="h5" sx={{ margin: 2 }}>
+          Skapa ett konto
+        </Typography>
+        {passwordError && (
+          <Typography color="error">Lösenord matchar inte</Typography>
+        )}
+        {passwordLengthError && (
+          <Typography color="error">
+            Lösenordet måste bestå av minst 6 tecken
+          </Typography>
+        )}
+        {phoneError && (
+          <Typography color="error">Ange ett giltigt telefonnummer</Typography>
+        )}
+        {emailError && (
+          <Typography color="error">Ange en giltig e-post</Typography>
+        )}
         <TextField
-          id="firstname"
           label="Förnamn"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setFirstname(event.target.value);
-          }}
+          variant="outlined"
+          type="fname"
+          value={firstname}
+          onChange={(event) => setFirstname(event.target.value)}
+          sx={{ margin: 1 }}
         />
-
         <TextField
-          id="lastname"
           label="Efternamn"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setLastname(event.target.value);
-          }}
+          variant="outlined"
+          type="lname"
+          value={lastname}
+          onChange={(event) => setLastname(event.target.value)}
+          sx={{ margin: 1 }}
         />
-        {emailError ? <Typography>Ange en giltig e-post</Typography> : null}
         <TextField
-          id="email"
           label="Email"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setEmail(event.target.value);
-          }}
+          variant="outlined"
+          value={email}
+          type="email"
+          onChange={(event) => setEmail(event.target.value)}
+          sx={{ margin: 1 }}
         />
-        {passwordError ? <Typography>Lösenord matchar inte</Typography> : null}
-        {passwordLengthError ? (
-          <Typography>Lösenordet måste bestå av minst 6 tecken</Typography>
-        ) : null}
         <TextField
-          id="password"
-          label="Lösenord"
-          variant="standard"
-          type="password"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setPassword(event.target.value);
-          }}
-        />
-
-        <TextField
-          id="confirmpassword"
-          label="Bekräfta lösenord"
-          variant="standard"
-          type="password"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setConfirmedPassword(event.target.value);
-          }}
-        />
-        {phoneError ? (
-          <Typography>Ange en giltigt telefonnummer</Typography>
-        ) : null}
-        <TextField
-          id="phonenumber"
           label="Telefonnummer"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setPhoneNumber(event.target.value);
-          }}
+          variant="outlined"
+          value={phoneNumber}
+          type="tel"
+          onChange={(event) => setPhoneNumber(event.target.value)}
+          sx={{ margin: 1 }}
         />
-
-        <FormControl variant="standard" sx={{ width: "250px", marginTop: 2 }}>
-          <InputLabel id="demo-simple-select-standard-label">Kön</InputLabel>
+        <TextField
+          label="Lösenord"
+          variant="outlined"
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          sx={{ margin: 1 }}
+        />
+        <TextField
+          label="Bekräfta lösenord"
+          variant="outlined"
+          type="password"
+          value={confirmedPassword}
+          onChange={(event) => setConfirmedPassword(event.target.value)}
+          sx={{ margin: 1 }}
+        />
+        <FormControl variant="outlined" sx={{ margin: 1 }}>
+          <InputLabel id="gender-label">Kön</InputLabel>
           <Select
-            labelId="demo-simple-select-standard-label"
-            id="demo-simple-select-standard"
+            labelId="gender-label"
             value={gender}
-            onChange={(event) => {
-              setGender(event.target.value);
-            }}
-            sx={{ width: "250px", marginTop: 2 }}
             label="Kön"
+            onChange={(event) => setGender(event.target.value)}
           >
             <MenuItem value={"Man"}>Man</MenuItem>
-            <MenuItem value={"Woman"}>Kvinna</MenuItem>
-            <MenuItem value={"Nonbinary"}>Ickebinär</MenuItem>
+            <MenuItem value={"Kvinna"}>Kvinna</MenuItem>
+            <MenuItem value={"Ickebinär"}>Ickebinär</MenuItem>
           </Select>
         </FormControl>
-
         <TextField
-          id="age"
           label="Ålder"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setAge(Number(event.target.value));
-          }}
+          variant="outlined"
+          type="number"
+          value={age}
+          onChange={(event) => setAge(Number(event.target.value))}
+          sx={{ margin: 1 }}
         />
+        <Typography variant="body1" sx={{ margin: 1 }}>
+          Välj en avatar
+        </Typography>
+        <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+          {avatars.map((avatar, index) => (
+            <Avatar
+              key={index}
+              alt={`Avatar ${index + 1}`}
+              src={avatar}
+              sx={{
+                cursor: "pointer",
+                width: 70,
+                height: 70,
+                opacity: selectedAvatar == avatar ? "0.3" : "none",
+              }}
+              onClick={() => setSelectedAvatar(avatar)}
+            />
+          ))}
+        </div>
         <Button
           variant="contained"
-          sx={{
-            marginTop: 4,
-            marginBottom: 1,
-            paddingRight: 5,
-            paddingLeft: 5,
-          }}
           onClick={handleCreateUser}
+          sx={{ margin: 1, fontSize: 20 }}
         >
           Skapa konto
         </Button>

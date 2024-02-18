@@ -26,7 +26,7 @@ namespace Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Profile>>> GetProfilesByTeamId(
+        public async Task<ActionResult<IEnumerable<ProfileOutgoingDTO>>> GetProfilesByTeamId(
             [FromBody] string teamId
         )
         {
@@ -45,8 +45,28 @@ namespace Controllers
                     return BadRequest("JWT token is missing.");
                 }
                 var profiles = await _profileService.GetProfilesByTeamId(loggedInUser.Id, teamId);
+                var profilesDtos = new List<ProfileOutgoingDTO>();
 
-                return Ok(profiles);
+                profilesDtos = profiles
+                    .Select(
+                        p =>
+                            new ProfileOutgoingDTO(
+                                p.Id,
+                                p.FullName,
+                                p.Role,
+                                p.IsOwner,
+                                p.UserId,
+                                p.TeamId,
+                                p.DateCreated,
+                                p.IsOnline,
+                                p.LastOnline,
+                                p.LastActive,
+                                p.User.AvatarUrl
+                            )
+                    )
+                    .ToList();
+
+                return Ok(profilesDtos);
             }
             catch (Exception e)
             {
@@ -86,7 +106,7 @@ namespace Controllers
 
         [HttpPost("byauth")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Profile>>> GetProfileByAuthAndTeam(
+        public async Task<ActionResult<IEnumerable<ProfileOutgoingDTO>>> GetProfileByAuthAndTeam(
             [FromBody] string teamId
         )
         {
@@ -106,7 +126,20 @@ namespace Controllers
                 }
                 var profile = await _profileService.GetProfileByAuthAndTeam(loggedInUser, teamId);
 
-                return Ok(profile);
+                var profileOutgoingDTO = new ProfileOutgoingDTO(
+                    profile.Id,
+                    profile.FullName,
+                    profile.Role,
+                    profile.IsOwner,
+                    profile.UserId,
+                    profile.TeamId,
+                    profile.DateCreated,
+                    profile.IsOnline,
+                    profile.LastOnline,
+                    profile.LastActive,
+                    profile.User.AvatarUrl
+                );
+                return Ok(profileOutgoingDTO);
             }
             catch (Exception e)
             {

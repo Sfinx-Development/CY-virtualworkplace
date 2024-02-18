@@ -7,6 +7,7 @@ export interface User {
   phoneNumber: string;
   gender: string;
   age: number;
+  avatarUrl: string;
 }
 //jwtn endast i cookie ju
 
@@ -25,6 +26,7 @@ export interface Profile {
   teamId: string;
   userId: string;
   isOnline?: boolean;
+  avatarUrl: string;
 }
 
 export interface Team {
@@ -96,13 +98,12 @@ export interface MeetingOccasion {
   id: string;
   meetingId: string;
   profileId: string;
-  name:string;
-  description:string;
-  date:Date;
-  minutes:number;
-  roomId:string;
+  name: string;
+  description: string;
+  date: Date;
+  minutes: number;
+  roomId: string;
 }
-
 
 export interface Message {
   id: string;
@@ -148,9 +149,7 @@ export interface ProfileHubDTO {
   lastActive: boolean;
 }
 
-
-
-export interface GetParticipantDTO{
-  profileId:string;
-  conversationId:string;
+export interface GetParticipantDTO {
+  profileId: string;
+  conversationId: string;
 }
