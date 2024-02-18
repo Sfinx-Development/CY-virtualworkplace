@@ -11,6 +11,7 @@ public class OutgoingMessageDTO
     public string ProfileId { get; set; }
 
     public OutgoingMessageDTO(
+        string id,
         string content,
         DateTime dateCreated,
         string conversationParticipantId,
@@ -19,7 +20,7 @@ public class OutgoingMessageDTO
         string profileId
     )
     {
-        Id = Utils.GenerateRandomId();
+        Id = id;
         Content = content;
         DateCreated = dateCreated;
         ConversationParticipantId = conversationParticipantId;

@@ -4,5 +4,6 @@ namespace core
     {
         public string ConversationParticipantId { get; set; }
         public string Content { get; set; }
+        public string MessageId{get;set;}
     }
 }

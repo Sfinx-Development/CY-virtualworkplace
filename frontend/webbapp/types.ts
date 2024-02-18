@@ -115,6 +115,12 @@ export interface Message {
   profileId: string;
 }
 
+export interface MessageOutgoing {
+  conversationParticipantId: string;
+  content: string;
+  messageId: string;
+}
+
 export interface Conversation {
   id: string;
   dateCreated: Date;
@@ -133,11 +139,6 @@ export interface ConversationParticipant {
   id: string;
   profileId: string;
   conversationId: string;
-}
-
-export interface MessageInput {
-  conversationParticipantId: string;
-  content: string;
 }
 
 export interface ProfileHubDTO {

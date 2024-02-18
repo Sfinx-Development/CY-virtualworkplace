@@ -183,6 +183,7 @@ namespace Controllers
                     .Select(
                         m =>
                             new OutgoingMessageDTO(
+                                m.Id,
                                 m.Content,
                                 m.DateCreated,
                                 m.ConversationParticipantId,

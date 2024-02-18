@@ -1,22 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Conversation, ConversationParticipant } from "../../types";
 import {
-  Conversation,
-  ConversationParticipant,
-  Message,
-  MessageInput,
-} from "../../types";
-import {
-  FetchCreateMessage,
   FetchGetConversationParticipant,
   FetchGetTeamConversation,
-  FetchGetTeamMessages,
 } from "../api/conversation";
 
 interface ConversationState {
   teamConversation: Conversation | undefined;
   activeConversation: Conversation | undefined;
   activeConversationParticipant: ConversationParticipant | undefined;
-  messages: Message[];
   error: string | null;
 }
 
@@ -24,31 +16,8 @@ export const initialState: ConversationState = {
   teamConversation: undefined,
   activeConversation: undefined,
   activeConversationParticipant: undefined,
-  messages: [],
   error: null,
 };
-
-export const GetTeamConversationMessages = createAsyncThunk<
-  Message[],
-  string,
-  { rejectValue: string }
->("conversation/getTeamConversationMessages", async (teamId, thunkAPI) => {
-  try {
-    const messages = await FetchGetTeamMessages(teamId);
-    if (messages) {
-      console.log("meddelanden hämtade:", messages);
-      return messages;
-    } else {
-      return thunkAPI.rejectWithValue(
-        "Ett fel inträffade vid hämtning av konversation."
-      );
-    }
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      "Ett fel inträffade vid hämtning av konversation."
-    );
-  }
-});
 
 export const GetTeamConversation = createAsyncThunk<
   Conversation,
@@ -100,46 +69,12 @@ export const GetConversationParticipant = createAsyncThunk<
   }
 );
 
-export const CreateMessageAsync = createAsyncThunk<
-  Message,
-  MessageInput,
-  { rejectValue: string }
->("conversation/createMesssage", async (message, thunkAPI) => {
-  try {
-    const createdMessage = await FetchCreateMessage(message);
-    if (createdMessage) {
-      console.log("meddelandet skapat:", createdMessage);
-      return createdMessage;
-    } else {
-      return thunkAPI.rejectWithValue(
-        "Ett fel inträffade vid skapande av meddelande."
-      );
-    }
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      "Ett fel inträffade vid hämtning av konversation."
-    );
-  }
-});
-
 const conversationSlice = createSlice({
   name: "conversation",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(GetTeamConversationMessages.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
-        if (action.payload) {
-          console.log(action.payload);
-          state.messages = action.payload;
-          state.error = null;
-        }
-      })
-      .addCase(GetTeamConversationMessages.rejected, (state) => {
-        state.messages = [];
-        state.error = "Något gick fel med hämtandet av konversation.";
-      })
       .addCase(GetTeamConversation.fulfilled, (state, action) => {
         console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
@@ -151,16 +86,6 @@ const conversationSlice = createSlice({
       .addCase(GetTeamConversation.rejected, (state) => {
         state.teamConversation = undefined;
         state.error = "Något gick fel med hämtandet av konversation.";
-      })
-      .addCase(CreateMessageAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
-        if (action.payload) {
-          state.messages.push(action.payload);
-          state.error = null;
-        }
-      })
-      .addCase(CreateMessageAsync.rejected, (state) => {
-        state.error = "Något gick fel med skapandet av meddelandet.";
       })
       .addCase(GetConversationParticipant.fulfilled, (state, action) => {
         if (action.payload) {

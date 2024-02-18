@@ -60,6 +60,7 @@ namespace Controllers
                     return BadRequest("Failed to send message.");
                 }
                 var outgoingMessageDTO = new OutgoingMessageDTO(
+                    createdMessage.Id,
                     createdMessage.Content,
                     createdMessage.DateCreated,
                     createdMessage.ConversationParticipantId,
@@ -76,52 +77,11 @@ namespace Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost("GetMessagesInConversation")]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation(
-            [FromBody] string conversationParticipantId
-        )
-        {
-            try
-            {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
-                var messages = await _conversationService.GetConversationWithAllMessages(
-                    conversationParticipantId,
-                    loggedInUser
-                );
-
-                if (messages == null || !messages.Any())
-                {
-                    return NotFound("No messages found in the conversation.");
-                }
-
-                return Ok(messages);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        //         [Authorize]
-        // [HttpDelete]
-        // public async Task<ActionResult> DeleteMessage([FromBody] DeleteMessageDTO deleteMessageDTO)
+        // [Authorize]
+        // [HttpPost("GetMessagesInConversation")]
+        // public async Task<ActionResult<IEnumerable<Message>>> GetMessagesInConversation(
+        //     [FromBody] string conversationParticipantId
+        // )
         // {
         //     try
         //     {
@@ -142,30 +102,91 @@ namespace Controllers
         //             return BadRequest("Failed to get user.");
         //         }
 
-        //         // Your authorization logic based on the user can be added here if needed
+        //         var messages = await _conversationService.GetConversationWithAllMessages(
+        //             conversationParticipantId,
+        //             loggedInUser
+        //         );
 
-        //         // Extract necessary information from deleteMessageDTO
-        //         var conversationId = deleteMessageDTO.ConversationId;
-        //         var messageId = deleteMessageDTO.MessageId;
-
-        //         var conversation = new Conversation
+        //         if (messages == null || !messages.Any())
         //         {
-        //             Id = conversationId // Populate Conversation properties from deleteMessageDTO or other sources
-        //         };
+        //             return NotFound("No messages found in the conversation.");
+        //         }
 
-        //         var message = new Message
-        //         {
-        //             Id = messageId // Populate Message properties from deleteMessageDTO or other sources
-        //         };
-
-        //         await _messageService.RemoveConversationAndMessages(conversation, message);
-
-        //         return Ok("Successfully deleted message.");
+        //         return Ok(messages);
         //     }
         //     catch (Exception e)
         //     {
         //         return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
         //     }
         // }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<ActionResult> DeleteMessage([FromBody] string messageId)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                await _messageService.DeleteAsync(messageId, loggedInUser);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+             [Authorize]
+        [HttpPut]
+        public async Task<ActionResult<OutgoingMessageDTO>> EditMessage([FromBody] IncomingMessageDTO incomingMessageDTO)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                var editedMessage = await _messageService.EditAsync(incomingMessageDTO, loggedInUser);
+
+   var outgoingMessageDTO = new OutgoingMessageDTO(
+                    editedMessage.Id,
+                    editedMessage.Content,
+                    editedMessage.DateCreated,
+                    editedMessage.ConversationParticipantId,
+                    editedMessage.ConversationId,
+                    editedMessage.ConversationParticipant.FullName,
+                    editedMessage.ConversationParticipant.ProfileId
+                );
+                return Ok(editedMessage);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
     }
 }
