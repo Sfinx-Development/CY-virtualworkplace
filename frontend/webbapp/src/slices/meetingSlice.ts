@@ -131,16 +131,23 @@ export const Getmyactiveroom = createAsyncThunk<
 });
 
 export const DeleteMeetingAsync = createAsyncThunk<
-  void,
+  string,
   string,
   { rejectValue: string }
 >("meeting/deletemeeting", async (meetingId, thunkAPI) => {
   try {
-    // Call your API function to delete the meeting by ID
-    await FetchDeleteMeeting(meetingId);
+    const isDeleted = await FetchDeleteMeeting(meetingId);
+    if (isDeleted) {
+      return meetingId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid raderande av meddelande."
+      );
+    }
   } catch (error) {
-    console.error("Error deleting meeting:", error);
-    return thunkAPI.rejectWithValue("Något gick fel vid radering av möte.");
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid raderande av meddelande."
+    );
   }
 });
 
@@ -203,14 +210,18 @@ const meetingSlice = createSlice({
         state.meetingroom = undefined;
         state.error = "Något gick fel med hämtandet av mötesrum.";
       })
-      .addCase(DeleteMeetingAsync.fulfilled, (state) => {
-        // Since DeleteMeetingAsync is a delete operation, there might not be a payload.
-        state.deletemeeting = undefined;
-        state.error = null;
+      .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
+        console.log("Fulfilled action payload:", action.payload);
+        if (action.payload) {
+          const filteredMeetings = state.occasions?.filter(
+            (m) => m.meetingId != action.payload
+          );
+          state.occasions = filteredMeetings;
+          state.error = null;
+        }
       })
       .addCase(DeleteMeetingAsync.rejected, (state) => {
-        state.occasions = undefined;
-        state.error = "Något gick fel med radering av möte.";
+        state.error = "Något gick fel när meddelandet skulle tas bort.";
       });
   },
 });

@@ -137,22 +137,31 @@ export const FetchGetMeetingRoomByTeam= async (teamId: string): Promise<MeetingR
   }
 };
 
-export const FetchDeleteMeeting = async (meetingId: string): Promise<void> => {
+export const FetchDeleteMeeting = async (
+  meetingId: string
+): Promise<boolean> => {
   try {
-    const response = await fetch(`${meetingapiUrl}${meetingId}`, {
+    const response = await fetch(`${meetingapiUrl}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(meetingId),
     });
+    console.log("RESPONSE: ", response);
 
     if (!response.ok) {
-      throw new Error("Något gick fel vid radering av möte.");
+      throw new Error("Något gick fel vid radering av meddelande");
+    } else {
+      return true;
     }
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+
+
+
 

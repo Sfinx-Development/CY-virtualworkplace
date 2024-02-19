@@ -140,14 +140,11 @@ namespace Controllers
 
         [Authorize]
         [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] DeleteMeetingDTO deleteMeetingDTO)
+        public async Task<ActionResult> Delete([FromBody] string meetingId)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+               var jwt = Request.Cookies["jwttoken"];
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
@@ -160,7 +157,8 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                await _meetingService.DeleteMeetingAndOccasions(deleteMeetingDTO);
+                await _meetingService.DeleteMeetingAndOccasions(meetingId, loggedInUser.Id);
+            
 
                 return Ok("Successfully deleted meeting.");
             }

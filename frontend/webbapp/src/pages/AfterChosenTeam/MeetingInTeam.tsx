@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import {
   GetMyMeetingsAsync,
   GetMyPastMeetingsAsync,
+  DeleteMeetingAsync
 } from "../../slices/meetingSlice";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
@@ -21,6 +22,7 @@ import { theme1 } from "../../theme";
 export default function MeetingInTeamsPage() {
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
+  const error = useAppSelector((state) => state.meetingSlice.error);
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
@@ -62,12 +64,16 @@ export default function MeetingInTeamsPage() {
   const pastMeetings =
     useAppSelector((state) => state.meetingSlice.pastOccasions) || [];
 
-  //   const handleDeleteMeeting = (meetingId: string) => {
-  //     dispatch(DeleteMeetingAsync(meetingId));
-  //   };
+    const handleDeleteMeeting = (meetingId: string) => {
+      console.log("MESSAGE ID ÄR: ", meetingId);
+      
+      dispatch(DeleteMeetingAsync(meetingId));
+    };
+
 
   return (
     <Container>
+      {error?(<Typography>Endast skapare av mötet kan radera</Typography>):null}
       <Typography variant="h4">Mötes scheman för {activeTeam?.name}</Typography>
 
       <Box>
@@ -85,7 +91,7 @@ export default function MeetingInTeamsPage() {
                     {meeting.date.toString()}
                     <IconButton
                       style={{ position: "absolute", right: 250 }}
-                      //   onClick={() => handleDeleteMeeting(meeting.id)}
+                      onClick={() => handleDeleteMeeting(meeting.meetingId)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -108,12 +114,12 @@ export default function MeetingInTeamsPage() {
                 <CardContent>
                   <Typography variant="subtitle1">
                     {meeting.name}
-                    <IconButton
+                    {/* <IconButton
                       style={{ position: "absolute", right: 250 }}
-                      //   onClick={() => handleDeleteMeeting(meeting.id)}
+                        onClick={() => handleDeleteMeeting(meeting.meetingId)}
                     >
                       <DeleteIcon />
-                    </IconButton>
+                    </IconButton> */}
                   </Typography>
                   <Typography variant="body2">
                     {meeting.date.toString()}
