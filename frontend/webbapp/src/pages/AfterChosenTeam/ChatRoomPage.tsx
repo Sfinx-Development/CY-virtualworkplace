@@ -1,17 +1,7 @@
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import EditIcon from "@mui/icons-material/Edit";
-import {
-  Avatar,
-  Button,
-  Card,
-  Container,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { format } from "date-fns";
+import { Button, Card, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { MessageOutgoing } from "../../../types";
+import { Message, MessageOutgoing } from "../../../types";
+import ChatMessage from "../../components/ChatMessage";
 import {
   GetConversationParticipant,
   GetTeamConversation,
@@ -114,6 +104,12 @@ export default function ChatRoom() {
     }
   };
 
+  const handleSetEditMode = (message: Message) => {
+    setIsEditMode(true);
+    setMessageIdToEdit(message.id);
+    setEditedContent(message.content);
+  };
+
   const handleEditMessage = () => {
     if (editedContent && isEditMode && messageIdToEdit) {
       console.log("REDIGAR TILLLLL: ", editedContent);
@@ -136,10 +132,6 @@ export default function ChatRoom() {
       return profile.avatarUrl;
     }
   };
-  function formatDate(dateString: Date) {
-    const date = new Date(dateString);
-    return format(date, "yyyy-MM-dd HH:mm");
-  }
 
   // const isMobile = window.innerWidth <= 500;
   const chatColor = theme1.palette.chat.main;
@@ -169,103 +161,20 @@ export default function ChatRoom() {
         {Array.isArray(messages) &&
           activeParticipant &&
           messages.map((message) => (
-            <Card
-              key={message.id}
-              sx={{
-                padding: 1.5,
-                marginTop: 1,
-                backgroundColor:
-                  message.conversationParticipantId === activeParticipant.id
-                    ? "rgba(200, 200, 200, 0.4)"
-                    : "rgba(243, 228, 250, 0.4)",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                  }}
-                >
-                  {message.fullName && (
-                    <Typography
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        fontWeight: "bold",
-                        fontSize: 14,
-                      }}
-                    >
-                      <Avatar
-                        src={getProfilesAvatar(message.profileId)}
-                        sx={{ height: 20, width: 20, marginRight: 1 }}
-                      />
-
-                      {message.fullName}
-                    </Typography>
-                  )}
-                  <Typography style={{ marginLeft: "8px", fontSize: 12 }}>
-                    {formatDate(message.dateCreated)}
-                  </Typography>
-                </div>
-
-                {message.conversationParticipantId === activeParticipant.id ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <IconButton
-                      sx={{ color: "black", padding: 0, marginRight: 0.5 }}
-                      onClick={() => {
-                        handleDeleteMessage(message.id);
-                      }}
-                    >
-                      <DeleteOutlineIcon sx={{ padding: 0, fontSize: 20 }} />
-                    </IconButton>
-                    <IconButton
-                      sx={{
-                        color: "black",
-                        padding: 0,
-                      }}
-                      onClick={() => {
-                        setIsEditMode(true);
-                        setMessageIdToEdit(message.id);
-                        setEditedContent(message.content);
-                      }}
-                    >
-                      <EditIcon sx={{ padding: 0, fontSize: 20 }} />
-                    </IconButton>
-                  </div>
-                ) : null}
-              </div>
-              {isEditMode && messageIdToEdit == message.id ? (
-                <TextField
-                  value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  onKeyDown={handleKeyPress}
-                />
-              ) : (
-                <Typography style={{ fontSize: 14, marginLeft: 25 }}>
-                  {message.content}
-                </Typography>
-              )}
-
-              <div ref={messagesEndRef} />
-            </Card>
+            <ChatMessage
+              message={message}
+              activeParticipant={activeParticipant}
+              getProfilesAvatar={() => getProfilesAvatar(message.profileId)}
+              handleDeleteMessage={() => handleDeleteMessage(message.id)}
+              handleSetEditMode={() => handleSetEditMode(message)}
+              isEditMode={isEditMode}
+              messageIdToEdit={messageIdToEdit}
+              handleKeyPress={(event) => handleKeyPress(event)}
+              editedContent={editedContent}
+              setEditedContent={setEditedContent}
+            />
           ))}
+        <div ref={messagesEndRef} />
         <Container
           sx={{
             display: "flex",
