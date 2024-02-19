@@ -1,12 +1,15 @@
 // Navigation.tsx
 
+import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 import { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
+import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
+import { LiveVideo } from "./pages/AfterChosenTeam/LiveForm";
 import MeetingInTeamsPage from "./pages/AfterChosenTeam/MeetingInTeam";
-import MeetingRoom from "./pages/AfterChosenTeam/MeetingRoomPage";
+import { MeetingRoom } from "./pages/AfterChosenTeam/MeetingRoomPage";
 import Menu from "./pages/AfterChosenTeam/MenuPage";
 import Office from "./pages/AfterChosenTeam/OfficePage";
 import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
@@ -20,7 +23,6 @@ import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
-import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 
 const Navigation = () => {
   const user = useAppSelector((state) => state.userSlice.user);
@@ -32,12 +34,15 @@ const Navigation = () => {
     dispatch(getUserAsync());
   }, []);
 
-  // useEffect(() => {
-  //   if(!user){
-  //     navigate("/signin")
-  //   }
-  // },[user])
+  const navigate = useNavigate();
 
+  const agoraClient = useRTCClient(
+    AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
+  ); // Initialize Agora Client
+
+  const handleConnect = (channelName: string) => {
+    navigate(`/via/${channelName}`); // on form submit, navigate to new route
+  };
   return (
     <Routes>
       {user ? (
@@ -47,7 +52,10 @@ const Navigation = () => {
           <Route path="jointeam" element={<JoinTeam />} />
           <Route path="enterhouse" element={<EnterHouse />} />
           <Route path="menu" element={<Menu />} />
-          <Route path="meetingroom" element={<MeetingRoom />} />
+          <Route
+            path="meetingroom"
+            element={<MeetingRoom connectToVideo={handleConnect} />}
+          />
           <Route path="office" element={<Office />} />
           <Route path="chatroom" element={<ChatRoom />} />
           <Route path="createmeeting" element={<CreateMeeting />} />
@@ -58,6 +66,18 @@ const Navigation = () => {
           <Route path="forgotpassword" element={<ForgotPassword />} />
           <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
           <Route path="joinmeeting" element={<OngoingMeeting />} />
+          {/* <Route
+            path="connect"
+            element={<ConnectForm connectToVideo={handleConnect} />}
+          /> */}
+          <Route
+            path="/via/:channelName"
+            element={
+              <AgoraRTCProvider client={agoraClient}>
+                <LiveVideo />
+              </AgoraRTCProvider>
+            }
+          />
         </Route>
       ) : (
         <Route element={<RootLayout />}>

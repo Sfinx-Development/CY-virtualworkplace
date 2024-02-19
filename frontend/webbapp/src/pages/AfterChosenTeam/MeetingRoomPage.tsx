@@ -25,7 +25,11 @@ import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 import Connector from "./signalRConnection";
 
-export default function MeetingRoom() {
+interface ConnectFormProps {
+  connectToVideo: (channelName: string) => void;
+}
+
+export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const dispatch = useAppDispatch();
 
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
@@ -156,7 +160,8 @@ export default function MeetingRoom() {
         >
           <CardActionArea
             onClick={() => {
-              navigate("/joinmeeting");
+              // navigate("/joinmeeting");
+              connectToVideo(ongoingMeeting.meetingId);
             }}
           >
             <CardContent sx={{ flex: "1 0 auto" }}>
@@ -261,4 +266,4 @@ export default function MeetingRoom() {
       </div>
     </Container>
   );
-}
+};
