@@ -60,16 +60,16 @@ public class MeetingService
             // await _meetingOccasionRepository.CreateAsync(ownersOccasion);
             var profiles = await _profileRepository.GetProfilesInTeamAsync(profile.TeamId);
 
-            foreach(Profile p in profiles)
+            foreach (Profile p in profiles)
             {
-                    MeetingOccasion profileOccasion =
-                new()
-                {
-                    Id = Utils.GenerateRandomId(),
-                    Profile = p,
-                    Meeting = meeting
-                };
-            await _meetingOccasionRepository.CreateAsync(profileOccasion);
+                MeetingOccasion profileOccasion =
+            new()
+            {
+                Id = Utils.GenerateRandomId(),
+                Profile = p,
+                Meeting = meeting
+            };
+                await _meetingOccasionRepository.CreateAsync(profileOccasion);
             }
 
             return createdMeeting;
@@ -80,7 +80,7 @@ public class MeetingService
         }
     }
 
-      public async Task<Meeting> CreateAsync(IncomingMeetingDTO incomingMeetingDTO)
+    public async Task<Meeting> CreateAsync(IncomingMeetingDTO incomingMeetingDTO)
     {
         try
         {
@@ -114,7 +114,7 @@ public class MeetingService
                     Meeting = meeting
                 };
             await _meetingOccasionRepository.CreateAsync(ownersOccasion);
-          
+
             return createdMeeting;
         }
         catch (Exception)
@@ -146,7 +146,7 @@ public class MeetingService
         }
     }
 
-     public async Task<Meeting> GetMeetingByTeamId(string teamId)
+    public async Task<Meeting> GetMeetingByTeamId(string teamId)
     {
         try
         {
@@ -167,14 +167,14 @@ public class MeetingService
         }
     }
 
-    public async Task DeleteMeetingAndOccasions(DeleteMeetingDTO deleteMeetingDTO)
+    public async Task DeleteMeetingAndOccasions(string meetingId, string loggedInUserId)
     {
         try
         {
-            var profile = await _profileRepository.GetByIdAsync(deleteMeetingDTO.OwnerId);
-            var meeting = await _meetingRepository.GetByIdAsync(deleteMeetingDTO.MeetingId);
 
-            if (profile.Id == meeting.OwnerId)
+            var meeting = await _meetingRepository.GetByIdAsync(meetingId);
+            var profile = await _profileRepository.GetByIdAsync(meeting.OwnerId);
+            if (profile.UserId == loggedInUserId)
             {
                 //hämta alla meetingoccasions för mötet och radera dom sen mötet
                 var meetingOccasions = await _meetingOccasionRepository.GetAllOccasionsByMeetingId(
@@ -187,6 +187,9 @@ public class MeetingService
                 }
 
                 await _meetingRepository.DeleteByIdAsync(meeting.Id);
+            }
+            else{
+                throw new Exception("Only owner can delete meeting");
             }
         }
         catch (Exception)
