@@ -76,7 +76,7 @@ export default function CreateMeetingPage() {
         date: parsedDate,
         minutes: newMeetingMinutes.toString(),
         isRepeating: newMeetingIsRepeating,
-        roomId: meetingroom.id, // Non-null assertion operator
+        roomId: meetingroom.id,
         ownerId: activeProfile.id,
         interval: intervalAsString,
         endDate: parsedEndDate,

@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import NavCard from "../../components/NavCard";
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
@@ -25,14 +24,12 @@ export default function Menu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  // const primaryColor = theme1.palette.primary.main;
   const officeColor = theme1.palette.office.main;
   const meetingRoomColor = theme1.palette.room.main;
   const chatRoomColor = theme1.palette.chat.main;
   const leaveColor = theme1.palette.leave.main;
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile

@@ -95,12 +95,10 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   }, []);
 
   useEffect(() => {
-    // När komponenten monteras, skicka en åtgärd för att gå in i mötesrummet
     if (activeProfile) {
       dispatch(enterMeetingRoomAsync(activeProfile.id));
     }
 
-    // När komponenten avmonteras, skicka en åtgärd för att lämna mötesrummet
     return () => {
       if (activeProfile) {
         dispatch(leaveMeetingRoomAsync(activeProfile.id));
@@ -160,7 +158,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         >
           <CardActionArea
             onClick={() => {
-              // navigate("/joinmeeting");
               connectToVideo(ongoingMeeting.meetingId);
             }}
           >
@@ -179,7 +176,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       <div
         style={{
           display: "flex",
-          // height: "80%",
           justifyContent: "flex-end",
           alignItems: "flex-end",
           flexDirection: "column",
