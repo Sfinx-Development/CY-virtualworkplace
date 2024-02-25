@@ -43,8 +43,6 @@ export default function MeetingInTeamsPage() {
     if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
-      // dispatch(GetOnlineProfiles(activeTeam?.id));
-      // setLoadedOnlineProfiles(true);
     }
   }, [dispatch, activeTeam]);
 
