@@ -7,7 +7,7 @@ import {
   FetchOnlineProfiles,
   FetchUpdateProfile,
 } from "../api/profile";
-import Connector from "../pages/AfterChosenTeam/signalRConnection";
+import Connector from "../pages/AfterChosenTeam/OnlineConnection";
 
 interface ProfileState {
   profiles: Profile[] | undefined;

@@ -16,6 +16,7 @@ import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
+import ChatConnector from "./ChatConnection";
 
 export default function ChatRoom() {
   const dispatch = useAppDispatch();
@@ -93,8 +94,21 @@ export default function ChatRoom() {
         messageId: "",
       };
       dispatch(CreateMessageAsync(message));
+
+      const connection = ChatConnector.getInstance();
+
+      connection
+        .invokeHubMethod("MessageSent", message)
+        .then(() => {
+          console.log("Message sent successfully.");
+        })
+        .catch((error) => {
+          console.error("Error sending message:", error);
+        });
       setContent("");
     }
+    //ANGELINA-------------------------------------------------------------------------
+    //när den har triggats så kolla om inte den redan finns i messages - om inte finns så lägg till den i statet på messages :)
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {

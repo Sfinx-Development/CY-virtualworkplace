@@ -3,6 +3,7 @@ using core;
 using Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -81,6 +82,7 @@ builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<MeetingService>();
+builder.Services.AddScoped<ChatHub>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -131,12 +133,13 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 app.UseRouting();
 app.MapHub<MeetingRoomHub>("/meetingroomhub");
+app.MapHub<ChatHub>("/chathub");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+var hubContext = app.Services.GetRequiredService<IHubContext<ChatHub>>();
 app.UseCors("AllowAll");
 
 app.MapControllers();

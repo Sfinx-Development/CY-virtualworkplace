@@ -23,7 +23,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import Connector from "./signalRConnection";
+import Connector from "./OnlineConnection";
 
 interface ConnectFormProps {
   connectToVideo: (channelName: string) => void;

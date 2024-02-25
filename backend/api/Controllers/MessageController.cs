@@ -6,6 +6,7 @@ using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Controllers
 {
@@ -16,16 +17,19 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly IMessageService _messageService;
         private readonly IConversationService _conversationService;
+        private readonly IHubContext<ChatHub> _chatHubContext;
 
         public MessageController(
             JwtService jwtService,
             IMessageService messageService,
-            IConversationService conversationService
+            IConversationService conversationService,
+            IHubContext<ChatHub> hubContext
         )
         {
             _jwtService = jwtService;
             _messageService = messageService;
             _conversationService = conversationService;
+            _chatHubContext = hubContext;
         }
 
         [Authorize]
@@ -59,6 +63,7 @@ namespace Controllers
                 {
                     return BadRequest("Failed to send message.");
                 }
+
                 var outgoingMessageDTO = new OutgoingMessageDTO(
                     createdMessage.Id,
                     createdMessage.Content,
@@ -68,6 +73,9 @@ namespace Controllers
                     createdMessage.ConversationParticipant.FullName,
                     createdMessage.ConversationParticipant.ProfileId
                 );
+
+                var chatHub = new ChatHub(_chatHubContext);
+                await chatHub.MessageSent(outgoingMessageDTO);
 
                 return outgoingMessageDTO;
             }
@@ -150,9 +158,11 @@ namespace Controllers
             }
         }
 
-             [Authorize]
+        [Authorize]
         [HttpPut]
-        public async Task<ActionResult<OutgoingMessageDTO>> EditMessage([FromBody] IncomingMessageDTO incomingMessageDTO)
+        public async Task<ActionResult<OutgoingMessageDTO>> EditMessage(
+            [FromBody] IncomingMessageDTO incomingMessageDTO
+        )
         {
             try
             {
@@ -170,9 +180,12 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                var editedMessage = await _messageService.EditAsync(incomingMessageDTO, loggedInUser);
+                var editedMessage = await _messageService.EditAsync(
+                    incomingMessageDTO,
+                    loggedInUser
+                );
 
-   var outgoingMessageDTO = new OutgoingMessageDTO(
+                var outgoingMessageDTO = new OutgoingMessageDTO(
                     editedMessage.Id,
                     editedMessage.Content,
                     editedMessage.DateCreated,

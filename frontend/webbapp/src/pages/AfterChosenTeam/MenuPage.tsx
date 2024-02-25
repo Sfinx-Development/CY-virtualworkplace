@@ -1,6 +1,7 @@
 import GroupsIcon from "@mui/icons-material/Groups";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -9,7 +10,6 @@ import {
   Container,
   Popper,
   Typography,
-  Avatar,
 } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
@@ -19,7 +19,7 @@ import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import Connector from "./signalRConnection";
+import Connector from "./OnlineConnection";
 
 export default function Menu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
