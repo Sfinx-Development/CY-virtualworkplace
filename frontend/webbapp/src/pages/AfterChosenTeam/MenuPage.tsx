@@ -19,6 +19,7 @@ import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
+import ChatConnector from "./ChatConnection";
 import Connector from "./OnlineConnection";
 
 export default function Menu() {
@@ -55,6 +56,7 @@ export default function Menu() {
   useEffect(() => {
     dispatch(getActiveTeam());
     Connector.getInstance().start();
+    ChatConnector.getInstance().start();
   }, []);
 
   //räcker att man köra getmyprofile här och sedan överallt framåt - getactiveprofile för här sätts till localstorage

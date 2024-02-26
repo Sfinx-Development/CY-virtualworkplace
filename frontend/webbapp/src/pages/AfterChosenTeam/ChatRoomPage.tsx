@@ -11,6 +11,7 @@ import {
   DeleteMessageAsync,
   EditMessageAsync,
   GetTeamConversationMessages,
+  messageSent,
 } from "../../slices/messageSlice";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
@@ -66,6 +67,7 @@ export default function ChatRoom() {
 
   useEffect(() => {
     if (activeTeam) {
+      console.log("KÖRS");
       dispatch(GetMyProfileAsync(activeTeam.id));
       dispatch(GetTeamConversation(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
@@ -99,17 +101,25 @@ export default function ChatRoom() {
 
       connection
         .invokeHubMethod("MessageSent", message)
-        .then(() => {
-          console.log("Message sent successfully.");
+        .then((message) => {
+          console.log("Message sent successfully.: ", message);
         })
         .catch((error) => {
           console.error("Error sending message:", error);
         });
       setContent("");
     }
-    //ANGELINA-------------------------------------------------------------------------
-    //när den har triggats så kolla om inte den redan finns i messages - om inte finns så lägg till den i statet på messages :)
   };
+
+  useEffect(() => {
+    const connection = ChatConnector.getInstance();
+
+    connection.events = {
+      messageSent: (message: Message) => {
+        dispatch(messageSent(message));
+      },
+    };
+  }, []);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
