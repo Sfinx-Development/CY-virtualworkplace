@@ -16,7 +16,6 @@ import {
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
-import { theme1 } from "../../theme";
 import ChatConnector from "./ChatConnection";
 
 export default function ChatRoom() {
@@ -158,7 +157,7 @@ export default function ChatRoom() {
   };
 
   // const isMobile = window.innerWidth <= 500;
-  const chatColor = theme1.palette.chat.main;
+  // const chatColor = theme1.palette.chat.main;
   return (
     <Container
       sx={{
@@ -173,19 +172,18 @@ export default function ChatRoom() {
         className="card-content"
         sx={{
           padding: 2,
-          backgroundColor: "transparent",
-          border: 2,
-          borderColor: "lightgrey",
-          flexGrow: 1,
+          backgroundColor: "#f5f5f5",
           height: "350px",
+          flexGrow: 1,
           overflow: "auto",
         }}
       >
-        <Typography>{activeTeam?.name} - chatt </Typography>
+        <Typography variant="h6">{activeTeam?.name} - Chat</Typography>
         {Array.isArray(messages) &&
           activeParticipant &&
           messages.map((message) => (
             <ChatMessage
+              key={message.id}
               message={message}
               activeParticipant={activeParticipant}
               getProfilesAvatar={() => getProfilesAvatar(message.profileId)}
@@ -200,33 +198,20 @@ export default function ChatRoom() {
           ))}
         <div ref={messagesEndRef} />
         <Container
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            marginTop: "10px",
-            flex: 1,
-          }}
+          sx={{ display: "flex", alignItems: "center", marginTop: "10px" }}
         >
           <TextField
             label="Skriv meddelande"
             fullWidth
             variant="outlined"
             value={content}
-            type="text"
             onChange={(e) => setContent(e.target.value)}
             sx={{ marginRight: "10px" }}
             onKeyDown={(e) => {
-              if (e.key == "Enter") {
-                e.preventDefault();
-                handleSendMessage();
-              }
+              if (e.key === "Enter") handleSendMessage();
             }}
           />
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: chatColor }}
-            onClick={handleSendMessage}
-          >
+          <Button variant="contained" onClick={handleSendMessage}>
             Skicka
           </Button>
         </Container>

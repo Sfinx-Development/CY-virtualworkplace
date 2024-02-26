@@ -1,8 +1,9 @@
-import { Avatar, Card, IconButton, TextField, Typography } from "@mui/material";
+import React from "react";
+import { Avatar, Card, IconButton, Typography } from "@mui/material";
 import { format } from "date-fns";
-import { ConversationParticipant, Message } from "../../types";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
+import { Message, ConversationParticipant } from "../../types";
 
 interface ChatMessageProps {
   message: Message;
@@ -27,95 +28,69 @@ export default function ChatMessage(props: ChatMessageProps) {
     <Card
       key={props.message.id}
       sx={{
-        padding: 1.5,
-        marginTop: 1,
-        backgroundColor:
-          props.message.conversationParticipantId === props.activeParticipant.id
-            ? "rgba(200, 200, 200, 0.4)"
-            : "rgba(243, 228, 250, 0.4)",
+        padding: 2,
+        marginBottom: 2,
+        // backgroundColor:
+        //   message.conversationParticipantId === activeParticipant.id
+        //     ? "#e6f2ff"
+        //     : "#f2f2f2",
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           {props.message.fullName && (
-            <Typography
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                fontWeight: "bold",
-                fontSize: 14,
-              }}
-            >
-              <Avatar
-                src={props.getProfilesAvatar(props.message.profileId)}
-                sx={{ height: 20, width: 20, marginRight: 1 }}
-              />
-
-              {props.message.fullName}
-            </Typography>
+            <Avatar
+              src={props.getProfilesAvatar(props.message.profileId)}
+              alt={props.message.fullName}
+              sx={{ marginRight: 1 }}
+            />
           )}
-          <Typography style={{ marginLeft: "8px", fontSize: 12 }}>
+          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+            {props.message.fullName}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ marginLeft: 1, color: "text.secondary" }}
+          >
             {formatDate(props.message.dateCreated)}
           </Typography>
         </div>
-
         {props.message.conversationParticipantId ===
-        props.activeParticipant.id ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
+          props.activeParticipant.id && (
+          <div>
             <IconButton
-              sx={{ color: "black", padding: 0, marginRight: 0.5 }}
-              onClick={() => {
-                props.handleDeleteMessage(props.message.id);
-              }}
+              size="small"
+              onClick={() => props.handleDeleteMessage(props.message.id)}
             >
-              <DeleteOutlineIcon sx={{ padding: 0, fontSize: 20 }} />
+              <DeleteOutlineIcon />
             </IconButton>
             <IconButton
-              sx={{
-                color: "black",
-                padding: 0,
-              }}
-              onClick={() => {
-                props.handleSetEditMode(props.message);
-              }}
+              size="small"
+              onClick={() => props.handleSetEditMode(props.message)}
             >
-              <EditIcon sx={{ padding: 0, fontSize: 20 }} />
+              <EditIcon />
             </IconButton>
           </div>
-        ) : null}
+        )}
       </div>
-      {props.isEditMode && props.messageIdToEdit == props.message.id ? (
-        <TextField
-          value={props.editedContent}
-          onChange={(e) => props.setEditedContent(e.target.value)}
-          type="text"
-          fullWidth
-          variant="outlined"
-          onKeyDown={props.handleKeyPress}
-        />
-      ) : (
-        <Typography style={{ fontSize: 14, marginLeft: 25 }}>
-          {props.message.content}
-        </Typography>
-      )}
+      <Typography variant="body1" sx={{ marginLeft: 25 }}>
+        {props.isEditMode ? (
+          <textarea
+            value={props.message.content}
+            style={{
+              width: "100%",
+              border: "none",
+              background: "inherit",
+              resize: "none",
+            }}
+            readOnly
+          />
+        ) : (
+          props.message.content
+        )}
+      </Typography>
     </Card>
   );
 }
