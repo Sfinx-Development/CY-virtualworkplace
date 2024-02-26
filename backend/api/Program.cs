@@ -81,7 +81,7 @@ builder.Services.AddScoped<ILoginService, LogInService>();
 builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository>();
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
-builder.Services.AddScoped<MeetingService>();
+builder.Services.AddScoped<IMeetingService,MeetingService>();
 builder.Services.AddScoped<ChatHub>();
 
 builder.Services.AddEndpointsApiExplorer();

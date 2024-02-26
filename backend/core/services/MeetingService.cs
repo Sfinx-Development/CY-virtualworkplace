@@ -1,9 +1,9 @@
-using Interfaces;
 using System;
+using Interfaces;
+
 namespace core;
 
-
-public class MeetingService
+public class MeetingService : IMeetingService
 {
     private readonly IMeetingRepository _meetingRepository;
     private readonly IProfileRepository _profileRepository;
@@ -47,7 +47,6 @@ public class MeetingService
                     TeamId = profile.TeamId
                 };
 
-
             Meeting createdMeeting = await _meetingRepository.CreateAsync(meeting);
 
             // MeetingOccasion ownersOccasion =
@@ -63,12 +62,12 @@ public class MeetingService
             foreach (Profile p in profiles)
             {
                 MeetingOccasion profileOccasion =
-            new()
-            {
-                Id = Utils.GenerateRandomId(),
-                Profile = p,
-                Meeting = meeting
-            };
+                    new()
+                    {
+                        Id = Utils.GenerateRandomId(),
+                        Profile = p,
+                        Meeting = meeting
+                    };
                 await _meetingOccasionRepository.CreateAsync(profileOccasion);
             }
 
@@ -102,7 +101,6 @@ public class MeetingService
                     Interval = incomingMeetingDTO.Interval,
                     EndDate = incomingMeetingDTO.EndDate
                 };
-
 
             Meeting createdMeeting = await _meetingRepository.CreateAsync(meeting);
 
@@ -171,7 +169,6 @@ public class MeetingService
     {
         try
         {
-
             var meeting = await _meetingRepository.GetByIdAsync(meetingId);
             var profile = await _profileRepository.GetByIdAsync(meeting.OwnerId);
             if (profile.UserId == loggedInUserId)
@@ -188,7 +185,8 @@ public class MeetingService
 
                 await _meetingRepository.DeleteByIdAsync(meeting.Id);
             }
-            else{
+            else
+            {
                 throw new Exception("Only owner can delete meeting");
             }
         }

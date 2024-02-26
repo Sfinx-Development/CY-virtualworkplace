@@ -16,10 +16,14 @@ namespace Controllers
     public class MeetingController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly MeetingService _meetingService;
+        private readonly IMeetingService _meetingService;
         private readonly IMeetingRoomService _meetingRoomService;
 
-        public MeetingController(JwtService jwtService, MeetingService meetingService, IMeetingRoomService meetingRoomService)
+        public MeetingController(
+            JwtService jwtService,
+            IMeetingService meetingService,
+            IMeetingRoomService meetingRoomService
+        )
         {
             _jwtService = jwtService;
             _meetingService = meetingService;
@@ -28,7 +32,9 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<Meeting>> Post([FromBody]IncomingMeetingDTO incomingMeetingDTO)
+        public async Task<ActionResult<Meeting>> Post(
+            [FromBody] IncomingMeetingDTO incomingMeetingDTO
+        )
         {
             try
             {
@@ -66,9 +72,11 @@ namespace Controllers
             }
         }
 
-                [Authorize]
+        [Authorize]
         [HttpPost("CreateTeamMeeting")]
-        public async Task<ActionResult<Meeting>> PostTeamMeeting([FromBody]IncomingMeetingDTO incomingMeetingDTO)
+        public async Task<ActionResult<Meeting>> PostTeamMeeting(
+            [FromBody] IncomingMeetingDTO incomingMeetingDTO
+        )
         {
             try
             {
@@ -87,7 +95,9 @@ namespace Controllers
                 //I CREATE MEETING ISERVICE SKA OCCASION OCKSÅ SKAPAS FÖR ÄGAREN AV MÖTET DIREKT
                 if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
                 {
-                    var meetingCreated = await _meetingService.CreateTeamMeetingAsync(incomingMeetingDTO);
+                    var meetingCreated = await _meetingService.CreateTeamMeetingAsync(
+                        incomingMeetingDTO
+                    );
 
                     if (meetingCreated == null)
                     {
@@ -106,10 +116,11 @@ namespace Controllers
             }
         }
 
-
         [HttpPost("meetingroom")]
         [Authorize]
-        public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid([FromBody] string teamId)
+        public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid(
+            [FromBody] string teamId
+        )
         {
             try
             {
@@ -128,7 +139,6 @@ namespace Controllers
 
                 MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
                 return Ok(meetingRoom);
-
             }
             catch (Exception e)
             {
@@ -136,15 +146,13 @@ namespace Controllers
             }
         }
 
-
-
         [Authorize]
         [HttpDelete]
         public async Task<ActionResult> Delete([FromBody] string meetingId)
         {
             try
             {
-               var jwt = Request.Cookies["jwttoken"];
+                var jwt = Request.Cookies["jwttoken"];
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
@@ -158,7 +166,6 @@ namespace Controllers
                 }
 
                 await _meetingService.DeleteMeetingAndOccasions(meetingId, loggedInUser.Id);
-            
 
                 return Ok("Successfully deleted meeting.");
             }
@@ -225,10 +232,8 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-
                 Meeting meeting = await _meetingService.GetById(meetingId, loggedInUser.Id);
                 return Ok(meeting);
-
 
                 // MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
                 // return Ok(meetingRoom);
