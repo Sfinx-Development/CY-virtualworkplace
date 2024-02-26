@@ -1,4 +1,12 @@
-import { Button, Card, Container, TextField, Typography } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import {
+  Button,
+  Card,
+  Container,
+  TextField,
+  Typography,
+  styled,
+} from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Message, MessageOutgoing } from "../../../types";
 import ChatMessage from "../../components/ChatMessage";
@@ -16,7 +24,14 @@ import {
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
+import { theme1 } from "../../theme";
 import ChatConnector from "./ChatConnection";
+
+const StyledTextField = styled(TextField)({
+  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "lightgray",
+  },
+});
 
 export default function ChatRoom() {
   const dispatch = useAppDispatch();
@@ -50,19 +65,23 @@ export default function ChatRoom() {
   const [messageIdToEdit, setMessageIdToEdit] = useState("");
   const [editedContent, setEditedContent] = useState("");
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
     scrollToBottom();
     dispatch(getActiveTeam());
   }, []);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const handleDeleteMessage = (messageId: string) => {
     console.log("MESSAGE ID ÄR: ", messageId);
     dispatch(DeleteMessageAsync(messageId));
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     if (activeTeam) {
@@ -86,7 +105,6 @@ export default function ChatRoom() {
   }, [teamConversation]);
 
   const handleSendMessage = () => {
-    //just det hur hantera här?!1
     if (activeParticipant && content != "") {
       console.log("PARTICIPANTID: ", activeParticipant.id);
       const message: MessageOutgoing = {
@@ -108,6 +126,7 @@ export default function ChatRoom() {
         });
       setContent("");
     }
+    scrollToBottom();
   };
 
   useEffect(() => {
@@ -116,6 +135,7 @@ export default function ChatRoom() {
     connection.events = {
       messageSent: (message: Message) => {
         dispatch(messageSent(message));
+        scrollToBottom();
       },
     };
   }, []);
@@ -136,7 +156,6 @@ export default function ChatRoom() {
   const handleEditMessage = () => {
     if (editedContent && isEditMode && messageIdToEdit) {
       console.log("REDIGAR TILLLLL: ", editedContent);
-      //dispatcha edit message och stopppa in messageidtoedit samt editedcontent
       const message = messages.find((m) => m.id == messageIdToEdit);
       if (message) {
         const messageToEdit: MessageOutgoing = {
@@ -157,7 +176,7 @@ export default function ChatRoom() {
   };
 
   // const isMobile = window.innerWidth <= 500;
-  // const chatColor = theme1.palette.chat.main;
+  const chatColor = theme1.palette.chat.main;
   return (
     <Container
       sx={{
@@ -181,41 +200,59 @@ export default function ChatRoom() {
         <Typography variant="h6">{activeTeam?.name} - Chat</Typography>
         {Array.isArray(messages) &&
           activeParticipant &&
-          messages.map((message) => (
-            <ChatMessage
-              key={message.id}
-              message={message}
-              activeParticipant={activeParticipant}
-              getProfilesAvatar={() => getProfilesAvatar(message.profileId)}
-              handleDeleteMessage={() => handleDeleteMessage(message.id)}
-              handleSetEditMode={() => handleSetEditMode(message)}
-              isEditMode={isEditMode}
-              messageIdToEdit={messageIdToEdit}
-              handleKeyPress={(event) => handleKeyPress(event)}
-              editedContent={editedContent}
-              setEditedContent={setEditedContent}
-            />
-          ))}
+          messages.map((message) => {
+            if (message.id) {
+              return (
+                <ChatMessage
+                  message={message}
+                  key={message.id}
+                  activeParticipant={activeParticipant}
+                  getProfilesAvatar={() => getProfilesAvatar(message.profileId)}
+                  handleDeleteMessage={() => handleDeleteMessage(message.id)}
+                  handleSetEditMode={() => handleSetEditMode(message)}
+                  isEditMode={isEditMode}
+                  messageIdToEdit={messageIdToEdit}
+                  handleKeyPress={(event) => handleKeyPress(event)}
+                  editedContent={editedContent}
+                  setEditedContent={setEditedContent}
+                />
+              );
+            }
+            return null;
+          })}
         <div ref={messagesEndRef} />
-        <Container
-          sx={{ display: "flex", alignItems: "center", marginTop: "10px" }}
-        >
-          <TextField
-            label="Skriv meddelande"
-            fullWidth
-            variant="outlined"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            sx={{ marginRight: "10px" }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSendMessage();
-            }}
-          />
-          <Button variant="contained" onClick={handleSendMessage}>
-            Skicka
-          </Button>
-        </Container>
       </Card>
+      <Container
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginTop: "10px",
+        }}
+      >
+        <StyledTextField
+          fullWidth
+          variant="outlined"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          sx={{
+            input: {
+              color: "black",
+              marginRight: "10px",
+              borderColor: chatColor,
+            },
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSendMessage();
+          }}
+        />
+        <Button
+          variant="contained"
+          onClick={handleSendMessage}
+          sx={{ backgroundColor: "lightgray", marginLeft: 2 }}
+        >
+          <SendIcon sx={{ color: "white" }} />
+        </Button>
+      </Container>
     </Container>
   );
 }

@@ -1,9 +1,9 @@
-import React from "react";
-import { Avatar, Card, IconButton, Typography } from "@mui/material";
-import { format } from "date-fns";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
-import { Message, ConversationParticipant } from "../../types";
+import { Avatar, Card, IconButton, TextField, Typography } from "@mui/material";
+import { format } from "date-fns";
+import React from "react";
+import { ConversationParticipant, Message } from "../../types";
 
 interface ChatMessageProps {
   message: Message;
@@ -76,16 +76,14 @@ export default function ChatMessage(props: ChatMessageProps) {
         )}
       </div>
       <Typography variant="body1" sx={{ marginLeft: 25 }}>
-        {props.isEditMode ? (
-          <textarea
-            value={props.message.content}
-            style={{
-              width: "100%",
-              border: "none",
-              background: "inherit",
-              resize: "none",
-            }}
-            readOnly
+        {props.isEditMode && props.messageIdToEdit == props.message.id ? (
+          <TextField
+            value={props.editedContent}
+            onChange={(e) => props.setEditedContent(e.target.value)}
+            type="text"
+            fullWidth
+            variant="outlined"
+            onKeyDown={props.handleKeyPress}
           />
         ) : (
           props.message.content
