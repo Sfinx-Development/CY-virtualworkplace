@@ -45,6 +45,13 @@ export default function JoinTeam() {
     }
   };
 
+  const handlePaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const pastedText = event.clipboardData.getData("text");
+    const newLetters = pastedText.split("").slice(0, letters.length);
+    setLetters(newLetters);
+  };
+
   return (
     <Container sx={{ padding: "20px" }}>
       <div
@@ -76,6 +83,7 @@ export default function JoinTeam() {
             justifyContent: "center",
             marginTop: 10,
           }}
+          onPaste={handlePaste}
         >
           {letters.map((_, index) => (
             <TextField
