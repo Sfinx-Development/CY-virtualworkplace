@@ -184,20 +184,27 @@ export default function ChatRoom() {
         <Typography>{activeTeam?.name} - chatt </Typography>
         {Array.isArray(messages) &&
           activeParticipant &&
-          messages.map((message) => (
-            <ChatMessage
-              message={message}
-              activeParticipant={activeParticipant}
-              getProfilesAvatar={() => getProfilesAvatar(message.profileId)}
-              handleDeleteMessage={() => handleDeleteMessage(message.id)}
-              handleSetEditMode={() => handleSetEditMode(message)}
-              isEditMode={isEditMode}
-              messageIdToEdit={messageIdToEdit}
-              handleKeyPress={(event) => handleKeyPress(event)}
-              editedContent={editedContent}
-              setEditedContent={setEditedContent}
-            />
-          ))}
+          messages.map((message) => {
+            if (message.id) {
+              return (
+                <ChatMessage
+                  message={message}
+                  key={message.id}
+                  activeParticipant={activeParticipant}
+                  getProfilesAvatar={() => getProfilesAvatar(message.profileId)}
+                  handleDeleteMessage={() => handleDeleteMessage(message.id)}
+                  handleSetEditMode={() => handleSetEditMode(message)}
+                  isEditMode={isEditMode}
+                  messageIdToEdit={messageIdToEdit}
+                  handleKeyPress={(event) => handleKeyPress(event)}
+                  editedContent={editedContent}
+                  setEditedContent={setEditedContent}
+                />
+              );
+            }
+            return null;
+          })}
+
         <div ref={messagesEndRef} />
         <Container
           sx={{
