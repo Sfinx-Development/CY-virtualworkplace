@@ -1,23 +1,19 @@
 import * as signalR from "@microsoft/signalr";
-import { ProfileHubDTO } from "../../../types";
+import { Message } from "../../../types";
 
 // Define your hub URL
-const hubUrl = `http://${window.location.hostname}:5290/meetingroomhub`; 
+const hubUrl = `http://${window.location.hostname}:5290/chathub`;
 
-class Connector {
+class ChatConnector {
   private connection: signalR.HubConnection;
   public events: {
-    profileOnline: (profile: ProfileHubDTO) => void;
-    profileOffline: (profileId: string) => void;
-    // teamProfilesOnline: (onlineProfiles: ProfileHubDTO[]) => void;
+    messageSent: (message: Message) => void;
   };
-  static instance: Connector;
+  static instance: ChatConnector;
 
   private constructor() {
     this.events = {
-      profileOnline: () => {},
-      profileOffline: () => {},
-      // teamProfilesOnline: () => {},
+      messageSent: () => {},
     };
 
     this.connection = new signalR.HubConnectionBuilder()
@@ -25,20 +21,8 @@ class Connector {
       .withAutomaticReconnect()
       .build();
 
-    this.connection.on("profileOnline", (profile: ProfileHubDTO) => {
-      this.events.profileOnline(profile);
-    });
-
-    // this.connection.on(
-    //   "teamProfilesOnline",
-    //   (onlineProfiles: ProfileHubDTO[]) => {
-    //     this.events.teamProfilesOnline(onlineProfiles);
-    //     console.log(onlineProfiles);
-    //   }
-    // );
-
-    this.connection.on("profileOffline", (profileId: string) => {
-      this.events.profileOffline(profileId);
+    this.connection.on("messageSent", (message: Message) => {
+      this.events.messageSent(message);
     });
 
     this.connection.start().catch((err) => {
@@ -46,9 +30,9 @@ class Connector {
     });
   }
 
-  public static getInstance(): Connector {
-    if (!Connector.instance) Connector.instance = new Connector();
-    return Connector.instance;
+  public static getInstance(): ChatConnector {
+    if (!ChatConnector.instance) ChatConnector.instance = new ChatConnector();
+    return ChatConnector.instance;
   }
 
   public async invokeHubMethod<T>(
@@ -57,10 +41,8 @@ class Connector {
   ): Promise<void> {
     try {
       if (this.connection.state === signalR.HubConnectionState.Disconnected) {
-        // Start the connection if it's disconnected
         await this.connection.start();
       }
-      // Once the connection is started or if it's already connected, invoke the method
       await this.connection.invoke(methodName, ...args);
     } catch (error) {
       console.error("Error invoking hub method:", error);
@@ -92,4 +74,4 @@ class Connector {
   }
 }
 
-export default Connector;
+export default ChatConnector;

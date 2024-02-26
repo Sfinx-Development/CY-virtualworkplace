@@ -103,6 +103,13 @@ export const DeleteMessageAsync = createAsyncThunk<
   }
 });
 
+export const messageSent = createAsyncThunk(
+  "conversation/messageSent",
+  (message: Message) => {
+    return message;
+  }
+);
+
 const messageSlice = createSlice({
   name: "message",
   initialState,
@@ -124,7 +131,7 @@ const messageSlice = createSlice({
       .addCase(CreateMessageAsync.fulfilled, (state, action) => {
         console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
-          state.messages.push(action.payload);
+          // state.messages.push(action.payload);
           state.error = null;
         }
       })
@@ -161,6 +168,11 @@ const messageSlice = createSlice({
       })
       .addCase(DeleteMessageAsync.rejected, (state) => {
         state.error = "Något gick fel när meddelandet skulle tas bort.";
+      })
+      .addCase(messageSent.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.messages = [...state.messages, action.payload];
+        }
       });
   },
 });

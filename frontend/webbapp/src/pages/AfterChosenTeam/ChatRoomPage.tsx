@@ -11,11 +11,13 @@ import {
   DeleteMessageAsync,
   EditMessageAsync,
   GetTeamConversationMessages,
+  messageSent,
 } from "../../slices/messageSlice";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
+import ChatConnector from "./ChatConnection";
 
 export default function ChatRoom() {
   const dispatch = useAppDispatch();
@@ -65,6 +67,7 @@ export default function ChatRoom() {
 
   useEffect(() => {
     if (activeTeam) {
+      console.log("KÖRS");
       dispatch(GetMyProfileAsync(activeTeam.id));
       dispatch(GetTeamConversation(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
@@ -93,9 +96,30 @@ export default function ChatRoom() {
         messageId: "",
       };
       dispatch(CreateMessageAsync(message));
+
+      const connection = ChatConnector.getInstance();
+
+      connection
+        .invokeHubMethod("MessageSent", message)
+        .then((message) => {
+          console.log("Message sent successfully.: ", message);
+        })
+        .catch((error) => {
+          console.error("Error sending message:", error);
+        });
       setContent("");
     }
   };
+
+  useEffect(() => {
+    const connection = ChatConnector.getInstance();
+
+    connection.events = {
+      messageSent: (message: Message) => {
+        dispatch(messageSent(message));
+      },
+    };
+  }, []);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {

@@ -18,7 +18,8 @@ import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import Connector from "./signalRConnection";
+import ChatConnector from "./ChatConnection";
+import Connector from "./OnlineConnection";
 
 export default function Menu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -52,6 +53,7 @@ export default function Menu() {
   useEffect(() => {
     dispatch(getActiveTeam());
     Connector.getInstance().start();
+    ChatConnector.getInstance().start();
   }, []);
 
   useEffect(() => {
