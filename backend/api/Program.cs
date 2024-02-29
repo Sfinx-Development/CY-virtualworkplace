@@ -82,7 +82,6 @@ builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
-builder.Services.AddScoped<ChatHub>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -139,7 +138,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-var hubContext = app.Services.GetRequiredService<IHubContext<ChatHub>>();
+
 app.UseCors("AllowAll");
 
 app.MapControllers();

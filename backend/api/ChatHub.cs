@@ -17,4 +17,18 @@ public class ChatHub : Hub
 
         await _hubContext.Clients.All.SendAsync("messageSent", message);
     }
+
+    public async Task MessageEdited(OutgoingMessageDTO message)
+    {
+        Console.WriteLine("------MESSAGE EDITED-----------");
+
+        await _hubContext.Clients.All.SendAsync("messageEdited", message);
+    }
+
+    public async Task MessageDeleted(string messageId)
+    {
+        Console.WriteLine("------MESSAGE DELETED-----------");
+
+        await _hubContext.Clients.All.SendAsync("messageDeleted", messageId);
+    }
 }
