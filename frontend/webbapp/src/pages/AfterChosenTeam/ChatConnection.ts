@@ -8,12 +8,16 @@ class ChatConnector {
   private connection: signalR.HubConnection;
   public events: {
     messageSent: (message: Message) => void;
+    messageEdited: (message: Message) => void;
+    messageDeleted: (messageId: string) => void;
   };
   static instance: ChatConnector;
 
   private constructor() {
     this.events = {
       messageSent: () => {},
+      messageEdited: () => {},
+      messageDeleted: () => {},
     };
 
     this.connection = new signalR.HubConnectionBuilder()
@@ -23,6 +27,12 @@ class ChatConnector {
 
     this.connection.on("messageSent", (message: Message) => {
       this.events.messageSent(message);
+    });
+    this.connection.on("messageEdited", (message: Message) => {
+      this.events.messageEdited(message);
+    });
+    this.connection.on("messageDeleted", (messageId: string) => {
+      this.events.messageDeleted(messageId);
     });
 
     this.connection.start().catch((err) => {

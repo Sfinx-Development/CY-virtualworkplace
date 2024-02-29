@@ -17,19 +17,16 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly IMessageService _messageService;
         private readonly IConversationService _conversationService;
-        private readonly IHubContext<ChatHub> _chatHubContext;
 
         public MessageController(
             JwtService jwtService,
             IMessageService messageService,
-            IConversationService conversationService,
-            IHubContext<ChatHub> hubContext
+            IConversationService conversationService
         )
         {
             _jwtService = jwtService;
             _messageService = messageService;
             _conversationService = conversationService;
-            _chatHubContext = hubContext;
         }
 
         [Authorize]
@@ -74,8 +71,8 @@ namespace Controllers
                     createdMessage.ConversationParticipant.ProfileId
                 );
 
-                var chatHub = new ChatHub(_chatHubContext);
-                await chatHub.MessageSent(outgoingMessageDTO);
+                // var chatHub = new ChatHub(_chatHubContext);
+                // await chatHub.MessageSent(outgoingMessageDTO);
 
                 return outgoingMessageDTO;
             }
@@ -149,6 +146,8 @@ namespace Controllers
                 }
 
                 await _messageService.DeleteAsync(messageId, loggedInUser);
+                // var chatHub = new ChatHub(_chatHubContext);
+                // await chatHub.MessageDeleted(messageId);
 
                 return Ok();
             }
@@ -194,6 +193,8 @@ namespace Controllers
                     editedMessage.ConversationParticipant.FullName,
                     editedMessage.ConversationParticipant.ProfileId
                 );
+                // var chatHub = new ChatHub(_chatHubContext);
+                // await chatHub.MessageEdited(outgoingMessageDTO);
                 return Ok(editedMessage);
             }
             catch (Exception e)

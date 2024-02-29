@@ -19,6 +19,11 @@ import {
   DeleteMessageAsync,
   EditMessageAsync,
   GetTeamConversationMessages,
+  liveUpdateMessageDeleted,
+  liveUpdateMessageEdited,
+  liveUpdateMessageSent,
+  messageDeleted,
+  messageEdited,
   messageSent,
 } from "../../slices/messageSlice";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
@@ -70,6 +75,26 @@ export default function ChatRoom() {
   };
 
   useEffect(() => {
+    const connection = ChatConnector.getInstance();
+
+    connection.events = {
+      messageSent: (message: Message) => {
+        dispatch(messageSent(message));
+        scrollToBottom();
+      },
+      //fix
+      messageEdited: (message: Message) => {
+        dispatch(messageEdited(message));
+        scrollToBottom();
+      },
+      messageDeleted: (messageId: string) => {
+        dispatch(messageDeleted(messageId));
+        scrollToBottom();
+      },
+    };
+  }, []);
+
+  useEffect(() => {
     scrollToBottom();
     dispatch(getActiveTeam());
   }, []);
@@ -77,6 +102,7 @@ export default function ChatRoom() {
   const handleDeleteMessage = (messageId: string) => {
     console.log("MESSAGE ID ÄR: ", messageId);
     dispatch(DeleteMessageAsync(messageId));
+    dispatch(liveUpdateMessageDeleted(messageId));
   };
 
   useEffect(() => {
@@ -105,40 +131,30 @@ export default function ChatRoom() {
   }, [teamConversation]);
 
   const handleSendMessage = () => {
-    if (activeParticipant && content != "") {
+    if (activeParticipant && content !== "") {
       console.log("PARTICIPANTID: ", activeParticipant.id);
       const message: MessageOutgoing = {
         conversationParticipantId: activeParticipant.id,
         content: content,
         messageId: "",
       };
-      dispatch(CreateMessageAsync(message));
-
-      const connection = ChatConnector.getInstance();
-
-      connection
-        .invokeHubMethod("MessageSent", message)
-        .then((message) => {
-          console.log("Message sent successfully.: ", message);
+      dispatch(CreateMessageAsync(message))
+        .then((action) => {
+          const createdMessage = action.payload;
+          if (typeof createdMessage !== "string" && createdMessage) {
+            // Skicka det nya meddelandet till SignalR-hubben
+            dispatch(liveUpdateMessageSent(createdMessage));
+            setContent("");
+            scrollToBottom();
+          }
         })
         .catch((error) => {
           console.error("Error sending message:", error);
+          // Hantera fel här om det behövs
         });
-      setContent("");
     }
     scrollToBottom();
   };
-
-  useEffect(() => {
-    const connection = ChatConnector.getInstance();
-
-    connection.events = {
-      messageSent: (message: Message) => {
-        dispatch(messageSent(message));
-        scrollToBottom();
-      },
-    };
-  }, []);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -155,7 +171,6 @@ export default function ChatRoom() {
 
   const handleEditMessage = () => {
     if (editedContent && isEditMode && messageIdToEdit) {
-      console.log("REDIGAR TILLLLL: ", editedContent);
       const message = messages.find((m) => m.id == messageIdToEdit);
       if (message) {
         const messageToEdit: MessageOutgoing = {
@@ -163,7 +178,19 @@ export default function ChatRoom() {
           content: editedContent,
           messageId: message.id,
         };
-        dispatch(EditMessageAsync(messageToEdit));
+        dispatch(EditMessageAsync(messageToEdit))
+          .then((action) => {
+            const editedMessage = action.payload;
+            if (typeof editedMessage !== "string" && editedMessage) {
+              dispatch(liveUpdateMessageEdited(editedMessage));
+              setContent("");
+              scrollToBottom();
+            }
+          })
+          .catch((error) => {
+            console.error("Error sending message:", error);
+            // Hantera fel här om det behövs
+          });
       }
     }
   };
