@@ -30,7 +30,7 @@ public class MeetingServiceTest
             meetingOccasionRepositoryMock.Object
         );
 
-        var incomingMeetingDTO = new IncomingMeetingDTO
+        var incomingMeetingDTO = new CreateMeetingDTO
         {
             Name = "TestMeeting",
             Description = "A meeting for testing",
