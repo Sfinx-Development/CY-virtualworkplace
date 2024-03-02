@@ -53,7 +53,6 @@ public class MeetingRepository : IMeetingRepository
         }
     }
 
-
     public async Task<Meeting> UpdateAsync(Meeting meeting)
     {
         try
@@ -86,7 +85,16 @@ public class MeetingRepository : IMeetingRepository
         }
     }
 
-    
-
-    
+    public async Task<List<Meeting>> GetAllByTeam(string teamId)
+    {
+        try
+        {
+            var meetings = await _cyDbContext.Meetings.Where(m => m.TeamId == teamId).ToListAsync();
+            return meetings;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

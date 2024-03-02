@@ -85,7 +85,7 @@ export interface Meeting {
   id: string;
   name: string;
   description: string;
-  Date: Date;
+  date: Date;
   minutes: number;
   roomId: string;
   ownerId: string /* (profileId) */;

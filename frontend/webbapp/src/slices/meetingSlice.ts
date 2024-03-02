@@ -12,6 +12,8 @@ import {
   FetchGetMeetingRoomByTeam,
   FetchGetMyPastMeetings,
   FetchDeleteMeeting,
+  FetchGetMyOccasions,
+  FetchEditMeeting,
 } from "../api/meeting";
 
 interface MeetingState {
@@ -70,8 +72,29 @@ export const createTeamMeetingAsync = createAsyncThunk<
   }
 });
 
-export const GetMyMeetingsAsync = createAsyncThunk<
+export const GetMyOccasionsAsync = createAsyncThunk<
   MeetingOccasion[],
+  string,
+  { rejectValue: string }
+>("meeting/getmyoccasions", async (profileId, thunkAPI) => {
+  try {
+    console.log("profilid: ", profileId);
+    const myMeetings = await FetchGetMyOccasions(profileId);
+    if (myMeetings) {
+      console.log("myoccasions: ", myMeetings);
+      return myMeetings;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av lag."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av lag.");
+  }
+});
+
+export const GetMyMeetingsAsync = createAsyncThunk<
+  Meeting[],
   string,
   { rejectValue: string }
 >("meeting/getmymeetings", async (profileId, thunkAPI) => {
@@ -81,6 +104,25 @@ export const GetMyMeetingsAsync = createAsyncThunk<
     if (myMeetings) {
       console.log("mymeetings: ", myMeetings);
       return myMeetings;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av lag."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av lag.");
+  }
+});
+
+export const EditMeetingAsync = createAsyncThunk<
+  Meeting,
+  Meeting,
+  { rejectValue: string }
+>("meeting/editmeeting", async (meeting, thunkAPI) => {
+  try {
+    const editedMeeting = await FetchEditMeeting(meeting);
+    if (editedMeeting) {
+      return editedMeeting;
     } else {
       return thunkAPI.rejectWithValue(
         "Ett fel inträffade vid hämtning av lag."
@@ -178,12 +220,23 @@ const meetingSlice = createSlice({
       .addCase(GetMyMeetingsAsync.fulfilled, (state, action) => {
         console.log("Fulfilled action payload MY MEETINGS:", action.payload);
         if (action.payload) {
+          state.meetings = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetMyOccasionsAsync.rejected, (state) => {
+        state.occasions = undefined;
+        state.error = "Något gick fel med hämtandet av occasions.";
+      })
+      .addCase(GetMyOccasionsAsync.fulfilled, (state, action) => {
+        console.log("Fulfilled action payload MY MEETINGS:", action.payload);
+        if (action.payload) {
           state.occasions = action.payload;
           state.error = null;
         }
       })
       .addCase(GetMyMeetingsAsync.rejected, (state) => {
-        state.occasions = undefined;
+        state.meetings = undefined;
         state.error = "Något gick fel med hämtandet av möte.";
       })
       .addCase(GetMyPastMeetingsAsync.fulfilled, (state, action) => {
@@ -222,6 +275,38 @@ const meetingSlice = createSlice({
       })
       .addCase(DeleteMeetingAsync.rejected, (state) => {
         state.error = "Något gick fel när meddelandet skulle tas bort.";
+      })
+      .addCase(EditMeetingAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          // Uppdatera mötet i meetings (om det finns)
+          if (state.meetings) {
+            const index = state.meetings.findIndex(
+              (m) => m.id === action.payload.id
+            );
+            if (index !== -1) {
+              state.meetings[index] = action.payload;
+            }
+          }
+
+          // Uppdatera mötet i occasions (om det finns)
+          if (state.occasions) {
+            const occasionIndex = state.occasions.findIndex(
+              (o) => o.meetingId === action.payload.id
+            );
+            if (occasionIndex !== -1) {
+              state.occasions[occasionIndex].date = action.payload.date;
+              state.occasions[occasionIndex].name = action.payload.name;
+              state.occasions[occasionIndex].description =
+                action.payload.description;
+            }
+          }
+
+          state.error = null;
+        }
+      })
+
+      .addCase(EditMeetingAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
       });
   },
 });
