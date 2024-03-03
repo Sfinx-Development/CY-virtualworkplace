@@ -16,7 +16,6 @@ import { getActiveTeam} from "../../slices/teamSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 
 
-
 export default function CreateMeetingPage() {
   const dispatch = useAppDispatch();
   const meetings = useAppSelector((state) => state.meetingSlice.meetings);
@@ -125,13 +124,26 @@ export default function CreateMeetingPage() {
           variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
+        
+        
+
         <TextField
-          label="Date"
+          label="Date" 
           type="datetime-local"
           value={newMeetingDate}
           onChange={(e) => setNewMeetingDate(e.target.value)}
           variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
+         
+          sx={{
+            width: '250px',
+            marginTop: 2,
+            '& label': {
+              color: 'transparent',
+            },
+            '&:focus label': {
+              color: 'initial',
+            },
+          }}
         />
         <TextField
           label="Minutes"
@@ -139,8 +151,10 @@ export default function CreateMeetingPage() {
           value={newMeetingMinutes}
           onChange={(e) => setNewMeetingMinutes(parseInt(e.target.value, 10))}
           variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
+          sx={{ width: "250px", marginTop: 2,   }}
         />
+
+
         <FormControlLabel
           control={
             <Checkbox
