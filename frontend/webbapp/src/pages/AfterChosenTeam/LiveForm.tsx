@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import {
   LocalUser,
   RemoteUser,
@@ -11,6 +15,7 @@ import {
   useRemoteAudioTracks,
   useRemoteUsers,
 } from "agora-rtc-react";
+import { useAppSelector } from "../../slices/store";
 
 export const LiveVideo = () => {
   const appId = "164c628ea4b243ed8ebf6d36d0e1d3c9";
@@ -22,7 +27,7 @@ export const LiveVideo = () => {
 
   // track the mic/video state - Turn on Mic and Camera On
   const [micOn, setMic] = useState(true);
-  const [cameraOn, setCamera] = useState(true);
+  const [cameraOn, setCamera] = useState(false);
 
   // get local video and mic tracks
   const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
@@ -46,6 +51,9 @@ export const LiveVideo = () => {
   //remote users
   const remoteUsers = useRemoteUsers();
   const { audioTracks } = useRemoteAudioTracks(remoteUsers);
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
   // play the remote user audio tracks
   audioTracks.forEach((track) => track.play());
@@ -57,6 +65,7 @@ export const LiveVideo = () => {
           // Initialize each remote stream using RemoteUser component
           remoteUsers.map((user) => (
             <div key={user.uid} className="remote-video-container">
+              <p>{activeProfile?.fullName}</p>
               <RemoteUser user={user} />
             </div>
           ))
@@ -77,21 +86,21 @@ export const LiveVideo = () => {
           <div id="controlsToolbar">
             <div id="mediaControls">
               <button className="btn" onClick={() => setMic((a) => !a)}>
-                Mic
+                {micOn ? <MicIcon /> : <MicOffIcon />}
               </button>
               <button className="btn" onClick={() => setCamera((a) => !a)}>
-                Camera
+                {cameraOn ? <VideocamIcon /> : <VideocamOffIcon />}
               </button>
             </div>
             <button
               id="endConnection"
+              className="btn"
               onClick={() => {
                 setActiveConnection(false);
                 navigate("/meetingroom");
               }}
             >
-              {" "}
-              Disconnect
+              Lämna
             </button>
           </div>
         </div>

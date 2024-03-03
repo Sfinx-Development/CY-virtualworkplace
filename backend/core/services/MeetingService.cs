@@ -23,7 +23,7 @@ public class MeetingService : IMeetingService
         _meetingOccasionRepository = meetingOccasionRepository;
     }
 
-    public async Task<Meeting> CreateTeamMeetingAsync(IncomingMeetingDTO incomingMeetingDTO)
+    public async Task<Meeting> CreateTeamMeetingAsync(CreateMeetingDTO incomingMeetingDTO)
     {
         try
         {
@@ -79,7 +79,7 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public async Task<Meeting> CreateAsync(IncomingMeetingDTO incomingMeetingDTO)
+    public async Task<Meeting> CreateAsync(CreateMeetingDTO incomingMeetingDTO)
     {
         try
         {
@@ -121,7 +121,7 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public async Task<Meeting> UpdateMeeting(Meeting meeting)
+    public async Task<Meeting> UpdateMeeting(IncomingMeetingDTO meeting)
     {
         try
         {
@@ -130,7 +130,7 @@ public class MeetingService : IMeetingService
 
             foundMeeting.Name = meeting.Name ?? foundMeeting.Name;
             foundMeeting.Description = meeting.Description ?? foundMeeting.Description;
-            foundMeeting.Date = meeting.Date;
+            foundMeeting.Date = meeting.Date.AddHours(1);
             foundMeeting.Minutes = meeting.Minutes;
             foundMeeting.IsRepeating = meeting.IsRepeating;
             foundMeeting.Interval = meeting.Interval;
@@ -220,6 +220,24 @@ public class MeetingService : IMeetingService
         catch (Exception)
         {
             throw new Exception();
+        }
+    }
+
+    public async Task<List<Meeting>> GetMeetingsByProfile(string profileId, User loggedInUser)
+    {
+        try
+        {
+            var profile = await _profileRepository.GetByIdAsync(profileId);
+            if (profile.UserId != loggedInUser.Id)
+            {
+                throw new Exception("Not correct user");
+            }
+            var meetings = await _meetingRepository.GetAllByTeam(profile.TeamId);
+            return meetings;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
         }
     }
 }

@@ -1,11 +1,51 @@
-import { CreateMeetingDTO, Meeting, MeetingOccasion, MeetingRoom, } from "../../types";
+import {
+  CreateMeetingDTO,
+  Meeting,
+  MeetingOccasion,
+  MeetingRoom,
+} from "../../types";
 
 const meetingapiUrl = `http://${window.location.hostname}:5290/meeting`;
 const meetingOccasionapiUrl = `http://${window.location.hostname}:5290/meetingoccasion`;
 
-export const FetchGetMyMeetings = async (profileId: string): Promise<MeetingOccasion[]> => {
+export const FetchGetMyOccasions = async (
+  profileId: string
+): Promise<MeetingOccasion[]> => {
   try {
     const response = await fetch(meetingOccasionapiUrl + "/meetingoccasion", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileId),
+    });
+    const responseBody = await response.json();
+    console.log("RESPONSEBODYN : ", responseBody);
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av occasions");
+    }
+    //VAFÖR BEHÖVA GÖRA SÅHÄR??
+    const data = responseBody.$values as MeetingOccasion[];
+    console.log("RESPONSE NÄR DEN ÄR TYPAD: ", data);
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+const formatDate = (date: string) => {
+  const parsedDate = Date.parse(date);
+  return new Date(parsedDate);
+};
+
+export const FetchGetMyMeetings = async (
+  profileId: string
+): Promise<Meeting[]> => {
+  try {
+    const response = await fetch(meetingapiUrl + "/allmeetings", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -20,7 +60,12 @@ export const FetchGetMyMeetings = async (profileId: string): Promise<MeetingOcca
       throw new Error("Något gick fel vid hämtning av meetings");
     }
     //VAFÖR BEHÖVA GÖRA SÅHÄR??
-    const data = responseBody.$values as MeetingOccasion[];
+    // const data = responseBody.$values as Meeting[];
+    const data = responseBody.$values.map((meeting: Meeting) => ({
+      ...meeting,
+      date: new Date(meeting.date),
+    }));
+
     console.log("RESPONSE NÄR DEN ÄR TYPAD: ", data);
     return data;
   } catch (error) {
@@ -29,16 +74,21 @@ export const FetchGetMyMeetings = async (profileId: string): Promise<MeetingOcca
   }
 };
 
-export const FetchGetMyPastMeetings = async (profileId: string): Promise<MeetingOccasion[]> => {
+export const FetchGetMyPastMeetings = async (
+  profileId: string
+): Promise<MeetingOccasion[]> => {
   try {
-    const response = await fetch(meetingOccasionapiUrl + "/pastmeetingoccasion", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(profileId),
-    });
+    const response = await fetch(
+      meetingOccasionapiUrl + "/pastmeetingoccasion",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(profileId),
+      }
+    );
     const responseBody = await response.json();
     console.log("RESPONSEBODYN : ", responseBody);
 
@@ -109,10 +159,9 @@ export const FetchCreateTeamMeeting = async (
   }
 };
 
-
-
-
-export const FetchGetMeetingRoomByTeam= async (teamId: string): Promise<MeetingRoom> => {
+export const FetchGetMeetingRoomByTeam = async (
+  teamId: string
+): Promise<MeetingRoom> => {
   try {
     const response = await fetch(meetingapiUrl + "/meetingroom", {
       method: "POST",
@@ -162,6 +211,25 @@ export const FetchDeleteMeeting = async (
   }
 };
 
+export const FetchEditMeeting = async (meeting: Meeting): Promise<Meeting> => {
+  try {
+    const response = await fetch(meetingapiUrl, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(meeting),
+    });
+    const responseBody = await response.json();
 
-
-
+    if (!response.ok) {
+      throw new Error("Något gick fel vid redigering av mötet");
+    }
+    const data = responseBody as Meeting;
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -33,7 +33,7 @@ namespace Controllers
         [Authorize]
         [HttpPost("Create")]
         public async Task<ActionResult<Meeting>> Post(
-            [FromBody] IncomingMeetingDTO incomingMeetingDTO
+            [FromBody] CreateMeetingDTO incomingMeetingDTO
         )
         {
             try
@@ -75,7 +75,7 @@ namespace Controllers
         [Authorize]
         [HttpPost("CreateTeamMeeting")]
         public async Task<ActionResult<Meeting>> PostTeamMeeting(
-            [FromBody] IncomingMeetingDTO incomingMeetingDTO
+            [FromBody] CreateMeetingDTO incomingMeetingDTO
         )
         {
             try
@@ -177,14 +177,11 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<Meeting>> Update(Meeting meeting)
+        public async Task<ActionResult<Meeting>> Update([FromBody] IncomingMeetingDTO meeting)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
 
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
@@ -199,6 +196,9 @@ namespace Controllers
 
                 if (loggedInUser.Profiles.Any(p => p.Id == meeting.OwnerId))
                 {
+                    Console.WriteLine(
+                        ".------------------------------möte kommer in: " + meeting.Date
+                    );
                     Meeting updatedMeeting = await _meetingService.UpdateMeeting(meeting);
                     return Ok(updatedMeeting);
                 }
@@ -215,7 +215,7 @@ namespace Controllers
 
         [HttpPost("allmeetings")]
         [Authorize]
-        public async Task<ActionResult<Meeting>> Get([FromBody] string meetingId)
+        public async Task<ActionResult<List<OutgoingMeetingDTO>>> Get([FromBody] string profileId)
         {
             try
             {
@@ -232,11 +232,26 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                Meeting meeting = await _meetingService.GetById(meetingId, loggedInUser.Id);
-                return Ok(meeting);
-
-                // MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
-                // return Ok(meetingRoom);
+                var meetings = await _meetingService.GetMeetingsByProfile(profileId, loggedInUser);
+                var outgoingMeetings = new List<OutgoingMeetingDTO>();
+                outgoingMeetings = meetings
+                    .Select(
+                        m =>
+                            new OutgoingMeetingDTO(
+                                m.Id,
+                                m.Name,
+                                m.Description,
+                                m.Date,
+                                m.Minutes,
+                                m.IsRepeating,
+                                m.RoomId,
+                                m.OwnerId,
+                                m.Interval,
+                                m.EndDate
+                            )
+                    )
+                    .ToList();
+                return Ok(outgoingMeetings);
             }
             catch (Exception e)
             {

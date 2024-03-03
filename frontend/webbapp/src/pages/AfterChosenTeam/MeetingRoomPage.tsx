@@ -179,6 +179,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           justifyContent: "flex-end",
           alignItems: "flex-end",
           flexDirection: "column",
+          marginTop: 10,
           gap: 10,
         }}
       >
