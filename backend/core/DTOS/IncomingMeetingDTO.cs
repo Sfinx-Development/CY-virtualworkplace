@@ -12,4 +12,6 @@ public class IncomingMeetingDTO
     public string OwnerId { get; set; }
     public int Interval { get; set; }
     public DateTime? EndDate { get; set; }
+
+    
 }

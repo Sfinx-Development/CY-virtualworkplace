@@ -36,6 +36,7 @@ export const initialState: MeetingState = {
   error: null,
 };
 
+
 export const createMeetingAsync = createAsyncThunk<
   Meeting,
   CreateMeetingDTO,

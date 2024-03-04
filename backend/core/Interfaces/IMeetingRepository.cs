@@ -7,4 +7,5 @@ public interface IMeetingRepository
     Task<Meeting> UpdateAsync(Meeting meeting);
     Task DeleteByIdAsync(string id);
     Task<List<Meeting>> GetAllByTeam(string teamId);
+     Task<bool> IsOverLappedMeetings(CreateMeetingDTO createMeetingDTO);
 }

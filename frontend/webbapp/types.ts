@@ -53,6 +53,7 @@ export interface CreateMeetingDTO {
   ownerId: string;
   interval: string;
   endDate: Date;
+  teamId?: string;
 }
 
 export interface Room {
@@ -92,6 +93,7 @@ export interface Meeting {
   isRepeating: boolean;
   interval: number;
   endDate: Date;
+  teamId?: string;
 }
 
 export interface MeetingOccasion {
