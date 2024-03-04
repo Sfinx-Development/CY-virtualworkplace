@@ -150,7 +150,6 @@ export default function ChatRoom() {
         })
         .catch((error) => {
           console.error("Error sending message:", error);
-          // Hantera fel här om det behövs
         });
     }
     scrollToBottom();
@@ -189,7 +188,6 @@ export default function ChatRoom() {
           })
           .catch((error) => {
             console.error("Error sending message:", error);
-            // Hantera fel här om det behövs
           });
       }
     }

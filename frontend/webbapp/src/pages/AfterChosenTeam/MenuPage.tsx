@@ -14,12 +14,15 @@ import Alert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
 import NavCard from "../../components/NavCard";
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
-import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+import {
+  GetMyProfileAsync,
+  GetOnlineProfiles,
+  GetTeamProfiles,
+} from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import ChatConnector from "./ChatConnection";
-import Connector from "./OnlineConnection";
+import { useNavigate } from "react-router-dom";
 
 export default function Menu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -39,7 +42,7 @@ export default function Menu() {
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
   const now = new Date();
-
+  const navigate = useNavigate();
   const ongoingMeeting = occasions
     ? occasions.find((occasion) => {
         const startDate = new Date(occasion.date);
@@ -52,8 +55,6 @@ export default function Menu() {
 
   useEffect(() => {
     dispatch(getActiveTeam());
-    Connector.getInstance().start();
-    ChatConnector.getInstance().start();
   }, []);
 
   useEffect(() => {
@@ -85,6 +86,12 @@ export default function Menu() {
     setProfileDropdown(true);
   };
 
+  const handleNavigationToMeetingRoom = () => {
+    if (activeTeam) {
+      dispatch(GetOnlineProfiles(activeTeam.id));
+      navigate("/meetingroom");
+    }
+  };
   const handleMouseLeave = () => {
     setProfileDropdown(false);
   };
@@ -163,6 +170,7 @@ export default function Menu() {
             backgroundColor={meetingRoomColor}
             navigationPage="/meetingroom"
             title="Mötesrum"
+            onClick={handleNavigationToMeetingRoom}
             icon={
               ongoingMeeting ? (
                 <NotificationsNoneIcon

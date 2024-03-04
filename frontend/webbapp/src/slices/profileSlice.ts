@@ -208,18 +208,6 @@ const profileSlice = createSlice({
         state.activeProfile = activeProfile;
       }
     },
-    // profileOnline: createAsyncThunk(
-    //   "profile/profileOnline",
-    //   (profile: ProfileHubDTO) => {
-    //     return profile;
-    //   }
-    // ),
-    // profileOffline: createAsyncThunk(
-    //   "profile/profileOffline",
-    //   (profileId: string) => {
-    //     return profileId;
-    //   }
-    // ),
   },
   extraReducers: (builder) => {
     builder

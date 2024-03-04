@@ -12,6 +12,7 @@ interface NavCardProps {
   navigationPage: string;
   title: string;
   icon?: React.ReactNode;
+  onClick?: () => void;
 }
 
 export default function NavCard(props: NavCardProps) {
@@ -28,7 +29,7 @@ export default function NavCard(props: NavCardProps) {
     >
       <CardActionArea
         onClick={() => {
-          navigate(props.navigationPage);
+          props.onClick ? props.onClick() : navigate(props.navigationPage);
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
