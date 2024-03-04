@@ -36,10 +36,10 @@ export const FetchGetMyOccasions = async (
   }
 };
 
-const formatDate = (date: string) => {
-  const parsedDate = Date.parse(date);
-  return new Date(parsedDate);
-};
+// const formatDate = (date: string) => {
+//   const parsedDate = Date.parse(date);
+//   return new Date(parsedDate);
+// };
 
 export const FetchGetMyMeetings = async (
   profileId: string

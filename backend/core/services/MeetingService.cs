@@ -27,6 +27,9 @@ public class MeetingService : IMeetingService
     {
         try
         {
+            if(await _meetingRepository.IsOverLappedMeetings(incomingMeetingDTO)){
+                throw new Exception("Overlapped meetings");
+            }
             Room room = await _roomService.GetRoomById(incomingMeetingDTO.RoomId);
             Profile profile = await _profileRepository.GetByIdAsync(incomingMeetingDTO.OwnerId);
 
@@ -83,6 +86,7 @@ public class MeetingService : IMeetingService
     {
         try
         {
+
             Room room = await _roomService.GetRoomById(incomingMeetingDTO.RoomId);
             Profile profile = await _profileRepository.GetByIdAsync(incomingMeetingDTO.OwnerId);
 
@@ -240,4 +244,46 @@ public class MeetingService : IMeetingService
             throw new Exception(e.Message);
         }
     }
+
+   // I MeetingService.cs
+
+// I MeetingService.cs
+
+// I MeetingService.cs
+
+// I MeetingService.cs
+
+// private bool MeetingTimeOverlaps(Meeting meeting1, Meeting meeting2)
+// {
+//     return (meeting1.Date < meeting2.Date.AddMinutes(meeting2.Minutes) &&
+//             meeting2.Date < meeting1.Date.AddMinutes(meeting1.Minutes));
+// }
+
+
+public async Task<List<Meeting>> GetTeamMeetingsInPeriodAsync(string teamId, DateTime startDateTime, DateTime? endDateTime)
+{
+    try
+    {
+        // Hämta möten för teamet i den angivna tidsperioden
+        var teamMeetings = await _meetingRepository.GetAllByTeam(teamId);
+        teamMeetings.ForEach(m => Console.WriteLine("MÖTESDATUM: " + m.Date));
+
+        // Använd endDateTime direkt, den kan vara null
+        var overlappingMeetings = teamMeetings
+            .Where(m => startDateTime < m.Date.AddMinutes(m.Minutes) && m.Date < endDateTime)
+            .ToList();
+
+        return overlappingMeetings;
+    }
+    catch (Exception ex)
+    {
+        // Logga felmeddelandet eller returnera ett lämpligt felmeddelande
+        // med ytterligare information om felet.
+        // Log.Error($"An error occurred in GetTeamMeetingsInPeriodAsync: {ex}");
+        throw new InvalidOperationException("Failed to get team meetings in the specified period.", ex);
+    }
+}
+
+
+
 }

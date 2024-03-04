@@ -9,6 +9,8 @@ public class CreateMeetingDTO
     public bool IsRepeating { get; set; }
     public string RoomId { get; set; }
     public string OwnerId { get; set; }
+
     public int Interval { get; set; }
     public DateTime? EndDate { get; set; }
+      public string? TeamId { get; set; }
 }

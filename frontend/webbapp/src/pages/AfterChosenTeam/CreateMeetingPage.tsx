@@ -14,6 +14,7 @@ import { CreateMeetingDTO } from "../../../types";
 import { useAppSelector } from "../../slices/store";
 import { getActiveTeam} from "../../slices/teamSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -22,6 +23,7 @@ export default function CreateMeetingPage() {
   const meetings = useAppSelector((state) => state.meetingSlice.meetings);
   const meetingroom = useAppSelector((state) => state.meetingSlice.meetingroom);
   const error = useAppSelector((state) => state.meetingSlice.error);
+  const navigate = useNavigate();
 
   const [newMeetingName, setNewMeetingName] = useState("");
   const [newMeetingDescription, setNewMeetingDescription] = useState("");
@@ -61,7 +63,7 @@ export default function CreateMeetingPage() {
       newMeetingName !== "" &&
       newMeetingDescription !== "" &&
       newMeetingDate !== "" &&
-      activeProfile && meetingroom
+      activeProfile && meetingroom && activeTeam
     ) {
       setFieldError(false);
   
@@ -80,6 +82,7 @@ export default function CreateMeetingPage() {
         ownerId: activeProfile.id,
         interval: intervalAsString,
         endDate: parsedEndDate,
+        teamId: activeTeam?.id
       };
   
       await dispatch(createTeamMeetingAsync(meetingDto));
@@ -92,6 +95,7 @@ export default function CreateMeetingPage() {
       setNewMeetingInterval(0);
       setNewMeetingEndDate("");
       setOwner(""); // Återställ owner-fältet
+      navigate("/meetinginteam");
     } else {
       setFieldError(true);
     }
