@@ -131,7 +131,7 @@ export default function ChatRoom() {
   }, [teamConversation]);
 
   const handleSendMessage = () => {
-    if (activeParticipant && content !== "") {
+    if (activeParticipant && content.trim() !== "") {
       console.log("PARTICIPANTID: ", activeParticipant.id);
       const message: MessageOutgoing = {
         conversationParticipantId: activeParticipant.id,
@@ -273,7 +273,10 @@ export default function ChatRoom() {
         <Button
           variant="contained"
           onClick={handleSendMessage}
-          sx={{ backgroundColor: "lightgray", marginLeft: 2 }}
+          sx={{
+            backgroundColor: content.trim() != "" ? chatColor : "lightgray",
+            marginLeft: 2,
+          }}
         >
           <SendIcon sx={{ color: "white" }} />
         </Button>
