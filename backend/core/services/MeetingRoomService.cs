@@ -13,7 +13,7 @@ public class MeetingRoomServie : IMeetingRoomService
 
     public async Task<MeetingRoom> CreateMeetingRoom(Team team)
     {
-        Cy cy = new() { Id = Utils.GenerateRandomId() };
+        // Cy cy = new() { Id = Utils.GenerateRandomId() };
 
         MeetingRoom meetingRoom =
             new()
@@ -22,7 +22,7 @@ public class MeetingRoomServie : IMeetingRoomService
                 Team = team,
                 TeamId = team.Id,
                 RoomLayout = "default",
-                Cy = cy
+                // Cy = cy
             };
 
         MeetingRoom createdRoom = await _meetingRoomRepository.CreateAsync(meetingRoom);

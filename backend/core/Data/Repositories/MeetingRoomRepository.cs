@@ -16,10 +16,7 @@ public class MeetingRoomRepository : IMeetingRoomRepository
     {
         try
         {
-            MeetingRoom room = await _cyDbContext
-                .MeetingRooms.Include(m => m.Cy)
-                .Where(m => m.Id == id)
-                .FirstAsync();
+            MeetingRoom room = await _cyDbContext.MeetingRooms.Where(m => m.Id == id).FirstAsync();
 
             if (room == null)
             {
