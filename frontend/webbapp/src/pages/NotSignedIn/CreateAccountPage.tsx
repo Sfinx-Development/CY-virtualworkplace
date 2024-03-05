@@ -13,7 +13,6 @@ import { PhoneNumberUtil } from "google-libphonenumber";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { avatars } from "../../../avatars";
-import { User } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
 import { createUserAsync } from "../../slices/userSlice";
 
@@ -31,41 +30,36 @@ export default function CreateAccount() {
   const [emailError, setEmailError] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
   const [passwordLengthError, setPasswordLengthError] = useState(false);
+  const [ageError, setAgeError] = useState(false);
+  const [fieldsError, setFieldsError] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const isEmail = (email: string): boolean => {
+  const isEmailValid = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     return emailRegex.test(email);
   };
 
-  const isPhoneNumber = (phone: string): boolean => {
+  const isPhoneNumber = (phone: string) => {
     const phoneUtil = PhoneNumberUtil.getInstance();
     try {
-      //gäller bara för sverige nu då - borde kolla vra personen befinner sig
-      //ev ha COUNTRY i usern? - översättning skapa också isåfall överallt till engelska iaf
       const phoneNumberProto = phoneUtil.parse(`+46${phone}`);
       const isValid = phoneUtil.isValidNumber(phoneNumberProto);
-
-      if (isValid) {
-        setPhoneError(false);
-        console.log("IS VALID NUMBER");
-        return true;
-      } else {
-        setPhoneError(true);
-        console.log("IS NOT VALID NUMBER");
-        return false;
-      }
-      return false;
+      return isValid;
     } catch (e) {
       console.error("NumberParseException was thrown:", e);
-      //sätt error meddelande - något gick fel? eller vad?
       return false;
     }
   };
 
   const handleCreateUser = async () => {
+    setPasswordError(false);
+    setPasswordLengthError(false);
+    setEmailError(false);
+    setPhoneError(false);
+    setAgeError(false);
+    setFieldsError(false);
+
     if (
       firstname &&
       lastname &&
@@ -78,12 +72,13 @@ export default function CreateAccount() {
       selectedAvatar
     ) {
       if (
-        password == confirmedPassword &&
+        password === confirmedPassword &&
         password.length >= 6 &&
-        isEmail(email) &&
-        isPhoneNumber(phoneNumber)
+        isEmailValid(email) &&
+        isPhoneNumber(phoneNumber) &&
+        age >= 16
       ) {
-        const newUser: User = {
+        const newUser = {
           id: "",
           firstName: firstname,
           lastName: lastname,
@@ -97,28 +92,32 @@ export default function CreateAccount() {
         await dispatch(createUserAsync(newUser));
         navigate("/signin");
       } else {
-        if (password != confirmedPassword) {
+        if (password !== confirmedPassword) {
           setPasswordError(true);
-          setPasswordLengthError(false);
-          setEmailError(false);
         } else if (password.length < 6 || confirmedPassword.length < 6) {
           setPasswordLengthError(true);
-          setPasswordError(false);
-          setEmailError(false);
-        } else if (!isEmail(email)) {
+        } else if (!isEmailValid(email)) {
           setEmailError(true);
+        } else if (!isPhoneNumber(phoneNumber)) {
+          setPhoneError(true);
+        } else if (age < 16) {
+          setAgeError(true);
+        } else {
+          setFieldsError(true);
         }
       }
+    } else {
+      setFieldsError(true);
     }
   };
-
+  const isMobile = window.innerWidth <= 500;
   return (
     <Container
       sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        flexDirection: isMobile ? "column" : "row",
       }}
     >
       <div>
@@ -138,6 +137,14 @@ export default function CreateAccount() {
         )}
         {emailError && (
           <Typography color="error">Ange en giltig e-post</Typography>
+        )}
+        {ageError && (
+          <Typography color="error">
+            Du måste vara minst 16 år för att skapa ett konto
+          </Typography>
+        )}
+        {fieldsError && (
+          <Typography color="error">Alla fält måste fyllas i</Typography>
         )}
         <TextField
           label="Förnamn"
@@ -193,6 +200,7 @@ export default function CreateAccount() {
             labelId="gender-label"
             value={gender}
             label="Kön"
+            sx={{ width: "100px" }}
             onChange={(event) => setGender(event.target.value)}
           >
             <MenuItem value={"Man"}>Man</MenuItem>
@@ -211,7 +219,14 @@ export default function CreateAccount() {
         <Typography variant="body1" sx={{ margin: 1 }}>
           Välj en avatar
         </Typography>
-        <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 10,
+            marginBottom: 20,
+            flexWrap: "wrap",
+          }}
+        >
           {avatars.map((avatar, index) => (
             <Avatar
               key={index}
