@@ -63,6 +63,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
       dispatch(GetOnlineProfiles(activeTeam.id));
+      console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
     }
   }, [activeTeam]);
 
@@ -114,6 +115,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
     <div
+      key={profile.profileId}
       style={{
         display: "flex",
         alignItems: "center",
@@ -121,7 +123,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       }}
     >
       <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
-      <Typography key={profile.profileId}>{profile.fullName}</Typography>
+      <Typography>{profile.fullName}</Typography>
     </div>
   ));
 

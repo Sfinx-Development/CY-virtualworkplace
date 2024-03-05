@@ -1,4 +1,10 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Container,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateTeamDTO } from "../../../types";
@@ -14,7 +20,11 @@ export default function CreateTeam() {
   const navigate = useNavigate();
 
   const handleCreateTeam = async () => {
-    if (teamName != "" && teamRole != "" && profileRole != "") {
+    if (
+      teamName.trim() !== "" &&
+      teamRole.trim() !== "" &&
+      profileRole.trim() !== ""
+    ) {
       setFieldError(false);
       const team: CreateTeamDTO = {
         teamName: teamName,
@@ -49,24 +59,28 @@ export default function CreateTeam() {
             setTeamName(event.target.value);
           }}
         />
-        <TextField
-          id="firstname"
-          label="Typ/avdelning"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setTeamRole(event.target.value);
-          }}
-        />
-        <TextField
-          id="firstname"
-          label="Din roll i teamet"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
-          onChange={(event) => {
-            setProfileRole(event.target.value);
-          }}
-        />
+        <Tooltip title="Ange typen av teamet eller avdelningen, t.ex. 'Skolklass', 'Arbetslag', 'Utvecklingsteam' osv.">
+          <TextField
+            id="team-role"
+            label="Typ/avdelning"
+            variant="standard"
+            sx={{ width: "250px", marginTop: 2 }}
+            onChange={(event) => {
+              setTeamRole(event.target.value);
+            }}
+          />
+        </Tooltip>
+        <Tooltip title="Beskriv din roll eller ansvar i teamet. Exempelvis 'Projektledare', 'Utvecklare', 'Designer' etc. Detta hjälper andra att förstå din funktion inom teamet.">
+          <TextField
+            id="firstname"
+            label="Din roll i teamet"
+            variant="standard"
+            sx={{ width: "250px", marginTop: 2 }}
+            onChange={(event) => {
+              setProfileRole(event.target.value);
+            }}
+          />
+        </Tooltip>
         <Button
           variant="contained"
           sx={{
