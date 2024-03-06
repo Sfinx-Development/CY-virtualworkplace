@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using core;
 
@@ -10,9 +11,11 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    partial class CyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240306200756_rollback")]
+    partial class rollback
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -309,31 +312,6 @@ namespace core.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("core.Todo", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TeamId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("Todos");
-                });
-
             modelBuilder.Entity("core.User", b =>
                 {
                     b.Property<string>("Id")
@@ -513,16 +491,6 @@ namespace core.Migrations
                     b.Navigation("HealthCheck");
 
                     b.Navigation("Profile");
-                });
-
-
-            modelBuilder.Entity("core.Todo", b =>
-                {
-                    b.HasOne("core.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("core.MeetingRoom", b =>

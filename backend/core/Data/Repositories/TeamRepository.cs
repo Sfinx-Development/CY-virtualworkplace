@@ -51,7 +51,9 @@ public class TeamRepository : ITeamRepository
     {
         try
         {
-            var teams = await _cyDbContext.Teams.Where(t => t.Profiles.Any(p => p.UserId == userId)).ToListAsync();
+            var teams = await _cyDbContext
+                .Teams.Where(t => t.Profiles.Any(p => p.UserId == userId))
+                .ToListAsync();
             return teams;
         }
         catch (Exception e)

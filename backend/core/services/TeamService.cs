@@ -59,6 +59,7 @@ public class TeamService : ITeamService
 
         if (createdTeam != null && createdProfile != null && createdConversation != null)
         {
+            await _teamRepository.UpdateAsync(createdTeam);
             return createdTeam;
         }
         else
