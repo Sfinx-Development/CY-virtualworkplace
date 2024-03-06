@@ -51,7 +51,9 @@ public class TeamRepository : ITeamRepository
     {
         try
         {
-            var teams = await _cyDbContext.Teams.Where(t => t.Profiles.Any(p => p.UserId == userId)).ToListAsync();
+            var teams = await _cyDbContext
+                .Teams.Where(t => t.Profiles.Any(p => p.UserId == userId))
+                .ToListAsync();
             return teams;
         }
         catch (Exception e)
@@ -94,6 +96,7 @@ public class TeamRepository : ITeamRepository
             teamToUpdate.Name = team.Name ?? teamToUpdate.Name;
             teamToUpdate.Code = team.Code ?? teamToUpdate.Code;
             teamToUpdate.TeamRole = team.TeamRole ?? teamToUpdate.TeamRole;
+            teamToUpdate.TeamRole = team.OwnerId;
 
             _cyDbContext.Teams.Update(teamToUpdate);
 
