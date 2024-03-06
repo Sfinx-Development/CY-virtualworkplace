@@ -53,9 +53,12 @@ public class HealthCheckService : IHealthCheckService
         {
             var foundHealthCheck =
                 await _healthCheckRepository.GetByIdAsync(healthCheck.Id) ?? throw new Exception();
-            var teamOwner = await _profileRepository.GetByIdAsync(foundHealthCheck.Team.OwnerId);
+            var profile = await _profileRepository.GetByUserAndTeamIdAsync(
+                loggedInUser.Id,
+                healthCheck.TeamId
+            );
 
-            if (teamOwner.UserId != loggedInUser.Id)
+            if (!profile.IsOwner)
             {
                 throw new Exception("Only owner of team can update healthcheck");
             }
@@ -154,8 +157,11 @@ public class HealthCheckService : IHealthCheckService
         {
             //när denna raderas så ska alla profilers svar också raderas
             var healthCheck = await _healthCheckRepository.GetByIdAsync(id);
-            var profile = await _profileRepository.GetByIdAsync(healthCheck.Team.OwnerId);
-            if (profile.UserId != loggedInUser.Id)
+            var profile = await _profileRepository.GetByUserAndTeamIdAsync(
+                loggedInUser.Id,
+                healthCheck.TeamId
+            );
+            if (!profile.IsOwner)
             {
                 throw new Exception("Only team owner can delete healthcheck.");
             }
