@@ -15,19 +15,22 @@ export default function JoinTeam() {
   const primaryColor = theme1.palette.primary.main;
 
   useEffect(() => {
-    if (letters.every((letter) => letter !== "")) {
+    if (letters.every((letter) => letter !== "") && role !== "") {
       handleJoinTeam();
     }
   }, [letters]);
 
+  useEffect(() => {
+    if (role !== "" && letters.every((letter) => letter !== "")) {
+      handleJoinTeam();
+    }
+  }, [ letters]);
+
   const handleJoinTeam = async () => {
-    if (letters.every((letter) => letter !== "") && role != "") {
+    if (letters.every((letter) => letter !== "") && role !== "") {
       setFieldError(false);
-      await dispatch(
-        createJoinAsync({ code: letters.join(""), role: role })
-      ).then(() => {
-        navigate("/chooseteam");
-      });
+      await dispatch(createJoinAsync({ code: letters.join(""), role: role }));
+      navigate("/chooseteam");
     } else {
       setFieldError(true);
     }
@@ -42,6 +45,13 @@ export default function JoinTeam() {
 
     if (index < textFieldsRef.current.length - 1 && value !== "") {
       textFieldsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleRoleEnterPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent the default Enter key behavior
+      handleJoinTeam();
     }
   };
 
@@ -71,6 +81,7 @@ export default function JoinTeam() {
           label="Din roll i teamet"
           style={{ borderColor: primaryColor, minWidth: "40%" }}
           onChange={(event) => setRole(event.target.value)}
+          onKeyDown={handleRoleEnterPress}
         />
         <Typography variant="h6" sx={{ marginTop: 10 }}>
           Skriv in den kod som du får från ett befintligt team
@@ -98,7 +109,6 @@ export default function JoinTeam() {
                 )
               }
               onKeyDown={(event) => {
-                // Gå till föregående textfält om användaren trycker på backspace i ett tomt fält
                 if (
                   event.key === "Backspace" &&
                   (event.target as HTMLInputElement).value === "" &&
