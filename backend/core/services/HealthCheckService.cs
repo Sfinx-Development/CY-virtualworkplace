@@ -20,15 +20,27 @@ public class HealthCheckService : IHealthCheckService
         _teamRepository = teamRepository;
     }
 
-    public async Task<HealthCheck> CreateHealthCheckAsync(HealthCheck healthCheck)
+    public async Task<HealthCheck> CreateHealthCheckAsync(
+        HealthCheckDTO healthCheck,
+        User loggedInUser
+    )
     {
         try
         {
             //kolla om den som begär är en del av teamet
+            var profile = await _profileRepository.GetByUserAndTeamIdAsync(
+                loggedInUser.Id,
+                healthCheck.TeamId
+            );
+
+            if (!profile.IsOwner)
+            {
+                throw new Exception("Only owner of team can update healthcheck");
+            }
 
             HealthCheck newHealthCheck =
                 new(
-                    healthCheck.Id,
+                    Utils.GenerateRandomId(),
                     healthCheck.TeamId,
                     healthCheck.Question,
                     healthCheck.StartTime,
@@ -47,7 +59,7 @@ public class HealthCheckService : IHealthCheckService
         }
     }
 
-    public async Task<HealthCheck> UpdateHealthCheck(HealthCheck healthCheck, User loggedInUser)
+    public async Task<HealthCheck> UpdateHealthCheck(HealthCheckDTO healthCheck, User loggedInUser)
     {
         try
         {
@@ -106,12 +118,12 @@ public class HealthCheckService : IHealthCheckService
             {
                 throw new Exception("Not valid user");
             }
-            var now = new DateTime();
+            // var now = new DateTime();
             var healthChecks = await _healthCheckRepository.GetAllByTeam(profile.TeamId);
-            var healthChecksValidNow = healthChecks.FindAll(
-                h => h.StartTime >= now && h.EndTime < now
-            );
-            return healthChecksValidNow;
+            // var healthChecksValidNow = healthChecks.FindAll(
+            //     h => h.StartTime >= now && h.EndTime < now
+            // );
+            return healthChecks;
         }
         catch (Exception e)
         {

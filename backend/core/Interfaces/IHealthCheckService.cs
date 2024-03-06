@@ -2,9 +2,9 @@ namespace core;
 
 public interface IHealthCheckService
 {
-    Task<HealthCheck> CreateHealthCheckAsync(HealthCheck healthCheck);
+    Task<HealthCheck> CreateHealthCheckAsync(HealthCheckDTO healthCheck, User loggedInUser);
 
-    Task<HealthCheck> UpdateHealthCheck(HealthCheck healthCheck, User loggedInUser);
+    Task<HealthCheck> UpdateHealthCheck(HealthCheckDTO healthCheck, User loggedInUser);
 
     Task<HealthCheck> GetHealthCheckBykId(string id);
     Task<List<HealthCheck>> GetByTeam(string profileId, User loggedInUser);
