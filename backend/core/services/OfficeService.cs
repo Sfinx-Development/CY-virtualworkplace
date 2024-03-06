@@ -13,7 +13,7 @@ public class OfficeService : IOfficeService
 
     public async Task<Office> CreateOffice(Profile profile)
     {
-        Cy cy = new() { Id = Utils.GenerateRandomId() };
+        // Cy cy = new() { Id = Utils.GenerateRandomId() };
 
         Office office =
             new()
@@ -21,7 +21,6 @@ public class OfficeService : IOfficeService
                 Id = Utils.GenerateRandomId(),
                 Profile = profile,
                 RoomLayout = "default",
-                Cy = cy,
                 ProfileId = profile.Id
             };
 

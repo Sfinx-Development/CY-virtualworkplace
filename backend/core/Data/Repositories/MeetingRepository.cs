@@ -34,7 +34,6 @@ public class MeetingRepository : IMeetingRepository
         {
             Meeting meeting = await _cyDbContext
                 .Meetings.Include(m => m.Room)
-                .ThenInclude(r => r.Cy)
                 .Where(m => m.Id == id)
                 .FirstAsync();
 
@@ -97,14 +96,20 @@ public class MeetingRepository : IMeetingRepository
             throw new Exception(e.Message);
         }
     }
-    public async Task<bool> IsOverLappedMeetings(CreateMeetingDTO createMeetingDTO){
-       
-         var overlappingMeetings = await _cyDbContext.Meetings
-            .Where(m => createMeetingDTO.Date.AddMinutes(60) < m.Date.AddMinutes(m.Minutes) && m.Date < createMeetingDTO.Date.AddMinutes(createMeetingDTO.Minutes + 60))
+
+    public async Task<bool> IsOverLappedMeetings(CreateMeetingDTO createMeetingDTO)
+    {
+        var overlappingMeetings = await _cyDbContext
+            .Meetings.Where(
+                m =>
+                    createMeetingDTO.Date.AddMinutes(60) < m.Date.AddMinutes(m.Minutes)
+                    && m.Date < createMeetingDTO.Date.AddMinutes(createMeetingDTO.Minutes + 60)
+            )
             .ToListAsync();
-            if(overlappingMeetings.Count > 0){
-                return true;
-            }
-            return false;
+        if (overlappingMeetings.Count > 0)
+        {
+            return true;
+        }
+        return false;
     }
 }

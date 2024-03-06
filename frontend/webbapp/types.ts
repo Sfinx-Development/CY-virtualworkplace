@@ -70,11 +70,6 @@ export interface Office extends Room {
   profileId: string;
 }
 
-export interface Cy {
-  id: string;
-  healthCheckInterval: number;
-}
-
 export interface HealthCheck {
   id: string;
   healthCheckTime: Date;
