@@ -96,7 +96,6 @@ public class TeamRepository : ITeamRepository
             teamToUpdate.Name = team.Name ?? teamToUpdate.Name;
             teamToUpdate.Code = team.Code ?? teamToUpdate.Code;
             teamToUpdate.TeamRole = team.TeamRole ?? teamToUpdate.TeamRole;
-            teamToUpdate.TeamRole = team.OwnerId;
 
             _cyDbContext.Teams.Update(teamToUpdate);
 
