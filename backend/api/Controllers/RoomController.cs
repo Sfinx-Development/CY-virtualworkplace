@@ -25,17 +25,17 @@ namespace Controllers
             _hubContext = hubContext;
         }
 
-        [HttpPost]
+        [HttpPost("profileonlline")]
         [Authorize]
         public async Task<ActionResult<Profile>> ProfileEnterMeetingRoom(
             [FromBody] string profileId
         )
         {
-            await _hubContext.Clients.All.SendAsync("profileOffline", profileId);
+            await _hubContext.Clients.All.SendAsync("profileOnline", profileId);
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPost("profileoffline")]
         [Authorize]
         public async Task<ActionResult<Profile>> ProfileLeavingMeetingRoom(
             [FromBody] string profileId

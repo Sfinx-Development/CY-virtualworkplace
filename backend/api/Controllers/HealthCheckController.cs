@@ -26,7 +26,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<HealthCheck>> Post([FromBody] HealthCheck healthCheck)
+        public async Task<ActionResult<HealthCheck>> Post([FromBody] HealthCheckDTO healthCheck)
         {
             try
             {
@@ -43,7 +43,8 @@ namespace Controllers
                 }
 
                 var healthCheckCreated = await _healthCheckService.CreateHealthCheckAsync(
-                    healthCheck
+                    healthCheck,
+                    loggedInUser
                 );
 
                 if (healthCheckCreated == null)
@@ -89,7 +90,7 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<HealthCheck>> Update([FromBody] HealthCheck healthCheck)
+        public async Task<ActionResult<HealthCheck>> Update([FromBody] HealthCheckDTO healthCheck)
         {
             try
             {
