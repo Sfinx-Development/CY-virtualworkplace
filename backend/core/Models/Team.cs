@@ -7,6 +7,9 @@ public class Team
     public string Code { get; set; }
     public DateTime CreatedAt { get; set; }
     public string TeamRole { get; set; }
+
+    //får vara PROFILENS ID:
+    public string OwnerId { get; set; }
     public List<Profile> Profiles = new();
 
     public Team() { }

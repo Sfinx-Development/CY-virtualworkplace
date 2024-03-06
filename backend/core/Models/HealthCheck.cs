@@ -11,4 +11,19 @@ public class HealthCheck
     public DateTime EndTime { get; set; }
 
     public HealthCheck() { }
+
+    public HealthCheck(
+        string id,
+        string teamId,
+        string question,
+        DateTime startTime,
+        DateTime endTime
+    )
+    {
+        Id = id;
+        TeamId = teamId;
+        Question = question;
+        StartTime = startTime;
+        EndTime = endTime;
+    }
 }
