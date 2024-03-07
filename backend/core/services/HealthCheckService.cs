@@ -8,16 +8,19 @@ public class HealthCheckService : IHealthCheckService
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly IHealthCheckRepository _healthCheckRepository;
+    private readonly IProfileHealthCheckRepository _profileHealthCheckRepository;
 
     public HealthCheckService(
         IProfileRepository profileRepository,
         IHealthCheckRepository healthCheckRepository,
-        ITeamRepository teamRepository
+        ITeamRepository teamRepository,
+        IProfileHealthCheckRepository profileHealthCheckRepository
     )
     {
         _profileRepository = profileRepository;
         _healthCheckRepository = healthCheckRepository;
         _teamRepository = teamRepository;
+        _profileHealthCheckRepository = profileHealthCheckRepository;
     }
 
     public async Task<HealthCheck> CreateHealthCheckAsync(
@@ -179,6 +182,13 @@ public class HealthCheckService : IHealthCheckService
             }
             //kolla här så den som raderar är ägaren av teamet
             //hämta ut healthcheck sen matcha loggedinuser med ownerns userid
+            var profileHealthChecks = await _profileHealthCheckRepository.GetAllByHealthCheck(
+                healthCheck.Id
+            );
+            foreach (var profileHC in profileHealthChecks)
+            {
+                await _profileHealthCheckRepository.DeleteByIdAsync(profileHC.Id);
+            }
             await _healthCheckRepository.DeleteByIdAsync(id);
         }
         catch (Exception e)
