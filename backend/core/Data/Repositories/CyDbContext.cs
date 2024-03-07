@@ -13,6 +13,7 @@ public class CyDbContext : DbContext
     public DbSet<MeetingRoom> MeetingRooms { get; set; }
     public DbSet<MeetingOccasion> MeetingOccasions { get; set; }
     public DbSet<HealthCheck> HealthChecks { get; set; }
+    public DbSet<ProfileHealthCheck> ProfileHealthChecks { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Conversation> Conversations { get; set; }
     public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
@@ -45,14 +46,15 @@ public class CyDbContext : DbContext
         //with many healthchecks?
         modelBuilder.Entity<HealthCheck>().HasOne(h => h.Team);
         modelBuilder.Entity<ProfileHealthCheck>().HasOne(ph => ph.Profile);
+        modelBuilder.Entity<ProfileHealthCheck>().HasOne(ph => ph.HealthCheck);
 
         modelBuilder.Entity<Todo>().HasOne(t => t.Team);
 
         modelBuilder.Entity<Profile>().HasOne(p => p.User).WithMany(u => u.Profiles);
         modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);
 
-        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);  modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Profile);
-      
+        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
+        modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Profile);
 
         modelBuilder
             .Entity<ConversationParticipant>()

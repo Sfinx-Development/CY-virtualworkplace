@@ -10,4 +10,24 @@ public class ProfileHealthCheck
     public Profile Profile { get; set; }
     public string ProfileId { get; set; }
     public HealthCheck HealthCheck { get; set; }
+    public string HealthCheckId { get; set; }
+
+    public ProfileHealthCheck(
+        string id,
+        DateTime date,
+        int rating,
+        bool isAnonymous,
+        string profileId,
+        string healthCheckId
+    )
+    {
+        Id = id;
+        Date = date;
+        Rating = rating;
+        IsAnonymous = isAnonymous;
+        ProfileId = profileId;
+        HealthCheckId = healthCheckId;
+    }
+
+    public ProfileHealthCheck() { }
 }
