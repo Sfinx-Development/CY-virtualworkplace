@@ -16,6 +16,7 @@ public class CyDbContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Conversation> Conversations { get; set; }
     public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
+    public DbSet<Todo> Todos { get; set; }
 
     public CyDbContext() { }
 
@@ -39,17 +40,19 @@ public class CyDbContext : DbContext
 
         modelBuilder.Entity<MeetingRoom>().HasOne(mr => mr.Team);
 
-        modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Profile);
         modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Meeting);
 
         //with many healthchecks?
         modelBuilder.Entity<HealthCheck>().HasOne(h => h.Team);
         modelBuilder.Entity<ProfileHealthCheck>().HasOne(ph => ph.Profile);
 
+        modelBuilder.Entity<Todo>().HasOne(t => t.Team);
+
         modelBuilder.Entity<Profile>().HasOne(p => p.User).WithMany(u => u.Profiles);
         modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);
 
-        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
+        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);  modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Profile);
+      
 
         modelBuilder
             .Entity<ConversationParticipant>()
