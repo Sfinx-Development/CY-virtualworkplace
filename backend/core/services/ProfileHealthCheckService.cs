@@ -120,6 +120,10 @@ public class ProfileHealthCheckService : IProfileHealthCheckService
                         HealthCheckId = h.HealthCheckId
                     }
             );
+            if (profileHealthCheckDTOs == null || profileHealthCheckDTOs.Count() < 1)
+            {
+                profileHealthCheckDTOs = new List<ProfileHealthCheckDTO>();
+            }
             return profileHealthCheckDTOs;
         }
         catch (System.Exception e)
