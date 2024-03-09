@@ -40,7 +40,11 @@ public class HealthCheckService : IHealthCheckService
             {
                 throw new Exception("Only owner of team can update healthcheck");
             }
-
+            var now = DateTime.UtcNow;
+            if (healthCheck.StartTime < now)
+            {
+                throw new Exception("Can not create healthchecks for the past.");
+            }
             HealthCheck newHealthCheck =
                 new(
                     Utils.GenerateRandomId(),
