@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+// DETTA ÄR DEVELOP BRANCHEN - VI KAN ÖVA GENOM ATT ALDRIG SKICKA MED DENNA TILL MAIN
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
 
