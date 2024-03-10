@@ -77,31 +77,20 @@ public class TodoRepository : ITodoRepository
     //     }
     // }
 
-    // public async Task<Todo> UpdateAsync(Todo todo)
-    // {
-    //     try
-    //     {
-    //         var todoToUpdate = await _cyDbContext.Teams.FirstAsync(t => t.Id == todo.Id);
+    public async Task<Todo> UpdateAsync(Todo todo)
+    {
+        try
+        {
+            _cyDbContext.Todos.Update(todo);
 
-    //         if (todoToUpdate == null)
-    //         {
-    //             throw new Exception();
-    //         }
-
-    //         todoToUpdate.Name = todo.Name ?? todoToUpdate.Name;
-    //         todoToUpdate.Code = todo.Code ?? todoToUpdate.Code;
-    //         todoToUpdate.TeamRole = todo.TeamRole ?? todoToUpdate.TeamRole;
-
-    //         _cyDbContext.Todo.Update(todoToUpdate);
-
-    //         await _cyDbContext.SaveChangesAsync();
-    //         return todoToUpdate;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception();
-    //     }
-    // }
+            await _cyDbContext.SaveChangesAsync();
+            return todo;
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
 
     public async Task DeleteByIdAsync(string id)
     {

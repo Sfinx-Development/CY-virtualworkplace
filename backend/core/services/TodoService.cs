@@ -68,6 +68,29 @@ public class TodoService : ITodoService
         }
     }
 
+      public async Task<Todo> UpdateTodo(TodoDTO todoDTO)
+    {
+        try
+        {
+            var foundTodo =
+                await _todoRepository.GetByIdAsync(todoDTO.Id) ?? throw new Exception();
+
+            foundTodo.Title = todoDTO.Title ?? foundTodo.Title;
+            foundTodo.Description = todoDTO.Description ?? foundTodo.Description;
+            foundTodo.Date = todoDTO.Date.AddHours(1);
+            // foundMeeting.Minutes = meeting.Minutes;
+            // foundMeeting.IsRepeating = meeting.IsRepeating;
+            // foundMeeting.Interval = meeting.Interval;
+            // foundMeeting.EndDate = meeting.EndDate;
+            var updatedTodo = await _todoRepository.UpdateAsync(foundTodo);
+            return updatedTodo;
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
+
     // public async Task<HealthCheck> UpdateHealthCheck(HealthCheckDTO healthCheck, User loggedInUser)
     // {
     //     try

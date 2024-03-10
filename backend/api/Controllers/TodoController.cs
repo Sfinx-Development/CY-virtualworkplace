@@ -147,37 +147,37 @@ var createdTodo = await _todoService.CreateTodo(todo, loggedInUser);
             }
         }
 
-    //     [HttpPut]
-    //     [Authorize]
-    //     public async Task<ActionResult<HealthCheck>> Update([FromBody] HealthCheckDTO healthCheck)
-    //     {
-    //         try
-    //         {
-    //             var jwt = Request.Cookies["jwttoken"];
+        [HttpPut]
+        [Authorize]
+        public async Task<ActionResult<Todo>> Update([FromBody] TodoDTO todoDTO)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
 
-    //             if (string.IsNullOrWhiteSpace(jwt))
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
-    //             var loggedInUser = await _jwtService.GetByJWT(jwt);
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
 
-    //             if (loggedInUser == null)
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
 
-    //             HealthCheck updatedHealthCheck = await _healthCheckService.UpdateHealthCheck(
-    //                 healthCheck,
-    //                 loggedInUser
-    //             );
-    //             return Ok(updatedHealthCheck);
-    //         }
-    //         catch (Exception e)
-    //         {
-    //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    //         }
-    //     }
+                Todo updatedTodo = await _todoService.UpdateTodo(
+                    todoDTO
+                
+                );
+                return Ok(updatedTodo);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
 
-    //  
+     
      }
 }

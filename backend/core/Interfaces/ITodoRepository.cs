@@ -9,6 +9,7 @@ public interface ITodoRepository
     Task<List<Todo>> GetByTeamIdAsync(string teamId);
     Task<Todo> GetByIdAsync(string todoId);
     Task DeleteByIdAsync(string id);
+    Task<Todo> UpdateAsync(Todo todo);
     // Task<Todo> GetByIdAsync(string todoId);
     // Task<Todo> UpdateAsync(Todo todo);
     // Task DeleteByIdAsync(string id);
