@@ -39,11 +39,20 @@ builder.Services.AddSingleton(securityKey);
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
+// builder.Services.AddDbContext<CyDbContext>(
+//     options =>
+//         options.UseMySql(
+//             "server=localhost;database=cy;user=root;password=",
+//             ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
+//         )
+// );
 builder.Services.AddDbContext<CyDbContext>(
     options =>
         options.UseMySql(
-            "server=localhost;database=cy;user=root;password=",
-            ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
+            "server=cydb.mysql.database.azure.com;database=cy;user=angelinaholmqvist;password=BellaKattis123",
+            ServerVersion.AutoDetect(
+                "server=cydb.mysql.database.azure.com;database=cy;user=angelinaholmqvist;password=BellaKattis123"
+            )
         )
 );
 
