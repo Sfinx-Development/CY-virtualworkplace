@@ -67,6 +67,7 @@ builder.Services.AddScoped<IHealthCheckRepository, HealthCheckRepository>();
 builder.Services.AddScoped<IConversationParticipantRepository, ConversationParticipantRepository>();
 builder.Services.AddScoped<IProfileHealthCheckRepository, ProfileHealthCheckRepository>();
 builder.Services.AddScoped<LogInRepository>();
+builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -86,6 +87,7 @@ builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
 builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 builder.Services.AddScoped<IProfileHealthCheckService, ProfileHealthCheckService>();
+builder.Services.AddScoped<ITodoService, TodoService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

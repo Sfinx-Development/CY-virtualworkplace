@@ -16,31 +16,17 @@ namespace Controllers
     public class TodoController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly ITeamService _teamService;
-        private readonly IProfileService _profileService;
-        private readonly IConversationService _conversationService;
-        private readonly IMeetingOccasionService _meetingOccasionService;
+        private readonly ITodoService _todoService;
 
-        public TodoController(
-            JwtService jwtService,
-            ITeamService teamService,
-            IProfileService profileService,
-            IConversationService conversationService,
-            IMeetingOccasionService meetingOccasionService
-        )
+        public TodoController(JwtService jwtService, ITodoService todoService)
         {
             _jwtService = jwtService;
-            _teamService = teamService;
-            _profileService = profileService;
-            _conversationService = conversationService;
-            _meetingOccasionService =meetingOccasionService;
+            _todoService = todoService;
         }
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<Todo>> Post(
-            [FromBody] IncomingCreateTeamDTO incomingCreateTeamDTO
-        )
+        public async Task<ActionResult<TodoDTO>> Post([FromBody] TodoDTO todo)
         {
             try
             {
@@ -56,8 +42,16 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-              
-                // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
+               // Korrekt användning i TodoController
+var createdTodo = await _todoService.CreateTodo(todo, loggedInUser);
+
+
+                if (createdTodo == null)
+                {
+                    return BadRequest("Failed to create todo.");
+                }
+                return CreatedAtAction("Post", createdTodo );
+
             }
             catch (Exception e)
             {
@@ -66,11 +60,38 @@ namespace Controllers
         }
 
     //     [Authorize]
-    //     [HttpPost("Join")]
-    //     public async Task<ActionResult<Team>> Post([FromBody] JoinRequestDTO request)
+    //     [HttpDelete]
+    //     public async Task<ActionResult> Delete([FromBody] string id)
     //     {
-    //         //ATT GÖRA: kolla villkor så man inte kan gå med flera gånger i samma team
+    //         try
+    //         {
+    //             var jwt = Request.Cookies["jwttoken"];
+    //             if (string.IsNullOrWhiteSpace(jwt))
+    //             {
+    //                 return BadRequest("JWT token is missing.");
+    //             }
 
+    //             var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+    //             if (loggedInUser == null)
+    //             {
+    //                 return BadRequest("Failed to get user.");
+    //             }
+
+    //             await _healthCheckService.DeleteById(id, loggedInUser);
+
+    //             return Ok("Successfully deleted HealthCheck.");
+    //         }
+    //         catch (Exception e)
+    //         {
+    //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+    //         }
+    //     }
+
+    //     [HttpPut]
+    //     [Authorize]
+    //     public async Task<ActionResult<HealthCheck>> Update([FromBody] HealthCheckDTO healthCheck)
+    //     {
     //         try
     //         {
     //             var jwt = Request.Cookies["jwttoken"];
@@ -83,31 +104,14 @@ namespace Controllers
 
     //             if (loggedInUser == null)
     //             {
-    //                 return BadRequest("Failed to get user.");
+    //                 return BadRequest("JWT token is missing.");
     //             }
-    //             var foundTeam = await _teamService.GetByCodeAsync(request.Code);
 
-    //             if (foundTeam == null)
-    //             {
-    //                 return BadRequest("No team found.");
-    //             }
-    //             else
-    //             {
-    //                 var createdProfile = await _profileService.CreateProfile(
-    //                     loggedInUser,
-    //                     false,
-    //                     request.Role,
-    //                     foundTeam
-    //                 );
-
-    //                 await _conversationService.AddParticipantToTeamConversation(
-    //                     createdProfile,
-    //                     foundTeam.Id
-    //                 );
-    //                  await _meetingOccasionService.AddOccasionsToNewProfiles(createdProfile.Id, foundTeam.Id);
-    //                 // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
-    //                 return Ok(createdProfile.Team);
-    //             }
+    //             HealthCheck updatedHealthCheck = await _healthCheckService.UpdateHealthCheck(
+    //                 healthCheck,
+    //                 loggedInUser
+    //             );
+    //             return Ok(updatedHealthCheck);
     //         }
     //         catch (Exception e)
     //         {
@@ -115,17 +119,14 @@ namespace Controllers
     //         }
     //     }
 
+    //     //hämta alla by teamet på profilid samt som gäller för nutiden
+    //     [HttpPost("byteam")]
     //     [Authorize]
-    //     [HttpDelete]
-    //     public async Task<ActionResult> Post([FromBody] DeleteTeamDTO deleteTeamDTO)
+    //     public async Task<ActionResult<List<HealthCheck>>> Get([FromBody] string profileId)
     //     {
     //         try
     //         {
-    //             Console.WriteLine(deleteTeamDTO.TeamId + "PROFIL ID KOMMER HÄR");
-    //             var jwt = HttpContext
-    //                 .Request.Headers["Authorization"]
-    //                 .ToString()
-    //                 .Replace("Bearer ", string.Empty);
+    //             var jwt = Request.Cookies["jwttoken"];
     //             if (string.IsNullOrWhiteSpace(jwt))
     //             {
     //                 return BadRequest("JWT token is missing.");
@@ -138,89 +139,9 @@ namespace Controllers
     //                 return BadRequest("Failed to get user.");
     //             }
 
-    //             var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
+    //             var healthChecks = await _healthCheckService.GetByTeam(profileId, loggedInUser);
 
-    //             if (userProfiles == null || userProfiles.Count < 1)
-    //             {
-    //                 return BadRequest("User profile not found.");
-    //             }
-
-    //             var profileToDelete = userProfiles.Find(p => p.Id == deleteTeamDTO.ProfileId);
-
-    //             if (profileToDelete == null)
-    //             {
-    //                 return BadRequest("User profile not found.");
-    //             }
-
-    //             await _profileService.DeleteTeamAndProfiles(deleteTeamDTO);
-
-    //             return Ok("Successfully left the team.");
-    //         }
-    //         catch (Exception e)
-    //         {
-    //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    //         }
-    //     }
-
-    //     [HttpGet]
-    //     [Authorize]
-    //     public async Task<ActionResult<IEnumerable<Team>>> GetMyTeams()
-    //     {
-    //         try
-    //         {
-    //             var jwtCookie = Request.Cookies["jwttoken"];
-
-    //             if (string.IsNullOrWhiteSpace(jwtCookie))
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
-    //             var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-    //             if (loggedInUser == null)
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
-    //             var teams = await _teamService.GetTeamsByUserId(loggedInUser.Id);
-    //             teams.ForEach(t => Console.WriteLine(t.Name));
-    //             return Ok(teams);
-    //         }
-    //         catch (Exception e)
-    //         {
-    //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    //         }
-    //     }
-
-    //     [HttpPut]
-    //     [Authorize]
-    //     public async Task<ActionResult<Team>> Update(Team team)
-    //     {
-    //         try
-    //         {
-    //             var jwt = HttpContext
-    //                 .Request.Headers["Authorization"]
-    //                 .ToString()
-    //                 .Replace("Bearer ", string.Empty);
-
-    //             if (string.IsNullOrWhiteSpace(jwt))
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
-    //             var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-    //             if (loggedInUser == null)
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
-
-    //             if (loggedInUser.Profiles.Any(p => p.Team.Id == team.Id))
-    //             {
-    //                 Team updatedTeam = await _teamService.UpdateTeam(team);
-    //                 return Ok(updatedTeam);
-    //             }
-    //             else
-    //             {
-    //                 return BadRequest("Profile not found.");
-    //             }
+    //             return Ok(healthChecks);
     //         }
     //         catch (Exception e)
     //         {

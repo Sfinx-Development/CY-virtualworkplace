@@ -1,30 +1,28 @@
 namespace core;
 
-public class Todo
+public class TodoDTO
 {
     public string Id { get; set; }
     public string? Description { get; set; }
     public string Title { get; set; }
     public DateTime Date { get; set; }
-    public Team? Team { get; set; }
     public string? TeamId { get; set; }
 
-    public Todo() { }
+    public TodoDTO() { }
 
-    public Todo(
+        public TodoDTO(
         string id,
         string teamId,
-        string title,
         string description,
-        DateTime date
-    
+        DateTime date,
+        string title
+        
     )
     {
         Id = id;
         TeamId = teamId;
-        Title = title;
         Description = description;
-        Date = date;
-       
+        Date= date;
+        Title = title;
     }
 }
