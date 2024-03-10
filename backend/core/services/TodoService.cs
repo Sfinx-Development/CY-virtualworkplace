@@ -97,48 +97,50 @@ public class TodoService : ITodoService
     //     }
     // }
 
-    // public async Task<HealthCheck> GetHealthCheckBykId(string id)
-    // {
-    //     try
-    //     {
-    //         var healthCheck = await _healthCheckRepository.GetByIdAsync(id);
+    public async Task<Todo> GetTodoById(string id)
+    {
+        try
+        {
+            var todo = await _todoRepository.GetByIdAsync(id);
 
-    //         if (healthCheck == null)
-    //         {
-    //             throw new Exception("HealthCheck can't be found");
-    //         }
-    //         else
-    //         {
-    //             return healthCheck;
-    //         }
-    //     }
-    //     catch (Exception)
-    //     {
-    //         throw new Exception();
-    //     }
-    // }
+            if (todo == null)
+            {
+                throw new Exception("Todo can't be found");
+            }
+            else
+            {
+                return todo;
+            }
+        }
+        catch (Exception)
+        {
+            throw new Exception();
+        }
+    }
 
-    // public async Task<List<HealthCheck>> GetByTeam(string profileId, User loggedInUser)
-    // {
-    //     try
-    //     {
-    //         var profile = await _profileRepository.GetByIdAsync(profileId);
-    //         if (profile.UserId != loggedInUser.Id)
-    //         {
-    //             throw new Exception("Not valid user");
-    //         }
-    //         // var now = new DateTime();
-    //         var healthChecks = await _healthCheckRepository.GetAllByTeam(profile.TeamId);
-    //         // var healthChecksValidNow = healthChecks.FindAll(
-    //         //     h => h.StartTime >= now && h.EndTime < now
-    //         // );
-    //         return healthChecks;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
+    public async Task<List<Todo>> GetByTeam(string teamId, User loggedInUser)
+    {
+        try
+        {
+            // var team = await _teamRepository.GetByIdAsync(teamId);
+            // if (team.Profil != loggedInUser.Id)
+            // {
+            //     throw new Exception("Not valid user");
+            // }
+            var todos = await _todoRepository.GetByTeamIdAsync(teamId);
+          
+            // var now = new DateTime();
+           
+            // var healthChecksValidNow = healthChecks.FindAll(
+            //     h => h.StartTime >= now && h.EndTime < now
+            // );
+            return todos;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 
     // // public async Task DeleteHealthCheckAndProfileChecks(string HealthCheckId, string loggedInUserId)
     // // {
@@ -172,34 +174,28 @@ public class TodoService : ITodoService
     // //     }
     // // }
 
-    // public async Task DeleteById(string id, User loggedInUser)
-    // {
-    //     try
-    //     {
-    //         //när denna raderas så ska alla profilers svar också raderas
-    //         var healthCheck = await _healthCheckRepository.GetByIdAsync(id);
-    //         var profile = await _profileRepository.GetByUserAndTeamIdAsync(
-    //             loggedInUser.Id,
-    //             healthCheck.TeamId
-    //         );
-    //         if (!profile.IsOwner)
-    //         {
-    //             throw new Exception("Only team owner can delete healthcheck.");
-    //         }
-    //         //kolla här så den som raderar är ägaren av teamet
-    //         //hämta ut healthcheck sen matcha loggedinuser med ownerns userid
-    //         var profileHealthChecks = await _profileHealthCheckRepository.GetAllByHealthCheck(
-    //             healthCheck.Id
-    //         );
-    //         foreach (var profileHC in profileHealthChecks)
-    //         {
-    //             await _profileHealthCheckRepository.DeleteByIdAsync(profileHC.Id);
-    //         }
-    //         await _healthCheckRepository.DeleteByIdAsync(id);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
+    public async Task DeleteById(string id, User loggedInUser)
+    {
+        try
+        {
+            //när denna raderas så ska alla profilers svar också raderas
+            var todo = await _todoRepository.GetByIdAsync(id);
+            var profile = await _profileRepository.GetByUserAndTeamIdAsync(
+                loggedInUser.Id,
+                todo.TeamId
+            );
+          
+            //kolla här så den som raderar är ägaren av teamet
+            //hämta ut healthcheck sen matcha loggedinuser med ownerns userid
+            // foreach (var profileHC in profileHealthChecks)
+            // {
+            //     await _profileHealthCheckRepository.DeleteByIdAsync(profileHC.Id);
+            // }
+            await _todoRepository.DeleteByIdAsync(id);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

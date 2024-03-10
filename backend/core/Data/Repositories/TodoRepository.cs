@@ -26,27 +26,43 @@ public class TodoRepository : ITodoRepository
         }
     }
 
-    // public async Task<Todo> GetByIdAsync(string todoId)
-    // {
-    //     try
-    //     {
-    //        Todo todo = await _cyDbContext.Todos.FirstAsync(t => t.id == todoId);
-    //         if (Todo != null)
-    //         {
-    //             return todo;
-    //         }
-    //         else
-    //         {
-    //             throw new Exception();
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return null;
-    //     }
-    // }
+    public async Task<Todo> GetByIdAsync(string todoId)
+    {
+        try
+        {
+           Todo todo = await _cyDbContext.Todos.FirstAsync(t => t.Id == todoId);
+            if (todo != null)
+            {
+                return todo;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
 
-    // public async Task<List<Team>> GetByUserIdAsync(string userId)
+
+
+    public async Task<List<Todo>> GetByTeamIdAsync(string teamId)
+    {
+        try
+        {
+            var todos = await _cyDbContext.Todos.Where(t => t.TeamId == teamId).ToListAsync(); 
+            return todos;
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+       
+    }
+
+        // public async Task<List<Team>> GetByUserIdAsync(string userId)
     // {
     //     try
     //     {
@@ -54,26 +70,6 @@ public class TodoRepository : ITodoRepository
     //             .Teams.Where(t => t.Profiles.Any(p => p.UserId == userId))
     //             .ToListAsync();
     //         return teams;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception();
-    //     }
-    // }
-
-    // public async Task<Team> GetByIdAsync(string teamId)
-    // {
-    //     try
-    //     {
-    //         Team team = await _cyDbContext.Teams.FirstAsync(t => t.Id == teamId);
-    //         if (team != null)
-    //         {
-    //             return team;
-    //         }
-    //         else
-    //         {
-    //             throw new Exception();
-    //         }
     //     }
     //     catch (Exception e)
     //     {
@@ -107,22 +103,22 @@ public class TodoRepository : ITodoRepository
     //     }
     // }
 
-    // public async Task DeleteByIdAsync(string id)
-    // {
-    //     try
-    //     {
+    public async Task DeleteByIdAsync(string id)
+    {
+        try
+        {
          
-    //         var todoToDelete = await _cyDbContext.Todos.FindAsync(id);
-    //         var deletedTodo = todoToDelete;
-    //         if (todoToDelete != null)
-    //         {
-    //             _cyDbContext.Todos.Remove(todoToDelete);
-    //             await _cyDbContext.SaveChangesAsync();
-    //         }
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
+            var todoToDelete = await _cyDbContext.Todos.FindAsync(id);
+            var deletedTodo = todoToDelete;
+            if (todoToDelete != null)
+            {
+                _cyDbContext.Todos.Remove(todoToDelete);
+                await _cyDbContext.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

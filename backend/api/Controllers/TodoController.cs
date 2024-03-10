@@ -59,34 +59,93 @@ var createdTodo = await _todoService.CreateTodo(todo, loggedInUser);
             }
         }
 
-    //     [Authorize]
-    //     [HttpDelete]
-    //     public async Task<ActionResult> Delete([FromBody] string id)
-    //     {
-    //         try
-    //         {
-    //             var jwt = Request.Cookies["jwttoken"];
-    //             if (string.IsNullOrWhiteSpace(jwt))
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
+        //    hämta alla by teamet på profilid samt som gäller för nutiden
+        [HttpPost("getByteam")]
+        [Authorize]
+        public async Task<ActionResult<List<Todo>>> Get([FromBody] string teamId)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
 
-    //             var loggedInUser = await _jwtService.GetByJWT(jwt);
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
 
-    //             if (loggedInUser == null)
-    //             {
-    //                 return BadRequest("Failed to get user.");
-    //             }
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
 
-    //             await _healthCheckService.DeleteById(id, loggedInUser);
+                var todos = await _todoService.GetByTeam(teamId,loggedInUser);
 
-    //             return Ok("Successfully deleted HealthCheck.");
-    //         }
-    //         catch (Exception e)
-    //         {
-    //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    //         }
-    //     }
+                return Ok(todos);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+               [HttpPost("getOneById")]
+        [Authorize]
+        public async Task<ActionResult<List<Todo>>> GetOneById([FromBody] string todoId)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                var todo = await _todoService.GetTodoById(todoId);
+
+                return Ok(todo);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<ActionResult> Delete([FromBody] string todoId)
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                await _todoService.DeleteById(todoId, loggedInUser);
+
+                return Ok("Successfully deleted Todo.");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
 
     //     [HttpPut]
     //     [Authorize]
@@ -119,34 +178,6 @@ var createdTodo = await _todoService.CreateTodo(todo, loggedInUser);
     //         }
     //     }
 
-    //     //hämta alla by teamet på profilid samt som gäller för nutiden
-    //     [HttpPost("byteam")]
-    //     [Authorize]
-    //     public async Task<ActionResult<List<HealthCheck>>> Get([FromBody] string profileId)
-    //     {
-    //         try
-    //         {
-    //             var jwt = Request.Cookies["jwttoken"];
-    //             if (string.IsNullOrWhiteSpace(jwt))
-    //             {
-    //                 return BadRequest("JWT token is missing.");
-    //             }
-
-    //             var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-    //             if (loggedInUser == null)
-    //             {
-    //                 return BadRequest("Failed to get user.");
-    //             }
-
-    //             var healthChecks = await _healthCheckService.GetByTeam(profileId, loggedInUser);
-
-    //             return Ok(healthChecks);
-    //         }
-    //         catch (Exception e)
-    //         {
-    //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    //         }
-    //     }
+    //  
      }
 }
