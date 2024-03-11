@@ -1,13 +1,67 @@
 trigger:
-  - main # Specifikera vilken branch som ska utlösa pipelinen, till exempel "main" eller "master"
+- main
+
+pr:
+- main
 
 pool:
-  vmImage: "ubuntu-latest" # Välj den virtuella maskin som ska användas för att köra bygget, till exempel 'windows-latest' eller 'ubuntu-latest'
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
 
 steps:
-  - script: echo 'Bygg steg' # Ett enkelt steg som bara skriver ut en sträng
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '7.x' # Byt till rätt version av .NET SDK
 
-  - task: PublishBuildArtifacts@1 # En uppgift för att publicera byggarbete
-    inputs:
-      pathtoPublish: "$(Build.ArtifactStagingDirectory)" # Sökvägen till katalogen som innehåller de filer som ska publiceras
-      artifactName: "drop" # Namnet på artefaktet som skapas
+- task: DotNetCoreCLI@2
+  displayName: 'Restore NuGet packages'
+  inputs:
+    command: 'restore'
+    projects: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build backend'
+  inputs:
+    command: 'build'
+    projects: 'path/to/your/backend/project.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish backend'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'path/to/your/backend/project.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/backend'
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'path/to/your/frontend'
+
+- task: Npm@1
+  inputs:
+    command: 'run'
+    workingDir: 'path/to/your/frontend'
+    arguments: 'build'
+
+- task: CopyFiles@2
+  displayName: 'Copy frontend build output'
+  inputs:
+    SourceFolder: 'path/to/your/frontend/build'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/frontend'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
