@@ -1,0 +1,13 @@
+trigger:
+  - main # Specifikera vilken branch som ska utlösa pipelinen, till exempel "main" eller "master"
+
+pool:
+  vmImage: "ubuntu-latest" # Välj den virtuella maskin som ska användas för att köra bygget, till exempel 'windows-latest' eller 'ubuntu-latest'
+
+steps:
+  - script: echo 'Bygg steg' # Ett enkelt steg som bara skriver ut en sträng
+
+  - task: PublishBuildArtifacts@1 # En uppgift för att publicera byggarbete
+    inputs:
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)" # Sökvägen till katalogen som innehåller de filer som ska publiceras
+      artifactName: "drop" # Namnet på artefaktet som skapas
