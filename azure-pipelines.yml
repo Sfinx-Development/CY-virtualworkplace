@@ -28,7 +28,7 @@ steps:
   displayName: 'Build backend'
   inputs:
     command: 'build'
-    projects: 'backend/api/api.csproj'
+    projects: 'backend/core/core.csproj' # Anpassat för att peka på core-projektet
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
@@ -45,14 +45,13 @@ steps:
 
 - task: Npm@1
   inputs:
-    command: 'install'
+    customCommand: 'install' # Använd customCommand istället för command
     workingDir: 'frontend/webbapp'
 
 - task: Npm@1
   inputs:
-    command: 'run'
+    customCommand: 'run build' # Använd customCommand istället för command
     workingDir: 'frontend/webbapp'
-    arguments: 'build'
 
 - task: CopyFiles@2
   displayName: 'Copy frontend build output'
