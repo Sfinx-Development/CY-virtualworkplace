@@ -5,7 +5,7 @@ import {
   FetchGetTeamConversation,
 } from "../api/conversation";
 
-interface ConversationState {
+export interface ConversationState {
   teamConversation: Conversation | undefined;
   activeConversation: Conversation | undefined;
   activeConversationParticipant: ConversationParticipant | undefined;
