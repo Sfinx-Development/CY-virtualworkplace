@@ -10,7 +10,10 @@ import {
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProfileHubDTO } from "../../../types";
-import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
+import {
+  GetMyMeetingsAsync,
+  setActiveMeeting,
+} from "../../slices/meetingSlice";
 import {
   GetMyProfileAsync,
   GetOnlineProfiles,
@@ -26,7 +29,7 @@ import { theme1 } from "../../theme";
 import Connector from "./OnlineConnection";
 
 interface ConnectFormProps {
-  connectToVideo: (channelName: string) => void;
+  connectToVideo: () => void;
 }
 
 export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
@@ -160,7 +163,8 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         >
           <CardActionArea
             onClick={() => {
-              connectToVideo(ongoingMeeting.meetingId);
+              dispatch(setActiveMeeting(ongoingMeeting.meetingId));
+              connectToVideo();
             }}
           >
             <CardContent sx={{ flex: "1 0 auto" }}>

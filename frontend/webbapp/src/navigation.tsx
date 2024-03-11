@@ -40,8 +40,8 @@ const Navigation = () => {
     AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
   ); // Initialize Agora Client
 
-  const handleConnect = (channelName: string) => {
-    navigate(`/via/${channelName}`); // on form submit, navigate to new route
+  const handleConnect = () => {
+    navigate(`livemeeting`); // on form submit, navigate to new route
   };
   return (
     <Routes>
@@ -75,7 +75,7 @@ const Navigation = () => {
             element={<ConnectForm connectToVideo={handleConnect} />}
           /> */}
           <Route
-            path="/via/:channelName"
+            path="/livemeeting"
             element={
               <AgoraRTCProvider client={agoraClient}>
                 <LiveVideo />
