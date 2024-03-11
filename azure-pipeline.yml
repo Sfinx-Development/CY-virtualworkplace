@@ -28,7 +28,7 @@ steps:
   displayName: 'Build backend'
   inputs:
     command: 'build'
-    projects: 'path/to/your/backend/project.csproj'
+    projects: 'backend/api/api.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
@@ -36,7 +36,7 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: 'path/to/your/backend/project.csproj'
+    projects: 'backend/api/api.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/backend'
 
 - task: NodeTool@0
@@ -46,18 +46,18 @@ steps:
 - task: Npm@1
   inputs:
     command: 'install'
-    workingDir: 'path/to/your/frontend'
+    workingDir: 'frontend/webbapp'
 
 - task: Npm@1
   inputs:
     command: 'run'
-    workingDir: 'path/to/your/frontend'
+    workingDir: 'frontend/webbapp'
     arguments: 'build'
 
 - task: CopyFiles@2
   displayName: 'Copy frontend build output'
   inputs:
-    SourceFolder: 'path/to/your/frontend/build'
+    SourceFolder: 'frontend/webbapp/build'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/frontend'
 
 - task: PublishBuildArtifacts@1
