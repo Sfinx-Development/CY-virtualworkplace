@@ -16,7 +16,7 @@ import {
   FetchEditMeeting,
 } from "../api/meeting";
 
-interface MeetingState {
+export interface MeetingState {
   meetings: Meeting[] | undefined;
   occasions: MeetingOccasion[] | undefined;
   teamMeetings: Meeting[] | undefined;

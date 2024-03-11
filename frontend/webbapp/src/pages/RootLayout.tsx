@@ -14,6 +14,9 @@ const RootLayout = () => {
       navigate("/signin");
     });
   };
+  const handleSignIn = async () => {
+    navigate("/signin");
+  };
   return (
     <div className="flex flex-col h-screen">
       <AppBar
@@ -56,7 +59,17 @@ const RootLayout = () => {
               Logga ut
             </Button>{" "}
           </div>
-        ) : null}
+        ) : (
+          <div>
+            {" "}
+            <Button
+              sx={{ paddingRight: 2, paddingLeft: 2 }}
+              onClick={handleSignIn}
+            >
+              Logga in
+            </Button>{" "}
+          </div>
+        )}
       </AppBar>
 
       <main className="bg-neutral-100 flex flex-1 flex-col">

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateTeamDTO, Team } from "../../types";
 import { FetchCreateTeam, FetchGetMyTeams, FetchJoinTeam } from "../api/team";
 
-interface TeamState {
+export interface TeamState {
   teams: Team[] | undefined;
   activeTeam: Team | undefined;
   error: string | null;
