@@ -55,7 +55,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/frontend/webbapp/dist'
+    PathtoPublish: 'dist'
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
