@@ -56,5 +56,6 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifacts'
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/frontend/webbapp/dist' # Uppdaterad sökväg till dist-mappen
+    PathtoPublish: '$(Build.SourcesDirectory)\CY-virtualworkplace\frontend\webbapp\dist'
     ArtifactName: 'drop'
+
