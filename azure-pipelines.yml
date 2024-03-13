@@ -54,8 +54,8 @@ steps:
     workingDir: 'frontend/webbapp'
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish artifacts'
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)\frontend\webbapp\dist'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/frontend/webbapp'
     ArtifactName: 'drop'
+    publishLocation: 'Container'
 
