@@ -56,7 +56,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy frontend build output'
   inputs:
-    SourceFolder: 'frontend/webbapp/build'
+    SourceFolder: 'frontend/webbapp/dist' # Uppdaterad sökväg till dist-mappen
     TargetFolder: '$(Build.ArtifactStagingDirectory)/frontend'
 
 - task: PublishBuildArtifacts@1
