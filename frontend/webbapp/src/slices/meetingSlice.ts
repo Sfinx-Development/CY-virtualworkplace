@@ -1,23 +1,24 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   CreateMeetingDTO,
   Meeting,
-  MeetingRoom,
   MeetingOccasion,
+  MeetingRoom,
 } from "../../types";
 import {
   FetchCreateMeeting,
   FetchCreateTeamMeeting,
-  FetchGetMyMeetings,
-  FetchGetMeetingRoomByTeam,
-  FetchGetMyPastMeetings,
   FetchDeleteMeeting,
-  FetchGetMyOccasions,
   FetchEditMeeting,
+  FetchGetMeetingRoomByTeam,
+  FetchGetMyMeetings,
+  FetchGetMyOccasions,
+  FetchGetMyPastMeetings,
 } from "../api/meeting";
 
 export interface MeetingState {
   meetings: Meeting[] | undefined;
+  activeMeetingId: string | undefined;
   occasions: MeetingOccasion[] | undefined;
   teamMeetings: Meeting[] | undefined;
   pastOccasions: MeetingOccasion[] | undefined;
@@ -28,6 +29,7 @@ export interface MeetingState {
 
 export const initialState: MeetingState = {
   meetings: undefined,
+  activeMeetingId: undefined,
   occasions: undefined,
   teamMeetings: undefined,
   pastOccasions: undefined,
@@ -35,7 +37,6 @@ export const initialState: MeetingState = {
   deletemeeting: undefined,
   error: null,
 };
-
 
 export const createMeetingAsync = createAsyncThunk<
   Meeting,
@@ -197,7 +198,11 @@ export const DeleteMeetingAsync = createAsyncThunk<
 const meetingSlice = createSlice({
   name: "meeting",
   initialState,
-  reducers: {},
+  reducers: {
+    setActiveMeeting: (state, action: PayloadAction<string>) => {
+      state.activeMeetingId = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createMeetingAsync.fulfilled, (state, action) => {
@@ -311,5 +316,7 @@ const meetingSlice = createSlice({
       });
   },
 });
+
+export const { setActiveMeeting } = meetingSlice.actions;
 
 export const meetingReducer = meetingSlice.reducer;
