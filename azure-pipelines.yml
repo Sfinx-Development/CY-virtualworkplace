@@ -53,14 +53,8 @@ steps:
     customCommand: 'run build' # Använd customCommand istället för command
     workingDir: 'frontend/webbapp'
 
-- task: CopyFiles@2
-  displayName: 'Copy frontend build output'
-  inputs:
-    SourceFolder: 'frontend/webbapp/dist' # Uppdaterad sökväg till dist-mappen
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/frontend'
-
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifacts'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: 'frontend/webbapp/dist' # Uppdaterad sökväg till dist-mappen
     ArtifactName: 'drop'
