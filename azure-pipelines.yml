@@ -28,7 +28,7 @@ steps:
   displayName: 'Build backend'
   inputs:
     command: 'build'
-    projects: 'backend/core/core.csproj' # Anpassat för att peka på core-projektet
+    projects: 'backend/core/core.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
@@ -45,17 +45,22 @@ steps:
 
 - task: Npm@1
   inputs:
-    customCommand: 'install' # Använd customCommand istället för command
+    customCommand: 'install'
     workingDir: 'frontend/webbapp'
 
 - task: Npm@1
   inputs:
-    customCommand: 'run build' # Använd customCommand istället för command
+    customCommand: 'run build'
     workingDir: 'frontend/webbapp'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'dist'
-    ArtifactName: 'drop'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/backend/api'
+    ArtifactName: 'backend'
     publishLocation: 'Container'
 
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'dist'
+    ArtifactName: 'frontend'
+    publishLocation: 'Container'
