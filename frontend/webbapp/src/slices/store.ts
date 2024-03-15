@@ -1,25 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { authReducer } from "./authSlice";
 
-import { meetingReducer } from "./meetingSlice";
-
-import { profileReducer } from "./profileSlice";
-import { teamReducer } from "./teamSlice";
-import { userReducer } from "./userSlice";
-import { conversationReducer } from "./conversationSlice";
-import { messageReducer } from "./messageSlice";
+import rootReducer from "./rootSlice";
 
 const store = configureStore({
-  reducer: {
-    profileSlice: profileReducer,
-    userSlice: userReducer,
-    authSlice: authReducer,
-    teamSlice: teamReducer,
-    meetingSlice: meetingReducer,
-    conversationSlice: conversationReducer,
-    messageSlice: messageReducer,
-  },
+  reducer: rootReducer, // Använd rotreduceraren här istället för att ange varje reducer separat
 });
 
 export type RootState = ReturnType<typeof store.getState>;

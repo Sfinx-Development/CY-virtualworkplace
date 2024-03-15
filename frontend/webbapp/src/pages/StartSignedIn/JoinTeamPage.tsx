@@ -20,12 +20,6 @@ export default function JoinTeam() {
     }
   }, [letters]);
 
-  useEffect(() => {
-    if (role !== "" && letters.every((letter) => letter !== "")) {
-      handleJoinTeam();
-    }
-  }, [ letters]);
-
   const handleJoinTeam = async () => {
     if (letters.every((letter) => letter !== "") && role !== "") {
       setFieldError(false);
@@ -48,7 +42,9 @@ export default function JoinTeam() {
     }
   };
 
-  const handleRoleEnterPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleRoleEnterPress = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     if (event.key === "Enter") {
       event.preventDefault(); // Prevent the default Enter key behavior
       handleJoinTeam();

@@ -9,7 +9,7 @@ import {
 import ChatConnector from "../pages/AfterChosenTeam/ChatConnection";
 import * as signalR from "@microsoft/signalr";
 
-interface MessageState {
+export interface MessageState {
   messages: Message[];
   error: string | null;
 }
