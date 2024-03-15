@@ -1,7 +1,7 @@
 [build]
   base = "frontend/webbapp"
   command = "npm run build"
-  publish = "frontend/webbapp/dist"
+  publish = "dist"
 
 [[redirects]]
   from = "/*"
