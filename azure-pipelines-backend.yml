@@ -36,11 +36,31 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: 'backend/core/core.csproj'
+    projects: 'backend/core/core.csproj'  # Byt till rätt projektsökväg för din backend-applikation
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/backend'
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'
+
+- task: Npm@1
+  inputs:
+    customCommand: 'install'
+    workingDir: 'frontend/webbapp'
+
+- task: Npm@1
+  inputs:
+    customCommand: 'run build'
+    workingDir: 'frontend/webbapp'
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/backend'
     ArtifactName: 'backend'
+    publishLocation: 'Container'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'frontend/webbapp/dist'
+    ArtifactName: 'frontend'
     publishLocation: 'Container'
