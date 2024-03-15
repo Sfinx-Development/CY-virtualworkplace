@@ -15,15 +15,26 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
-        "AllowAll",
+        "AllowSpecificOrigins",
         builder =>
         {
-            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+            builder
+                .WithOrigins("http://localhost:5173", "https://cyworkplace.netlify.app")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
         }
     );
 });
 
-builder.WebHost.UseUrls("http://0.0.0.0:5290");
+if (builder.Environment.IsDevelopment())
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5290");
+}
+else
+{
+    builder.WebHost.UseUrls("https://cyworkplace.netlify.app");
+}
 
 builder.Configuration.AddJsonFile("appsettings.json");
 
