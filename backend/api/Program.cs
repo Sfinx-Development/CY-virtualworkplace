@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder
-                .WithOrigins("http://localhost:5173", "https://cyapi.azurewebsites.net")
+                .WithOrigins("http://localhost:5173", "https://cyworkplace.netlify.app")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -33,7 +33,7 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    builder.WebHost.UseUrls("https://cyworkplace.netlify.app");
+    builder.WebHost.UseUrls("https://cyapi.azurewebsites.net");
 }
 
 builder.Configuration.AddJsonFile("appsettings.json");
