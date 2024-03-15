@@ -3,7 +3,7 @@ import { User } from "../../types";
 import { FetchLogOut, FetchSignIn } from "../api/logIn";
 import { FetchCreateUseer, FetchGetUseer } from "../api/user";
 
-interface UserState {
+export interface UserState {
   user: User | undefined;
   error: string | null;
 }
@@ -124,16 +124,16 @@ const userSlice = createSlice({
         state.user = undefined;
         state.error = "Användarnamn eller lösenord är felaktigt.";
       })
-      .addCase(logOutUserAsync.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.user = undefined;
-          state.error = null;
-        }
-      })
-      .addCase(logOutUserAsync.rejected, (state) => {
-        state.user = undefined; //den får vara undefined antar jag ändå eller?
-        state.error = "Något gick fel vid utloggningen.";
-      })
+      // .addCase(logOutUserAsync.fulfilled, (state, action) => {
+      //   if (action.payload) {
+      //     state.user = undefined;
+      //     state.error = null;
+      //   }
+      // })
+      // .addCase(logOutUserAsync.rejected, (state) => {
+      //   state.user = undefined; //den får vara undefined antar jag ändå eller?
+      //   state.error = "Något gick fel vid utloggningen.";
+      // })
       .addCase(getUserAsync.fulfilled, (state, action) => {
         if (action.payload) {
           state.user = action.payload;

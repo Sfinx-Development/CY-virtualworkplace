@@ -9,7 +9,7 @@ import {
 } from "../api/profile";
 import Connector from "../pages/AfterChosenTeam/OnlineConnection";
 
-interface ProfileState {
+export interface ProfileState {
   profiles: Profile[] | undefined;
   activeProfile: Profile | undefined;
   error: string | null;

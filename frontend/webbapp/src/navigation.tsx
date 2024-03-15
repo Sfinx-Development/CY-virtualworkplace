@@ -2,7 +2,7 @@
 
 import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 import { useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
@@ -40,11 +40,15 @@ const Navigation = () => {
     AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
   ); // Initialize Agora Client
 
-  const handleConnect = (channelName: string) => {
-    navigate(`/via/${channelName}`); // on form submit, navigate to new route
+  const handleConnect = () => {
+    navigate(`livemeeting`); // on form submit, navigate to new route
   };
   return (
     <Routes>
+      <Route
+        path="*"
+        element={user ? null : <Navigate to="/signin" replace />}
+      />
       {user ? (
         <Route element={<RootLayout />}>
           <Route path="chooseteam" element={<ChooseTeam />} />
@@ -71,7 +75,7 @@ const Navigation = () => {
             element={<ConnectForm connectToVideo={handleConnect} />}
           /> */}
           <Route
-            path="/via/:channelName"
+            path="/livemeeting"
             element={
               <AgoraRTCProvider client={agoraClient}>
                 <LiveVideo />
