@@ -61,6 +61,6 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'dist'
+    PathtoPublish: 'frontend/webbapp/dist'
     ArtifactName: 'frontend'
     publishLocation: 'Container'
