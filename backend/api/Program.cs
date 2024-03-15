@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder
-                .WithOrigins("http://localhost:5173", "https://cyworkplace.netlify.app")
+                .WithOrigins("http://localhost:5173", "https://cyapi.azurewebsites.net")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
