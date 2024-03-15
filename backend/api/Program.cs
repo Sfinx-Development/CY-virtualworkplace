@@ -18,11 +18,7 @@ builder.Services.AddCors(options =>
         "AllowAll",
         builder =>
         {
-            builder
-                .WithOrigins("https://cyworkplace.netlify.app")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
+            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
         }
     );
 });
