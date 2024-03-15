@@ -1,6 +1,7 @@
 import { CreateTeamDTO, Team } from "../../types";
 
-const apiUrl = `https://cyapi.azurewebsites.net/team`;
+const apiUrl = "https://cyapi.azurewebsites.net/team";
+
 
 export const FetchGetMyTeams = async (): Promise<Team[]> => {
   try {

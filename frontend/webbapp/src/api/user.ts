@@ -1,16 +1,14 @@
 import { User } from "../../types";
 
-let apiUrl: string;
+const apiUrl = "https://cyapi.azurewebsites.net/user";
+// if (process.env.NODE_ENV === "development") {
+//   apiUrl = `http://${window.location.hostname}:5290/user`;
+// } else {
+//   apiUrl = `https://cyapi.azurewebsites.net/user`;
+// }
 
 export const FetchGetUseer = async (): Promise<User> => {
   try {
-    if (process.env.NODE_ENV === "development") {
-      // Om utvecklingsläge, använd IP-adressen för din lokal utvecklingsmiljö
-      apiUrl = `http://${window.location.hostname}:5290/user`; // Ändra portnummeret till det som din backend använder lokalt
-    } else {
-      // Annars, använd produktions-URL:en
-      apiUrl = `https://cyapi.azurewebsites.net/user`;
-    }
     const response = await fetch(apiUrl, {
       method: "POST",
       credentials: "include",
