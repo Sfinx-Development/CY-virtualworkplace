@@ -1,4 +1,4 @@
-const apiUrl = `http://${window.location.hostname}:5290/auth`;
+const apiUrl = `https://cyapi.azurewebsites.net/auth`;
 
 export const FetchForgotPassword = async (email: string): Promise<boolean> => {
   try {

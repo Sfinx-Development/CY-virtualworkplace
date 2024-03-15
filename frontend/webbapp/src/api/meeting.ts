@@ -5,8 +5,8 @@ import {
   MeetingRoom,
 } from "../../types";
 
-const meetingapiUrl = `http://${window.location.hostname}:5290/meeting`;
-const meetingOccasionapiUrl = `http://${window.location.hostname}:5290/meetingoccasion`;
+const meetingapiUrl = `https://cyapi.azurewebsites.net/meeting`;
+const meetingOccasionapiUrl = `http://cyapi.azurewebsites.net/meetingoccasion`;
 
 export const FetchGetMyOccasions = async (
   profileId: string

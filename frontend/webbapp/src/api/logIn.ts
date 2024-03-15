@@ -1,4 +1,4 @@
-const apiUrl = `http://${window.location.hostname}:5290/login`;
+const apiUrl = `https://cyapi.azurewebsites.net/login`;
 
 export const FetchSignIn = async (
   email: string,

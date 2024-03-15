@@ -11,7 +11,7 @@ import {
   Message,
 } from "../../types";
 
-const conversationApiUrl = `http://${window.location.hostname}:5290/conversation`;
+const conversationApiUrl = `https://cyapi.azurewebsites.net/conversation`;
 
 export const FetchGetTeamMessages = async (
   teamId: string
