@@ -29,13 +29,11 @@ public class CyDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseMySql(
-            // "server=localhost;database=cy;user=root;password=",
-            "server=cydb.mysql.database.azure.com;database=cy;user=angelinaholmqvist;password=BellaKattis123",
-            ServerVersion.AutoDetect(
-                "server=cydb.mysql.database.azure.com;database=cy;user=angelinaholmqvist;password=BellaKattis123"
-            )
-        );
+        var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+        var connectionString = configuration.GetConnectionString("CyDbContext");
+
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

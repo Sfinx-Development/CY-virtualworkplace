@@ -46,14 +46,13 @@ builder.Services.AddSignalR();
 //             ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
 //         )
 // );
+builder.Configuration.AddJsonFile("appsettings.json");
+
+// Hämta anslutningssträngen från konfigurationsfilen
+var connectionString = builder.Configuration.GetConnectionString("CyDbContext");
+
 builder.Services.AddDbContext<CyDbContext>(
-    options =>
-        options.UseMySql(
-            "server=cydb.mysql.database.azure.com;database=cy;user=angelinaholmqvist;password=BellaKattis123",
-            ServerVersion.AutoDetect(
-                "server=cydb.mysql.database.azure.com;database=cy;user=angelinaholmqvist;password=BellaKattis123"
-            )
-        )
+    options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
 // if (!builder.Environment.IsDevelopment())
