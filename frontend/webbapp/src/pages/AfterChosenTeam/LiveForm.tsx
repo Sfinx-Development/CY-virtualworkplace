@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
@@ -18,9 +18,12 @@ import {
 import { useAppSelector } from "../../slices/store";
 
 export const LiveVideo = () => {
+
   const appId = process.env.REACT_APP_AGORA_APP_ID ?? "";
-  // const agoraEngine = useRTCClient( AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })); // Initialize Agora Client
-  const { channelName } = useParams(); //pull the channel name from the param
+
+  const activeMeetingId = useAppSelector(
+    (state) => state.meetingSlice.activeMeetingId
+  );
 
   // set the connection state
   const [activeConnection, setActiveConnection] = useState(true);
@@ -40,7 +43,7 @@ export const LiveVideo = () => {
   useJoin(
     {
       appid: appId,
-      channel: channelName!,
+      channel: activeMeetingId!,
       token: null,
     },
     activeConnection

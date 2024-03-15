@@ -1,26 +1,25 @@
-import { useEffect, useState } from "react";
 import {
-  Container,
-  Typography,
-  TextField,
   Button,
   Checkbox,
+  Container,
   FormControlLabel,
-
+  TextField,
+  Typography,
 } from "@mui/material";
-import { useAppDispatch } from "../../slices/store";
-import { createTeamMeetingAsync, Getmyactiveroom } from "../../slices/meetingSlice";
-import { CreateMeetingDTO } from "../../../types";
-import { useAppSelector } from "../../slices/store";
-import { getActiveTeam} from "../../slices/teamSlice";
-import { GetMyProfileAsync } from "../../slices/profileSlice";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-
+import { CreateMeetingDTO } from "../../../types";
+import {
+  Getmyactiveroom,
+  createTeamMeetingAsync,
+} from "../../slices/meetingSlice";
+import { GetMyProfileAsync } from "../../slices/profileSlice";
+import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { getActiveTeam } from "../../slices/teamSlice";
 
 export default function CreateMeetingPage() {
   const dispatch = useAppDispatch();
-  const meetings = useAppSelector((state) => state.meetingSlice.meetings);
+  // const meetings = useAppSelector((state) => state.meetingSlice.meetings);
   const meetingroom = useAppSelector((state) => state.meetingSlice.meetingroom);
   const error = useAppSelector((state) => state.meetingSlice.error);
   const navigate = useNavigate();
@@ -36,22 +35,22 @@ export default function CreateMeetingPage() {
   const [newMeetingEndDate, setNewMeetingEndDate] = useState("");
   const [fieldError, setFieldError] = useState(false);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const activeProfile = useAppSelector((state) => state.profileSlice.activeProfile);
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
+  useEffect(() => {
+    dispatch(getActiveTeam());
+  }, []);
 
-    useEffect(() => {
-      dispatch(getActiveTeam());
-     
-    }, []);
-
-    useEffect(() => {
-     if(activeTeam){
+  useEffect(() => {
+    if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
-      
+
       dispatch(Getmyactiveroom(activeTeam.id));
-     }
-  },[activeTeam] );
- 
+    }
+  }, [activeTeam]);
+
   const handleCreateMeeting = async () => {
     console.log("name: ", newMeetingName);
     console.log("des: ", newMeetingDescription);
@@ -63,15 +62,17 @@ export default function CreateMeetingPage() {
       newMeetingName !== "" &&
       newMeetingDescription !== "" &&
       newMeetingDate !== "" &&
-      activeProfile && meetingroom && activeTeam
+      activeProfile &&
+      meetingroom &&
+      activeTeam
     ) {
       setFieldError(false);
-  
+
       const intervalAsString = newMeetingInterval.toString();
       const parsedDate = new Date(newMeetingDate);
       const parsedEndDate = new Date(newMeetingEndDate);
-      console.log("parseddata:,  ", parsedDate)
-  
+      console.log("parseddata:,  ", parsedDate);
+
       const meetingDto: CreateMeetingDTO = {
         name: newMeetingName,
         description: newMeetingDescription,
@@ -82,11 +83,11 @@ export default function CreateMeetingPage() {
         ownerId: activeProfile.id,
         interval: intervalAsString,
         endDate: parsedEndDate,
-        teamId: activeTeam?.id
+        teamId: activeTeam?.id,
       };
-  
+
       await dispatch(createTeamMeetingAsync(meetingDto));
-  
+
       setNewMeetingName("");
       setNewMeetingDescription("");
       setNewMeetingDate("");
@@ -100,7 +101,6 @@ export default function CreateMeetingPage() {
       setFieldError(true);
     }
   };
-  
 
   return (
     <Container sx={{ padding: "20px" }}>
@@ -129,24 +129,21 @@ export default function CreateMeetingPage() {
           variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
-        
-        
 
         <TextField
-          label="Date" 
+          label="Date"
           type="datetime-local"
           value={newMeetingDate}
           onChange={(e) => setNewMeetingDate(e.target.value)}
           variant="outlined"
-         
           sx={{
-            width: '250px',
+            width: "250px",
             marginTop: 2,
-            '& label': {
-              color: 'transparent',
+            "& label": {
+              color: "transparent",
             },
-            '&:focus label': {
-              color: 'initial',
+            "&:focus label": {
+              color: "initial",
             },
           }}
         />
@@ -156,17 +153,14 @@ export default function CreateMeetingPage() {
           value={newMeetingMinutes}
           onChange={(e) => setNewMeetingMinutes(parseInt(e.target.value, 10))}
           variant="outlined"
-          sx={{ width: "250px", marginTop: 2,   }}
+          sx={{ width: "250px", marginTop: 2 }}
         />
-
 
         <FormControlLabel
           control={
             <Checkbox
               checked={newMeetingIsRepeating}
-              onChange={() =>
-                setNewMeetingIsRepeating(!newMeetingIsRepeating)
-              }
+              onChange={() => setNewMeetingIsRepeating(!newMeetingIsRepeating)}
             />
           }
           label="Repeating"
@@ -178,7 +172,9 @@ export default function CreateMeetingPage() {
               label="Interval"
               type="number"
               value={newMeetingInterval}
-              onChange={(e) => setNewMeetingInterval(parseInt(e.target.value, 10))}
+              onChange={(e) =>
+                setNewMeetingInterval(parseInt(e.target.value, 10))
+              }
               variant="outlined"
               sx={{ width: "250px", marginTop: 2 }}
             />
@@ -192,39 +188,32 @@ export default function CreateMeetingPage() {
             />
           </>
         )}
-<TextField
-  type="hidden"
-  value={newMeetingRoomId}
-  onChange={(e) => setNewMeetingRoomId(e.target.value)} // Använd 'e' här
-/>
-<TextField
-  type="hidden"
-  value={activeProfile?.id || ""}
-  onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
-/>
+        <TextField
+          type="hidden"
+          value={newMeetingRoomId}
+          onChange={(e) => setNewMeetingRoomId(e.target.value)} // Använd 'e' här
+        />
+        <TextField
+          type="hidden"
+          value={activeProfile?.id || ""}
+          onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
+        />
         <Button variant="contained" onClick={handleCreateMeeting}>
           Create Meeting
         </Button>
 
-        {meetings && (
+        {/* {meetings && (
           <div>
             <Typography variant="h6">Latest Meeting:</Typography>
             <Typography>{meetings[meetings.length - 1].name}</Typography>
           </div>
-        )}
+        )} */}
 
         {error && <Typography color="error">{error}</Typography>}
       </div>
     </Container>
   );
 }
-
-
-
-
-
-
-
 
 // import { Container, Typography } from "@mui/material";
 
@@ -247,7 +236,7 @@ export default function CreateMeetingPage() {
 //           alignItems: "center",
 //         }}
 //       >
-//         create meeting  
+//         create meeting
 //         <Typography variant={"h4"}>MEETING: {activeMeeting?.name}</Typography>
 //       </div>
 //     </Container>

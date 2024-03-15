@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { FetchForgotPassword } from "../api/auth";
 
-interface AuthState {
+export interface AuthState {
   error: string | null;
   success: string | null;
 }
