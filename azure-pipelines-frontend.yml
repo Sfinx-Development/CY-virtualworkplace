@@ -28,3 +28,8 @@ steps:
     PathtoPublish: 'dist' 
     ArtifactName: 'frontend'
     publishLocation: 'Container'
+
+- name: Deploy to Azure Static Web Apps
+  uses: azure/static-web-apps-deploy@v1
+  with:
+    azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
