@@ -1,0 +1,30 @@
+trigger:
+- main
+
+pr:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: Npm@1
+  inputs:
+    customCommand: 'install'
+    workingDir: 'frontend/webbapp'
+
+- task: Npm@1
+  inputs:
+    customCommand: 'run build'
+    workingDir: 'frontend/webbapp'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'dist' 
+    ArtifactName: 'frontend'
+    publishLocation: 'Container'
