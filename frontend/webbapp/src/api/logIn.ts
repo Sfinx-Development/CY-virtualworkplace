@@ -12,6 +12,8 @@ export const FetchSignIn = async (
   password: string
 ): Promise<boolean> => {
   try {
+    console.log(process.env.NODE_ENV);
+    console.log("apiurl: ", apiUrl);
     const response = await fetch(apiUrl, {
       method: "POST",
       credentials: "include",
