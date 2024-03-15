@@ -7,5 +7,5 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/frontend/webbapp/public/index.html"
   status = 200
