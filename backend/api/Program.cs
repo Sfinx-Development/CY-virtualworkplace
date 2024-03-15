@@ -15,7 +15,7 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
-        "AllowSpecificOrigins",
+        "AllowAll",
         builder =>
         {
             builder
