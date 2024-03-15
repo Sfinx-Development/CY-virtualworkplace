@@ -1,5 +1,12 @@
-const apiUrl = `https://cyapi.azurewebsites.net/login`;
+let apiUrl;
 
+if (process.env.NODE_ENV === "development") {
+  // Om utvecklingsläge, använd IP-adressen för din lokal utvecklingsmiljö
+  apiUrl = `http://localhost:5290/login`; // Ändra portnummeret till det som din backend använder lokalt
+} else {
+  // Annars, använd produktions-URL:en
+  apiUrl = `https://cyapi.azurewebsites.net/login`;
+}
 export const FetchSignIn = async (
   email: string,
   password: string
