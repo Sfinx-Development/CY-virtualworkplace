@@ -1,8 +1,8 @@
-let apiUrl;
+let apiUrl: string;
 
 if (process.env.NODE_ENV === "development") {
   // Om utvecklingsläge, använd IP-adressen för din lokal utvecklingsmiljö
-  apiUrl = `http://localhost:5290/login`; // Ändra portnummeret till det som din backend använder lokalt
+  apiUrl = `http://${window.location.hostname}:5290/login`; // Ändra portnummeret till det som din backend använder lokalt
 } else {
   // Annars, använd produktions-URL:en
   apiUrl = `https://cyapi.azurewebsites.net/login`;
