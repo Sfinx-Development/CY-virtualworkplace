@@ -1,6 +1,7 @@
 using System;
 using core;
 using Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -10,10 +11,7 @@ public class UserServiceTests
     public async Task CreateUser_ValidUser_ReturnsUserWithAssignedUserId()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
-        var LogInServiceMock = new Mock<ILoginService>();
-        var userServiceMock = new Mock<IUserService>();
-        var profileServiceMock = new Mock<IProfileService>();
-        var teamServiceMock = new Mock<ITeamService>();
+        var loggerServiceMock = new Mock<ILogger<UserService>>();
 
         userRepositoryMock
             .Setup(repo => repo.CreateAsync(It.IsAny<User>()))
@@ -33,7 +31,7 @@ public class UserServiceTests
                 }
             );
 
-        var userService = new UserService(userRepositoryMock.Object);
+        var userService = new UserService(userRepositoryMock.Object, loggerServiceMock.Object);
         var userCreateDto = new UserCreateDTO
         {
             FirstName = "Elina",
@@ -54,6 +52,7 @@ public class UserServiceTests
     public void GetUserById_ExistingUserId_ReturnsUser()
     {
         var userRepositoryMock = new Mock<IUserRepository>();
+        var loggerServiceMock = new Mock<ILogger<UserService>>();
         userRepositoryMock
             .Setup(repo => repo.GetByIdAsync("123"))
             .ReturnsAsync(
@@ -65,7 +64,7 @@ public class UserServiceTests
                 }
             );
 
-        var userService = new UserService(userRepositoryMock.Object);
+        var userService = new UserService(userRepositoryMock.Object, loggerServiceMock.Object);
 
         var user = userService.GetById("123");
 
