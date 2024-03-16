@@ -26,7 +26,7 @@ import { getUserAsync } from "./slices/userSlice";
 
 const Navigation = () => {
   const user = useAppSelector((state) => state.userSlice.user);
-  console.log("User:", user);
+
   const dispatch = useAppDispatch();
   // const navigate = useNavigate();
 

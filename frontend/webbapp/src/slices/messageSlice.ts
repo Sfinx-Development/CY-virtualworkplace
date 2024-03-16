@@ -1,3 +1,4 @@
+import * as signalR from "@microsoft/signalr";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Message, MessageOutgoing } from "../../types";
 import { FetchGetTeamMessages } from "../api/conversation";
@@ -7,7 +8,6 @@ import {
   FetchEditMessage,
 } from "../api/message";
 import ChatConnector from "../pages/AfterChosenTeam/ChatConnection";
-import * as signalR from "@microsoft/signalr";
 
 export interface MessageState {
   messages: Message[];
@@ -236,10 +236,7 @@ const messageSlice = createSlice({
         state.error = "Något gick fel med skapandet av meddelandet.";
       })
       .addCase(EditMessageAsync.fulfilled, (state, action) => {
-        console.log(
-          "Fulfilled action payload for editing message:",
-          action.payload
-        );
+        //går via signalr men borde kolla hur detta funkar bäst
         if (action.payload) {
           // const index = state.messages.findIndex(
           //   (m) => m.id === action.payload.id

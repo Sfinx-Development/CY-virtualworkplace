@@ -21,14 +21,13 @@ export const FetchGetMyOccasions = async (
       body: JSON.stringify(profileId),
     });
     const responseBody = await response.json();
-    console.log("RESPONSEBODYN : ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av occasions");
     }
     //VAFÖR BEHÖVA GÖRA SÅHÄR??
     const data = responseBody.$values as MeetingOccasion[];
-    console.log("RESPONSE NÄR DEN ÄR TYPAD: ", data);
+
     return data;
   } catch (error) {
     console.error(error);
@@ -54,7 +53,6 @@ export const FetchGetMyMeetings = async (
       body: JSON.stringify(profileId),
     });
     const responseBody = await response.json();
-    console.log("RESPONSEBODYN : ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av meetings");
@@ -66,7 +64,6 @@ export const FetchGetMyMeetings = async (
       date: new Date(meeting.date),
     }));
 
-    console.log("RESPONSE NÄR DEN ÄR TYPAD: ", data);
     return data;
   } catch (error) {
     console.error(error);
@@ -90,14 +87,13 @@ export const FetchGetMyPastMeetings = async (
       }
     );
     const responseBody = await response.json();
-    console.log("RESPONSEBODYN : ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av meetings");
     }
     //VAFÖR BEHÖVA GÖRA SÅHÄR??
     const data = responseBody.$values as MeetingOccasion[];
-    console.log("RESPONSE NÄR DEN ÄR TYPAD: ", data);
+
     return data;
   } catch (error) {
     console.error(error);
@@ -109,7 +105,6 @@ export const FetchCreateMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<Meeting> => {
   try {
-    console.log("MÖTESDATUM SOM SKICKAS IN I REQUESTEN: ", newMeeting.date);
     const response = await fetch(meetingapiUrl + "/create", {
       method: "POST",
       headers: {
@@ -136,7 +131,6 @@ export const FetchCreateTeamMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<Meeting> => {
   try {
-    console.log("MÖTESDATUM SOM SKICKAS IN I REQUESTEN: ", newMeeting.date);
     const response = await fetch(meetingapiUrl + "/createteammeeting", {
       method: "POST",
       headers: {
@@ -172,7 +166,6 @@ export const FetchGetMeetingRoomByTeam = async (
       body: JSON.stringify(teamId),
     });
     const responseBody = await response.json();
-    console.log("RESPONSE från get activeteam: ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av meetings");
@@ -198,7 +191,6 @@ export const FetchDeleteMeeting = async (
       },
       body: JSON.stringify(meetingId),
     });
-    console.log("RESPONSE: ", response);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid radering av meddelande");

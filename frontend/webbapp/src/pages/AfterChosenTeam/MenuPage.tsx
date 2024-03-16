@@ -65,8 +65,6 @@ export default function Menu() {
 
   useEffect(() => {
     if (activeProfile) {
-      console.log("körs");
-      console.log("AKTIVE PROFIL : ", activeProfile);
       dispatch(GetMyMeetingsAsync(activeProfile.id));
     }
   }, []);

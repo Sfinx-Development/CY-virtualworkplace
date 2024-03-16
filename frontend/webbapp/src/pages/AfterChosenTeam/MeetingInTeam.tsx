@@ -54,7 +54,6 @@ export default function MeetingInTeamsPage() {
 
   useEffect(() => {
     if (activeProfile) {
-      console.log("OCH HÄR AKTIV PROFIL: ", activeProfile);
       dispatch(GetMyMeetingsAsync(activeProfile.id));
       dispatch(GetMyOccasionsAsync(activeProfile.id));
       dispatch(GetMyPastMeetingsAsync(activeProfile.id));
@@ -70,19 +69,14 @@ export default function MeetingInTeamsPage() {
     useAppSelector((state) => state.meetingSlice.pastOccasions) || [];
 
   const handleDeleteMeeting = (meetingId: string) => {
-    console.log("MESSAGE ID ÄR: ", meetingId);
-
     dispatch(DeleteMeetingAsync(meetingId));
   };
   const handleEditMeeting = () => {
     if (meetingIdToEdit && isEditMode) {
       const meetingToUpdate = meetings?.find((m) => m.id == meetingIdToEdit);
       if (meetingToUpdate) {
-        console.log("datum ääääääääääääär: ", editedDate);
-
         // Använd Date.parse() för att tolka datumsträngen i lokala tidszonen
         const parsedDate = Date.parse(editedDate);
-        console.log("datum ääääääääääääär: ", new Date(parsedDate));
 
         if (!isNaN(parsedDate)) {
           // Kontrollera att tolkningen är giltig

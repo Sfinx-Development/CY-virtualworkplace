@@ -33,7 +33,7 @@ export const createUserAsync = createAsyncThunk<
 export const logOutUserAsync = createAsyncThunk("user/logOutUser", async () => {
   try {
     const isLoggedOut = await FetchLogOut();
-    console.log("IS LOGGED OOUT: ", isLoggedOut);
+
     return isLoggedOut;
   } catch (error) {
     console.error(error);
@@ -51,7 +51,6 @@ export const logInUserAsync = createAsyncThunk<
     if (isAuthenticated) {
       const user = await FetchGetUseer();
       if (user) {
-        console.log("USER FINNS NU!! : ", user);
         return user;
       }
       return thunkAPI.rejectWithValue(

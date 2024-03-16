@@ -100,7 +100,6 @@ export default function ChatRoom() {
   }, []);
 
   const handleDeleteMessage = (messageId: string) => {
-    console.log("MESSAGE ID ÄR: ", messageId);
     dispatch(DeleteMessageAsync(messageId));
     dispatch(liveUpdateMessageDeleted(messageId));
   };
@@ -111,7 +110,6 @@ export default function ChatRoom() {
 
   useEffect(() => {
     if (activeTeam) {
-      console.log("KÖRS");
       dispatch(GetMyProfileAsync(activeTeam.id));
       dispatch(GetTeamConversation(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
@@ -132,7 +130,6 @@ export default function ChatRoom() {
 
   const handleSendMessage = () => {
     if (activeParticipant && content.trim() !== "") {
-      console.log("PARTICIPANTID: ", activeParticipant.id);
       const message: MessageOutgoing = {
         conversationParticipantId: activeParticipant.id,
         content: content,

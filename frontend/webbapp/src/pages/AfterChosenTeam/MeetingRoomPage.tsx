@@ -57,7 +57,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     : null;
 
   useEffect(() => {
-    console.log("HÄMTAR TEAM");
     dispatch(getActiveTeam());
   }, []);
 
@@ -66,7 +65,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
       dispatch(GetOnlineProfiles(activeTeam.id));
-      console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
     }
   }, [activeTeam]);
 

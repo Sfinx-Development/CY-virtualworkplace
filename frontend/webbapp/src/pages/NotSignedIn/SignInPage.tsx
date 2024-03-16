@@ -38,13 +38,11 @@ export default function SignIn() {
   };
 
   useEffect(() => {
-    console.log("LOGGAR UT");
     dispatch(logOutUserAsync());
   }, []);
 
   const handleSignIn = async () => {
     try {
-      console.log("LOGGAR IN");
       await dispatch(
         logInUserAsync({
           email: email,
@@ -60,7 +58,6 @@ export default function SignIn() {
 
   useEffect(() => {
     if (user && !error && teams && signedIn) {
-      console.log("HÄR INNE");
       navigate("/chooseteam");
     }
   }, [user, teams, signedIn]);

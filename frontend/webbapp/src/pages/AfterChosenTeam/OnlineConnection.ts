@@ -62,11 +62,6 @@ class Connector {
     try {
       if (this.connection.state === signalR.HubConnectionState.Disconnected) {
         await this.connection.start();
-        console.log("SignalR connection started.");
-      } else {
-        console.log(
-          "SignalR connection is already started or in the process of reconnecting."
-        );
       }
     } catch (error) {
       console.error("Error starting SignalR connection:", error);
