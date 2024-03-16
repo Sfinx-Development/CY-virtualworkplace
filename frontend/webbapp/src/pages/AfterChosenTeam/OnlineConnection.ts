@@ -2,7 +2,7 @@ import * as signalR from "@microsoft/signalr";
 import { ProfileHubDTO } from "../../../types";
 
 // Define your hub URL
-const hubUrl = `http://${window.location.hostname}:5290/meetingroomhub`;
+const hubUrl = `https://cyapi.azurewebsites.net/meetingroomhub`;
 
 class Connector {
   private connection: signalR.HubConnection;
