@@ -27,15 +27,6 @@ builder.Services.AddCors(options =>
     );
 });
 
-// if (builder.Environment.IsDevelopment())
-// {
-//     builder.WebHost.UseUrls("http://0.0.0.0:5290");
-// }
-// else
-// {
-//     builder.WebHost.UseUrls("https://cyapi.azurewebsites.net");
-// }
-
 builder.Configuration.AddJsonFile("appsettings.json");
 
 var jwtConfig = builder.Configuration.GetSection("Jwt");
