@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-// DETTA ÄR DEVELOP BRANCHEN - VI KAN ÖVA GENOM ATT ALDRIG SKICKA MED DENNA TILL MAIN
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 builder.Services.AddCors(options =>
 {
@@ -27,14 +27,14 @@ builder.Services.AddCors(options =>
     );
 });
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.WebHost.UseUrls("http://0.0.0.0:5290");
-}
-else
-{
-    builder.WebHost.UseUrls("https://cyapi.azurewebsites.net");
-}
+// if (builder.Environment.IsDevelopment())
+// {
+//     builder.WebHost.UseUrls("http://0.0.0.0:5290");
+// }
+// else
+// {
+//     builder.WebHost.UseUrls("https://cyapi.azurewebsites.net");
+// }
 
 builder.Configuration.AddJsonFile("appsettings.json");
 
@@ -46,30 +46,11 @@ builder.Services.AddSingleton(securityKey);
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
-// builder.Services.AddDbContext<CyDbContext>(
-//     options =>
-//         options.UseMySql(
-//             "server=localhost;database=cy;user=root;password=",
-//             ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
-//         )
-// );
-builder.Configuration.AddJsonFile("appsettings.json");
-
-// Hämta anslutningssträngen från konfigurationsfilen
 var connectionString = builder.Configuration.GetConnectionString("CyDbContext");
 
 builder.Services.AddDbContext<CyDbContext>(
     options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
-
-// if (!builder.Environment.IsDevelopment())
-// {
-//     builder.Services.AddHttpsRedirection(options =>
-//     {
-//         options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
-//         options.HttpsPort = 443;
-//     });
-// }
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -155,14 +136,14 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 app.UseRouting();
 
-if (!builder.Environment.IsDevelopment())
-{
-    builder.Services.AddHttpsRedirection(options =>
-    {
-        options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
-        options.HttpsPort = 443;
-    });
-}
+// if (!builder.Environment.IsDevelopment())
+// {
+//     builder.Services.AddHttpsRedirection(options =>
+//     {
+//         options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
+//         options.HttpsPort = 443;
+//     });
+// }
 
 app.MapHub<MeetingRoomHub>("/meetingroomhub");
 app.MapHub<ChatHub>("/chathub");
