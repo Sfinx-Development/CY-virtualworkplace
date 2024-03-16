@@ -23,15 +23,11 @@ export default function ChooseTeam() {
   const primaryColor = theme1.palette.primary.main;
 
   const handleNavigateToMenu = (teamId: string) => {
-    //hämta saker kanske? nja kanske inte va
-    //navigera till teamets meny
     dispatch(setActiveTeam(teamId));
     navigate("/enterhouse");
   };
 
   useEffect(() => {
-    // //hämtar usern så att den är uppdaterad med jwtn - måste fixa så att om inte usern finns så loggas man ut
-    // dispatch(getUserAsync());
     dispatch(GetMyTeamsAsync());
   }, []);
   const isMobile = window.innerWidth <= 500;
@@ -57,7 +53,7 @@ export default function ChooseTeam() {
           fullWidth
           style={{
             margin: "10px 0",
-            width: "30%",
+            flex: 1,
             flexDirection: "row",
             justifyContent: "center",
           }}
@@ -73,8 +69,8 @@ export default function ChooseTeam() {
           size="large"
           fullWidth
           style={{
-            margin: "10px 0",
-            width: "30%",
+            margin: "10px 10px",
+            flex: 1,
             flexDirection: "row",
             justifyContent: "center",
           }}
@@ -100,7 +96,7 @@ export default function ChooseTeam() {
               key={team.id}
               sx={{
                 display: "flex",
-                minWidth: isMobile ? "100px" : "250px",
+                minWidth: isMobile ? "200px" : "250px",
                 backgroundColor: primaryColor,
               }}
             >

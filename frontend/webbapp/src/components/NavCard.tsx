@@ -23,7 +23,7 @@ export default function NavCard(props: NavCardProps) {
     <Card
       sx={{
         display: "flex",
-        width: isMobile ? "100px" : "200px",
+        minWidth: isMobile ? "120px" : "200px",
         backgroundColor: props.backgroundColor,
       }}
     >
