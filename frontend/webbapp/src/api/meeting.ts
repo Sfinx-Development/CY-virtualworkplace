@@ -6,7 +6,7 @@ import {
 } from "../../types";
 
 const meetingapiUrl = `https://cyapi.azurewebsites.net/meeting`;
-const meetingOccasionapiUrl = `http://cyapi.azurewebsites.net/meetingoccasion`;
+const meetingOccasionapiUrl = `https://cyapi.azurewebsites.net/meetingoccasion`;
 
 export const FetchGetMyOccasions = async (
   profileId: string
