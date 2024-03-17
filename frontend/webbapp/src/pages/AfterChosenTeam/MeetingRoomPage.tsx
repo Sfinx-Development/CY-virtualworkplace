@@ -10,6 +10,7 @@ import {
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MeetingOccasion, ProfileHubDTO } from "../../../types";
+import { isMobile } from "../../../globalConstants";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -107,9 +108,8 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       }
     };
   }, [dispatch, activeProfile]);
-  //ismobile kan sättas till ett ställe bara och exporteras? typ globala egenskaper eller något?
+
   const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
-  const isMobile = window.innerWidth <= 500;
   const meetingRoomColor = theme1.palette.room.main;
   const leaveColor = theme1.palette.leave.main;
   const navigate = useNavigate();

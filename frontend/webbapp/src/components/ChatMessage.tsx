@@ -23,7 +23,7 @@ export default function ChatMessage(props: ChatMessageProps) {
     const date = new Date(dateString);
     return format(date, "yyyy-MM-dd HH:mm");
   }
-  const isMobile = window.innerWidth <= 500;
+
   return (
     <Card
       key={props.message.id}

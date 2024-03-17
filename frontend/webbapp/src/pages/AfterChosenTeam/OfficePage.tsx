@@ -23,7 +23,6 @@ export default function Office() {
   }, [activeTeam]);
 
   const backgroundImageUrl = "https://i.imgur.com/uWBWv0m.jpeg";
-  // const isMobile = window.innerWidth <= 500;
   const officeColor = theme1.palette.office.main;
   return (
     <Container
