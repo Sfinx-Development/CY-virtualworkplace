@@ -200,7 +200,6 @@ export default function ChatRoom() {
     }
   };
 
-  // const isMobile = window.innerWidth <= 500;
   const chatColor = theme1.palette.chat.main;
   return (
     <Container

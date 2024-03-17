@@ -1,8 +1,11 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
+import AppsIcon from "@mui/icons-material/Apps";
+import KeyboardIcon from "@mui/icons-material/Keyboard";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { isMobile } from "../../../globalConstants";
 import { forgotPasswordAsync } from "../../slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
-
+import { theme1 } from "../../theme";
 
 export default function ForgotPassword() {
   const success = useAppSelector((state) => state.authSlice.success);
@@ -32,13 +35,43 @@ export default function ForgotPassword() {
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
           flex: 1,
-          backgroundColor: "pink",
+          backgroundColor: theme1.palette.primary.main,
           padding: 50,
+          justifyContent: "center",
         }}
       >
-        EN LOGGA KANSKE OCH NÅGOT KUL?
+        <Typography
+          sx={{
+            fontSize: isMobile ? 15 : 20,
+            fontWeight: "550",
+            marginBottom: isMobile ? 1 : 2,
+          }}
+        >
+          Skydda dina lösenord
+        </Typography>
+        <Box sx={{ display: "flex" }}>
+          <KeyboardIcon sx={{ fontSize: isMobile ? 15 : 20 }} />
+          <Typography
+            sx={{
+              fontSize: isMobile ? 12 : 15,
+              marginLeft: isMobile ? 0.5 : 1,
+            }}
+          >
+            Använd specialtecken
+          </Typography>
+        </Box>
+        <Box sx={{ display: "flex" }}>
+          <AppsIcon sx={{ fontSize: isMobile ? 15 : 20 }} />
+          <Typography
+            sx={{
+              fontSize: isMobile ? 12 : 15,
+              marginLeft: isMobile ? 0.5 : 1,
+            }}
+          >
+            Använd inte samma lösenord på flera tjänster
+          </Typography>
+        </Box>
       </div>
 
       <div

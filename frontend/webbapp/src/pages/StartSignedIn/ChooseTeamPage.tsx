@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -30,7 +31,6 @@ export default function ChooseTeam() {
   useEffect(() => {
     dispatch(GetMyTeamsAsync());
   }, []);
-  const isMobile = window.innerWidth <= 500;
 
   return (
     <Container
