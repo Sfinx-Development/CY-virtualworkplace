@@ -32,6 +32,9 @@ namespace Controllers
             try
             {
                 _logger.LogInformation("LOGGA IN---------");
+                _logger.LogInformation(
+                    $"E-post: {logInDTONoJwt.Email}, Lösenord: {logInDTONoJwt.Password}"
+                );
                 string jwt = await _logInService.LogIn(logInDTONoJwt.Email, logInDTONoJwt.Password);
 
                 var cookieOptions = new CookieOptions
