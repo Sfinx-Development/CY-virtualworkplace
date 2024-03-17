@@ -23,17 +23,13 @@ export default function ChatMessage(props: ChatMessageProps) {
     const date = new Date(dateString);
     return format(date, "yyyy-MM-dd HH:mm");
   }
-
+  const isMobile = window.innerWidth <= 500;
   return (
     <Card
       key={props.message.id}
       sx={{
         padding: 2,
         marginBottom: 2,
-        // backgroundColor:
-        //   message.conversationParticipantId === activeParticipant.id
-        //     ? "#e6f2ff"
-        //     : "#f2f2f2",
         display: "flex",
         flexDirection: "column",
       }}
@@ -44,15 +40,22 @@ export default function ChatMessage(props: ChatMessageProps) {
             <Avatar
               src={props.getProfilesAvatar(props.message.profileId)}
               alt={props.message.fullName}
-              sx={{ marginRight: 1 }}
+              sx={{
+                marginRight: 1,
+                width: isMobile ? 20 : 25,
+                height: isMobile ? 20 : 25,
+              }}
             />
           )}
-          <Typography variant="body1" sx={{ fontWeight: 600 }}>
+          <Typography sx={{ fontWeight: 600, fontSize: isMobile ? 15 : 18 }}>
             {props.message.fullName}
           </Typography>
           <Typography
-            variant="body2"
-            sx={{ marginLeft: 1, color: "text.secondary" }}
+            sx={{
+              marginLeft: 1,
+              color: "text.secondary",
+              fontSize: isMobile ? 10 : 13,
+            }}
           >
             {formatDate(props.message.dateCreated)}
           </Typography>
@@ -75,7 +78,10 @@ export default function ChatMessage(props: ChatMessageProps) {
           </div>
         )}
       </div>
-      <Typography variant="body1" sx={{ marginLeft: 25 }}>
+      <Typography
+        variant="body1"
+        sx={{ marginLeft: isMobile ? 5 : 25, fontSize: isMobile ? 13 : 16 }}
+      >
         {props.isEditMode && props.messageIdToEdit == props.message.id ? (
           <TextField
             value={props.editedContent}

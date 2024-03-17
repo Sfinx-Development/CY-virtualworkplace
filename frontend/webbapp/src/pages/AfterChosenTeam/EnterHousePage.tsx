@@ -23,9 +23,22 @@ export default function EnterHouse() {
   }, [navigate]);
 
   return (
-    <video id="video" autoPlay style={{ height: "100%", width: "100%" }}>
-      <source src="https://i.imgur.com/s4D0XN7.mp4" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <video
+        id="video"
+        autoPlay
+        style={{ height: "100%", width: "100%", objectFit: "cover" }}
+      >
+        <source src="https://i.imgur.com/s4D0XN7.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
   );
 }

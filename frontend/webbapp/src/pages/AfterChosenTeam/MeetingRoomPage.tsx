@@ -109,7 +109,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       }
     };
   }, [dispatch, activeProfile]);
-
+  //ismobile kan sättas till ett ställe bara och exporteras? typ globala egenskaper eller något?
   const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
   const isMobile = window.innerWidth <= 500;
   const meetingRoomColor = theme1.palette.room.main;
@@ -192,7 +192,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Card
           sx={{
             display: "flex",
-            minWidth: isMobile ? "100px" : "250px",
+            minWidth: isMobile ? "150px" : "250px",
             backgroundColor: meetingRoomColor,
           }}
         >
@@ -205,8 +205,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               <CardContent sx={{ flex: "1 0 auto" }}>
                 <Typography
                   component="div"
-                  variant="h6"
-                  sx={{ textAlign: "center" }}
+                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
                 >
                   Skapa möte
                 </Typography>
@@ -218,7 +217,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Card
           sx={{
             display: "flex",
-            minWidth: isMobile ? "100px" : "250px",
+            minWidth: isMobile ? "150px" : "250px",
             backgroundColor: meetingRoomColor,
           }}
         >
@@ -231,8 +230,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               <CardContent sx={{ flex: "1 0 auto" }}>
                 <Typography
                   component="div"
-                  variant="h6"
-                  sx={{ textAlign: "center" }}
+                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
                 >
                   Teamets möten
                 </Typography>
@@ -244,7 +242,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Card
           sx={{
             display: "flex",
-            minWidth: isMobile ? "100px" : "250px",
+            minWidth: isMobile ? "150px" : "250px",
             backgroundColor: leaveColor,
           }}
         >
@@ -257,8 +255,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               <CardContent sx={{ flex: "1 0 auto" }}>
                 <Typography
                   component="div"
-                  variant="h6"
-                  sx={{ textAlign: "center" }}
+                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
                 >
                   Lämna
                 </Typography>
