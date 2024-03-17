@@ -1,4 +1,4 @@
-import { Container, TextField, Typography } from "@mui/material";
+import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../slices/store";
@@ -79,7 +79,7 @@ export default function JoinTeam() {
           onChange={(event) => setRole(event.target.value)}
           onKeyDown={handleRoleEnterPress}
         />
-        <Typography variant="h6" sx={{ marginTop: 10 }}>
+        <Typography variant="h6" sx={{ marginTop: 5, textAlign: "center" }}>
           Skriv in den kod som du får från ett befintligt team
         </Typography>
         <div
@@ -96,7 +96,7 @@ export default function JoinTeam() {
             <TextField
               key={index}
               variant="outlined"
-              sx={{ width: "10%", margin: "5px" }}
+              sx={{ width: "10%", margin: "5px", borderColor: "pink" }}
               value={letters[index]}
               onChange={(event) =>
                 handleLetterChange(
@@ -117,6 +117,18 @@ export default function JoinTeam() {
             />
           ))}
         </div>
+        <Button
+          variant="contained"
+          sx={{
+            marginTop: 4,
+            marginBottom: 1,
+            paddingRight: 5,
+            paddingLeft: 5,
+          }}
+          onClick={handleJoinTeam}
+        >
+          Gå med i Team
+        </Button>
       </div>
     </Container>
   );

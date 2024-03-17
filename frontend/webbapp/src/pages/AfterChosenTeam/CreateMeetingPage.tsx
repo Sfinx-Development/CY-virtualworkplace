@@ -141,7 +141,7 @@ export default function CreateMeetingPage() {
           }}
         />
         <TextField
-          label="Minutes"
+          label="Minuter"
           type="number"
           value={newMeetingMinutes}
           onChange={(e) => setNewMeetingMinutes(parseInt(e.target.value, 10))}
@@ -156,7 +156,7 @@ export default function CreateMeetingPage() {
               onChange={() => setNewMeetingIsRepeating(!newMeetingIsRepeating)}
             />
           }
-          label="Repeating"
+          label="Upprepas"
           sx={{ width: "250px", marginTop: 2 }}
         />
         {newMeetingIsRepeating && (
@@ -179,6 +179,13 @@ export default function CreateMeetingPage() {
               variant="outlined"
               sx={{ width: "250px", marginTop: 2 }}
             />
+            <Button
+              variant="contained"
+              onClick={handleCreateMeeting}
+              sx={{ marginTop: 2 }}
+            >
+              Skapa möte
+            </Button>
           </>
         )}
         <TextField
@@ -191,10 +198,6 @@ export default function CreateMeetingPage() {
           value={activeProfile?.id || ""}
           onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
         />
-        <Button variant="contained" onClick={handleCreateMeeting}>
-          Create Meeting
-        </Button>
-
         {/* {meetings && (
           <div>
             <Typography variant="h6">Latest Meeting:</Typography>

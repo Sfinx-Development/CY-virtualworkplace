@@ -117,12 +117,16 @@ export default function MeetingInTeamsPage() {
     }
   };
 
+  const isMobile = window.innerWidth <= 500;
+
   return (
     <Container>
       {error ? (
         <Typography>Endast skapare av mötet kan radera</Typography>
       ) : null}
-      <Typography variant="h4">Mötes scheman för {activeTeam?.name}</Typography>
+      <Typography variant={isMobile ? "h5" : "h4"}>
+        {activeTeam?.name}
+      </Typography>
 
       <Box>
         {upcomingMeetings.length > 0 && (
