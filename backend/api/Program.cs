@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+Log.Logger = new LoggerConfiguration().WriteTo.File("log.txt").CreateLogger();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
