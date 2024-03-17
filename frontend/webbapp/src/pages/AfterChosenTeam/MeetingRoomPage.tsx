@@ -109,7 +109,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       }
     };
   }, [dispatch, activeProfile]);
-
+  //ismobile kan sättas till ett ställe bara och exporteras? typ globala egenskaper eller något?
   const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
   const isMobile = window.innerWidth <= 500;
   const meetingRoomColor = theme1.palette.room.main;
