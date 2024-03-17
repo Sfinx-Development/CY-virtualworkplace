@@ -44,7 +44,7 @@ namespace Controllers
                     IsEssential = true,
                     Secure = true,
                     SameSite = SameSiteMode.None,
-                    Domain = ".netlify.app",
+                    Domain = null,
                     Path = "/"
                 };
 
