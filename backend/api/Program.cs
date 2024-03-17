@@ -130,15 +130,6 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 app.UseRouting();
 
-// if (!builder.Environment.IsDevelopment())
-// {
-//     builder.Services.AddHttpsRedirection(options =>
-//     {
-//         options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
-//         options.HttpsPort = 443;
-//     });
-// }
-
 app.MapHub<MeetingRoomHub>("/meetingroomhub");
 app.MapHub<ChatHub>("/chathub");
 if (app.Environment.IsDevelopment())
