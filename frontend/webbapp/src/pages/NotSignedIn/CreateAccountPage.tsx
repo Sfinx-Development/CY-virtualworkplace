@@ -13,6 +13,7 @@ import { PhoneNumberUtil } from "google-libphonenumber";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { avatars } from "../../../avatars";
+import { isMobile } from "../../../globalConstants";
 import { useAppDispatch } from "../../slices/store";
 import { createUserAsync } from "../../slices/userSlice";
 
@@ -110,7 +111,7 @@ export default function CreateAccount() {
       setFieldsError(true);
     }
   };
-  const isMobile = window.innerWidth <= 500;
+
   return (
     <Container
       sx={{

@@ -45,9 +45,9 @@ export default function IndexPage() {
       </div>
 
       <img
-        alt="working remotly image"
+        alt="two happy girls working by computers"
         width={"100%"}
-        src="https://enterprise.gov.ie/images_upload/djei/en/imagelibrary/Remote-working-EN-banner.jpg"
+        src="https://i.imgur.com/3ZY0ydQ.jpeg"
       />
 
       <div

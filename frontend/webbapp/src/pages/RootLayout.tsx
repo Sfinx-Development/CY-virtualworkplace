@@ -1,11 +1,11 @@
 import ComputerIcon from "@mui/icons-material/Computer";
 import { AppBar, Button, Typography } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { isMobile } from "../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../slices/store";
 import { logOutUserAsync } from "../slices/userSlice";
 
 const RootLayout = () => {
-  const isMobile = window.innerWidth <= 500;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.userSlice.user);

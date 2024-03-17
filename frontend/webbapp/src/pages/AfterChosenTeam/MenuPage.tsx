@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import NavCard from "../../components/NavCard";
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import {
@@ -22,7 +24,6 @@ import {
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import { useNavigate } from "react-router-dom";
 
 export default function Menu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -96,7 +97,7 @@ export default function Menu() {
     setProfileDropdown(false);
   };
   const backgroundImageUrl = "https://i.imgur.com/bpC29BQ.jpeg";
-  const isMobile = window.innerWidth <= 500;
+
   return (
     <Container
       sx={{

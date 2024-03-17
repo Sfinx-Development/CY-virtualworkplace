@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { isMobile } from "../../../globalConstants";
 import { Meeting } from "../../../types";
 import {
   DeleteMeetingAsync,
@@ -122,8 +123,6 @@ export default function MeetingInTeamsPage() {
       }
     }
   };
-
-  const isMobile = window.innerWidth <= 500;
 
   return (
     <Container>

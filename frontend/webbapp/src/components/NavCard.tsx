@@ -6,6 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../globalConstants";
 
 interface NavCardProps {
   backgroundColor: string;
@@ -16,7 +17,6 @@ interface NavCardProps {
 }
 
 export default function NavCard(props: NavCardProps) {
-  const isMobile = window.innerWidth <= 500;
   const navigate = useNavigate();
 
   return (
