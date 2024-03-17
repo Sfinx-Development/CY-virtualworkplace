@@ -42,19 +42,19 @@ export default function ChatMessage(props: ChatMessageProps) {
               alt={props.message.fullName}
               sx={{
                 marginRight: 1,
-                width: isMobile ? 20 : 60,
-                height: isMobile ? 20 : 60,
+                width: isMobile ? 20 : 25,
+                height: isMobile ? 20 : 25,
               }}
             />
           )}
-          <Typography sx={{ fontWeight: 600, fontSize: isMobile ? 15 : 25 }}>
+          <Typography sx={{ fontWeight: 600, fontSize: isMobile ? 15 : 18 }}>
             {props.message.fullName}
           </Typography>
           <Typography
             sx={{
               marginLeft: 1,
               color: "text.secondary",
-              fontSize: isMobile ? 10 : 20,
+              fontSize: isMobile ? 10 : 13,
             }}
           >
             {formatDate(props.message.dateCreated)}
@@ -80,7 +80,7 @@ export default function ChatMessage(props: ChatMessageProps) {
       </div>
       <Typography
         variant="body1"
-        sx={{ marginLeft: 25, fontSize: isMobile ? 13 : 25 }}
+        sx={{ marginLeft: isMobile ? 5 : 25, fontSize: isMobile ? 13 : 16 }}
       >
         {props.isEditMode && props.messageIdToEdit == props.message.id ? (
           <TextField
