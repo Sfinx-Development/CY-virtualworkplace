@@ -44,12 +44,14 @@ export default function SignIn() {
     const hasConsented = localStorage.getItem("cookieConsent");
     if (!hasConsented) {
       setShowCookieConsent(true);
+      //Hejsan på dejsan
     }
   }, []);
 
   const handleCookieConsent = () => {
     localStorage.setItem("cookieConsent", "true");
     setShowCookieConsent(false);
+    // Hejsan
   };
 
   useEffect(() => {
