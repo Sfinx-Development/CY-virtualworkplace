@@ -107,14 +107,14 @@ export default function SignIn() {
           <div>
             <Typography variant="body1">
               Denna webbplats använder tredjepartscookies för att förbättra din
-              upplevelse. Godkänn användningen av cookies för att fortsätta.
+              upplevelse. Godkänn i inställningar för användningen av tredjepartcookies för att fortsätta.
             </Typography>
             <Button
               variant="contained"
               onClick={handleCookieConsent}
               sx={{ marginTop: 2 }}
             >
-              Jag accepterar
+              Ok
             </Button>
           </div>
         )}
