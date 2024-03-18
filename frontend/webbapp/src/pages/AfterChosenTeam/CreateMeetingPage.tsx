@@ -186,13 +186,6 @@ export default function CreateMeetingPage() {
               variant="outlined"
               sx={{ width: "250px", marginTop: 2 }}
             />
-            <Button
-              variant="contained"
-              onClick={handleCreateMeeting}
-              sx={{ marginTop: 2 }}
-            >
-              Skapa möte
-            </Button>
           </>
         )}
         <TextField
@@ -205,6 +198,13 @@ export default function CreateMeetingPage() {
           value={activeProfile?.id || ""}
           onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
         />
+        <Button
+          variant="contained"
+          onClick={handleCreateMeeting}
+          sx={{ marginTop: 2 }}
+        >
+          Skapa möte
+        </Button>
         {/* {meetings && (
           <div>
             <Typography variant="h6">Latest Meeting:</Typography>
