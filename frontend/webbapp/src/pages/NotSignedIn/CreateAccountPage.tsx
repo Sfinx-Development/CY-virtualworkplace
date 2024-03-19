@@ -1,14 +1,14 @@
 import {
   Avatar,
   Button,
-  Container,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
   TextField,
-  Typography,
+  Typography,Grid
 } from "@mui/material";
+import { keyframes } from "@emotion/react";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -112,20 +112,42 @@ export default function CreateAccount() {
     }
   };
 
-  return (
-    <Container
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: isMobile ? "column" : "row",
-      }}
-    >
-      <div>
-        <Typography variant="h5" sx={{ margin: 2 }}>
-          Skapa ett konto
-        </Typography>
-        {passwordError && (
+      // Keyframes för bakgrundsanimering
+      const gradientAnimation = keyframes`
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    `;
+  
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          background: "linear-gradient(45deg, #333333, #666666)",
+          animation: `${gradientAnimation} 10s ease infinite`,
+        }}
+      >
+        <div
+       style={{
+        background: "white",
+        paddingLeft:10,
+        paddingRight:10,
+        justifyContent:"center",
+        alignItems:"center",
+        flexDirection:isMobile ? "column" : "row",
+        borderRadius: 10,
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+       }}
+        >
+          <Grid item xs={12} textAlign="center">
+            <Typography variant="h5" sx={{ color: "#FFF" }}>
+              Skapa ett konto
+            </Typography>
+          </Grid>
+          {passwordError && (
           <Typography color="error">Lösenord matchar inte</Typography>
         )}
         {passwordLengthError && (
@@ -147,110 +169,131 @@ export default function CreateAccount() {
         {fieldsError && (
           <Typography color="error">Alla fält måste fyllas i</Typography>
         )}
-        <TextField
-          label="Förnamn"
-          variant="outlined"
-          type="fname"
-          value={firstname}
-          onChange={(event) => setFirstname(event.target.value)}
-          sx={{ margin: 1 }}
-        />
-        <TextField
-          label="Efternamn"
-          variant="outlined"
-          type="lname"
-          value={lastname}
-          onChange={(event) => setLastname(event.target.value)}
-          sx={{ margin: 1 }}
-        />
-        <TextField
-          label="Email"
-          variant="outlined"
-          value={email}
-          type="email"
-          onChange={(event) => setEmail(event.target.value)}
-          sx={{ margin: 1 }}
-        />
-        <TextField
-          label="Telefonnummer"
-          variant="outlined"
-          value={phoneNumber}
-          type="tel"
-          onChange={(event) => setPhoneNumber(event.target.value)}
-          sx={{ margin: 1 }}
-        />
-        <TextField
-          label="Lösenord"
-          variant="outlined"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          sx={{ margin: 1 }}
-        />
-        <TextField
-          label="Bekräfta lösenord"
-          variant="outlined"
-          type="password"
-          value={confirmedPassword}
-          onChange={(event) => setConfirmedPassword(event.target.value)}
-          sx={{ margin: 1 }}
-        />
-        <FormControl variant="outlined" sx={{ margin: 1 }}>
-          <InputLabel id="gender-label">Kön</InputLabel>
-          <Select
-            labelId="gender-label"
-            value={gender}
-            label="Kön"
-            sx={{ width: "100px" }}
-            onChange={(event) => setGender(event.target.value)}
-          >
-            <MenuItem value={"Man"}>Man</MenuItem>
-            <MenuItem value={"Kvinna"}>Kvinna</MenuItem>
-            <MenuItem value={"Ickebinär"}>Ickebinär</MenuItem>
-          </Select>
-        </FormControl>
-        <TextField
-          label="Ålder"
-          variant="outlined"
-          type="number"
-          value={age}
-          onChange={(event) => setAge(Number(event.target.value))}
-          sx={{ margin: 1 }}
-        />
-        <Typography variant="body1" sx={{ margin: 1 }}>
-          Välj en avatar
-        </Typography>
-        <div
-          style={{
-            display: "flex",
-            gap: 10,
-            marginBottom: 20,
-            flexWrap: "wrap",
-          }}
-        >
-          {avatars.map((avatar, index) => (
-            <Avatar
-              key={index}
-              alt={`Avatar ${index + 1}`}
-              src={avatar}
-              sx={{
-                cursor: "pointer",
-                width: 70,
-                height: 70,
-                opacity: selectedAvatar == avatar ? "0.3" : "none",
-              }}
-              onClick={() => setSelectedAvatar(avatar)}
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <TextField
+              label="Förnamn"
+              variant="outlined"
+              type="fname"
+              value={firstname}
+              onChange={(event) => setFirstname(event.target.value)}
+              fullWidth
             />
-          ))}
+          </Grid>
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <TextField
+              label="Efternamn"
+              variant="outlined"
+              type="lname"
+              value={lastname}
+              onChange={(event) => setLastname(event.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <TextField
+              label="Email"
+              variant="outlined"
+              value={email}
+              type="email"
+              onChange={(event) => setEmail(event.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <TextField
+              label="Telefonnummer"
+              variant="outlined"
+              value={phoneNumber}
+              type="tel"
+              onChange={(event) => setPhoneNumber(event.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <TextField
+              label="Lösenord"
+              variant="outlined"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <TextField
+              label="Bekräfta lösenord"
+              variant="outlined"
+              type="password"
+              value={confirmedPassword}
+              onChange={(event) => setConfirmedPassword(event.target.value)}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel id="gender-label" sx={{ color: "#FFF" }}>
+                Kön
+              </InputLabel>
+              <Select
+                labelId="gender-label"
+                value={gender}
+                label="Kön"
+                onChange={(event) => setGender(event.target.value)}
+              >
+                <MenuItem value={"Man"}>Man</MenuItem>
+                <MenuItem value={"Kvinna"}>Kvinna</MenuItem>
+                <MenuItem value={"Ickebinär"}>Ickebinär</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} paddingTop={2}>
+            <TextField
+              label="Ålder"
+              variant="outlined"
+              type="number"
+              value={age}
+              onChange={(event) => setAge(Number(event.target.value))}
+              fullWidth
+            />
+          </Grid>
+       <Grid item xs={12} sm={6} paddingTop={2}>
+            <Typography variant="body1" sx={{ color: "#FFF" }}>
+              Välj en avatar
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                marginBottom: 20,
+                flexWrap: "wrap",
+              }}
+            >
+              {avatars.map((avatar, index) => (
+                <Avatar
+                  key={index}
+                  alt={`Avatar ${index + 1}`}
+                  src={avatar}
+                  sx={{
+                    cursor: "pointer",
+                    width: 70,
+                    height: 70,
+                    opacity: selectedAvatar === avatar ? 0.3 : 1,
+                  }}
+                  onClick={() => setSelectedAvatar(avatar)}
+                />
+              ))}
+            </div>
+            <Button
+              variant="contained"
+              onClick={handleCreateUser}
+              sx={{ margin: 1, fontSize: 20 }}
+            >
+              Skapa konto
+            </Button>
+          </Grid>
         </div>
-        <Button
-          variant="contained"
-          onClick={handleCreateUser}
-          sx={{ margin: 1, fontSize: 20 }}
-        >
-          Skapa konto
-        </Button>
       </div>
-    </Container>
-  );
-}
+    );
+                }

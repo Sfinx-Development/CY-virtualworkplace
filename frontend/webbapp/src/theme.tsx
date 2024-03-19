@@ -24,7 +24,7 @@ declare module "@mui/material/styles" {
 export const theme1 = createTheme({
   palette: {
     primary: {
-      main: "#E4B7BF",
+      main: "#FF6B6B",
     },
     office: {
       main: "#FCF3CF",

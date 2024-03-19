@@ -72,7 +72,7 @@ const RootLayout = () => {
         )}
       </AppBar>
 
-      <main className="bg-neutral-100 flex flex-1 flex-col">
+      <main className="bg-neutral-100 flex flex-1 flex-col w-full">
         <Outlet />
       </main>
 
