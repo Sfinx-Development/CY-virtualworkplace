@@ -52,6 +52,9 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime?>("LastActive")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("ProfileId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
