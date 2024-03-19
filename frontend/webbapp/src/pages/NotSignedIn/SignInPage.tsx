@@ -30,6 +30,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
+  const [showCookieConsent, setShowCookieConsent] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (
@@ -41,6 +42,20 @@ export default function SignIn() {
   //   console.log("LOGGAR UT");
   //   dispatch(logOutUserAsync());
   // }, []);
+
+  useEffect(() => {
+    const hasConsented = localStorage.getItem("cookieConsent");
+    if (!hasConsented) {
+      setShowCookieConsent(true);
+      //Hejsan på dejsan
+    }
+  }, []);
+
+  const handleCookieConsent = () => {
+    localStorage.setItem("cookieConsent", "true");
+    setShowCookieConsent(false);
+    // Hejsan
+  };
 
   const handleSignIn = async () => {
     try {
@@ -86,6 +101,21 @@ export default function SignIn() {
           padding: 50,
         }}
       >
+             {showCookieConsent && (
+          <div>
+            <Typography variant="body1">
+              Denna webbplats använder tredjepartscookies för att förbättra din
+              upplevelse. Godkänn i inställningar för användningen av tredjepartcookies för att fortsätta.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={handleCookieConsent}
+              sx={{ marginTop: 2 }}
+            >
+              Ok
+            </Button>
+          </div>
+        )}
         {error ? (
           <Typography variant="h6">Inloggning misslyckades</Typography>
         ) : null}
