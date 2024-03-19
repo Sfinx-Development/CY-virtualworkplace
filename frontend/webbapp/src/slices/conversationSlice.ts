@@ -4,6 +4,7 @@ import {
   FetchGetConversationParticipant,
   FetchGetTeamConversation,
 } from "../api/conversation";
+import { FetchUpdateLastActive } from "../api/conversationParticipant";
 
 export interface ConversationState {
   teamConversation: Conversation | undefined;
@@ -69,6 +70,32 @@ export const GetConversationParticipant = createAsyncThunk<
   }
 );
 
+//egen slice?
+export const UpdateLastActive = createAsyncThunk<
+  ConversationParticipant,
+  ConversationParticipant,
+  { rejectValue: string }
+>(
+  "conversation/updateLastActive",
+  async (conversationParticipant, thunkAPI) => {
+    try {
+      const participant = await FetchUpdateLastActive(conversationParticipant);
+      if (participant) {
+        console.log("Deltagare uppdaterad:", participant);
+        return participant;
+      } else {
+        return thunkAPI.rejectWithValue(
+          "Ett fel inträffade vid uppdatering av deltagare."
+        );
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid uppdatering av deltagare."
+      );
+    }
+  }
+);
+
 const conversationSlice = createSlice({
   name: "conversation",
   initialState,
@@ -96,6 +123,17 @@ const conversationSlice = createSlice({
       .addCase(GetConversationParticipant.rejected, (state) => {
         state.activeConversationParticipant = undefined;
         state.error = "Något gick fel med hämtandet av deltagare.";
+      })
+      .addCase(UpdateLastActive.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeConversationParticipant = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(UpdateLastActive.rejected, (state) => {
+        state.activeConversationParticipant = undefined;
+        state.error =
+          "Något gick fel med uppdatering av deltagarens senast aktiva tid.";
       });
   },
 });

@@ -8,11 +8,16 @@ import {
   styled,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { Message, MessageOutgoing } from "../../../types";
+import {
+  ConversationParticipant,
+  Message,
+  MessageOutgoing,
+} from "../../../types";
 import ChatMessage from "../../components/ChatMessage";
 import {
   GetConversationParticipant,
   GetTeamConversation,
+  UpdateLastActive,
 } from "../../slices/conversationSlice";
 import {
   CreateMessageAsync,
@@ -70,9 +75,25 @@ export default function ChatRoom() {
   const [messageIdToEdit, setMessageIdToEdit] = useState("");
   const [editedContent, setEditedContent] = useState("");
 
+  const audioRef = useRef<HTMLAudioElement>(null);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    return () => {
+      if (activeParticipant) {
+        const updatedParticipant: ConversationParticipant = {
+          id: activeParticipant.id,
+          profileId: activeParticipant.profileId,
+          conversationId: activeParticipant.conversationId,
+          lastActive: new Date(),
+        };
+        dispatch(UpdateLastActive(updatedParticipant));
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const connection = ChatConnector.getInstance();
@@ -81,8 +102,10 @@ export default function ChatRoom() {
       messageSent: (message: Message) => {
         dispatch(messageSent(message));
         scrollToBottom();
+        if (audioRef.current && message.profileId != activeProfile?.id) {
+          audioRef.current.play();
+        }
       },
-      //fix
       messageEdited: (message: Message) => {
         dispatch(messageEdited(message));
         scrollToBottom();
@@ -211,6 +234,12 @@ export default function ChatRoom() {
         justifyContent: "space-between",
       }}
     >
+      <audio
+        ref={audioRef}
+        src="src/assets/message.mp3"
+        style={{ display: "none" }}
+        itemType="mp3"
+      />
       <Card
         className="card-content"
         sx={{

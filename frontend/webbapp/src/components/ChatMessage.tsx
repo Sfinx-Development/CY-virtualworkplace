@@ -3,6 +3,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Avatar, Card, IconButton, TextField, Typography } from "@mui/material";
 import { format } from "date-fns";
 import React from "react";
+import { isMobile } from "../../globalConstants";
 import { ConversationParticipant, Message } from "../../types";
 
 interface ChatMessageProps {

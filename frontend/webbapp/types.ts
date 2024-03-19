@@ -136,6 +136,7 @@ export interface ConversationParticipant {
   id: string;
   profileId: string;
   conversationId: string;
+  lastActive: Date;
 }
 
 export interface ProfileHubDTO {
