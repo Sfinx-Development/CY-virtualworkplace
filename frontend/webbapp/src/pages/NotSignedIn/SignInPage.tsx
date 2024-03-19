@@ -2,7 +2,6 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   Button,
-  Container,
   FormControl,
   IconButton,
   Input,
@@ -11,16 +10,16 @@ import {
   Link,
   TextField,
   Typography,
+  keyframes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
-import { logInUserAsync } from "../../slices/userSlice";
+import { logInUserAsync, logOutUserAsync } from "../../slices/userSlice";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
-  const error = useAppSelector((state) => state.userSlice.error);
+  const logInError = useAppSelector((state) => state.userSlice.logInError);
   const user = useAppSelector((state) => state.userSlice.user);
   const teams = useAppSelector((state) => state.teamSlice.teams);
 
@@ -48,15 +47,17 @@ export default function SignIn() {
     const hasConsented = localStorage.getItem("cookieConsent");
     if (!hasConsented) {
       setShowCookieConsent(true);
-      //Hejsan på dejsan
     }
   }, []);
 
   const handleCookieConsent = () => {
     localStorage.setItem("cookieConsent", "true");
     setShowCookieConsent(false);
-    // Hejsan
   };
+
+  useEffect(() => {
+    dispatch(logOutUserAsync());
+  }, []);
 
   const handleSignIn = async () => {
     try {
@@ -74,7 +75,7 @@ export default function SignIn() {
   };
 
   useEffect(() => {
-    if (user && !error && teams && signedIn) {
+    if (user && !logInError && teams && signedIn) {
       navigate("/chooseteam");
     }
   }, [user, teams, signedIn]);
@@ -85,12 +86,24 @@ export default function SignIn() {
     }
   };
 
+  //göra dessa globala också sen - global stil?
+  const gradientAnimation = keyframes`
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  `;
+
   return (
-    <Container
-      sx={{
-        padding: isMobile ? 0 : "20px",
+    <div
+      style={{
+        padding: "20px",
         height: "100vh",
         width: "100%",
+        background: "linear-gradient(45deg, #333333, #666666)",
+        animation: `${gradientAnimation} 10s ease infinite`,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <div
@@ -98,8 +111,10 @@ export default function SignIn() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          flex: 1,
-          padding: isMobile ? 25 : 50,
+          padding: 50,
+          background: "#FFF",
+          borderRadius: 10,
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
         {showCookieConsent && (
@@ -118,7 +133,7 @@ export default function SignIn() {
             </Button>
           </div>
         )}
-        {error ? (
+        {logInError ? (
           <Typography variant="h6">Inloggning misslyckades</Typography>
         ) : null}
         <TextField
@@ -134,7 +149,7 @@ export default function SignIn() {
 
         <FormControl sx={{ width: "250px", marginTop: 5 }} variant="standard">
           <InputLabel htmlFor="standard-adornment-password">
-            Password
+            Lösenord
           </InputLabel>
           <Input
             id="standard-adornment-password"
@@ -164,6 +179,7 @@ export default function SignIn() {
             marginBottom: 1,
             paddingRight: 5,
             paddingLeft: 5,
+            color: "#FFF",
           }}
           onClick={handleSignIn}
         >
@@ -175,14 +191,14 @@ export default function SignIn() {
 
         <Button
           variant="contained"
-          sx={{ marginTop: 2 }}
+          sx={{ marginTop: 2, color: "#FFF" }}
           onClick={() => {
             navigate("/createaccount");
           }}
         >
-          Skapa Konto
+          Skapa konto
         </Button>
       </div>
-    </Container>
+    </div>
   );
 }
