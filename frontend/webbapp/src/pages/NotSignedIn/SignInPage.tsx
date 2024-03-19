@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
 import { logInUserAsync, logOutUserAsync } from "../../slices/userSlice";
@@ -96,7 +97,7 @@ export default function SignIn() {
   return (
     <div
       style={{
-        padding: "20px",
+        padding: isMobile ? "0" : "20px",
         height: "100vh",
         width: "100%",
         background: "linear-gradient(45deg, #333333, #666666)",
@@ -111,7 +112,7 @@ export default function SignIn() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: 50,
+          padding: isMobile ? 25 : 50,
           background: "#FFF",
           borderRadius: 10,
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
