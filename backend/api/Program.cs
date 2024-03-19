@@ -70,6 +70,7 @@ builder.Services.AddScoped<IConversationParticipantRepository, ConversationParti
 builder.Services.AddScoped<IProfileHealthCheckRepository, ProfileHealthCheckRepository>();
 builder.Services.AddScoped<LogInRepository>();
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
+builder.Services.AddScoped<IConversationParticipantRepository, ConversationParticipantRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -77,6 +78,7 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
 builder.Services.AddScoped<IOfficeService, OfficeService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IConversationParticipantService, ConversationParticipantService>();
 
 builder.Services.AddScoped<IConversationService, ConversationService>();
 

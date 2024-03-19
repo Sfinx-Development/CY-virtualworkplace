@@ -70,7 +70,8 @@ namespace core
                     profileId,
                     profile.FullName,
                     profile,
-                    createdConversation
+                    createdConversation,
+                    null
                 );
 
                 var createdParticipant = await _conversationParticipantRepository.Create(
@@ -234,7 +235,8 @@ namespace core
                     profile.Id,
                     profile.FullName,
                     profile,
-                    conversation
+                    conversation,
+                    null
                 );
 
                 var createdParticipant = await _conversationParticipantRepository.Create(

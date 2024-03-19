@@ -8,13 +8,15 @@ namespace core
         public Profile Profile { get; set; }
         public Conversation Conversation { get; set; }
         public string FullName { get; set; }
+        public DateTime? LastActive { get; set; }
 
         public ConversationParticipant(
             string conversationId,
             string profileId,
             string fullName,
             Profile profile,
-            Conversation conversation
+            Conversation conversation,
+            DateTime? lastActive
         )
         {
             Id = Utils.GenerateRandomId();
@@ -22,6 +24,7 @@ namespace core
             FullName = fullName;
             Profile = profile;
             Conversation = conversation;
+            LastActive = lastActive;
         }
 
         public ConversationParticipant() { }
