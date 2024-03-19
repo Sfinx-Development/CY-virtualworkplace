@@ -1,3 +1,4 @@
+import { keyframes } from "@emotion/react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
@@ -15,11 +16,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
-import { keyframes } from "@emotion/react";
 import { logInUserAsync, logOutUserAsync } from "../../slices/userSlice";
 
 export default function SignIn() {
-  const error = useAppSelector((state) => state.userSlice.error);
+  const logInError = useAppSelector((state) => state.userSlice.logInError);
   const user = useAppSelector((state) => state.userSlice.user);
   const teams = useAppSelector((state) => state.teamSlice.teams);
 
@@ -74,7 +74,7 @@ export default function SignIn() {
   };
 
   useEffect(() => {
-    if (user && !error && teams && signedIn) {
+    if (user && !logInError && teams && signedIn) {
       console.log("HÄR INNE");
       navigate("/chooseteam");
     }
@@ -86,8 +86,8 @@ export default function SignIn() {
     }
   };
 
-    // Keyframes för bakgrundsanimering
-    const gradientAnimation = keyframes`
+  //göra dessa globala också sen - global stil?
+  const gradientAnimation = keyframes`
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
@@ -121,7 +121,8 @@ export default function SignIn() {
           <div>
             <Typography variant="body1">
               Denna webbplats använder tredjepartscookies för att förbättra din
-              upplevelse. Godkänn i inställningar för användningen av tredjepartcookies för att fortsätta.
+              upplevelse. Godkänn i inställningar för användningen av
+              tredjepartcookies för att fortsätta.
             </Typography>
             <Button
               variant="contained"
@@ -132,7 +133,7 @@ export default function SignIn() {
             </Button>
           </div>
         )}
-        {error ? (
+        {logInError ? (
           <Typography variant="h6">Inloggning misslyckades</Typography>
         ) : null}
         <TextField
