@@ -6,6 +6,7 @@ namespace core;
 public interface IConversationParticipantRepository
 {
     Task<ConversationParticipant> Create(ConversationParticipant conversationPartisipant);
+    public Task<ConversationParticipant> Update(ConversationParticipant conversationParticipant);
     Task<ConversationParticipant> GetConversationParticipantById(string conversationParticipantId);
     Task<List<ConversationParticipant>> GetAllByConversation(string conversationId);
     Task<ConversationParticipant> GetByConversationAndProfile(

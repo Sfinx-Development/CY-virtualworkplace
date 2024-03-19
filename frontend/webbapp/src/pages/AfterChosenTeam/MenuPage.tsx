@@ -1,4 +1,5 @@
 import GroupsIcon from "@mui/icons-material/Groups";
+import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import {
   Avatar,
@@ -14,7 +15,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import NavCard from "../../components/NavCard";
+import {
+  GetConversationParticipant,
+  GetTeamConversation,
+} from "../../slices/conversationSlice";
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
+import { GetTeamConversationMessages } from "../../slices/messageSlice";
 import {
   GetMyProfileAsync,
   GetOnlineProfiles,
@@ -34,11 +40,19 @@ export default function Menu() {
   const leaveColor = theme1.palette.leave.main;
 
   const dispatch = useAppDispatch();
+  const activeParticipant = useAppSelector(
+    (state) => state.conversationSlice.activeConversationParticipant
+  );
+  const messages = useAppSelector((state) => state.messageSlice.messages);
+  const teamConversation = useAppSelector(
+    (state) => state.conversationSlice.teamConversation
+  );
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
   const [copied, setCopied] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
   const now = new Date();
@@ -67,8 +81,33 @@ export default function Menu() {
   useEffect(() => {
     if (activeProfile) {
       dispatch(GetMyMeetingsAsync(activeProfile.id));
+      dispatch(GetTeamConversation(activeProfile.id));
+      dispatch(GetTeamConversationMessages(activeProfile.id));
     }
-  }, []);
+  }, [activeProfile]);
+
+  useEffect(() => {
+    if (teamConversation && activeProfile) {
+      dispatch(
+        GetConversationParticipant({
+          profileId: activeProfile.id,
+          conversationId: teamConversation.id,
+        })
+      );
+    }
+  }, [teamConversation]);
+
+  useEffect(() => {
+    if (activeParticipant) {
+      const unreadMessages = messages.filter((message) => {
+        return (
+          new Date(message.dateCreated) >
+          new Date(activeParticipant?.lastActive)
+        );
+      });
+      setUnreadMessages(unreadMessages.length);
+    }
+  }, [activeParticipant]);
 
   const copyCodeToClipboard = () => {
     if (activeTeam) {
@@ -187,6 +226,18 @@ export default function Menu() {
             backgroundColor={chatRoomColor}
             navigationPage="/chatroom"
             title="Chattrum"
+            icon={
+              unreadMessages != null && unreadMessages > 0 ? (
+                <MarkUnreadChatAltIcon
+                  sx={{
+                    paddingLeft: 1,
+                    textAlign: "center",
+                    flexDirection: "row",
+                    fontSize: isMobile ? "10" : "22",
+                  }}
+                />
+              ) : null
+            }
           />
         </div>
 

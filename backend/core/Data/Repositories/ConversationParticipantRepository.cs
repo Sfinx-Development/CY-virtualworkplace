@@ -29,31 +29,30 @@ public class ConversationParticipantRepository : IConversationParticipantReposit
         }
     }
 
-    //     public async Task<Conversation> Update(Conversation conversation)
-    //     {
-    //          try
-    //         {
-    //             var conversationToUpdate = await _cyDbContext.Conversations.FirstAsync(c => c.Id == conversation.Id);
+    public async Task<ConversationParticipant> Update(
+        ConversationParticipant conversationParticipant
+    )
+    {
+        try
+        {
+            var conversationPartToUpdate =
+                await _cyDbContext.ConversationParticipants.FirstAsync(
+                    c => c.Id == conversationParticipant.Id
+                ) ?? throw new Exception("No conversation participant found in database.");
 
-    //             if (conversationToUpdate == null)
-    //             {
-    //                 throw new Exception();
-    //             }
+            conversationPartToUpdate.LastActive = conversationParticipant.LastActive;
 
-    //             conversationToUpdate.Messages = conversation.Messages ?? conversationToUpdate.Messages;
-    //             conversationToUpdate.Participants = conversation.Participants ?? conversationToUpdate.Participants;
+            _cyDbContext.ConversationParticipants.Update(conversationPartToUpdate);
 
+            await _cyDbContext.SaveChangesAsync();
+            return conversationPartToUpdate;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 
-    //             _cyDbContext.Conversations.Update(conversationToUpdate);
-
-    //             await _cyDbContext.SaveChangesAsync();
-    //             return conversationToUpdate;
-    //         }
-    //         catch (Exception e)
-    //         {
-    //             throw new Exception();
-    //         }
-    //     }
     public async Task<List<ConversationParticipant>> GetAllByConversation(string conversationId)
     {
         try
@@ -154,7 +153,8 @@ public class ConversationParticipantRepository : IConversationParticipantReposit
                 profileId,
                 profile.FullName,
                 profile,
-                conversationParticipant.Conversation
+                conversationParticipant.Conversation,
+                null
             );
 
             // lägg till denna senare
@@ -193,7 +193,8 @@ public class ConversationParticipantRepository : IConversationParticipantReposit
                 getProfile.Id,
                 getProfile.Id,
                 getProfile,
-                getConversation
+                getConversation,
+                null
             );
 
             await _cyDbContext.SaveChangesAsync();
