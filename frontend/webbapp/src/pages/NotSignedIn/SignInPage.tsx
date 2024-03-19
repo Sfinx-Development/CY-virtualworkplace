@@ -98,14 +98,15 @@ export default function SignIn() {
           flexDirection: "column",
           alignItems: "center",
           flex: 1,
-          padding: 50,
+          padding: isMobile ? 25 : 50,
         }}
       >
-             {showCookieConsent && (
+        {showCookieConsent && (
           <div>
             <Typography variant="body1">
               Denna webbplats använder tredjepartscookies för att förbättra din
-              upplevelse. Godkänn i inställningar för användningen av tredjepartcookies för att fortsätta.
+              upplevelse. Godkänn i inställningar för användningen av
+              tredjepartcookies för att fortsätta.
             </Typography>
             <Button
               variant="contained"
