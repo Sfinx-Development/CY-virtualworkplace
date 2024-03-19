@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
 import { logInUserAsync } from "../../slices/userSlice";
@@ -87,7 +88,7 @@ export default function SignIn() {
   return (
     <Container
       sx={{
-        padding: "20px",
+        padding: isMobile ? 0 : "20px",
         height: "100vh",
         width: "100%",
       }}
