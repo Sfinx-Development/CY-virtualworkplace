@@ -1,6 +1,5 @@
 import { ConversationParticipant } from "../../types";
 
-//dessa adresser kan vara i en fil specifik för develop eller prod liksom:
 const conversationParticipantApiUrl = `https://cyapi.azurewebsites.net/conversationParticipant`;
 
 export const FetchUpdateLastActive = async (
