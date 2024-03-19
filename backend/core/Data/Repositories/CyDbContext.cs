@@ -29,10 +29,11 @@ public class CyDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseMySql(
-            "server=localhost;database=cy;user=root;password=",
-            ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
-        );
+        var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+        var connectionString = configuration.GetConnectionString("CyDbContext");
+
+        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

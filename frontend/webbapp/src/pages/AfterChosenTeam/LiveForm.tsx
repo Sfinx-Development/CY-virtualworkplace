@@ -18,7 +18,8 @@ import {
 import { useAppSelector } from "../../slices/store";
 
 export const LiveVideo = () => {
-  const appId = "164c628ea4b243ed8ebf6d36d0e1d3c9";
+
+  const appId = process.env.REACT_APP_AGORA_APP_ID ?? "";
 
   const activeMeetingId = useAppSelector(
     (state) => state.meetingSlice.activeMeetingId

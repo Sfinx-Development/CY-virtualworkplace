@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { MeetingOccasion, ProfileHubDTO } from "../../../types";
 import { isMobile } from "../../../globalConstants";
-import { ProfileHubDTO } from "../../../types";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -48,7 +48,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const now = new Date();
 
   const ongoingMeeting = occasions
-    ? occasions.find((occasion) => {
+    ? occasions.find((occasion: MeetingOccasion) => {
         const startDate = new Date(occasion.date);
         const endDate = new Date(
           startDate.getTime() + occasion.minutes * 60000
@@ -58,7 +58,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     : null;
 
   useEffect(() => {
-    console.log("HÄMTAR TEAM");
     dispatch(getActiveTeam());
   }, []);
 
@@ -67,7 +66,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
       dispatch(GetOnlineProfiles(activeTeam.id));
-      console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
     }
   }, [activeTeam]);
 
@@ -144,7 +142,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Typography> {activeTeam?.name}'s mötesrum</Typography>
         {onlineProfiles && onlineProfiles.length > 0 ? (
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {onlineProfiles.map((profile) => (
+            {onlineProfiles.map((profile: ProfileHubDTO) => (
               <ProfileItem key={profile.profileId} profile={profile} />
             ))}
           </div>

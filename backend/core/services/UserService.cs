@@ -2,22 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace core
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
+            _logger = logger;
         }
 
         public async Task<User> Create(UserCreateDTO userCreateDto)
         {
             try
             {
+                _logger.LogInformation("Inne i create på userservice");
                 bool isMailRegistered = await _userRepository.UserEmailIsRegistered(
                     userCreateDto.Email
                 );
@@ -43,9 +47,10 @@ namespace core
 
                 return createdUser;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new Exception();
+                _logger.LogError(e, "An error");
+                throw new Exception(e.Message);
             }
         }
 

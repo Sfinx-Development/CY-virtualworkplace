@@ -16,10 +16,12 @@ namespace Controllers
     public class LogInController : ControllerBase
     {
         private readonly ILoginService _logInService;
+        private readonly ILogger<LogInController> _logger;
 
-        public LogInController(ILoginService logInService)
+        public LogInController(ILoginService logInService, ILogger<LogInController> logger)
         {
             _logInService = logInService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -29,6 +31,10 @@ namespace Controllers
         {
             try
             {
+                _logger.LogInformation("LOGGA IN---------");
+                _logger.LogInformation(
+                    $"E-post: {logInDTONoJwt.Email}, Lösenord: {logInDTONoJwt.Password}"
+                );
                 string jwt = await _logInService.LogIn(logInDTONoJwt.Email, logInDTONoJwt.Password);
 
                 var cookieOptions = new CookieOptions
@@ -55,6 +61,7 @@ namespace Controllers
         [HttpPost("logout")]
         public IActionResult LogOutUser()
         {
+            _logger.LogInformation("LOGGA UT---------");
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,

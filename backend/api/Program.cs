@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
-// DETTA ÄR DEVELOP BRANCHEN - VI KAN ÖVA GENOM ATT ALDRIG SKICKA MED DENNA TILL MAIN
+using Serilog;
+using Serilog.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
+Log.Logger = new LoggerConfiguration().WriteTo.File("log.txt").CreateLogger();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -19,15 +22,13 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder
-                .WithOrigins("http://localhost:5173")
+                .WithOrigins("http://localhost:5173", "https://cyworkplace.netlify.app")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
         }
     );
 });
-
-builder.WebHost.UseUrls("http://0.0.0.0:5290");
 
 builder.Configuration.AddJsonFile("appsettings.json");
 
@@ -39,22 +40,11 @@ builder.Services.AddSingleton(securityKey);
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
-builder.Services.AddDbContext<CyDbContext>(
-    options =>
-        options.UseMySql(
-            "server=localhost;database=cy;user=root;password=",
-            ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
-        )
-);
+var connectionString = builder.Configuration.GetConnectionString("CyDbContext");
 
-// if (!builder.Environment.IsDevelopment())
-// {
-//     builder.Services.AddHttpsRedirection(options =>
-//     {
-//         options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
-//         options.HttpsPort = 443;
-//     });
-// }
+builder.Services.AddDbContext<CyDbContext>(
+    options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+);
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -141,6 +131,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 app.UseRouting();
+
 app.MapHub<MeetingRoomHub>("/meetingroomhub");
 app.MapHub<ChatHub>("/chathub");
 if (app.Environment.IsDevelopment())

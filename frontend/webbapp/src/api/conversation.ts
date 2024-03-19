@@ -11,7 +11,7 @@ import {
   Message,
 } from "../../types";
 
-const conversationApiUrl = `http://${window.location.hostname}:5290/conversation`;
+const conversationApiUrl = `https://cyapi.azurewebsites.net/conversation`;
 
 export const FetchGetTeamMessages = async (
   teamId: string
@@ -31,7 +31,6 @@ export const FetchGetTeamMessages = async (
     }
 
     const responseBody = await response.json();
-    console.log("REPONSE: ", responseBody);
 
     const messages = responseBody.$values as Message[];
     return messages;
@@ -59,7 +58,7 @@ export const FetchGetTeamConversation = async (
     }
 
     const responseBody = await response.json();
-    console.log("REPONSE: ", responseBody);
+
     const conversation = responseBody as Conversation;
 
     return conversation;
@@ -79,7 +78,6 @@ export const FetchGetConversationParticipant = async (
       conversationId: conversationId,
     };
 
-    console.log("DTO: ", DTO);
     const response = await fetch(
       conversationApiUrl + "/conversationparticipant",
       {
@@ -99,7 +97,6 @@ export const FetchGetConversationParticipant = async (
     }
 
     const responseBody = await response.json();
-    console.log("REPONSE: ", responseBody);
 
     const participant = responseBody as ConversationParticipant;
 

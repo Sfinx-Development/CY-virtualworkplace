@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   Card,
-  CardActionArea,
   Container,
   Popper,
   Typography,
@@ -119,7 +118,7 @@ export default function Menu() {
   };
 
   //löser inte denna typningen - ska kolla på det - elina hjälp
-  const handleMouseEnter = (event) => {
+  const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
     setProfileDropdown(true);
   };
@@ -243,12 +242,14 @@ export default function Menu() {
         </div>
 
         <Card sx={{ backgroundColor: "transparent", padding: 1 }}>
-          <CardActionArea
+          <Box
+            component="div"
+            sx={{ backgroundColor: "transparent", padding: 1 }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
             <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
-          </CardActionArea>
+          </Box>
 
           {profileDropdown && (
             <Popper
