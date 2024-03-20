@@ -1,6 +1,6 @@
 import { Message, MessageOutgoing } from "../../types";
 
-const messageApiUrl = `http://${window.location.hostname}:5290/message`;
+const messageApiUrl = "https://cyapi.azurewebsites.net/message";
 
 export const FetchDeleteMessage = async (
   messageId: string
@@ -14,7 +14,6 @@ export const FetchDeleteMessage = async (
       },
       body: JSON.stringify(messageId),
     });
-    console.log("RESPONSE: ", response);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid radering av meddelande");
@@ -40,14 +39,13 @@ export const FetchCreateMessage = async (
       body: JSON.stringify(message),
     });
     const responseBody = await response.json();
-    console.log("RESPONSE från create message: ", responseBody);
 
     if (!response.ok) {
       throw new Error("Något gick fel vid skapande av meddelande");
     }
 
     const data = responseBody as Message;
-    console.log("DATA: ", data);
+
     return data;
   } catch (error) {
     console.error(error);
