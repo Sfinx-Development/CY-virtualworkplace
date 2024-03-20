@@ -1,4 +1,3 @@
-import { keyframes } from "@emotion/react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
@@ -11,6 +10,7 @@ import {
   Link,
   TextField,
   Typography,
+  keyframes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
 import { logInUserAsync, logOutUserAsync } from "../../slices/userSlice";
-
+//roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
   const logInError = useAppSelector((state) => state.userSlice.logInError);
   const user = useAppSelector((state) => state.userSlice.user);
@@ -31,7 +31,6 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
-
   const [showCookieConsent, setShowCookieConsent] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -40,6 +39,10 @@ export default function SignIn() {
   ) => {
     event.preventDefault();
   };
+  // useEffect(() => {
+  //   console.log("LOGGAR UT");
+  //   dispatch(logOutUserAsync());
+  // }, []);
 
   useEffect(() => {
     const hasConsented = localStorage.getItem("cookieConsent");
@@ -54,13 +57,11 @@ export default function SignIn() {
   };
 
   useEffect(() => {
-    console.log("LOGGAR UT");
     dispatch(logOutUserAsync());
   }, []);
 
   const handleSignIn = async () => {
     try {
-      console.log("LOGGAR IN");
       await dispatch(
         logInUserAsync({
           email: email,
@@ -76,7 +77,6 @@ export default function SignIn() {
 
   useEffect(() => {
     if (user && !logInError && teams && signedIn) {
-      console.log("HÄR INNE");
       navigate("/chooseteam");
     }
   }, [user, teams, signedIn]);
@@ -97,7 +97,7 @@ export default function SignIn() {
   return (
     <div
       style={{
-        padding: isMobile ? "0" : "20px",
+        padding: isMobile ? 0 : "20px",
         height: "100vh",
         width: "100%",
         background: "linear-gradient(45deg, #333333, #666666)",
@@ -203,4 +203,3 @@ export default function SignIn() {
     </div>
   );
 }
-
