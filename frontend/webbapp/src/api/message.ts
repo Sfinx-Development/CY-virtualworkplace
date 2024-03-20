@@ -1,6 +1,7 @@
 import { Message, MessageOutgoing } from "../../types";
+import { getApiUrl } from "./config";
 
-const messageApiUrl = "https://cyapi.azurewebsites.net/message";
+const messageApiUrl = getApiUrl() + "/message";
 
 export const FetchDeleteMessage = async (
   messageId: string

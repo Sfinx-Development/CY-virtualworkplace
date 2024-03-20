@@ -31,7 +31,9 @@ public class CyDbContext : DbContext
     {
         var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-        var connectionString = configuration.GetConnectionString("CyDbContext");
+        var connectionString = configuration.GetConnectionString(
+            configuration["Environment"] == "Development" ? "CyDbContextDev" : "CyDbContextProd"
+        );
 
         options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
     }
