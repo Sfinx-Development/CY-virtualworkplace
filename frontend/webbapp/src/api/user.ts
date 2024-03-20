@@ -1,11 +1,7 @@
 import { User } from "../../types";
+import { getApiUrl } from "./config";
 
-const apiUrl = "https://cyapi.azurewebsites.net/user";
-// if (process.env.NODE_ENV === "development") {
-//   apiUrl = `http://${window.location.hostname}:5290/user`;
-// } else {
-//   apiUrl = `https://cyapi.azurewebsites.net/user`;
-// }
+const apiUrl = getApiUrl() + "/user";
 
 export const FetchGetUseer = async (): Promise<User> => {
   try {

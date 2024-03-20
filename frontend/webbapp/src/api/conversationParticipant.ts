@@ -1,6 +1,7 @@
 import { ConversationParticipant } from "../../types";
+import { getApiUrl } from "./config";
 
-const conversationParticipantApiUrl = `https://cyapi.azurewebsites.net/conversationParticipant`;
+const conversationParticipantApiUrl = getApiUrl() + `/conversationParticipant`;
 
 export const FetchUpdateLastActive = async (
   conversationParticipant: ConversationParticipant

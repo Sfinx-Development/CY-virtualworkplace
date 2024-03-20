@@ -10,8 +10,9 @@ import {
   GetParticipantDTO,
   Message,
 } from "../../types";
+import { getApiUrl } from "./config";
 
-const conversationApiUrl = `https://cyapi.azurewebsites.net/conversation`;
+const conversationApiUrl = getApiUrl() + `/conversation`;
 
 export const FetchGetTeamMessages = async (
   teamId: string

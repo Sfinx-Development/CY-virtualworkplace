@@ -1,6 +1,7 @@
 import { Profile, ProfileHubDTO } from "../../types";
+import { getApiUrl } from "./config";
 
-const apiUrl = "https://cyapi.azurewebsites.net/profile";
+const apiUrl = getApiUrl() + "/profile";
 
 export const FetchGetTeamProfiles = async (
   teamId: string
