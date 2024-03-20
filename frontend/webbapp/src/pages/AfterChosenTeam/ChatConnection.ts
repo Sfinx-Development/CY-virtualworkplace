@@ -1,8 +1,9 @@
 import * as signalR from "@microsoft/signalr";
 import { Message } from "../../../types";
+import { getApiUrl } from "../../api/config";
 
-// Define your hub URL
-const hubUrl = `https://cyapi.azurewebsites.net/chathub`;
+// ÄNDRA HÄR BEROENDE PÅ MILJÖ
+const hubUrl = getApiUrl() + `/chathub`;
 
 class ChatConnector {
   private connection: signalR.HubConnection;

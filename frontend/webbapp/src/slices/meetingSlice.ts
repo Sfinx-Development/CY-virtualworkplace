@@ -288,9 +288,7 @@ const meetingSlice = createSlice({
               (o) => o.meetingId === action.payload.id
             );
             if (occasionIndex !== -1) {
-              state.occasions[occasionIndex].date = new Date(
-                action.payload.date
-              );
+              state.occasions[occasionIndex].date = action.payload.date;
               state.occasions[occasionIndex].name = action.payload.name;
               state.occasions[occasionIndex].description =
                 action.payload.description;
