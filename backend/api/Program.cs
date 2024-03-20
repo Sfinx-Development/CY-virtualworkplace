@@ -1,13 +1,9 @@
-using System.Net;
 using core;
 using Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Serilog.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSignalR();
@@ -40,11 +36,14 @@ builder.Services.AddSingleton(securityKey);
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
-var connectionString = builder.Configuration.GetConnectionString("CyDbContext");
-
-builder.Services.AddDbContext<CyDbContext>(
-    options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+var connectionString = builder.Configuration.GetConnectionString(
+    builder.Environment.IsDevelopment() ? "CyDbContextDev" : "CyDbContextProd"
 );
+
+builder.Services.AddDbContext<CyDbContext>(options =>
+{
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
