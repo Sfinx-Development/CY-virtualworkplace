@@ -1,4 +1,6 @@
-const apiUrl = `https://cyapi.azurewebsites.net/auth`;
+import { getApiUrl } from "./config";
+
+const apiUrl = getApiUrl() + `/auth`;
 //en kommentar för att pusha
 export const FetchForgotPassword = async (email: string): Promise<boolean> => {
   try {

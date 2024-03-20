@@ -10,11 +10,23 @@ using Serilog;
 using Serilog.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var env = builder.Environment;
 builder.Services.AddSignalR();
-Log.Logger = new LoggerConfiguration().WriteTo.File("log.txt").CreateLogger();
 
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog();
+if (!env.IsDevelopment())
+{
+    Log.Logger = new LoggerConfiguration().WriteTo.File("log.txt").CreateLogger();
+    builder.Logging.ClearProviders();
+    builder.Logging.AddSerilog();
+}
+
+builder.Configuration.AddJsonFile("appsettings.json");
+
+var allowedOrigins = builder
+    .Configuration.GetSection("AllowedOrigins")
+    .GetSection(env.EnvironmentName)
+    .Get<string[]>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -22,7 +34,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder
-                .WithOrigins("http://localhost:5173", "https://cyworkplace.netlify.app")
+                .WithOrigins(allowedOrigins)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -30,7 +42,10 @@ builder.Services.AddCors(options =>
     );
 });
 
-builder.Configuration.AddJsonFile("appsettings.json");
+if (env.IsDevelopment())
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5290");
+}
 
 var jwtConfig = builder.Configuration.GetSection("Jwt");
 var securityKeyBytes = Convert.FromBase64String(jwtConfig["Secret"]);
@@ -40,11 +55,14 @@ builder.Services.AddSingleton(securityKey);
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
-var connectionString = builder.Configuration.GetConnectionString("CyDbContext");
-
-builder.Services.AddDbContext<CyDbContext>(
-    options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+var connectionString = builder.Configuration.GetConnectionString(
+    builder.Environment.IsDevelopment() ? "CyDbContextDev" : "CyDbContextProd"
 );
+
+builder.Services.AddDbContext<CyDbContext>(options =>
+{
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
