@@ -1,16 +1,32 @@
+using System.Net;
 using core;
 using Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Serilog.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var env = builder.Environment;
 builder.Services.AddSignalR();
-Log.Logger = new LoggerConfiguration().WriteTo.File("log.txt").CreateLogger();
 
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog();
+if (!env.IsDevelopment())
+{
+    Log.Logger = new LoggerConfiguration().WriteTo.File("log.txt").CreateLogger();
+    builder.Logging.ClearProviders();
+    builder.Logging.AddSerilog();
+}
+
+builder.Configuration.AddJsonFile("appsettings.json");
+
+var allowedOrigins = builder
+    .Configuration.GetSection("AllowedOrigins")
+    .GetSection(env.EnvironmentName)
+    .Get<string[]>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -18,7 +34,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder
-                .WithOrigins("http://localhost:5173", "https://cyworkplace.netlify.app")
+                .WithOrigins(allowedOrigins)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -26,7 +42,10 @@ builder.Services.AddCors(options =>
     );
 });
 
-builder.Configuration.AddJsonFile("appsettings.json");
+if (env.IsDevelopment())
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5290");
+}
 
 var jwtConfig = builder.Configuration.GetSection("Jwt");
 var securityKeyBytes = Convert.FromBase64String(jwtConfig["Secret"]);
