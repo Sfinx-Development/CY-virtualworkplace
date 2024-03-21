@@ -2,6 +2,7 @@ import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HealthCheck } from "../../../types";
+import { CreateHealthCheckAsync } from "../../slices/healthcheck";
 import { Getmyactiveroom } from "../../slices/meetingSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
@@ -45,12 +46,12 @@ export default function CreateHealthCheck() {
         teamId: activeTeam?.id,
       };
 
-      //   await dispatch(createTeamMeetingAsync(meetingDto));
+      await dispatch(CreateHealthCheckAsync(healthcheck));
 
       setEndDate("");
       setStartDate("");
       setQuestion("");
-      navigate("/meetingroom");
+      //   navigate("/meetingroom");
     } else {
       setFieldError(true);
     }
@@ -113,7 +114,7 @@ export default function CreateHealthCheck() {
         <TextField
           label="Slutdatum"
           type="datetime-local"
-          value={startDate}
+          value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           variant="outlined"
           sx={{
