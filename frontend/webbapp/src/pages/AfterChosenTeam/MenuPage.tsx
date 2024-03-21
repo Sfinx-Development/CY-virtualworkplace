@@ -241,7 +241,13 @@ export default function Menu() {
           />
         </div>
 
-        <Card sx={{ backgroundColor: "transparent", padding: 1 }}>
+        <Card
+          sx={{
+            backgroundColor: "transparent",
+            padding: 1,
+            maxHeight: "80px",
+          }}
+        >
           <Box
             component="div"
             sx={{ backgroundColor: "transparent", padding: 1 }}

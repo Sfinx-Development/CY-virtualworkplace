@@ -72,9 +72,10 @@ export interface Office extends Room {
 
 export interface HealthCheck {
   id: string;
-  healthCheckTime: Date;
-  cyId: string;
-  healthAverageStat: number;
+  teamId: string;
+  question: string;
+  startTime: Date;
+  endTime: Date;
 }
 
 export interface Meeting {

@@ -1,8 +1,8 @@
 // Navigation.tsx
 
 import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
-import { useEffect } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
@@ -23,18 +23,27 @@ import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
+import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
 
 const Navigation = () => {
+  const [userLoaded, setUserLoaded] = useState(false);
   const user = useAppSelector((state) => state.userSlice.user);
 
   const dispatch = useAppDispatch();
-  // const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(getUserAsync());
+    dispatch(getUserAsync()).then(() => {
+      setUserLoaded(true);
+    });
   }, []);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userLoaded && !user) {
+      navigate("/signin", { replace: true });
+    }
+  }, [userLoaded, user]);
 
   const agoraClient = useRTCClient(
     AgoraRTC.createClient({ codec: "vp8", mode: "rtc" })
@@ -45,10 +54,10 @@ const Navigation = () => {
   };
   return (
     <Routes>
-      <Route
+      {/* <Route
         path="*"
         element={user ? null : <Navigate to="/signin" replace />}
-      />
+      /> */}
       {user ? (
         <Route element={<RootLayout />}>
           <Route path="chooseteam" element={<ChooseTeam />} />
@@ -61,6 +70,7 @@ const Navigation = () => {
             element={<MeetingRoom connectToVideo={handleConnect} />}
           />
           <Route path="office" element={<Office />} />
+          <Route path="healthcheck" element={<CreateHealthCheck />} />
           <Route path="chatroom" element={<ChatRoom />} />
           <Route path="createmeeting" element={<CreateMeeting />} />
           <Route path="invitetomeeting" element={<InviteToMeeting />} />
