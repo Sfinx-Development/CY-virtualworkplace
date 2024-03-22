@@ -1,7 +1,8 @@
-import { HealthCheck } from "../../types";
+import { HealthCheck, ProfileHealthCheck } from "../../types";
 import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + `/healthcheck`;
+const profileHealthCheckUrl = getApiUrl() + `/profileHealthCheck`;
 
 export const FetchCreateHealthCheck = async (
   healthcheck: HealthCheck
@@ -56,41 +57,28 @@ export const FetchGetTeamHealthChecks = async (
   }
 };
 
-// export const FetchGetConversationParticipant = async (
-//   conversationId: string,
-//   profileId: string
-// ): Promise<ConversationParticipant> => {
-//   try {
-//     const DTO: GetParticipantDTO = {
-//       profileId: profileId,
-//       conversationId: conversationId,
-//     };
+export const FetchCreateProfileHealthCheck = async (
+  profileHealthcheck: ProfileHealthCheck
+): Promise<ProfileHealthCheck> => {
+  try {
+    const response = await fetch(profileHealthCheckUrl + "/create", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileHealthcheck),
+    });
 
-//     const response = await fetch(
-//       conversationApiUrl + "/conversationparticipant",
-//       {
-//         method: "POST",
-//         credentials: "include",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(DTO),
-//       }
-//     );
+    if (!response.ok) {
+      throw new Error("Något gick fel vid skapandet av profile health check");
+    }
 
-//     if (!response.ok) {
-//       throw new Error(
-//         "Något gick fel vid hämtning av deltagare i konversationen"
-//       );
-//     }
+    const responseBody = (await response.json()) as ProfileHealthCheck;
 
-//     const responseBody = await response.json();
-
-//     const participant = responseBody as ConversationParticipant;
-
-//     return participant;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
+    return responseBody;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

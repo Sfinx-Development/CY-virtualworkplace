@@ -78,6 +78,15 @@ export interface HealthCheck {
   endTime: Date;
 }
 
+export interface ProfileHealthCheck {
+  id: string;
+  date: Date;
+  rating: number;
+  isAnonymous: boolean;
+  profileId: string;
+  healthcheckId: string;
+}
+
 export interface Meeting {
   id: string;
   name: string;

@@ -1,19 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { HealthCheck } from "../../types";
+import { HealthCheck, ProfileHealthCheck } from "../../types";
 import {
   FetchCreateHealthCheck,
+  FetchCreateProfileHealthCheck,
   FetchGetTeamHealthChecks,
 } from "../api/healthcheck";
 
 export interface HealthCheckState {
   healthchecks: HealthCheck[] | undefined;
   activeHealthCheck: HealthCheck | undefined;
+  profileHealthChecks: ProfileHealthCheck[] | undefined;
+  activeProfileHealthCheck: ProfileHealthCheck | undefined;
   error: string | null;
 }
 
 export const initialState: HealthCheckState = {
   healthchecks: undefined,
   activeHealthCheck: undefined,
+  profileHealthChecks: undefined,
+  activeProfileHealthCheck: undefined,
   error: null,
 };
 
@@ -59,6 +64,32 @@ export const GetTeamHealthChecksAsync = createAsyncThunk<
   }
 });
 
+export const CreateProfileHealthCheckAsync = createAsyncThunk<
+  ProfileHealthCheck,
+  ProfileHealthCheck,
+  { rejectValue: string }
+>(
+  "healthcheck/createprofilehealthcheck",
+  async (profileHealthCheck, thunkAPI) => {
+    try {
+      const createdProfileHealthCheck = await FetchCreateProfileHealthCheck(
+        profileHealthCheck
+      );
+      if (createdProfileHealthCheck) {
+        return createdProfileHealthCheck;
+      } else {
+        return thunkAPI.rejectWithValue(
+          "Ett fel inträffade vid skapande av profile healthcheck."
+        );
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid skapande av profile healthcheck."
+      );
+    }
+  }
+);
+
 const healthcheckSlice = createSlice({
   name: "healthcheck",
   initialState,
@@ -85,6 +116,16 @@ const healthcheckSlice = createSlice({
         state.healthchecks = undefined;
         state.error = "Något gick fel.";
       });
+    //   .addCase(CreateProfileHealthCheckAsync.fulfilled, (state, action) => {
+    //     if (action.payload) {
+    //       state.profileHealthChecks?.push(action.payload);
+    //       state.error = null;
+    //     }
+    //   })
+    //   .addCase(CreateProfileHealthCheckAsync.rejected, (state) => {
+    //     state.profileHealthChecks = undefined;
+    //     state.error = "Något gick fel.";
+    //   })
   },
 });
 

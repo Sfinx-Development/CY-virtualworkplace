@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { HealthCheck } from "../../../types";
+import { RadioGroupRating } from "../../components/StyledRating";
 import { GetTeamHealthChecksAsync } from "../../slices/healthcheck";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
@@ -26,6 +27,8 @@ export default function Office() {
     (state) => state.healthcheckSlice.healthchecks
   );
   const [activeHealthChecks, setActiveHealthChecks] = useState<HealthCheck[]>();
+  const [ratingShow, setRatingShow] = useState(false);
+  const [healthCheckId, setHealthcheckId] = useState("");
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -59,8 +62,6 @@ export default function Office() {
   const backgroundImageUrl = "https://i.imgur.com/uWBWv0m.jpeg";
   const officeColor = theme1.palette.office.main;
 
-  const handleHealthCheckClick = () => {};
-
   return (
     <Container
       sx={{
@@ -75,7 +76,7 @@ export default function Office() {
         <Typography> {activeProfile?.fullName}'s kontor</Typography>
         {activeHealthChecks && activeHealthChecks.length > 0 ? (
           <Box mt={0.5}>
-            {activeHealthChecks.length > 0 ? (
+            {activeHealthChecks.length > 1 ? (
               <Typography>
                 Du har fått {activeHealthChecks.length} frågor
               </Typography>
@@ -94,13 +95,21 @@ export default function Office() {
                         check.endTime
                       ).toLocaleString()}`}
                     />
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleHealthCheckClick()}
-                    >
-                      Svara
-                    </Button>
+
+                    {ratingShow && healthCheckId == check.id ? (
+                      <RadioGroupRating onClick={() => setRatingShow(false)} />
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          setRatingShow(true);
+                          setHealthcheckId(check.id);
+                        }}
+                      >
+                        Svara
+                      </Button>
+                    )}
                   </ListItem>
                 ))}
             </List>
