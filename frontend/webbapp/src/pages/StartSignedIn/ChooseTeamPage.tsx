@@ -6,8 +6,8 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  Container,
   Typography,
+  keyframes,
 } from "@mui/material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -33,10 +33,21 @@ export default function ChooseTeam() {
     dispatch(GetMyTeamsAsync());
   }, []);
 
+  //göra dessa globala också sen - global stil?
+  const gradientAnimation = keyframes`
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  `;
+
   return (
-    <Container
-      sx={{
-        padding: "20px",
+    <div
+      style={{
+        padding: isMobile ? 0 : "20px",
+        height: "100vh",
+        width: "100%",
+        background: "linear-gradient(45deg, #333333, #666666)",
+        animation: `${gradientAnimation} 10s ease infinite`,
       }}
     >
       <div
@@ -97,8 +108,8 @@ export default function ChooseTeam() {
               key={team.id}
               sx={{
                 display: "flex",
-                minWidth: isMobile ? "200px" : "250px",
-                backgroundColor: theme1.palette.primary.main,
+                minWidth: isMobile ? "200px" : "300px",
+                backgroundColor: "#CDCDCB",
               }}
             >
               <CardActionArea
@@ -110,8 +121,11 @@ export default function ChooseTeam() {
                   <CardContent sx={{ flex: "1 0 auto" }}>
                     <Typography
                       component="div"
-                      variant="h5"
-                      sx={{ textAlign: "center", color: "white" }}
+                      variant="h6"
+                      sx={{
+                        textAlign: "center",
+                        color: "black",
+                      }}
                     >
                       {team.name}{" "}
                     </Typography>
@@ -121,6 +135,6 @@ export default function ChooseTeam() {
             </Card>
           ))}
       </div>
-    </Container>
+    </div>
   );
 }
