@@ -84,7 +84,7 @@ export interface ProfileHealthCheck {
   rating: number;
   isAnonymous: boolean;
   profileId: string;
-  healthcheckId: string;
+  healthCheckId: string;
 }
 
 export interface Meeting {

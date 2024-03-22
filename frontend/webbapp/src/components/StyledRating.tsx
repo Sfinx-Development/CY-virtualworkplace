@@ -47,15 +47,15 @@ function IconContainer(props: IconContainerProps) {
 }
 
 interface RadioGroupRatingProps {
-  onClick?: () => void; 
+  onChange?: (value: number | null) => void;
 }
 
 export const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({
-  onClick,
+  onChange,
 }) => {
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    if (onClick) {
-      onClick();
+  const handleChange = (event: React.ChangeEvent<{}>, value: number | null) => {
+    if (onChange) {
+      onChange(value);
     }
   };
 
@@ -66,7 +66,7 @@ export const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({
       IconContainerComponent={IconContainer}
       getLabelText={(value: number) => customIcons[value].label}
       highlightSelectedOnly
-      onClick={handleClick}
+      onChange={handleChange}
     />
   );
 };

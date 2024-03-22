@@ -6,6 +6,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
+import HealthCheckHub from "./pages/AfterChosenTeam/HealthCheckHub";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
 import { LiveVideo } from "./pages/AfterChosenTeam/LiveForm";
 import MeetingInTeamsPage from "./pages/AfterChosenTeam/MeetingInTeam";
@@ -70,7 +71,8 @@ const Navigation = () => {
             element={<MeetingRoom connectToVideo={handleConnect} />}
           />
           <Route path="office" element={<Office />} />
-          <Route path="healthcheck" element={<CreateHealthCheck />} />
+          <Route path="healthcheck" element={<HealthCheckHub />} />
+          <Route path="createhealthcheck" element={<CreateHealthCheck />} />
           <Route path="chatroom" element={<ChatRoom />} />
           <Route path="createmeeting" element={<CreateMeeting />} />
           <Route path="invitetomeeting" element={<InviteToMeeting />} />
