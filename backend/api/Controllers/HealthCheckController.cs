@@ -122,7 +122,7 @@ namespace Controllers
         //hämta alla by teamet på profilid samt som gäller för nutiden
         [HttpPost("byteam")]
         [Authorize]
-        public async Task<ActionResult<List<HealthCheck>>> Get([FromBody] string profileId)
+        public async Task<ActionResult<List<HealthCheckDTO>>> Get([FromBody] string profileId)
         {
             try
             {
@@ -141,7 +141,15 @@ namespace Controllers
 
                 var healthChecks = await _healthCheckService.GetByTeam(profileId, loggedInUser);
 
-                return Ok(healthChecks);
+                var healthCheckDTOs = new List<HealthCheckDTO>();
+
+                healthCheckDTOs = healthChecks
+                    .Select(
+                        h => new HealthCheckDTO(h.Id, h.TeamId, h.Question, h.StartTime, h.EndTime)
+                    )
+                    .ToList();
+
+                return Ok(healthCheckDTOs);
             }
             catch (Exception e)
             {

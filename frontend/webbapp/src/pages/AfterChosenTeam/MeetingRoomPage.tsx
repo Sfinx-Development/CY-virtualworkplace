@@ -1,4 +1,5 @@
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import {
   Box,
   Card,
@@ -9,8 +10,8 @@ import {
 } from "@mui/material";
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MeetingOccasion, ProfileHubDTO } from "../../../types";
 import { isMobile } from "../../../globalConstants";
+import { MeetingOccasion, ProfileHubDTO } from "../../../types";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -28,6 +29,8 @@ import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 import Connector from "./OnlineConnection";
+import AddIcon from "@mui/icons-material/Add";
+import EventNoteIcon from "@mui/icons-material/EventNote";
 
 interface ConnectFormProps {
   connectToVideo: () => void;
@@ -135,20 +138,43 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         backgroundImage: `url(${backgroundImageUrl})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "100vh",
+        minHeight: "100vh",
       }}
     >
-      <Card sx={{ padding: 2, backgroundColor: meetingRoomColor }}>
+      <Card
+        sx={{
+          padding: 2,
+          backgroundColor: meetingRoomColor,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {" "}
         <Typography> {activeTeam?.name}'s mötesrum</Typography>
-        {onlineProfiles && onlineProfiles.length > 0 ? (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {onlineProfiles.map((profile: ProfileHubDTO) => (
-              <ProfileItem key={profile.profileId} profile={profile} />
-            ))}
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Box>
+            {onlineProfiles && onlineProfiles.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {onlineProfiles.map((profile: ProfileHubDTO) => (
+                  <ProfileItem key={profile.profileId} profile={profile} />
+                ))}
+              </div>
+            ) : (
+              <Typography>Inga profiler online</Typography>
+            )}
+          </Box>
+
+          <div
+            onClick={() => {
+              navigate("/healthcheck");
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <Box>
+              <MonitorHeartIcon sx={{ fontSize: 40 }} />
+            </Box>
           </div>
-        ) : (
-          <Typography>Inga profiler online</Typography>
-        )}
+        </div>
       </Card>
       {ongoingMeeting ? (
         <Card
@@ -190,7 +216,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Card
           sx={{
             display: "flex",
-            minWidth: isMobile ? "150px" : "250px",
+            minWidth: isMobile ? "170px" : "200px",
             backgroundColor: meetingRoomColor,
           }}
         >
@@ -200,7 +226,21 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             }}
           >
             <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent sx={{ flex: "1 0 auto" }}>
+              <CardContent
+                sx={{
+                  flex: "1 0 auto",
+                  flexDirection: "row",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <AddIcon
+                  sx={{
+                    textAlign: "center",
+                    fontSize: isMobile ? "10" : "22",
+                    marginRight: 0.5,
+                  }}
+                />
                 <Typography
                   component="div"
                   sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
@@ -215,7 +255,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Card
           sx={{
             display: "flex",
-            minWidth: isMobile ? "150px" : "250px",
+            minWidth: isMobile ? "170px" : "200px",
             backgroundColor: meetingRoomColor,
           }}
         >
@@ -225,7 +265,21 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             }}
           >
             <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent sx={{ flex: "1 0 auto" }}>
+              <CardContent
+                sx={{
+                  flex: "1 0 auto",
+                  flexDirection: "row",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <EventNoteIcon
+                  sx={{
+                    textAlign: "center",
+                    fontSize: isMobile ? "10" : "22",
+                    marginRight: 0.5,
+                  }}
+                />
                 <Typography
                   component="div"
                   sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
@@ -240,7 +294,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Card
           sx={{
             display: "flex",
-            minWidth: isMobile ? "150px" : "250px",
+            minWidth: isMobile ? "170px" : "200px",
             backgroundColor: leaveColor,
           }}
         >

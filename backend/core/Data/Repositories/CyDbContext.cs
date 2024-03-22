@@ -29,13 +29,16 @@ public class CyDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+        if (!options.IsConfigured)
+        {
+            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-        var connectionString = configuration.GetConnectionString(
-            configuration["Environment"] == "Development" ? "CyDbContextDev" : "CyDbContextProd"
-        );
+            var connectionString = configuration.GetConnectionString(
+                configuration["Environment"] == "Development" ? "CyDbContextDev" : "CyDbContextProd"
+            );
 
-        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

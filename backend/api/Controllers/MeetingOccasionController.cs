@@ -69,9 +69,7 @@ namespace Controllers
                                 )
                         )
                         .ToList();
-                    Console.WriteLine(
-                        "OCCASIONSSSSSSSSSSSSS:" + outgoingOccasionDtos.Count.ToString()
-                    );
+
                     return Ok(outgoingOccasionDtos);
                 }
                 else

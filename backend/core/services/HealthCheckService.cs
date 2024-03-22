@@ -36,10 +36,6 @@ public class HealthCheckService : IHealthCheckService
                 healthCheck.TeamId
             );
 
-            if (!profile.IsOwner)
-            {
-                throw new Exception("Only owner of team can update healthcheck");
-            }
             var now = DateTime.UtcNow;
             if (healthCheck.StartTime < now)
             {
@@ -50,8 +46,8 @@ public class HealthCheckService : IHealthCheckService
                     Utils.GenerateRandomId(),
                     healthCheck.TeamId,
                     healthCheck.Question,
-                    healthCheck.StartTime,
-                    healthCheck.EndTime
+                    healthCheck.StartTime.AddHours(1),
+                    healthCheck.EndTime.AddHours(1)
                 );
 
             HealthCheck createdHealthCheck = await _healthCheckRepository.CreateAsync(
@@ -60,9 +56,9 @@ public class HealthCheckService : IHealthCheckService
 
             return createdHealthCheck;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
 
