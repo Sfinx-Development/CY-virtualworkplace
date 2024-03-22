@@ -7,7 +7,6 @@ import {
   CardActionArea,
   CardContent,
   Typography,
-  keyframes,
 } from "@mui/material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,21 +31,13 @@ export default function ChooseTeam() {
     dispatch(GetMyTeamsAsync());
   }, []);
 
-  //göra dessa globala också sen - global stil?
-  const gradientAnimation = keyframes`
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  `;
-
   return (
     <div
       style={{
         padding: isMobile ? 0 : "20px",
         height: "100vh",
         width: "100%",
-        background: "linear-gradient(45deg, #333333, #666666)",
-        animation: `${gradientAnimation} 10s ease infinite`,
+        background: "white",
       }}
     >
       <div

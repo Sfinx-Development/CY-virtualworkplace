@@ -9,9 +9,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { HealthCheck } from "../../../types";
+import { HealthCheck, ProfileHealthCheck } from "../../../types";
 import { RadioGroupRating } from "../../components/StyledRating";
-import { GetTeamHealthChecksAsync } from "../../slices/healthcheck";
+import {
+  CreateProfileHealthCheckAsync,
+  GetProfileHealthChecksByProfileAsync,
+  GetTeamHealthChecksAsync,
+} from "../../slices/healthcheck";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -25,6 +29,9 @@ export default function Office() {
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const healthchecks = useAppSelector(
     (state) => state.healthcheckSlice.healthchecks
+  );
+  const profilehealthchecks = useAppSelector(
+    (state) => state.healthcheckSlice.profileHealthChecks
   );
   const [activeHealthChecks, setActiveHealthChecks] = useState<HealthCheck[]>();
   const [ratingShow, setRatingShow] = useState(false);
@@ -43,24 +50,46 @@ export default function Office() {
   useEffect(() => {
     if (activeProfile) {
       dispatch(GetTeamHealthChecksAsync(activeProfile.id));
+      dispatch(GetProfileHealthChecksByProfileAsync(activeProfile.id));
     }
   }, [activeProfile]);
 
   useEffect(() => {
-    if (healthchecks) {
+    if (healthchecks && profilehealthchecks) {
+      console.log("PROFILE HS: ", profilehealthchecks);
       const activeHS = healthchecks.filter(
         (c) =>
           new Date(c.endTime) > new Date() && new Date(c.startTime) < new Date()
       );
-      if (activeHS) {
-        setActiveHealthChecks(activeHS);
-        console.log("AKTIVA: ", activeHealthChecks);
-      }
+
+      const filteredActiveHS = activeHS.filter((check) => {
+        return !profilehealthchecks.some(
+          (profileCheck) => profileCheck.healthCheckId === check.id
+        );
+      });
+
+      setActiveHealthChecks(filteredActiveHS);
+      console.log("AKTIVA: ", filteredActiveHS);
     }
-  }, [healthchecks]);
+  }, [healthchecks, profilehealthchecks, ratingShow]);
 
   const backgroundImageUrl = "https://i.imgur.com/uWBWv0m.jpeg";
   const officeColor = theme1.palette.office.main;
+
+  const handleRating = (healthCheckId: string, rating: number | null) => {
+    if (activeProfile && rating !== null) {
+      const profileHealthcheck: ProfileHealthCheck = {
+        id: "undefined",
+        date: new Date(),
+        rating: rating,
+        isAnonymous: true,
+        profileId: activeProfile?.id,
+        healthCheckId: healthCheckId,
+      };
+      dispatch(CreateProfileHealthCheckAsync(profileHealthcheck));
+    }
+    setRatingShow(false);
+  };
 
   return (
     <Container
@@ -97,7 +126,9 @@ export default function Office() {
                     />
 
                     {ratingShow && healthCheckId == check.id ? (
-                      <RadioGroupRating onClick={() => setRatingShow(false)} />
+                      <RadioGroupRating
+                        onChange={(value) => handleRating(check.id, value)}
+                      />
                     ) : (
                       <Button
                         variant="contained"

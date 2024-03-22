@@ -49,7 +49,7 @@ public class ProfileHealthCheckService : IProfileHealthCheckService
             ProfileHealthCheck profileHealthCheck =
                 new(
                     Utils.GenerateRandomId(),
-                    incomingHealthCheck.Date,
+                    incomingHealthCheck.Date.AddHours(1),
                     incomingHealthCheck.Rating,
                     incomingHealthCheck.IsAnonymous,
                     incomingHealthCheck.ProfileId,
@@ -132,6 +132,46 @@ public class ProfileHealthCheckService : IProfileHealthCheckService
         }
     }
 
+
+    public async Task<IEnumerable<ProfileHealthCheckDTO>> GetAllByProfileId(
+        string profileId,
+        User loggedInUser
+    )
+    {
+        try
+        {
+            // var healthCheck = await _healthCheckRepository.GetByIdAsync(healthCheckId);
+            // var teams = await _teamRepository.GetByUserIdAsync(loggedInUser.Id);
+            // if (!teams.Any(t => t.Id == healthCheck.TeamId))
+            // {
+            //     throw new Exception("You can only get results from your own team.");
+            // }
+            var profileHealthChecks = await _profileHealthCheckRepository.GetAllByProfileId(
+                profileId
+            );
+            var profileHealthCheckDTOs = profileHealthChecks.Select(
+                h =>
+                    new ProfileHealthCheckDTO()
+                    {
+                        Id = h.Id,
+                        Date = h.Date,
+                        Rating = h.Rating,
+                        IsAnonymous = h.IsAnonymous,
+                        ProfileId = h.ProfileId,
+                        HealthCheckId = h.HealthCheckId
+                    }
+            );
+            if (profileHealthCheckDTOs == null || profileHealthCheckDTOs.Count() < 1)
+            {
+                profileHealthCheckDTOs = new List<ProfileHealthCheckDTO>();
+            }
+            return profileHealthCheckDTOs;
+        }
+        catch (System.Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
     public async Task<ProfileHealthCheckDTO> GetByIdAsync(string id)
     {
         try

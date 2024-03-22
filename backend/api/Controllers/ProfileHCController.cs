@@ -157,5 +157,39 @@ namespace Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+        [HttpPost("byprofile")]
+        [Authorize]
+        public async Task<ActionResult<List<ProfileHealthCheckDTO>>> GetByProfile(
+            [FromBody] string profileId
+        )
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                var profileHealthChecks = await _profileHealthCheckService.GetAllByProfileId(
+                    profileId,
+                    loggedInUser
+                );
+
+                return Ok(profileHealthChecks);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
     }
 }

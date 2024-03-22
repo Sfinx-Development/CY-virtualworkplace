@@ -11,4 +11,5 @@ public interface IProfileHealthCheckRepository
     Task DeleteByIdAsync(string id);
 
     Task<IEnumerable<ProfileHealthCheck>> GetAllByHealthCheck(string healthCheckId);
+    Task<IEnumerable<ProfileHealthCheck>> GetAllByProfileId(string profileId);
 }

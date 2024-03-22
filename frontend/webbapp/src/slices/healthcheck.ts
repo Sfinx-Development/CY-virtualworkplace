@@ -3,6 +3,8 @@ import { HealthCheck, ProfileHealthCheck } from "../../types";
 import {
   FetchCreateHealthCheck,
   FetchCreateProfileHealthCheck,
+  FetchGetProfileHealthChecks,
+  FetchGetProfileHealthChecksByProfile,
   FetchGetTeamHealthChecks,
 } from "../api/healthcheck";
 
@@ -64,6 +66,55 @@ export const GetTeamHealthChecksAsync = createAsyncThunk<
   }
 });
 
+export const GetProfileHealthChecksAsync = createAsyncThunk<
+  ProfileHealthCheck[],
+  string,
+  { rejectValue: string }
+>("healthcheck/getprofilehealthchecks", async (healthcheckId, thunkAPI) => {
+  try {
+    const profileHealthChecks = await FetchGetProfileHealthChecks(
+      healthcheckId
+    );
+    if (profileHealthChecks) {
+      return profileHealthChecks;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtande av profilehealthchecks."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtande av profilehealthchecks."
+    );
+  }
+});
+
+export const GetProfileHealthChecksByProfileAsync = createAsyncThunk<
+  ProfileHealthCheck[],
+  string,
+  { rejectValue: string }
+>(
+  "healthcheck/getprofilehealthchecksbyprofile",
+  async (profileId, thunkAPI) => {
+    try {
+      const profileHealthChecks = await FetchGetProfileHealthChecksByProfile(
+        profileId
+      );
+      if (profileHealthChecks) {
+        return profileHealthChecks;
+      } else {
+        return thunkAPI.rejectWithValue(
+          "Ett fel inträffade vid hämtande av profilehealthchecks."
+        );
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtande av profilehealthchecks."
+      );
+    }
+  }
+);
+
 export const CreateProfileHealthCheckAsync = createAsyncThunk<
   ProfileHealthCheck,
   ProfileHealthCheck,
@@ -115,17 +166,39 @@ const healthcheckSlice = createSlice({
       .addCase(GetTeamHealthChecksAsync.rejected, (state) => {
         state.healthchecks = undefined;
         state.error = "Något gick fel.";
+      })
+      .addCase(GetProfileHealthChecksAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.profileHealthChecks = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetProfileHealthChecksAsync.rejected, (state) => {
+        state.profileHealthChecks = undefined;
+        state.error = "Något gick fel.";
+      })
+      .addCase(
+        GetProfileHealthChecksByProfileAsync.fulfilled,
+        (state, action) => {
+          if (action.payload) {
+            state.profileHealthChecks = action.payload;
+            state.error = null;
+          }
+        }
+      )
+      .addCase(GetProfileHealthChecksByProfileAsync.rejected, (state) => {
+        state.profileHealthChecks = undefined;
+        state.error = "Något gick fel.";
+      })
+      .addCase(CreateProfileHealthCheckAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.profileHealthChecks?.push(action.payload);
+          state.error = null;
+        }
+      })
+      .addCase(CreateProfileHealthCheckAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
       });
-    //   .addCase(CreateProfileHealthCheckAsync.fulfilled, (state, action) => {
-    //     if (action.payload) {
-    //       state.profileHealthChecks?.push(action.payload);
-    //       state.error = null;
-    //     }
-    //   })
-    //   .addCase(CreateProfileHealthCheckAsync.rejected, (state) => {
-    //     state.profileHealthChecks = undefined;
-    //     state.error = "Något gick fel.";
-    //   })
   },
 });
 

@@ -14,4 +14,6 @@ public interface IProfileHealthCheckService
         string healthCheckId,
         User loggedInUser
     );
+
+    Task<IEnumerable<ProfileHealthCheckDTO>> GetAllByProfileId(string profileId, User loggedInUser);
 }
