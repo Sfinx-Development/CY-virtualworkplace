@@ -15,13 +15,14 @@ import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
+// import { theme1 } from "../../theme";
 
 export default function ChooseTeam() {
   const user = useAppSelector((state) => state.userSlice.user);
   const myTeams = useAppSelector((state) => state.teamSlice.teams);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const primaryColor = theme1.palette.primary.main;
+  // const primaryColor = theme1.palette.primary.main;
 
   const handleNavigateToMenu = (teamId: string) => {
     dispatch(setActiveTeam(teamId));
@@ -97,7 +98,7 @@ export default function ChooseTeam() {
               sx={{
                 display: "flex",
                 minWidth: isMobile ? "200px" : "250px",
-                backgroundColor: primaryColor,
+                backgroundColor: theme1.palette.primary.main,
               }}
             >
               <CardActionArea
@@ -110,7 +111,7 @@ export default function ChooseTeam() {
                     <Typography
                       component="div"
                       variant="h5"
-                      sx={{ textAlign: "center" }}
+                      sx={{ textAlign: "center", color: "white" }}
                     >
                       {team.name}{" "}
                     </Typography>

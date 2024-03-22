@@ -5,7 +5,6 @@ import {
   Avatar,
   Box,
   Button,
-  Card,
   Container,
   Popper,
   Typography,
@@ -132,7 +131,7 @@ export default function Menu() {
   const handleMouseLeave = () => {
     setProfileDropdown(false);
   };
-  const backgroundImageUrl = "https://i.imgur.com/bpC29BQ.jpeg";
+  const backgroundImageUrl = "https://i.imgur.com/qwzB7Zi.jpeg";
 
   return (
     <Container
@@ -141,7 +140,7 @@ export default function Menu() {
         backgroundImage: `url(${backgroundImageUrl})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "100vh",
+        minHeight: "100vh",
       }}
     >
       <div
@@ -241,60 +240,60 @@ export default function Menu() {
           />
         </div>
 
-        <Card
+        {/* <Card
           sx={{
             backgroundColor: "transparent",
             padding: 1,
             maxHeight: "80px",
           }}
+        > */}
+        <Box
+          component="div"
+          sx={{ backgroundColor: "transparent", padding: 1, maxHeight: 40 }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <Box
-            component="div"
-            sx={{ backgroundColor: "transparent", padding: 1 }}
-            onMouseEnter={handleMouseEnter}
+          <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
+        </Box>
+
+        {profileDropdown && (
+          <Popper
+            open={profileDropdown}
+            anchorEl={anchorEl}
             onMouseLeave={handleMouseLeave}
           >
-            <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
-          </Box>
-
-          {profileDropdown && (
-            <Popper
-              open={profileDropdown}
-              anchorEl={anchorEl}
-              onMouseLeave={handleMouseLeave}
+            <Box
+              sx={{
+                border: 1,
+                p: 2,
+                bgcolor: "background.paper",
+                borderRadius: 2,
+                boxShadow: 2,
+                maxWidth: 300,
+              }}
             >
-              <Box
-                sx={{
-                  border: 1,
-                  p: 2,
-                  bgcolor: "background.paper",
-                  borderRadius: 2,
-                  boxShadow: 2,
-                  maxWidth: 300,
-                }}
-              >
-                {Array.isArray(profiles) &&
-                  profiles.map((profile) => (
-                    <Typography
-                      key={profile.id}
-                      sx={{
-                        marginBottom: 1,
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar
-                        src={profile.avatarUrl}
-                        sx={{ height: 25, width: 20, marginRight: 1 }}
-                      />
-                      {profile.fullName} - {profile.role}
-                    </Typography>
-                  ))}
-              </Box>
-            </Popper>
-          )}
-        </Card>
+              {Array.isArray(profiles) &&
+                profiles.map((profile) => (
+                  <Typography
+                    key={profile.id}
+                    sx={{
+                      marginBottom: 1,
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Avatar
+                      src={profile.avatarUrl}
+                      sx={{ height: 25, width: 20, marginRight: 1 }}
+                    />
+                    {profile.fullName} - {profile.role}
+                  </Typography>
+                ))}
+            </Box>
+          </Popper>
+        )}
+        {/* </Card> */}
         <div
           style={{
             flexDirection: "column",
@@ -322,9 +321,9 @@ export default function Menu() {
           textDecoration: "none",
           color: "black",
         }}
-        href="https://www.vecteezy.com/free-photos/interior"
+        href="https://www.freepik.com/"
       >
-        Interior Stock photos by Vecteezy
+        Designed by Freepik
       </a>
     </Container>
   );

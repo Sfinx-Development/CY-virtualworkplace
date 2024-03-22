@@ -1,6 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { HealthCheck } from "../../types";
-import { FetchCreateHealthCheck } from "../api/healthcheck";
+import {
+  FetchCreateHealthCheck,
+  FetchGetTeamHealthChecks,
+} from "../api/healthcheck";
 
 export interface HealthCheckState {
   healthchecks: HealthCheck[] | undefined;
@@ -35,6 +38,27 @@ export const CreateHealthCheckAsync = createAsyncThunk<
   }
 });
 
+export const GetTeamHealthChecksAsync = createAsyncThunk<
+  HealthCheck[],
+  string,
+  { rejectValue: string }
+>("healthcheck/gethealthcheck", async (profileId, thunkAPI) => {
+  try {
+    const healthchecks = await FetchGetTeamHealthChecks(profileId);
+    if (healthchecks) {
+      return healthchecks;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtande av healthchecks."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtande av healthchecks."
+    );
+  }
+});
+
 const healthcheckSlice = createSlice({
   name: "healthcheck",
   initialState,
@@ -48,6 +72,17 @@ const healthcheckSlice = createSlice({
         }
       })
       .addCase(CreateHealthCheckAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
+      })
+      .addCase(GetTeamHealthChecksAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          console.log("HÄMTAT: ", action.payload);
+          state.healthchecks = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetTeamHealthChecksAsync.rejected, (state) => {
+        state.healthchecks = undefined;
         state.error = "Något gick fel.";
       });
   },

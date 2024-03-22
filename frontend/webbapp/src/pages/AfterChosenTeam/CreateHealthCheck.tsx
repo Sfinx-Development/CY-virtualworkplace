@@ -1,6 +1,7 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { HealthCheck } from "../../../types";
 import { CreateHealthCheckAsync } from "../../slices/healthcheck";
 import { Getmyactiveroom } from "../../slices/meetingSlice";
@@ -51,7 +52,7 @@ export default function CreateHealthCheck() {
       setEndDate("");
       setStartDate("");
       setQuestion("");
-      //   navigate("/meetingroom");
+      navigate("/meetingroom");
     } else {
       setFieldError(true);
     }
@@ -69,18 +70,23 @@ export default function CreateHealthCheck() {
         {fieldError && (
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
-        <Typography variant="h4">Kolla läget</Typography>
+        <Typography variant={isMobile ? "h5" : "h4"}>Kolla läget</Typography>
         <div
           style={{
             display: "flex",
             alignItems: "center",
             flexDirection: "column",
+            justifyContent: "center",
           }}
         >
-          <Typography variant="h6">
+          <Typography
+            sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
+          >
             Ställ en fråga eller ett påstående till alla i ditt team.
           </Typography>
-          <Typography variant="h6" sx={{ textAlign: "center" }}>
+          <Typography
+            sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
+          >
             Välj en tidsperiod för när svaren ska samlas in och få sedan
             statistik på ett genomsnittligt svar.
           </Typography>

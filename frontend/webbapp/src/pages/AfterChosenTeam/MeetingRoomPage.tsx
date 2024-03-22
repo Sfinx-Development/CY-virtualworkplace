@@ -138,7 +138,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         backgroundImage: `url(${backgroundImageUrl})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "100vh",
+        minHeight: "100vh",
       }}
     >
       <Card

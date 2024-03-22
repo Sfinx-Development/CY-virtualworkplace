@@ -29,33 +29,32 @@ export const FetchCreateHealthCheck = async (
   }
 };
 
-// export const FetchGetTeamConversation = async (
-//   teamId: string
-// ): Promise<Conversation> => {
-//   try {
-//     const response = await fetch(conversationApiUrl + "/teamconversation", {
-//       method: "POST",
-//       credentials: "include",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(teamId),
-//     });
+export const FetchGetTeamHealthChecks = async (
+  profileId: string
+): Promise<HealthCheck[]> => {
+  try {
+    const response = await fetch(apiUrl + "/byteam", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileId),
+    });
 
-//     if (!response.ok) {
-//       throw new Error("Något gick fel vid hämtning av team conversation");
-//     }
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av teamets healthchecks");
+    }
 
-//     const responseBody = await response.json();
+    const responseBody = await response.json();
 
-//     const conversation = responseBody as Conversation;
-
-//     return conversation;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
+    const healthchecks = responseBody.$values as HealthCheck[];
+    return healthchecks;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 // export const FetchGetConversationParticipant = async (
 //   conversationId: string,
