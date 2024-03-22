@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, Typography } from "@mui/material";
-import CalendarTable from "../../components/CalendarTable";
+
 
 export default function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
-  const [day, setDay] = useState(new Date().getDay());
-  const [holidays, setHolidays] = useState([]);
+  const [day] = useState(new Date().getDay());
+  // const [holidays, setHolidays] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
-
-  const state = {
-    selectedDate: null,
-    year: new Date().getFullYear(),
-    month: new Date().getMonth(),
-    holidays: []
-  };
 
   useEffect(() => {
     initCalendar();
@@ -65,7 +58,7 @@ export default function CalendarPage() {
     setYear(newYear);
 
     const newHolidays = await getHolidays(newYear, newMonth + 1);
-    setHolidays(newHolidays);
+    newHolidays(newHolidays);
     updateCalendarCells(year, month);
   }
 
@@ -107,7 +100,7 @@ export default function CalendarPage() {
     const numDaysInMonth = lastDayOfMonth.getDate();
     const firstDayOfWeek = firstDayOfMonth.getDay();
   
-    const calendarRows = [[]];
+    const calendarRows: Array<Array<string | null>> = [[]];
     let currentRow = 0;
   
     // Fyller i tomma celler för dagar innan månadens första dag
@@ -134,15 +127,18 @@ export default function CalendarPage() {
   
 
 
-function updateCalendarCells(year, month) {
+function updateCalendarCells(year: number | undefined, month: number | undefined) {
   const calendarBody = document.querySelector('[data-cy="calendar-body"]');
   if (!calendarBody) return;
 
+  const currentYear = year ?? new Date().getFullYear();
+  const currentMonth = month ?? new Date().getMonth();
+
   const currentDate = new Date();
   const currentDay = currentDate.getDate();
-  const firstDayOfMonth = new Date(year, month, 1);
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
   const startingDay = firstDayOfMonth.getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
   let dayCounter = 1;
 
@@ -175,7 +171,7 @@ function updateCalendarCells(year, month) {
       const dateElement = document.createElement('span');
 
       if (dayCounter > startingDay && dayCounter <= daysInMonth + startingDay) {
-        dateElement.textContent = dayCounter - startingDay;
+        dateElement.textContent = (dayCounter - startingDay).toString(); 
         dateElement.setAttribute('data-cy', 'calendar-cell-date');
         cell.appendChild(dateElement);
 
@@ -209,13 +205,13 @@ function updateCalendarCells(year, month) {
   }
 
   useEffect(() => {
-    updateCalendarCells();
+    updateCalendarCells(year, month);
   }, [month, year, day]);
-  useEffect(() => {
-    document.addEventListener('DOMContentLoaded', function() {
-      updateCalendarCells();
-    });
-  }, []); // Tom beroendelista för att köra en gång vid montering
+  // useEffect(() => {
+  //   document.addEventListener('DOMContentLoaded', function() {
+  //     updateCalendarCells();
+  //   });
+  // }, []); // Tom beroendelista för att köra en gång vid montering
   
  
   
@@ -232,13 +228,13 @@ function updateCalendarCells(year, month) {
           <Typography variant="h6">Dagens Datum</Typography>
           <Typography>{currentTime.toLocaleTimeString()}</Typography>
           <Typography>{currentTime.toLocaleDateString()}</Typography>
-          <Typography>{weekDays[currentTime.getDay()]}</Typography>
+          <Typography>{currentTime.toLocaleDateString('sv-SE', { weekday: 'long' })}</Typography>
+
         </div>
         <div className="todo-aside" style={{ backgroundColor: 'rgb(211, 145, 158)', marginTop: '140px', height: 'calc(100% - 228px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', overflowY: 'auto' }}>
           <div className="add-todo-div">
           <Button id="add-todo-btn" variant="outlined" style={{ backgroundColor: 'rgb(171, 92, 121)', padding: '4px', color: 'rgb(255, 255, 255)', border: 'none', borderRadius: '2px', height: '50px', width: '280px', letterSpacing: '2px', fontSize: '14px', fontFamily: '"Helvetica", Arial, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-around', position: 'relative', overflow: 'hidden', transition: 'width 0.3s ease' }}>
               Lägg till todo i kalender
-              <i className="fas fa-plus" className="plus-icon"></i>
             </Button>
             <form id="add-todo-form" className="todo-form" action=""> 
              {/* <form id="add-todo-form" className="todo-form" action="" style={{ display: 'none' }}></form> */}
@@ -259,7 +255,6 @@ function updateCalendarCells(year, month) {
             <div className="my-todos-div">
             <Button id="show-todos-btn" variant="outlined" style={{ backgroundColor: 'rgb(19, 19, 19)', padding: '4px', color: 'rgb(255, 255, 255)', border: 'none', borderRadius: '2px', height: '50px', width: '280px', letterSpacing: '2px', fontSize: '14px', fontFamily: '"Helvetica", Arial, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-around', position: 'relative', overflow: 'hidden', transition: 'width 0.3s ease' }}>
                 Teamets todos
-                <i className="fas fa-tasks" className="todo-icon"></i>
               </Button>
               <Button id="read-todos-btn" aria-label="headphone icon">
                 <i className="fa-solid fa-headphones" id="headphone-icon"></i>
@@ -307,7 +302,7 @@ function updateCalendarCells(year, month) {
           </tbody>
         </table>
       </main>
-      {updateCalendarCells()}
+      {/* {updateCalendarCells()} */}
     </Container>
   );
 }
