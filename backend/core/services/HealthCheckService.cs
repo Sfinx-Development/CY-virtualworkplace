@@ -46,8 +46,8 @@ public class HealthCheckService : IHealthCheckService
                     Utils.GenerateRandomId(),
                     healthCheck.TeamId,
                     healthCheck.Question,
-                    healthCheck.StartTime,
-                    healthCheck.EndTime
+                    healthCheck.StartTime.AddHours(1),
+                    healthCheck.EndTime.AddHours(1)
                 );
 
             HealthCheck createdHealthCheck = await _healthCheckRepository.CreateAsync(
