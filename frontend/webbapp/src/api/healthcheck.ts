@@ -82,3 +82,55 @@ export const FetchCreateProfileHealthCheck = async (
     throw error;
   }
 };
+
+export const FetchGetProfileHealthChecks = async (
+  healthCheckId: string
+): Promise<ProfileHealthCheck[]> => {
+  try {
+    const response = await fetch(profileHealthCheckUrl + "/byhealthcheck", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(healthCheckId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtandet av profile health checks");
+    }
+    const responseBody = await response.json();
+    const profileHealthchecks = responseBody.$values as ProfileHealthCheck[];
+
+    return profileHealthchecks;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchGetProfileHealthChecksByProfile = async (
+  profileId: string
+): Promise<ProfileHealthCheck[]> => {
+  try {
+    const response = await fetch(profileHealthCheckUrl + "/byprofile", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtandet av profile health checks");
+    }
+    const responseBody = await response.json();
+    const profileHealthchecks = responseBody.$values as ProfileHealthCheck[];
+
+    return profileHealthchecks;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -58,6 +58,21 @@ public class ProfileHealthCheckRepository : IProfileHealthCheckRepository
         }
     }
 
+    public async Task<IEnumerable<ProfileHealthCheck>> GetAllByProfileId(string profileId)
+    {
+        try
+        {
+            var profileHealthChecks = await _cyDbContext
+                .ProfileHealthChecks.Where(p => p.ProfileId == profileId)
+                .ToListAsync();
+            return profileHealthChecks;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     public async Task<ProfileHealthCheck> GetByIdAsync(string id)
     {
         try
