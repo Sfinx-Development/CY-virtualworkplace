@@ -1,8 +1,9 @@
 import * as signalR from "@microsoft/signalr";
 import { ProfileHubDTO } from "../../../types";
+import { getApiUrl } from "../../api/config";
 
-// Define your hub URL
-const hubUrl = `http://${window.location.hostname}:5290/meetingroomhub`;
+// ÄNDRA HÄR BEROENDE PÅ MILJÖ
+const hubUrl = getApiUrl() + `/meetingroomhub`;
 
 class Connector {
   private connection: signalR.HubConnection;
@@ -62,11 +63,6 @@ class Connector {
     try {
       if (this.connection.state === signalR.HubConnectionState.Disconnected) {
         await this.connection.start();
-        console.log("SignalR connection started.");
-      } else {
-        console.log(
-          "SignalR connection is already started or in the process of reconnecting."
-        );
       }
     } catch (error) {
       console.error("Error starting SignalR connection:", error);

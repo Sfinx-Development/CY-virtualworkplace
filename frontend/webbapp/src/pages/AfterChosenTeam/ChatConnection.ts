@@ -1,8 +1,9 @@
 import * as signalR from "@microsoft/signalr";
 import { Message } from "../../../types";
+import { getApiUrl } from "../../api/config";
 
-// Define your hub URL
-const hubUrl = `http://${window.location.hostname}:5290/chathub`;
+// ÄNDRA HÄR BEROENDE PÅ MILJÖ
+const hubUrl = getApiUrl() + `/chathub`;
 
 class ChatConnector {
   private connection: signalR.HubConnection;
@@ -64,11 +65,6 @@ class ChatConnector {
     try {
       if (this.connection.state === signalR.HubConnectionState.Disconnected) {
         await this.connection.start();
-        console.log("SignalR connection started.");
-      } else {
-        console.log(
-          "SignalR connection is already started or in the process of reconnecting."
-        );
       }
     } catch (error) {
       console.error("Error starting SignalR connection:", error);

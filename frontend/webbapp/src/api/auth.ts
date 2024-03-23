@@ -1,5 +1,7 @@
-const apiUrl = `http://${window.location.hostname}:5290/auth`;
+import { getApiUrl } from "./config";
 
+const apiUrl = getApiUrl() + `/auth`;
+//en kommentar för att pusha
 export const FetchForgotPassword = async (email: string): Promise<boolean> => {
   try {
     const response = await fetch(apiUrl, {

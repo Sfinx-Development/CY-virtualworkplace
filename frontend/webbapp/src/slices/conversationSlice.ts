@@ -28,7 +28,6 @@ export const GetTeamConversation = createAsyncThunk<
   try {
     const conversation = await FetchGetTeamConversation(teamId);
     if (conversation) {
-      console.log("konverstion hämtade:", conversation);
       return conversation;
     } else {
       return thunkAPI.rejectWithValue(
@@ -55,7 +54,6 @@ export const GetConversationParticipant = createAsyncThunk<
         profileId
       );
       if (participant) {
-        console.log("Deltagare hämtade:", participant);
         return participant;
       } else {
         return thunkAPI.rejectWithValue(
@@ -103,9 +101,7 @@ const conversationSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(GetTeamConversation.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
-          console.log(action.payload);
           state.teamConversation = action.payload;
           state.error = null;
         }

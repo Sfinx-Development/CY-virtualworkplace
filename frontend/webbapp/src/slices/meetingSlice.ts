@@ -80,10 +80,8 @@ export const GetMyOccasionsAsync = createAsyncThunk<
   { rejectValue: string }
 >("meeting/getmyoccasions", async (profileId, thunkAPI) => {
   try {
-    console.log("profilid: ", profileId);
     const myMeetings = await FetchGetMyOccasions(profileId);
     if (myMeetings) {
-      console.log("myoccasions: ", myMeetings);
       return myMeetings;
     } else {
       return thunkAPI.rejectWithValue(
@@ -101,10 +99,8 @@ export const GetMyMeetingsAsync = createAsyncThunk<
   { rejectValue: string }
 >("meeting/getmymeetings", async (profileId, thunkAPI) => {
   try {
-    console.log("profilid: ", profileId);
     const myMeetings = await FetchGetMyMeetings(profileId);
     if (myMeetings) {
-      console.log("mymeetings: ", myMeetings);
       return myMeetings;
     } else {
       return thunkAPI.rejectWithValue(
@@ -162,7 +158,6 @@ export const Getmyactiveroom = createAsyncThunk<
   try {
     const myActiveRoom = await FetchGetMeetingRoomByTeam(teamId);
     if (myActiveRoom) {
-      console.log("Room hämtade:", myActiveRoom);
       return myActiveRoom;
     } else {
       return thunkAPI.rejectWithValue(
@@ -224,7 +219,6 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med skapandet av team.";
       })
       .addCase(GetMyMeetingsAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload MY MEETINGS:", action.payload);
         if (action.payload) {
           state.meetings = action.payload;
           state.error = null;
@@ -235,7 +229,6 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med hämtandet av occasions.";
       })
       .addCase(GetMyOccasionsAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload MY MEETINGS:", action.payload);
         if (action.payload) {
           state.occasions = action.payload;
           state.error = null;
@@ -246,9 +239,7 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med hämtandet av möte.";
       })
       .addCase(GetMyPastMeetingsAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload PAST MEETINGS:", action.payload);
         if (action.payload) {
-          console.log(action.payload);
           state.pastOccasions = action.payload;
           state.error = null;
         }
@@ -258,9 +249,7 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med hämtandet av möte.";
       })
       .addCase(Getmyactiveroom.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
-          console.log(action.payload);
           state.meetingroom = action.payload; // Uppdatera meetingroom i state
           state.error = null;
         }
@@ -270,7 +259,6 @@ const meetingSlice = createSlice({
         state.error = "Något gick fel med hämtandet av mötesrum.";
       })
       .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           const filteredMeetings = state.occasions?.filter(
             (m) => m.meetingId != action.payload
@@ -300,9 +288,7 @@ const meetingSlice = createSlice({
               (o) => o.meetingId === action.payload.id
             );
             if (occasionIndex !== -1) {
-              state.occasions[occasionIndex].date = new Date(
-                action.payload.date
-              );
+              state.occasions[occasionIndex].date = action.payload.date;
               state.occasions[occasionIndex].name = action.payload.name;
               state.occasions[occasionIndex].description =
                 action.payload.description;

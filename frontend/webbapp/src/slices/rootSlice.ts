@@ -1,6 +1,7 @@
 import { AnyAction, Reducer, combineReducers } from "@reduxjs/toolkit";
 import { AuthState, authReducer } from "./authSlice";
 import { ConversationState, conversationReducer } from "./conversationSlice";
+import { HealthCheckState, healthcheckReducer } from "./healthcheck";
 import { MeetingState, meetingReducer } from "./meetingSlice";
 import { MessageState, messageReducer } from "./messageSlice";
 import { ProfileState, profileReducer } from "./profileSlice";
@@ -15,6 +16,7 @@ export interface RootState {
   meetingSlice: MeetingState;
   conversationSlice: ConversationState;
   messageSlice: MessageState;
+  healthcheckSlice: HealthCheckState;
 }
 
 const appReducer = combineReducers({
@@ -25,6 +27,7 @@ const appReducer = combineReducers({
   meetingSlice: meetingReducer,
   conversationSlice: conversationReducer,
   messageSlice: messageReducer,
+  healthcheckSlice: healthcheckReducer
 });
 
 const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {

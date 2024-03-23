@@ -1,6 +1,7 @@
 import { Profile, ProfileHubDTO } from "../../types";
+import { getApiUrl } from "./config";
 
-const apiUrl = `http://${window.location.hostname}:5290/profile`;
+const apiUrl = getApiUrl() + "/profile";
 
 export const FetchGetTeamProfiles = async (
   teamId: string

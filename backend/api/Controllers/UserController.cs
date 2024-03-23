@@ -17,11 +17,17 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly IUserService _userService;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(JwtService jwtService, IUserService userService)
+        public UserController(
+            JwtService jwtService,
+            IUserService userService,
+            ILogger<UserController> logger
+        )
         {
             _jwtService = jwtService;
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -30,15 +36,11 @@ namespace Controllers
         {
             try
             {
-                Console.WriteLine("INNE I USER CONTROLLERN");
-
                 var jwtCookie = Request.Cookies["jwttoken"];
-                Request.Cookies.ToList().ForEach(c => Console.WriteLine("Cookie: " + c));
 
                 if (jwtCookie != null)
                 {
-                    // Cookien existerar, logga ut värdet för felsökning
-                    Console.WriteLine("JWT Cookie Value: " + jwtCookie);
+                    _logger.LogInformation("----- JWT SKAPAS------");
                 }
                 else
                 {
@@ -59,6 +61,7 @@ namespace Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError("------------error:" + e.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }

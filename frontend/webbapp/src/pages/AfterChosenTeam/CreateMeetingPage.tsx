@@ -52,12 +52,6 @@ export default function CreateMeetingPage() {
   }, [activeTeam]);
 
   const handleCreateMeeting = async () => {
-    console.log("name: ", newMeetingName);
-    console.log("des: ", newMeetingDescription);
-    console.log("DATUM SOM VI VÄLJER:::: ", newMeetingDate);
-    console.log("nmin: ", newMeetingMinutes);
-    console.log("activeprofile id: ", activeProfile?.id);
-    console.log("roomid: ", newMeetingRoomId);
     if (
       newMeetingName !== "" &&
       newMeetingDescription !== "" &&
@@ -71,7 +65,6 @@ export default function CreateMeetingPage() {
       const intervalAsString = newMeetingInterval.toString();
       const parsedDate = new Date(newMeetingDate);
       const parsedEndDate = new Date(newMeetingEndDate);
-      console.log("parseddata:,  ", parsedDate);
 
       const meetingDto: CreateMeetingDTO = {
         name: newMeetingName,
@@ -186,13 +179,6 @@ export default function CreateMeetingPage() {
               variant="outlined"
               sx={{ width: "250px", marginTop: 2 }}
             />
-            <Button
-              variant="contained"
-              onClick={handleCreateMeeting}
-              sx={{ marginTop: 2 }}
-            >
-              Skapa möte
-            </Button>
           </>
         )}
         <TextField
@@ -205,6 +191,13 @@ export default function CreateMeetingPage() {
           value={activeProfile?.id || ""}
           onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
         />
+        <Button
+          variant="contained"
+          onClick={handleCreateMeeting}
+          sx={{ marginTop: 2 }}
+        >
+          Skapa möte
+        </Button>
         {/* {meetings && (
           <div>
             <Typography variant="h6">Latest Meeting:</Typography>

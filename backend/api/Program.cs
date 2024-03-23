@@ -6,11 +6,26 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
-// DETTA ÄR DEVELOP BRANCHEN - VI KAN ÖVA GENOM ATT ALDRIG SKICKA MED DENNA TILL MAIN
+using Serilog;
+using Serilog.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var env = builder.Environment;
 builder.Services.AddSignalR();
+
+if (!env.IsDevelopment())
+{
+    Log.Logger = new LoggerConfiguration().WriteTo.File("log.txt").CreateLogger();
+    builder.Logging.ClearProviders();
+    builder.Logging.AddSerilog();
+}
+
+builder.Configuration.AddJsonFile("appsettings.json");
+
+var allowedOrigins = builder
+    .Configuration.GetSection("AllowedOrigins")
+    .GetSection(env.EnvironmentName)
+    .Get<string[]>();
 
 builder.Services.AddCors(options =>
 {
@@ -19,7 +34,7 @@ builder.Services.AddCors(options =>
         builder =>
         {
             builder
-                .WithOrigins("http://localhost:5173")
+                .WithOrigins(allowedOrigins)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials();
@@ -27,9 +42,10 @@ builder.Services.AddCors(options =>
     );
 });
 
-builder.WebHost.UseUrls("http://0.0.0.0:5290");
-
-builder.Configuration.AddJsonFile("appsettings.json");
+if (env.IsDevelopment())
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5290");
+}
 
 var jwtConfig = builder.Configuration.GetSection("Jwt");
 var securityKeyBytes = Convert.FromBase64String(jwtConfig["Secret"]);
@@ -39,22 +55,14 @@ builder.Services.AddSingleton(securityKey);
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
-builder.Services.AddDbContext<CyDbContext>(
-    options =>
-        options.UseMySql(
-            "server=localhost;database=cy;user=root;password=",
-            ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
-        )
+var connectionString = builder.Configuration.GetConnectionString(
+    builder.Environment.IsDevelopment() ? "CyDbContextDev" : "CyDbContextProd"
 );
 
-// if (!builder.Environment.IsDevelopment())
-// {
-//     builder.Services.AddHttpsRedirection(options =>
-//     {
-//         options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
-//         options.HttpsPort = 443;
-//     });
-// }
+builder.Services.AddDbContext<CyDbContext>(options =>
+{
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
@@ -141,6 +149,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 app.UseRouting();
+
 app.MapHub<MeetingRoomHub>("/meetingroomhub");
 app.MapHub<ChatHub>("/chathub");
 if (app.Environment.IsDevelopment())

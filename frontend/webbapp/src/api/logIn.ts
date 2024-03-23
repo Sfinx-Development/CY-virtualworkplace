@@ -1,4 +1,6 @@
-const apiUrl = `http://${window.location.hostname}:5290/login`;
+import { getApiUrl } from "./config";
+
+const apiUrl = getApiUrl() + "/login";
 
 export const FetchSignIn = async (
   email: string,

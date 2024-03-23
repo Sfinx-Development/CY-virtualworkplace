@@ -1,6 +1,7 @@
 import { User } from "../../types";
+import { getApiUrl } from "./config";
 
-const apiUrl = `http://${window.location.hostname}:5290/user`;
+const apiUrl = getApiUrl() + "/user";
 
 export const FetchGetUseer = async (): Promise<User> => {
   try {

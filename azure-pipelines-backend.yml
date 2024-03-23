@@ -1,0 +1,66 @@
+trigger:
+- main
+
+pr:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '7.x' # Byt till rätt version av .NET SDK
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore NuGet packages'
+  inputs:
+    command: 'restore'
+    projects: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build backend'
+  inputs:
+    command: 'build'
+    projects: 'backend/core/core.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish backend'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'backend/core/core.csproj'  # Byt till rätt projektsökväg för din backend-applikation
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/backend'
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'
+
+- task: Npm@1
+  inputs:
+    customCommand: 'install'
+    workingDir: 'frontend/webbapp'
+
+- task: Npm@1
+  inputs:
+    customCommand: 'run build'
+    workingDir: 'frontend/webbapp'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/backend'
+    ArtifactName: 'backend'
+    publishLocation: 'Container'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'frontend/webbapp/dist'
+    ArtifactName: 'frontend'
+    publishLocation: 'Container'

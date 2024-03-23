@@ -22,7 +22,7 @@ public class HealthCheckRepository : IHealthCheckRepository
         }
         catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
 

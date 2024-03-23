@@ -1,7 +1,7 @@
-import React from "react";
+import { keyframes } from "@emotion/react";
 import { Button, Container, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { keyframes } from "@emotion/react";
+import { isMobile } from "../../../globalConstants";
 
 const IndexPage = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const IndexPage = () => {
             color: "#FFF",
           }}
         >
-          <Typography variant="h3" gutterBottom>
+          <Typography variant={isMobile ? "h5" : "h3"} gutterBottom>
             Revolutionera din kommunikation
           </Typography>
           <Typography variant="subtitle1" gutterBottom>
@@ -77,7 +77,7 @@ const IndexPage = () => {
             color: "#FFF",
           }}
         >
-          <Typography variant="h4" gutterBottom>
+          <Typography variant={isMobile ? "h5" : "h4"} gutterBottom>
             Varför välja oss?
           </Typography>
           <div
@@ -91,7 +91,10 @@ const IndexPage = () => {
               <Typography variant="h6" gutterBottom>
                 Effektivt samarbete
               </Typography>
-              <Typography variant="body1" gutterBottom>
+              <Typography
+                variant={isMobile ? "subtitle2" : "body1"}
+                gutterBottom
+              >
                 Arbeta smidigt tillsammans oavsett var ni är.
               </Typography>
             </div>
@@ -99,7 +102,10 @@ const IndexPage = () => {
               <Typography variant="h6" gutterBottom>
                 Säker och pålitlig
               </Typography>
-              <Typography variant="body1" gutterBottom>
+              <Typography
+                variant={isMobile ? "subtitle2" : "body1"}
+                gutterBottom
+              >
                 Din data är säker och skyddad hos oss.
               </Typography>
             </div>
@@ -107,7 +113,10 @@ const IndexPage = () => {
               <Typography variant="h6" gutterBottom>
                 Enkel användning
               </Typography>
-              <Typography variant="body1" gutterBottom>
+              <Typography
+                variant={isMobile ? "subtitle2" : "body1"}
+                gutterBottom
+              >
                 Intuitivt gränssnitt för alla användare.
               </Typography>
             </div>
@@ -121,7 +130,7 @@ const IndexPage = () => {
             color: "#FFF",
           }}
         >
-          <Typography variant="h4" gutterBottom>
+          <Typography variant={isMobile ? "h6" : "h4"} gutterBottom>
             Redan en användare?
           </Typography>
           <Button
@@ -140,4 +149,3 @@ const IndexPage = () => {
 };
 
 export default IndexPage;
-

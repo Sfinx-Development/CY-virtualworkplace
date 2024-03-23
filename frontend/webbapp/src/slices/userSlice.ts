@@ -6,11 +6,13 @@ import { FetchCreateUseer, FetchGetUseer } from "../api/user";
 export interface UserState {
   user: User | undefined;
   error: string | null;
+  logInError: string | null;
 }
 
 export const initialState: UserState = {
   user: undefined,
   error: null,
+  logInError: null,
 };
 
 export const createUserAsync = createAsyncThunk<
@@ -33,7 +35,7 @@ export const createUserAsync = createAsyncThunk<
 export const logOutUserAsync = createAsyncThunk("user/logOutUser", async () => {
   try {
     const isLoggedOut = await FetchLogOut();
-    console.log("IS LOGGED OOUT: ", isLoggedOut);
+
     return isLoggedOut;
   } catch (error) {
     console.error(error);
@@ -51,7 +53,6 @@ export const logInUserAsync = createAsyncThunk<
     if (isAuthenticated) {
       const user = await FetchGetUseer();
       if (user) {
-        console.log("USER FINNS NU!! : ", user);
         return user;
       }
       return thunkAPI.rejectWithValue(
@@ -117,12 +118,12 @@ const userSlice = createSlice({
       .addCase(logInUserAsync.fulfilled, (state, action) => {
         if (action.payload) {
           state.user = action.payload;
-          state.error = null;
+          state.logInError = null;
         }
       })
       .addCase(logInUserAsync.rejected, (state) => {
         state.user = undefined;
-        state.error = "Användarnamn eller lösenord är felaktigt.";
+        state.logInError = "Användarnamn eller lösenord är felaktigt.";
       })
       // .addCase(logOutUserAsync.fulfilled, (state, action) => {
       //   if (action.payload) {

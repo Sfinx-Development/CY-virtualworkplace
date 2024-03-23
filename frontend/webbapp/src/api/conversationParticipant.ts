@@ -1,7 +1,7 @@
 import { ConversationParticipant } from "../../types";
+import { getApiUrl } from "./config";
 
-//dessa adresser kan vara i en fil specifik för develop eller prod liksom:
-const conversationParticipantApiUrl = `http://${window.location.hostname}:5290/conversationParticipant`;
+const conversationParticipantApiUrl = getApiUrl() + `/conversationParticipant`;
 
 export const FetchUpdateLastActive = async (
   conversationParticipant: ConversationParticipant

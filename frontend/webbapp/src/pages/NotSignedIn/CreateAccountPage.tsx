@@ -1,14 +1,15 @@
+import { keyframes } from "@emotion/react";
 import {
   Avatar,
   Button,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
   TextField,
-  Typography,Grid
+  Typography,
 } from "@mui/material";
-import { keyframes } from "@emotion/react";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -112,64 +113,84 @@ export default function CreateAccount() {
     }
   };
 
-      // Keyframes för bakgrundsanimering
-      const gradientAnimation = keyframes`
+
+  const gradientAnimation = keyframes`
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     `;
-  
-    return (
+
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        background: "linear-gradient(45deg, #333333, #666666)",
+        animation: `${gradientAnimation} 10s ease infinite`,
+        overflowY: "scroll", // Add this line
+      }}
+    >
       <div
         style={{
-          display: "flex",
+          background: "white",
+          paddingLeft: 20,
+          paddingRight: 20,
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
-          background: "linear-gradient(45deg, #333333, #666666)",
-          animation: `${gradientAnimation} 10s ease infinite`,
+          flexDirection: isMobile ? "column" : "row",
+          borderRadius: 10,
+          width: "80%",
+          marginTop: 20,
+          marginBottom: 20,
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <div
-       style={{
-        background: "white",
-        paddingLeft:10,
-        paddingRight:10,
-        justifyContent:"center",
-        alignItems:"center",
-        flexDirection:isMobile ? "column" : "row",
-        borderRadius: 10,
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-       }}
-        >
+        <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12} textAlign="center">
             <Typography variant="h5" sx={{ color: "#FFF" }}>
               Skapa ett konto
             </Typography>
           </Grid>
           {passwordError && (
-          <Typography color="error">Lösenord matchar inte</Typography>
-        )}
-        {passwordLengthError && (
-          <Typography color="error">
-            Lösenordet måste bestå av minst 6 tecken
-          </Typography>
-        )}
-        {phoneError && (
-          <Typography color="error">Ange ett giltigt telefonnummer</Typography>
-        )}
-        {emailError && (
-          <Typography color="error">Ange en giltig e-post</Typography>
-        )}
-        {ageError && (
-          <Typography color="error">
-            Du måste vara minst 16 år för att skapa ett konto
-          </Typography>
-        )}
-        {fieldsError && (
-          <Typography color="error">Alla fält måste fyllas i</Typography>
-        )}
-          <Grid item xs={12} sm={6} paddingTop={2}>
+            <Grid item xs={12}>
+              <Typography color="error">Lösenord matchar inte</Typography>
+            </Grid>
+          )}
+          {passwordLengthError && (
+            <Grid item xs={12}>
+              <Typography color="error">
+                Lösenordet måste bestå av minst 6 tecken
+              </Typography>
+            </Grid>
+          )}
+          {phoneError && (
+            <Grid item xs={12}>
+              <Typography color="error">
+                Ange ett giltigt telefonnummer
+              </Typography>
+            </Grid>
+          )}
+          {emailError && (
+            <Grid item xs={12}>
+              <Typography color="error">Ange en giltig e-post</Typography>
+            </Grid>
+          )}
+          {ageError && (
+            <Grid item xs={12}>
+              <Typography color="error">
+                Du måste vara minst 16 år för att skapa ett konto
+              </Typography>
+            </Grid>
+          )}
+          {fieldsError && (
+            <Grid item xs={12}>
+              <Typography color="error">Alla fält måste fyllas i</Typography>
+            </Grid>
+          )}
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Förnamn"
               variant="outlined"
@@ -179,7 +200,7 @@ export default function CreateAccount() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Efternamn"
               variant="outlined"
@@ -189,7 +210,7 @@ export default function CreateAccount() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Email"
               variant="outlined"
@@ -199,7 +220,7 @@ export default function CreateAccount() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Telefonnummer"
               variant="outlined"
@@ -209,7 +230,7 @@ export default function CreateAccount() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Lösenord"
               variant="outlined"
@@ -219,7 +240,7 @@ export default function CreateAccount() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Bekräfta lösenord"
               variant="outlined"
@@ -229,7 +250,7 @@ export default function CreateAccount() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <FormControl variant="outlined" fullWidth>
               <InputLabel id="gender-label" sx={{ color: "#FFF" }}>
                 Kön
@@ -246,7 +267,7 @@ export default function CreateAccount() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Ålder"
               variant="outlined"
@@ -256,7 +277,7 @@ export default function CreateAccount() {
               fullWidth
             />
           </Grid>
-       <Grid item xs={12} sm={6} paddingTop={2}>
+          <Grid item xs={12} sm={6}>
             <Typography variant="body1" sx={{ color: "#FFF" }}>
               Välj en avatar
             </Typography>
@@ -265,7 +286,7 @@ export default function CreateAccount() {
             <div
               style={{
                 display: "flex",
-                gap: 10,
+                gap: isMobile ? 2 : 10,
                 marginBottom: 20,
                 flexWrap: "wrap",
               }}
@@ -277,8 +298,8 @@ export default function CreateAccount() {
                   src={avatar}
                   sx={{
                     cursor: "pointer",
-                    width: 70,
-                    height: 70,
+                    width: isMobile ? 50 : 70,
+                    height: isMobile ? 50 : 70,
                     opacity: selectedAvatar === avatar ? 0.3 : 1,
                   }}
                   onClick={() => setSelectedAvatar(avatar)}
@@ -293,7 +314,8 @@ export default function CreateAccount() {
               Skapa konto
             </Button>
           </Grid>
-        </div>
+        </Grid>
       </div>
-    );
-                }
+    </div>
+  );
+}

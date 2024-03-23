@@ -1,6 +1,7 @@
 import { CreateTeamDTO, Team } from "../../types";
+import { getApiUrl } from "./config";
 
-const apiUrl = `http://${window.location.hostname}:5290/team`;
+const apiUrl = getApiUrl() + "/team";
 
 export const FetchGetMyTeams = async (): Promise<Team[]> => {
   try {
