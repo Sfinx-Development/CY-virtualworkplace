@@ -6,7 +6,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
-import HealthCheckHub from "./pages/AfterChosenTeam/HealthCheckHub";
+import HealthCheckHub from "./pages/AfterChosenTeam/HealthCheckPage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
 import { LiveVideo } from "./pages/AfterChosenTeam/LiveForm";
 import MeetingInTeamsPage from "./pages/AfterChosenTeam/MeetingInTeam";

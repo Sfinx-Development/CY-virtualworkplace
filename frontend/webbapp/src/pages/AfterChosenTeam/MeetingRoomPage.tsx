@@ -1,3 +1,5 @@
+import AddIcon from "@mui/icons-material/Add";
+import EventNoteIcon from "@mui/icons-material/EventNote";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import {
@@ -17,10 +19,10 @@ import {
   setActiveMeeting,
 } from "../../slices/meetingSlice";
 import {
-  GetMyProfileAsync,
   GetOnlineProfiles,
   GetTeamProfiles,
   enterMeetingRoomAsync,
+  getActiveProfile,
   leaveMeetingRoomAsync,
   profileOffline,
   profileOnline,
@@ -29,8 +31,6 @@ import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 import Connector from "./OnlineConnection";
-import AddIcon from "@mui/icons-material/Add";
-import EventNoteIcon from "@mui/icons-material/EventNote";
 
 interface ConnectFormProps {
   connectToVideo: () => void;
@@ -62,11 +62,12 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   useEffect(() => {
     dispatch(getActiveTeam());
+    dispatch(getActiveProfile());
   }, []);
 
   useEffect(() => {
     if (activeTeam) {
-      dispatch(GetMyProfileAsync(activeTeam?.id));
+      // dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
       dispatch(GetOnlineProfiles(activeTeam.id));
     }
