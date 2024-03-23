@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Linq;
 using Interfaces;
 
@@ -36,7 +37,8 @@ namespace core
                     await _conversationParticipantRepository.GetConversationParticipantById(
                         conversationParticipantDTO.Id
                     ) ?? throw new Exception("No conversation participant found.");
-                conversationPartToUpdate.LastActive = conversationParticipantDTO.LastActive;
+
+                conversationPartToUpdate.LastActive = DateTime.Now;
                 var updatedConversationPart = await _conversationParticipantRepository.Update(
                     conversationPartToUpdate
                 );

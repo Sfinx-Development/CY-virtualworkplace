@@ -90,6 +90,7 @@ const teamSlice = createSlice({
     getActiveTeam: (state) => {
       const activeTeam = loadTeamFromLocalStorage();
       if (activeTeam) {
+        console.log("ACTIVE TEAM: ", activeTeam);
         state.activeTeam = activeTeam;
       }
     },

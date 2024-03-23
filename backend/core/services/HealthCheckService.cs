@@ -37,7 +37,7 @@ public class HealthCheckService : IHealthCheckService
             );
 
             var now = DateTime.UtcNow;
-            if (healthCheck.StartTime < now)
+            if (healthCheck.EndTime < now)
             {
                 throw new Exception("Can not create healthchecks for the past.");
             }

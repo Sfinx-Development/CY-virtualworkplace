@@ -1,0 +1,105 @@
+
+/* stilregler för body, höjd och bredd 100% av parent storlek */
+body {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(214, 196, 203);
+}
+
+
+/* stilregler för main, sätter på plats från vänster */
+main {
+    justify-content: center;
+    margin-left: 350px;
+    width: auto;
+    margin-top: 6.9rem;
+    height: auto;
+    background-color: rgb(214, 196, 203);
+    display: flex;
+}
+
+#calendar-table {
+    font-family: "Helvetica", Arial, sans-serif;
+    flex-shrink: 0;
+    font-weight: bold;
+    justify-content: center;
+    font-size: 16px;
+    padding: 0 10px;
+    overflow: auto;
+    display: flex;
+}
+
+
+/* stilregler för hela kalenderbodyn */
+#calendar-body-id {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    /* padding: 10px;
+    margin-top: 0px; */
+    position: relative;
+}
+
+
+/* stilregler för day */
+.day {
+    justify-content: center;
+    font-size: 20px;
+    padding-bottom: 10px;
+}
+
+
+/* dagens datum till fetstil och andra färger */
+[data-cy="calendar-cell"].current-day {
+    font-weight: bold;
+    color: rgb(179, 154, 154);
+    background-color: rgb(53, 53, 53);
+}
+
+/* stilregler för cellen, ram, kolumn i hela grid-systemet och gör en hand */
+[data-cy="calendar-cell"] {
+    border: 1px solid black;
+    padding: 2.8vw 3.6vw;
+    grid-column: span;
+    cursor: pointer;
+    position: relative;
+}
+
+  /* stilregler för holiday på cell */
+.holiday {
+    font-size: 12px;
+    padding: 2px;
+    background-color: white;
+    overflow-wrap: break-word;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgb(215, 142, 142);
+    opacity: 0.6;
+}
+
+ /* sätter röd färg på datum */
+[data-cy="calendar-cell"].holiday-cell,
+[data-cy="calendar-cell"].sunday-cell {
+    color: rgb(182, 36, 36);
+}
+
+/* hovrar när när muspekaren är över cell */
+[data-cy="calendar-cell"]:hover {
+    background-color: rgb(255, 255, 255);
+}
+
+/* antaltodo i högra övre hörnet */
+[data-cy="calendar-cell-todos"] {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    color: black(36, 36, 36);
+    font-style: italic;
+    font-weight: bold;
+}

@@ -147,6 +147,7 @@ namespace Controllers
                     .Select(
                         h => new HealthCheckDTO(h.Id, h.TeamId, h.Question, h.StartTime, h.EndTime)
                     )
+                    .OrderBy(h => h.StartTime)
                     .ToList();
 
                 return Ok(healthCheckDTOs);

@@ -48,10 +48,8 @@ class Connector {
   ): Promise<void> {
     try {
       if (this.connection.state === signalR.HubConnectionState.Disconnected) {
-        // Start the connection if it's disconnected
         await this.connection.start();
       }
-      // Once the connection is started or if it's already connected, invoke the method
       await this.connection.invoke(methodName, ...args);
     } catch (error) {
       console.error("Error invoking hub method:", error);
