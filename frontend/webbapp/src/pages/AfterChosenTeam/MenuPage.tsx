@@ -133,6 +133,14 @@ export default function Menu() {
   };
   const backgroundImageUrl = "https://i.imgur.com/qwzB7Zi.jpeg";
 
+  const handleNavigateToCalendar = () => {
+    if (activeTeam) {
+      dispatch(GetOnlineProfiles(activeTeam.id));
+      navigate("/meetingroom");
+    }
+    navigate("/calendar"); // Byt ut "/calendar" mot den faktiska sökvägen till din kalendersida
+  };
+
   return (
     <Container
       sx={{
@@ -228,6 +236,24 @@ export default function Menu() {
             icon={
               unreadMessages != null && unreadMessages > 0 ? (
                 <MarkUnreadChatAltIcon
+                  sx={{
+                    paddingLeft: 1,
+                    textAlign: "center",
+                    flexDirection: "row",
+                    fontSize: isMobile ? "10" : "22",
+                  }}
+                />
+              ) : null
+            }
+          />
+             <NavCard
+            backgroundColor={meetingRoomColor}
+            navigationPage="/calendar"
+            title="Calender"
+            onClick={handleNavigateToCalendar}
+            icon={
+              ongoingMeeting ? (
+                <NotificationsNoneIcon
                   sx={{
                     paddingLeft: 1,
                     textAlign: "center",

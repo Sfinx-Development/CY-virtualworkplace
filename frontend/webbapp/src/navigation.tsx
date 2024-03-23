@@ -22,6 +22,7 @@ import RootLayout from "./pages/RootLayout";
 import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
+import CalendarPage from "./pages/AfterChosenTeam/CalendarPage";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
 import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
@@ -82,6 +83,8 @@ const Navigation = () => {
           <Route path="forgotpassword" element={<ForgotPassword />} />
           <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
           <Route path="joinmeeting" element={<OngoingMeeting />} />
+          <Route path="calendar" element={<CalendarPage />} />
+
           {/* <Route
             path="connect"
             element={<ConnectForm connectToVideo={handleConnect} />}

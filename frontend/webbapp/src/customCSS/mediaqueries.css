@@ -1,0 +1,172 @@
+/* mediaqueries.css */
+
+@media screen and (max-width: 768px) {
+    aside {
+        width: 100%;
+        top: 29rem;
+    }
+
+    .todo-aside {
+        margin-top: 0px;
+    }
+
+    .today-aside {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: rem;
+        left: 0;
+        display: flexbox;
+        height: 120px;
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        font-family: "Helvetica", Arial, sans-serif;
+        color: #ffffff;
+        background-color: #151515;
+    }
+
+    .today-aside h3 {
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 1.3rem;
+        color: rgb(255, 255, 255);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .today-aside p {
+        background-color: 151515;
+        font-family: "Helvetica", Arial, sans-serif;
+        color: #fbf9f9;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: 1px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        margin-top: -3px;
+    }
+
+    .main-container {
+        margin-left: 0;
+        overflow: hidden;
+    }
+
+    header {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        margin-top: 7rem;
+        height: 3rem;
+    }
+
+    #header-items {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    [data-cy='month-year'] {
+        top: 1rem;
+        left: 190px;
+        /*ändrade plats på denna*/
+        font-size: 16px;
+        /* Justera fontstorleken för att passa skärmen */
+    }
+
+    [data-cy='next-month'] {
+        right: -70px;
+        top: 1rem;
+    }
+
+    [data-cy='prev-month'] {
+        left: -70px;
+        top: 1rem;
+    }
+
+    #calendar-table {
+        height: 21rem;
+        justify-content: center;
+        /* Centrera kalendern horisontellt */
+        width: 100%;
+        /* Anpassa bredden för att fylla tillgängligt utrymme */
+        overflow-x: hidden;
+        /* Dölj eventuell horisontell scrollning */
+    }
+
+    .day {
+        font-size: 18px;
+        /* Justera fontstorleken för att passa skärmen */
+        padding-bottom: 10px;
+        /* Justera padding för att passa skärmen */
+    }
+
+    .holiday {
+        font-size: 5px;
+    }
+
+    main {
+        margin-left: 0;
+        /* Ta bort marginalen till vänster */
+        width: 100%;
+        /* Anpassa bredden för att fylla tillgängligt utrymme */
+    }
+
+    #calendar-table {
+        width: 100%;
+        /* Anpassa bredden för att fylla tillgängligt utrymme */
+        padding: 0 10px;
+        /* Justera padding på sidorna */
+        font-size: 14px;
+        /* Justera fontstorleken för att göra kalendern mindre */
+    }
+}
+
+
+/* la till mer css för att justera för surface 7 också */
+@media screen and (width: 912px) and (height: 1368px) {
+    aside {
+        width: 250px;
+        transform: translateX(0);
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        /* För Firefox */
+        -ms-overflow-style: none;
+        /* För IE och Edge */
+        -webkit-overflow-scrolling: touch;
+        /* För Safari */
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0;
+        scroll-margin: 0;
+        scroll-snap-align: start;
+    }
+
+    .items {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .container::-webkit-scrollbar {
+        display: none;
+        /* För Chrome, Safari och Opera */
+    }
+
+    main {
+        font-size: 14px;
+        /* Justera fontstorleken för att göra texten mindre */
+    }
+
+    #calendar-table {
+        margin-left: -100px;
+        font-size: 12px;
+        /* Justera fontstorleken för att göra kalendern mindre */
+        padding: 0;
+        /* Ta bort padding på sidorna */
+    }
+}
