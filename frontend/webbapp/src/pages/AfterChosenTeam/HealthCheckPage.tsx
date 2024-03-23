@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import { Box, Button, Container, Typography } from "@mui/material";
+import Skeleton from "@mui/material/Skeleton";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +27,7 @@ type RatingsCount = {
   [rating: string]: number;
 };
 
-export default function HealthCheckHub() {
+export default function HealthCheckPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -40,6 +41,8 @@ export default function HealthCheckHub() {
     (state) => state.healthcheckSlice.profileHealthChecks
   );
   const [chartData, setChartData] = useState<ChartData>({ data: [] });
+  const [currentHealthCheck, setCurrentHealthCheck] =
+    useState<HealthCheck | null>();
 
   useEffect(() => {
     dispatch(getActiveProfile());
@@ -86,6 +89,7 @@ export default function HealthCheckHub() {
   };
 
   const loadStatistic = async (check: HealthCheck) => {
+    setCurrentHealthCheck(check);
     await dispatch(GetProfileHealthChecksAsync(check.id));
   };
 
@@ -108,25 +112,56 @@ export default function HealthCheckHub() {
           <Box
             sx={{
               flex: 1,
-              marginTop: 10,
+              marginTop: isMobile ? 2 : 10,
               display: "flex",
               justifyContent: "center",
               marginRight: isMobile ? 0 : 10,
             }}
           >
             {chartData.data.length > 0 ? (
-              <PieChart
-                series={[{ type: "pie", data: chartData.data }]}
-                width={isMobile ? 300 : 600}
-                height={isMobile ? 300 : 400}
-                sx={{
-                  [`& .${pieArcLabelClasses.root}`]: {
-                    fill: "white",
-                    fontWeight: "bold",
-                  },
-                }}
-              />
-            ) : null}
+              <Container>
+                {currentHealthCheck != null ? (
+                  <Box
+                    display={"flex"}
+                    flexDirection={"column"}
+                    alignItems={"center"}
+                    padding={isMobile ? 0 : 2}
+                  >
+                    <Typography variant={isMobile ? "h6" : "h5"}>
+                      {new Date(
+                        currentHealthCheck.startTime
+                      ).toLocaleDateString("sv-SE")}{" "}
+                      -{" "}
+                      {new Date(currentHealthCheck.endTime).toLocaleDateString(
+                        "sv-SE"
+                      )}
+                    </Typography>
+                    <Typography variant={isMobile ? "h6" : "h5"}>
+                      {currentHealthCheck.question}
+                    </Typography>
+                  </Box>
+                ) : null}
+                <PieChart
+                  series={[{ type: "pie", data: chartData.data }]}
+                  width={isMobile ? 350 : 600}
+                  height={isMobile ? 300 : 400}
+                  sx={{
+                    [`& .${pieArcLabelClasses.root}`]: {
+                      fill: "white",
+                      fontWeight: "bold",
+                    },
+                  }}
+                />
+              </Container>
+            ) : (
+              <Container sx={{ marginTop: isMobile ? 0 : 10 }}>
+                <Skeleton
+                  variant="circular"
+                  width={isMobile ? 300 : 400}
+                  height={isMobile ? 300 : 400}
+                />
+              </Container>
+            )}
           </Box>
           <Box sx={{ maxWidth: isMobile ? "100%" : 300, textAlign: "center" }}>
             <Button
@@ -135,7 +170,6 @@ export default function HealthCheckHub() {
               sx={{
                 marginTop: 2,
                 marginBottom: 2,
-                backgroundColor: "lightgrey",
                 fontWeight: "600",
               }}
             >

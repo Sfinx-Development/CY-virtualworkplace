@@ -1,15 +1,7 @@
 import GroupsIcon from "@mui/icons-material/Groups";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import {
-  Avatar,
-  Box,
-  Button,
-  Container,
-  Popper,
-  Typography,
-} from "@mui/material";
-import Alert from "@mui/material/Alert";
+import { Alert, Avatar, Box, Button, Popper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
@@ -21,9 +13,9 @@ import {
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import { GetTeamConversationMessages } from "../../slices/messageSlice";
 import {
-  GetMyProfileAsync,
   GetOnlineProfiles,
   GetTeamProfiles,
+  getActiveProfile,
 } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -68,20 +60,20 @@ export default function Menu() {
 
   useEffect(() => {
     dispatch(getActiveTeam());
+    dispatch(getActiveProfile());
   }, []);
 
   useEffect(() => {
     if (activeTeam) {
       dispatch(GetTeamProfiles(activeTeam.id));
-      dispatch(GetMyProfileAsync(activeTeam.id));
+      dispatch(GetTeamConversationMessages(activeTeam.id));
+      dispatch(GetTeamConversation(activeTeam.id));
     }
-  }, []);
+  }, [activeTeam]);
 
   useEffect(() => {
     if (activeProfile) {
       dispatch(GetMyMeetingsAsync(activeProfile.id));
-      dispatch(GetTeamConversation(activeProfile.id));
-      dispatch(GetTeamConversationMessages(activeProfile.id));
     }
   }, [activeProfile]);
 
@@ -97,11 +89,10 @@ export default function Menu() {
   }, [teamConversation]);
 
   useEffect(() => {
-    if (activeParticipant) {
+    if (activeParticipant && messages) {
       const unreadMessages = messages.filter((message) => {
         return (
-          new Date(message.dateCreated) >
-          new Date(activeParticipant?.lastActive)
+          new Date(message.dateCreated) > new Date(activeParticipant.lastActive)
         );
       });
       setUnreadMessages(unreadMessages.length);
@@ -116,7 +107,6 @@ export default function Menu() {
     }
   };
 
-  //löser inte denna typningen - ska kolla på det - elina hjälp
   const handleMouseEnter = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
     setProfileDropdown(true);
@@ -138,12 +128,12 @@ export default function Menu() {
       dispatch(GetOnlineProfiles(activeTeam.id));
       navigate("/meetingroom");
     }
-    navigate("/calendar"); // Byt ut "/calendar" mot den faktiska sökvägen till din kalendersida
+    navigate("/calendar");
   };
 
   return (
-    <Container
-      sx={{
+    <div
+      style={{
         padding: "20px",
         backgroundImage: `url(${backgroundImageUrl})`,
         backgroundSize: "cover",
@@ -151,31 +141,31 @@ export default function Menu() {
         minHeight: "100vh",
       }}
     >
-      <div
-        style={{
+      <Box
+        sx={{
           display: "flex",
-          flexDirection: "column",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <div
-          style={{
+        <NavCard
+          navigationPage="/calendar"
+          onClick={handleNavigateToCalendar}
+          imageUrl="https://i.imgur.com/V05Tc5r.png"
+        />
+        <Box
+          sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            textAlign: "center",
+            mt: { xs: 2, md: 0 },
           }}
         >
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <div className="company-name-container">
-              <Typography
-                variant="h4"
-                className="company-name"
-                sx={{ textAlign: "center" }}
-              >
-                {activeTeam?.name}
-              </Typography>
-            </div>
-          </Box>
+          <Typography variant={isMobile ? "h5" : "h4"}>
+            {activeTeam?.name}
+          </Typography>
           <Button
             onClick={copyCodeToClipboard}
             variant="contained"
@@ -183,99 +173,24 @@ export default function Menu() {
           >
             Kod: {activeTeam?.code}
           </Button>
-          {copied ? (
+          {copied && !isMobile ? (
             <Alert
-              variant="filled"
+              variant="outlined"
               severity="success"
               sx={{ position: "absolute", marginTop: isMobile ? 20 : 15 }}
             >
               Du har kopierat koden!
             </Alert>
           ) : null}
-        </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 100,
-          height: "100%",
-        }}
-      >
-        <div
-          style={{
-            flexDirection: "column",
-            display: "flex",
-            gap: 50,
-          }}
-        >
-          <NavCard
-            backgroundColor={meetingRoomColor}
-            navigationPage="/meetingroom"
-            title="Mötesrum"
-            onClick={handleNavigationToMeetingRoom}
-            icon={
-              ongoingMeeting ? (
-                <NotificationsNoneIcon
-                  sx={{
-                    paddingLeft: 1,
-                    textAlign: "center",
-                    flexDirection: "row",
-                    fontSize: isMobile ? "10" : "22",
-                  }}
-                />
-              ) : null
-            }
-          />
-
-          <NavCard
-            backgroundColor={chatRoomColor}
-            navigationPage="/chatroom"
-            title="Chattrum"
-            icon={
-              unreadMessages != null && unreadMessages > 0 ? (
-                <MarkUnreadChatAltIcon
-                  sx={{
-                    paddingLeft: 1,
-                    textAlign: "center",
-                    flexDirection: "row",
-                    fontSize: isMobile ? "10" : "22",
-                  }}
-                />
-              ) : null
-            }
-          />
-             <NavCard
-            backgroundColor={meetingRoomColor}
-            navigationPage="/calendar"
-            title="Calender"
-            onClick={handleNavigateToCalendar}
-            icon={
-              ongoingMeeting ? (
-                <NotificationsNoneIcon
-                  sx={{
-                    paddingLeft: 1,
-                    textAlign: "center",
-                    flexDirection: "row",
-                    fontSize: isMobile ? "10" : "22",
-                  }}
-                />
-              ) : null
-            }
-          />
-        </div>
-
-        {/* <Card
-          sx={{
-            backgroundColor: "transparent",
-            padding: 1,
-            maxHeight: "80px",
-          }}
-        > */}
+        </Box>
         <Box
           component="div"
-          sx={{ backgroundColor: "transparent", padding: 1, maxHeight: 40 }}
+          sx={{
+            backgroundColor: "transparent",
+            paddingX: "50px",
+            maxHeight: 40,
+            mx: 2,
+          }}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -319,12 +234,64 @@ export default function Menu() {
             </Box>
           </Popper>
         )}
-        {/* </Card> */}
-        <div
-          style={{
-            flexDirection: "column",
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          justifyContent: "space-between",
+          mt: { xs: 4, md: 8 },
+        }}
+      >
+        <Box
+          sx={{
             display: "flex",
-            gap: 50,
+            flexDirection: { xs: "column", md: "row" },
+            gap: { xs: 3, md: 6 },
+            mb: { xs: 3, md: 0 },
+          }}
+        >
+          <NavCard
+            backgroundColor={meetingRoomColor}
+            navigationPage="/meetingroom"
+            title="Mötesrum"
+            onClick={handleNavigationToMeetingRoom}
+            icon={
+              ongoingMeeting ? (
+                <NotificationsNoneIcon
+                  sx={{
+                    paddingLeft: 1,
+                    flexDirection: "row",
+                    fontSize: isMobile ? "1rem" : "22px",
+                  }}
+                />
+              ) : null
+            }
+          />
+
+          <NavCard
+            backgroundColor={chatRoomColor}
+            navigationPage="/chatroom"
+            title="Chattrum"
+            icon={
+              unreadMessages != null && unreadMessages > 0 ? (
+                <MarkUnreadChatAltIcon
+                  sx={{
+                    paddingLeft: 1,
+                    flexDirection: "row",
+                    fontSize: isMobile ? "1rem" : "22px",
+                  }}
+                />
+              ) : null
+            }
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: { xs: 3, md: 6 },
           }}
         >
           <NavCard
@@ -338,19 +305,23 @@ export default function Menu() {
             navigationPage="/chooseteam"
             title="Lämna"
           />
-        </div>
-      </div>
-      <a
-        style={{
-          bottom: 0,
+        </Box>
+      </Box>
+      <Typography
+        component="a"
+        href="https://www.freepik.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{
           position: "absolute",
+          bottom: 0,
           textDecoration: "none",
           color: "black",
+          mt: 4,
         }}
-        href="https://www.freepik.com/"
       >
         Designed by Freepik
-      </a>
-    </Container>
+      </Typography>
+    </div>
   );
 }
