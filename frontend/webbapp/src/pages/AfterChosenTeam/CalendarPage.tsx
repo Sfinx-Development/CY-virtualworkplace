@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Container, Button, Typography } from "@mui/material";
-import { useAppSelector } from "../../slices/store";
+import { useAppSelector, useAppDispatch } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
-import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+// import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 
 interface Holiday {
   helgdag: string;
@@ -12,6 +12,7 @@ interface Holiday {
 
 export default function CalendarPage() {
   // const [selectedDate, setSelectedDate] = useState(null);
+  const dispatch = useAppDispatch();
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [day] = useState(new Date().getDay());
@@ -19,11 +20,11 @@ export default function CalendarPage() {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const profilesInTeam = useAppSelector((state) => state.profileSlice.profiles);
+  // const profilesInTeam = useAppSelector((state) => state.profileSlice.profiles);
 
-  const activeProfile = useAppSelector(
-    (state) => state.profileSlice.activeProfile
-  );
+  // const activeProfile = useAppSelector(
+  //   (state) => state.profileSlice.activeProfile
+  // );
 
   useEffect(() => {
     initCalendar();
@@ -187,10 +188,22 @@ export default function CalendarPage() {
           width: "350px",
         }}
       >
+        <Typography
+          variant="h5"
+          style={{
+            textAlign: "center",
+            marginTop: "40px",
+            fontFamily: "Arial, sans-serif",
+            fontWeight: "bold",
+            letterSpacing: "2px",
+          }}
+        >
+          {activeTeam?.name} Kalender
+        </Typography>
         <div className="today-aside" style={{ textAlign: "center" }}>
           <Typography
             variant="h6"
-            style={{ fontWeight: "bold", marginTop: "130px" }}
+            style={{ fontWeight: "bold", marginTop: "10px" }}
           >
             Dagens Datum
           </Typography>
@@ -210,7 +223,7 @@ export default function CalendarPage() {
             backgroundColor: "rgb(211, 145, 158)",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",      
+            alignItems: "center",
           }}
         >
           <div className="add-todo-div">
@@ -349,26 +362,47 @@ export default function CalendarPage() {
               justifyContent: "space-between",
               alignItems: "center",
               width: "100%",
-              padding: "0 20px",
+              marginTop: "10px",
             }}
           >
-            <Button
-              variant="outlined"
+            <span
               title="Föregående månad"
               onClick={handlePrevMonth}
+              style={{
+                cursor: "pointer",
+                fontSize: "32px",
+                color: "black",
+                marginRight: "20px",
+              }}
             >
-              <i className="fas fa-chevron-left"></i>
-            </Button>
-            <Typography variant="h6" id="month-year">
+              &lt;
+            </span>
+
+            <Typography
+              variant="h6"
+              id="month-year"
+              style={{
+                margin: "10px",
+                fontFamily: "Arial, sans-serif",
+                fontWeight: "bold",
+                color: "#000",
+              }}
+            >
               {updateCalendarMonthLabel()}
             </Typography>
-            <Button
-              variant="outlined"
+
+            <span
               title="Nästa månad"
               onClick={handleNextMonth}
+              style={{
+                cursor: "pointer",
+                fontSize: "32px", // Större storlek
+                color: "black",
+                marginLeft: "20px", // Lägg till mellanrum mellan månadsnamnet och pilen
+              }}
             >
-              <i className="fas fa-chevron-right"></i>
-            </Button>
+              &gt;
+            </span>
           </div>
         </header>
         <table id="calendar-table">
@@ -440,8 +474,9 @@ export default function CalendarPage() {
                       {holidayName && (
                         <div
                           style={{
-                            fontSize: "15px",
-                            padding: "2px",
+                            fontSize: "9px",
+
+                            whiteSpace: "nowrap",
                             backgroundColor: "white",
                             overflowWrap: "break-word",
                             position: "absolute",
@@ -451,6 +486,7 @@ export default function CalendarPage() {
                             textAlign: "center",
                             color: "rgb(215, 142, 142)",
                             opacity: 0.6,
+                            padding: "2px",
                           }}
                         >
                           {holidayName}
