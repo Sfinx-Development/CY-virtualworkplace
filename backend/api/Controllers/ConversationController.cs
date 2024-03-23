@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using api;
 using core;
+using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -231,7 +232,8 @@ namespace Controllers
                 {
                     Id = participant.Id,
                     ProfileId = participant.ProfileId,
-                    ConversationId = participant.ConversationId
+                    ConversationId = participant.ConversationId,
+                    LastActive = participant.LastActive
                 };
 
                 Console.WriteLine("SKICKAS IVÄG: ", participantDTO);
