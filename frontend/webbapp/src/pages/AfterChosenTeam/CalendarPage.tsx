@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Container, Button, Typography } from "@mui/material";
+import { useAppSelector } from "../../slices/store";
+import { getActiveTeam } from "../../slices/teamSlice";
+import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 
 interface Holiday {
   helgdag: string;
@@ -14,6 +17,13 @@ export default function CalendarPage() {
   const [day] = useState(new Date().getDay());
   const [holidays, setHolidays] = useState<Holiday[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const profilesInTeam = useAppSelector((state) => state.profileSlice.profiles);
+
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
   useEffect(() => {
     initCalendar();
@@ -142,6 +152,14 @@ export default function CalendarPage() {
     changeMonth(1);
   }
 
+  function isToday(year: number, month: number, day: number): boolean {
+    const today = new Date();
+    return (
+      today.getFullYear() === year &&
+      today.getMonth() === month &&
+      today.getDate() === day
+    );
+  }
 
   return (
     <Container
@@ -169,11 +187,20 @@ export default function CalendarPage() {
           width: "350px",
         }}
       >
-        <div className="today-aside">
-          <Typography variant="h6">Dagens Datum</Typography>
-          <Typography>{currentTime.toLocaleTimeString()}</Typography>
-          <Typography>{currentTime.toLocaleDateString()}</Typography>
-          <Typography>
+        <div className="today-aside" style={{ textAlign: "center" }}>
+          <Typography
+            variant="h6"
+            style={{ fontWeight: "bold", marginTop: "130px" }}
+          >
+            Dagens Datum
+          </Typography>
+          <Typography style={{ marginBottom: "5px" }}>
+            {currentTime.toLocaleTimeString()}
+          </Typography>
+          <Typography style={{ marginBottom: "5px" }}>
+            {currentTime.toLocaleDateString()}
+          </Typography>
+          <Typography style={{ marginBottom: "25px" }}>
             {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
           </Typography>
         </div>
@@ -181,12 +208,9 @@ export default function CalendarPage() {
           className="todo-aside"
           style={{
             backgroundColor: "rgb(211, 145, 158)",
-            marginTop: "140px",
-            height: "calc(100% - 228px)",
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
-            overflowY: "auto",
+            alignItems: "center",      
           }}
         >
           <div className="add-todo-div">
@@ -351,7 +375,14 @@ export default function CalendarPage() {
           <thead>
             <tr>
               {weekDays.map((day, index) => (
-                   <th key={index} style={{ color: index === 6 ? "rgb(182, 36, 36)" : "inherit" }}>{day}</th>
+                <th
+                  key={index}
+                  style={{
+                    color: index === 6 ? "rgb(182, 36, 36)" : "inherit",
+                  }}
+                >
+                  {day}
+                </th>
               ))}
             </tr>
           </thead>
@@ -366,13 +397,17 @@ export default function CalendarPage() {
                   )?.helgdag;
 
                   const isSunday = dayIndex === 6;
+                  const isTodayCell = isToday(year, month, parseInt(day));
 
                   // Stil för söndagar
                   const sundayCellStyle = {
                     color: isSunday ? "rgb(182, 36, 36)" : "black",
                   };
 
-                  // Om det finns ett helgdagsnamn, visa det med röd färg
+                  const cellHoverStyle = {
+                    backgroundColor: "rgb(214, 196, 203)",
+                  };
+
                   return (
                     <td
                       key={dayIndex}
@@ -382,29 +417,44 @@ export default function CalendarPage() {
                         gridColumn: "span",
                         cursor: "pointer",
                         position: "relative",
-                        color: isSunday ? "red" : (holidayName ? "red" : "black"),
+                        color: isSunday ? "red" : holidayName ? "red" : "black",
                         whiteSpace: "nowrap",
+                        backgroundColor: isTodayCell
+                          ? "grey"
+                          : "rgb(214, 196, 203)",
+                        transition: "background-color 0.3s",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isTodayCell) {
+                          e.currentTarget.style.backgroundColor = "white";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isTodayCell) {
+                          e.currentTarget.style.backgroundColor =
+                            "rgb(214, 196, 203)";
+                        }
                       }}
                     >
-                       {day}
+                      {day}
                       {holidayName && (
-                         <div
-                         style={{
-                           fontSize: "15px",
-                           padding: "2px",
-                           backgroundColor: "white",
-                           overflowWrap: "break-word",
-                           position: "absolute",
-                           bottom: 0,
-                           left: 0,
-                           right: 0,
-                           textAlign: "center",
-                           color: "rgb(215, 142, 142)",
-                           opacity: 0.6,
-                         }}
-                       >
-                         {holidayName}
-                       </div>
+                        <div
+                          style={{
+                            fontSize: "15px",
+                            padding: "2px",
+                            backgroundColor: "white",
+                            overflowWrap: "break-word",
+                            position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            textAlign: "center",
+                            color: "rgb(215, 142, 142)",
+                            opacity: 0.6,
+                          }}
+                        >
+                          {holidayName}
+                        </div>
                       )}
                     </td>
                   );
