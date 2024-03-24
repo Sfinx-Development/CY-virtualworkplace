@@ -1,3 +1,11 @@
+export interface Todo {
+  id: string;
+  description: string;
+  title?: string;
+  date: Date;
+  teamId?: string;
+}
+
 export interface User {
   id: string;
   firstName: string;
