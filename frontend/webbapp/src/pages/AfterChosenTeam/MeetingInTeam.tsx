@@ -9,9 +9,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { isMobile } from "../../../globalConstants";
-import { Meeting } from "../../../types";
+import { Meeting, MeetingOccasion } from "../../../types";
 import {
   DeleteMeetingAsync,
   EditMeetingAsync,
@@ -131,7 +131,7 @@ export default function MeetingInTeamsPage() {
         {upcomingMeetings.length > 0 && (
           <Box>
             <Typography variant="h5">Kommande möten</Typography>
-            {upcomingMeetings?.map((meeting: { id: Key | null | undefined; meetingId: string; name: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; date: { toString: () => string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; }; description: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; }) => (
+            {upcomingMeetings?.map((meeting: MeetingOccasion ) => (
               <Card
                 key={meeting.id}
                 style={{ marginBottom: "15px", backgroundColor: officeColor }}
@@ -211,7 +211,7 @@ export default function MeetingInTeamsPage() {
         {pastMeetings.length > 0 && (
           <Box>
             <Typography variant="h5">Passerade möten</Typography>
-            {pastMeetings?.map((meeting: { id: Key | null | undefined; name: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; date: { toString: () => string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined; }; }) => (
+            {pastMeetings?.map((meeting: MeetingOccasion) => (
               <Card
                 key={meeting.id}
                 style={{ marginBottom: "15px", backgroundColor: chatRoomColor }}
