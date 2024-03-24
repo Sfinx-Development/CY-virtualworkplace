@@ -28,7 +28,7 @@ export const FetchGetTodo = async (): Promise<Todo> => {
 };
 
 export const FetchCreateTeamTodo = async (
-  newTodo: CreateTodoDTO
+  newTodo: Todo
 ): Promise<Todo> => {
   try {
     const response = await fetch(todoapiUrl + "/create", {
