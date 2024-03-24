@@ -11,6 +11,7 @@ import {
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
+import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
 // import { theme1 } from "../../theme";
@@ -24,6 +25,7 @@ export default function ChooseTeam() {
 
   const handleNavigateToMenu = (teamId: string) => {
     dispatch(setActiveTeam(teamId));
+    dispatch(GetMyProfileAsync(teamId));
     navigate("/enterhouse");
   };
 
