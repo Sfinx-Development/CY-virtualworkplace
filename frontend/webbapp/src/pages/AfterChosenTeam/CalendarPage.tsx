@@ -46,26 +46,15 @@ export default function CalendarPage() {
     }
   }, [dispatch, activeTeam]);
 
-  // useEffect(() => {
-  //   if (activeProfile) {
-  //     dispatch(GetMyMeetingsAsync(activeProfile.id));
-  //     dispatch(GetMyOccasionsAsync(activeProfile.id));
-  //     dispatch(GetMyPastMeetingsAsync(activeProfile.id));
-  //   }
-  // }, [activeProfile]);
-
   useEffect(() => {
     initCalendar();
     const timerID = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timerID);
   }, []);
-  
+
   useEffect(() => {
     initCalendar();
   }, [month, year]);
-  
-
-
 
   const handleCreateTodo = async () => {
     if (!description || !todoDate) {
@@ -77,12 +66,11 @@ export default function CalendarPage() {
     const parsedStartDate = new Date(todoDate);
 
     const newTodo: Todo = {
-      
       id: "", // Assign id when received from backend
       description: description,
-      title: "Dressyr",
+      title: title,
       date: parsedStartDate,
-      teamId: activeTeam.id,  
+      teamId: activeTeam.id,
     };
 
     console.log("newtodo", newTodo);
@@ -91,7 +79,6 @@ export default function CalendarPage() {
     setDescription("");
     setTodoDate("");
   };
-  
 
   async function getHolidays(year: number, month: number): Promise<Holiday[]> {
     const apiUrl = `https://sholiday.faboul.se/dagar/v2.1/${year}/${month}`;
@@ -131,9 +118,6 @@ export default function CalendarPage() {
     const newHolidays = await getHolidays(year, month + 1);
     setHolidays(newHolidays);
   }
-
-  // Initiera kalendern när sidan laddas
-  // window.addEventListener("load", initCalendar);
 
   const weekDays = [
     "Måndag",
@@ -280,84 +264,95 @@ export default function CalendarPage() {
             alignItems: "center",
           }}
         >
-        
           <Button
-  id="add-todo-btn"
-  variant="outlined"
-  style={{
-    backgroundColor: "rgb(171, 92, 121)",
-    padding: "4px",
-    color: "rgb(255, 255, 255)",
-    border: "none",
-    borderRadius: "2px",
-    height: "50px",
-    width: "280px",
-    letterSpacing: "2px",
-    fontSize: "14px",
-    fontFamily: '"Helvetica", Arial, sans-serif',
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
-    position: "relative",
-    overflow: "hidden",
-    transition: "width 0.3s ease",
-  }}
->
-  Lägg till todo i kalender
-</Button>
-           
-            <div>
-  <input
-    type="text"
-    placeholder="Enter todo description"
-    value={description}
-    onChange={(e) => setDescription(e.target.value)}
-    style={{
-      borderRadius: "4px", // Flyttade detta style-objekt hit
-      marginTop: "20px",
-      marginLeft: "20px",
-      height: "80px",
-      width: "240px",
-      resize: "none",
-      padding: "8px",
-      fontSize: "14px",
-    }}
-  />
+            id="add-todo-btn"
+            variant="outlined"
+            style={{
+              backgroundColor: "rgb(171, 92, 121)",
+              padding: "4px",
+              color: "rgb(255, 255, 255)",
+              border: "none",
+              borderRadius: "2px",
+              height: "50px",
+              width: "280px",
+              letterSpacing: "2px",
+              fontSize: "14px",
+              fontFamily: '"Helvetica", Arial, sans-serif',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
+              position: "relative",
+              overflow: "hidden",
+              transition: "width 0.3s ease",
+            }}
+          >
+            Lägg till todo i kalender
+          </Button>
+          <TextField
+                label="Enter todo titel"
+                type="text"
+                value={title}
+                onChange={(e) => SetTitle(e.target.value)}
+                variant="outlined"
+                sx={{
+                backgroundColor: "white",
+                borderRadius: "4px", 
+                marginTop: "10px",
+                }}
+              />
 
-  <div
-    className="date-submit-div"
-    style={{
-      width: "260px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    }}
-  >
- <TextField
-          label="Slutdatum"
-          type="datetime-local"
-          value={todoDate}
-          onChange={(e) => setTodoDate(e.target.value)}
-          variant="outlined"
-          sx={{
-            width: "250px",
-            marginTop: 2,
-            "& label": {
-              color: "transparent",
-            },
-            "&:focus label": {
-              color: "initial",
-            },
-          }}
-        />
-    <Button onClick={handleCreateTodo}>Add Todo</Button>
-  </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Enter todo description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={{
+                borderRadius: "4px", 
+                marginTop: "20px",
+                marginLeft: "20px",
+                height: "80px",
+                width: "240px",
+                resize: "none",
+                padding: "8px",
+                fontSize: "14px",
+              }}
+            />
 
-  {fieldError && (
-    <Typography color="error">Please fill all fields</Typography>
-  )}
-</div>
-                   {/* <Button
+            <div
+              className="date-submit-div"
+              style={{
+                width: "260px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <TextField
+                label="Slutdatum"
+                type="datetime-local"
+                value={todoDate}
+                onChange={(e) => setTodoDate(e.target.value)}
+                variant="outlined"
+                sx={{
+                  width: "250px",
+                  marginTop: 2,
+                  "& label": {
+                    color: "transparent",
+                  },
+                  "&:focus label": {
+                    color: "initial",
+                  },
+                }}
+              />
+              <Button onClick={handleCreateTodo}>Add Todo</Button>
+            </div>
+
+            {fieldError && (
+              <Typography color="error">Please fill all fields</Typography>
+            )}
+          </div>
+          {/* <Button
               variant="contained"
               onClick={handleCreateTodo}
               sx={{ margin: 1, fontSize: 20 }}
@@ -376,54 +371,52 @@ export default function CalendarPage() {
                 >
                   Add todo
                 </Button> */}
-              </div>
-          
-      
-          <div id="todo-list-div" className="alltodos-div">
-            <div className="my-todos-div">
-              <Button
-                id="show-todos-btn"
-                variant="outlined"
-                style={{
-                  backgroundColor: "rgb(19, 19, 19)",
-                  padding: "4px",
-                  color: "rgb(255, 255, 255)",
-                  border: "none",
-                  borderRadius: "2px",
-                  height: "50px",
-                  width: "280px",
-                  letterSpacing: "2px",
-                  fontSize: "14px",
-                  fontFamily: '"Helvetica", Arial, sans-serif',
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  position: "relative",
-                  overflow: "hidden",
-                  transition: "width 0.3s ease",
-                }}
-              >
-                Teamets todos
-              </Button>
-              <Button id="read-todos-btn" aria-label="headphone icon">
-                <i className="fa-solid fa-headphones" id="headphone-icon"></i>
-              </Button>
-            </div>
-            <div
-              className="todo-list"
+        </div>
+
+        <div id="todo-list-div" className="alltodos-div">
+          <div className="my-todos-div">
+            <Button
+              id="show-todos-btn"
+              variant="outlined"
               style={{
+                backgroundColor: "rgb(19, 19, 19)",
+                padding: "4px",
+                color: "rgb(255, 255, 255)",
+                border: "none",
+                borderRadius: "2px",
+                height: "50px",
+                width: "280px",
+                letterSpacing: "2px",
+                fontSize: "14px",
                 fontFamily: '"Helvetica", Arial, sans-serif',
                 display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                maxWidth: "350px",
-                overflowX: "auto",
+                alignItems: "center",
+                justifyContent: "space-around",
+                position: "relative",
+                overflow: "hidden",
+                transition: "width 0.3s ease",
               }}
             >
-              <ul id="todo-list" className="todo-reveal-list"></ul>
-            </div>
+              Teamets todos
+            </Button>
+            <Button id="read-todos-btn" aria-label="headphone icon">
+              <i className="fa-solid fa-headphones" id="headphone-icon"></i>
+            </Button>
           </div>
-       
+          <div
+            className="todo-list"
+            style={{
+              fontFamily: '"Helvetica", Arial, sans-serif',
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              maxWidth: "350px",
+              overflowX: "auto",
+            }}
+          >
+            <ul id="todo-list" className="todo-reveal-list"></ul>
+          </div>
+        </div>
       </aside>
       <main
         style={{
@@ -476,9 +469,9 @@ export default function CalendarPage() {
               onClick={handleNextMonth}
               style={{
                 cursor: "pointer",
-                fontSize: "32px", 
+                fontSize: "32px",
                 color: "black",
-                marginLeft: "20px", 
+                marginLeft: "20px",
               }}
             >
               &gt;
