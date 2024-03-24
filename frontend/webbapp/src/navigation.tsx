@@ -26,10 +26,15 @@ import CalendarPage from "./pages/AfterChosenTeam/CalendarPage";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
 import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
+import { GetMyTeamsAsync } from "./slices/teamSlice";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
   const user = useAppSelector((state) => state.userSlice.user);
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
   const dispatch = useAppDispatch();
 
