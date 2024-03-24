@@ -31,7 +31,7 @@ import {
   messageEdited,
   messageSent,
 } from "../../slices/messageSlice";
-import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+import { GetTeamProfiles, getActiveProfile } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -102,8 +102,10 @@ export default function ChatRoom() {
       messageSent: (message: Message) => {
         dispatch(messageSent(message));
         scrollToBottom();
-        if (audioRef.current && message.profileId != activeProfile?.id) {
-          audioRef.current.play();
+        if (activeProfile) {
+          if (audioRef.current && message.profileId != activeProfile.id) {
+            audioRef.current.play();
+          }
         }
       },
       messageEdited: (message: Message) => {
@@ -120,6 +122,7 @@ export default function ChatRoom() {
   useEffect(() => {
     scrollToBottom();
     dispatch(getActiveTeam());
+    dispatch(getActiveProfile());
   }, []);
 
   const handleDeleteMessage = (messageId: string) => {
@@ -133,7 +136,7 @@ export default function ChatRoom() {
 
   useEffect(() => {
     if (activeTeam) {
-      dispatch(GetMyProfileAsync(activeTeam.id));
+      // dispatch(GetMyProfileAsync(activeTeam.id));
       dispatch(GetTeamConversation(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
       dispatch(GetTeamProfiles(activeTeam.id));
@@ -162,7 +165,7 @@ export default function ChatRoom() {
         .then((action) => {
           const createdMessage = action.payload;
           if (typeof createdMessage !== "string" && createdMessage) {
-            // Skicka det nya meddelandet till SignalR-hubben
+            // skickar det nya meddelandet till SignalR-hubben
             dispatch(liveUpdateMessageSent(createdMessage));
             setContent("");
             scrollToBottom();
@@ -233,7 +236,7 @@ export default function ChatRoom() {
     >
       <audio
         ref={audioRef}
-        src="src/assets/message.mp3"
+        src="/message.mp3"
         style={{ display: "none" }}
         itemType="mp3"
       />
