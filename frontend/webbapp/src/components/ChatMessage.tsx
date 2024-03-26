@@ -1,10 +1,8 @@
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import EditIcon from "@mui/icons-material/Edit";
-import { Avatar, Card, IconButton, TextField, Typography } from "@mui/material";
-import { format } from "date-fns";
+import { Card, TextField, Typography } from "@mui/material";
 import React from "react";
 import { isMobile } from "../../globalConstants";
 import { ConversationParticipant, Message } from "../../types";
+import { useAppSelector } from "../slices/store";
 
 interface ChatMessageProps {
   message: Message;
@@ -20,11 +18,9 @@ interface ChatMessageProps {
 }
 
 export default function ChatMessage(props: ChatMessageProps) {
-  function formatDate(dateString: Date) {
-    const date = new Date(dateString);
-    return format(date, "yyyy-MM-dd HH:mm");
-  }
-
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
   return (
     <Card
       key={props.message.id}
@@ -33,10 +29,29 @@ export default function ChatMessage(props: ChatMessageProps) {
         marginBottom: 2,
         display: "flex",
         flexDirection: "column",
+        backgroundColor:
+          props.message.profileId == activeProfile?.id ? "#F9F3FF" : "white",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        {/* {props.message.conversationParticipantId ===
+          props.activeParticipant.id && (
+          <div>
+            <IconButton
+              size="small"
+              onClick={() => props.handleDeleteMessage(props.message.id)}
+            >
+              <DeleteOutlineIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => props.handleSetEditMode(props.message)}
+            >
+              <EditIcon />
+            </IconButton>
+          </div>
+        )} */}
+        {/* <div style={{ display: "flex", alignItems: "center" }}>
           {props.message.fullName && (
             <Avatar
               src={props.getProfilesAvatar(props.message.profileId)}
@@ -60,24 +75,7 @@ export default function ChatMessage(props: ChatMessageProps) {
           >
             {formatDate(props.message.dateCreated)}
           </Typography>
-        </div>
-        {props.message.conversationParticipantId ===
-          props.activeParticipant.id && (
-          <div>
-            <IconButton
-              size="small"
-              onClick={() => props.handleDeleteMessage(props.message.id)}
-            >
-              <DeleteOutlineIcon />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => props.handleSetEditMode(props.message)}
-            >
-              <EditIcon />
-            </IconButton>
-          </div>
-        )}
+        </div> */}
       </div>
       <Typography
         variant="body1"

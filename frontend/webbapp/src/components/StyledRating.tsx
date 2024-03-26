@@ -53,7 +53,10 @@ interface RadioGroupRatingProps {
 export const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({
   onChange,
 }) => {
-  const handleChange = (event: React.ChangeEvent<{}>, value: number | null) => {
+  const handleChange = (
+    event: React.ChangeEvent<NonNullable<unknown>>,
+    value: number | null
+  ) => {
     if (onChange) {
       onChange(value);
     }
