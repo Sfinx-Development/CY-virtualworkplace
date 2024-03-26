@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Container, Button, Typography } from "@mui/material";
+import { Container, Button, Typography, TextField } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
-// import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+import { createTeamTodoAsync } from "../../slices/todoSlice";
+import { Todo } from "../../../types";
+import { format, addMonths, subMonths, setDate } from "date-fns";
+import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 
 interface Holiday {
   helgdag: string;
@@ -12,29 +15,83 @@ interface Holiday {
 
 export default function CalendarPage() {
   // const [selectedDate, setSelectedDate] = useState(null);
-  const dispatch = useAppDispatch();
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth());
   const [day] = useState(new Date().getDay());
   const [holidays, setHolidays] = useState<Holiday[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  // const profilesInTeam = useAppSelector((state) => state.profileSlice.profiles);
+  const [title, SetTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [todoDate, setTodoDate] = useState("");
+  const [fieldError, setFieldError] = useState(false);
 
-  // const activeProfile = useAppSelector(
-  //   (state) => state.profileSlice.activeProfile
-  // );
+  const dispatch = useAppDispatch();
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+
+  const profilesInTeam = useAppSelector((state) => state.profileSlice.profiles);
+
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
+
+  useEffect(() => {
+    dispatch(getActiveTeam());
+  }, []);
+
+  useEffect(() => {
+    if (activeTeam) {
+      dispatch(GetMyProfileAsync(activeTeam?.id));
+      dispatch(GetTeamProfiles(activeTeam?.id));
+    }
+  }, [dispatch, activeTeam]);
+
+  // useEffect(() => {
+  //   if (activeProfile) {
+  //     dispatch(GetMyMeetingsAsync(activeProfile.id));
+  //     dispatch(GetMyOccasionsAsync(activeProfile.id));
+  //     dispatch(GetMyPastMeetingsAsync(activeProfile.id));
+  //   }
+  // }, [activeProfile]);
 
   useEffect(() => {
     initCalendar();
     const timerID = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timerID);
   }, []);
-
+  
   useEffect(() => {
     initCalendar();
   }, [month, year]);
+  
+
+
+
+  const handleCreateTodo = async () => {
+    if (!description || !todoDate) {
+      setFieldError(true);
+      return;
+    }
+
+    // const teamId = activeTeam ? activeTeam.payload. : "";
+    const parsedStartDate = new Date(todoDate);
+
+    const newTodo: Todo = {
+      
+      id: "", // Assign id when received from backend
+      description: description,
+      title: "Dressyr",
+      date: parsedStartDate,
+      teamId: activeTeam.id,  
+    };
+
+    console.log("newtodo", newTodo);
+    await dispatch(createTeamTodoAsync(newTodo));
+
+    setDescription("");
+    setTodoDate("");
+  };
+  
 
   async function getHolidays(year: number, month: number): Promise<Holiday[]> {
     const apiUrl = `https://sholiday.faboul.se/dagar/v2.1/${year}/${month}`;
@@ -73,13 +130,10 @@ export default function CalendarPage() {
 
     const newHolidays = await getHolidays(year, month + 1);
     setHolidays(newHolidays);
-
-    // Uppdatera kalendern med aktuellt år och månad
-    // updateCalendarCells(year, month, newHolidays);
   }
 
   // Initiera kalendern när sidan laddas
-  window.addEventListener("load", initCalendar);
+  // window.addEventListener("load", initCalendar);
 
   const weekDays = [
     "Måndag",
@@ -226,61 +280,87 @@ export default function CalendarPage() {
             alignItems: "center",
           }}
         >
-          <div className="add-todo-div">
-            <Button
-              id="add-todo-btn"
-              variant="outlined"
-              style={{
-                backgroundColor: "rgb(171, 92, 121)",
-                padding: "4px",
-                color: "rgb(255, 255, 255)",
-                border: "none",
-                borderRadius: "2px",
-                height: "50px",
-                width: "280px",
-                letterSpacing: "2px",
-                fontSize: "14px",
-                fontFamily: '"Helvetica", Arial, sans-serif',
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-around",
-                position: "relative",
-                overflow: "hidden",
-                transition: "width 0.3s ease",
-              }}
-            >
-              Lägg till todo i kalender
-            </Button>
-            <form id="add-todo-form" className="todo-form" action="">
-              {/* <form id="add-todo-form" className="todo-form" action="" style={{ display: 'none' }}></form> */}
-              <textarea
-                id="title-input"
-                placeholder="Walk the dog..."
-                style={{
-                  borderRadius: "4px",
-                  marginTop: "20px",
-                  marginLeft: "20px",
-                  height: "80px",
-                  width: "240px",
-                  resize: "none",
-                  padding: "8px",
-                  fontSize: "14px",
-                }}
-              ></textarea>
-              <div
-                className="date-submit-div"
-                style={{
-                  width: "260px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <input type="date" id="date-input" />
-                <Button
-                  id="save-todo-button"
-                  type="submit"
-                  variant="contained"
+        
+          <Button
+  id="add-todo-btn"
+  variant="outlined"
+  style={{
+    backgroundColor: "rgb(171, 92, 121)",
+    padding: "4px",
+    color: "rgb(255, 255, 255)",
+    border: "none",
+    borderRadius: "2px",
+    height: "50px",
+    width: "280px",
+    letterSpacing: "2px",
+    fontSize: "14px",
+    fontFamily: '"Helvetica", Arial, sans-serif',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
+    position: "relative",
+    overflow: "hidden",
+    transition: "width 0.3s ease",
+  }}
+>
+  Lägg till todo i kalender
+</Button>
+           
+            <div>
+  <input
+    type="text"
+    placeholder="Enter todo description"
+    value={description}
+    onChange={(e) => setDescription(e.target.value)}
+    style={{
+      borderRadius: "4px", // Flyttade detta style-objekt hit
+      marginTop: "20px",
+      marginLeft: "20px",
+      height: "80px",
+      width: "240px",
+      resize: "none",
+      padding: "8px",
+      fontSize: "14px",
+    }}
+  />
+
+  <div
+    className="date-submit-div"
+    style={{
+      width: "260px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    }}
+  >
+ <TextField
+          label="Slutdatum"
+          type="datetime-local"
+          value={todoDate}
+          onChange={(e) => setTodoDate(e.target.value)}
+          variant="outlined"
+          sx={{
+            width: "250px",
+            marginTop: 2,
+            "& label": {
+              color: "transparent",
+            },
+            "&:focus label": {
+              color: "initial",
+            },
+          }}
+        />
+    <Button onClick={handleCreateTodo}>Add Todo</Button>
+  </div>
+
+  {fieldError && (
+    <Typography color="error">Please fill all fields</Typography>
+  )}
+</div>
+                   {/* <Button
+              variant="contained"
+              onClick={handleCreateTodo}
+              sx={{ margin: 1, fontSize: 20 }}
                   style={{
                     padding: "4px 12px",
                     color: "aliceblue",
@@ -295,10 +375,10 @@ export default function CalendarPage() {
                   }}
                 >
                   Add todo
-                </Button>
+                </Button> */}
               </div>
-            </form>
-          </div>
+          
+      
           <div id="todo-list-div" className="alltodos-div">
             <div className="my-todos-div">
               <Button
@@ -343,7 +423,7 @@ export default function CalendarPage() {
               <ul id="todo-list" className="todo-reveal-list"></ul>
             </div>
           </div>
-        </div>
+       
       </aside>
       <main
         style={{
@@ -396,9 +476,9 @@ export default function CalendarPage() {
               onClick={handleNextMonth}
               style={{
                 cursor: "pointer",
-                fontSize: "32px", // Större storlek
+                fontSize: "32px", 
                 color: "black",
-                marginLeft: "20px", // Lägg till mellanrum mellan månadsnamnet och pilen
+                marginLeft: "20px", 
               }}
             >
               &gt;
@@ -433,7 +513,6 @@ export default function CalendarPage() {
                   const isSunday = dayIndex === 6;
                   const isTodayCell = isToday(year, month, parseInt(day));
 
-                  // Stil för söndagar
                   const sundayCellStyle = {
                     color: isSunday ? "rgb(182, 36, 36)" : "black",
                   };

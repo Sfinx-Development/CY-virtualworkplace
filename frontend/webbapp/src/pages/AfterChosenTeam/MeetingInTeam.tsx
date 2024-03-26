@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { isMobile } from "../../../globalConstants";
-import { Meeting } from "../../../types";
+import { Meeting, MeetingOccasion } from "../../../types";
 import {
   DeleteMeetingAsync,
   EditMeetingAsync,
@@ -63,7 +63,7 @@ export default function MeetingInTeamsPage() {
 
   const currentDate = new Date();
   const upcomingMeetings = occasions
-    ? occasions.filter((occasion) => new Date(occasion.date) >= currentDate)
+    ? occasions.filter((occasion: { date: string | number | Date; }) => new Date(occasion.date) >= currentDate)
     : [];
 
   const pastMeetings =
@@ -74,7 +74,7 @@ export default function MeetingInTeamsPage() {
   };
   const handleEditMeeting = () => {
     if (meetingIdToEdit && isEditMode) {
-      const meetingToUpdate = meetings?.find((m) => m.id == meetingIdToEdit);
+      const meetingToUpdate = meetings?.find((m: { id: string; }) => m.id == meetingIdToEdit);
       if (meetingToUpdate) {
         // Använd Date.parse() för att tolka datumsträngen i lokala tidszonen
         const parsedDate = Date.parse(editedDate);
@@ -104,7 +104,7 @@ export default function MeetingInTeamsPage() {
 
   const handleSetEditMode = (meetingId: string) => {
     if (meetings) {
-      const meetingToEdit = meetings.find((m) => m.id == meetingId);
+      const meetingToEdit = meetings.find((m: { id: string; }) => m.id == meetingId);
       if (meetingToEdit) {
         setIsEditMode(true);
         setEditedName(meetingToEdit?.name);
@@ -131,7 +131,7 @@ export default function MeetingInTeamsPage() {
         {upcomingMeetings.length > 0 && (
           <Box>
             <Typography variant="h5">Kommande möten</Typography>
-            {upcomingMeetings?.map((meeting) => (
+            {upcomingMeetings?.map((meeting: MeetingOccasion ) => (
               <Card
                 key={meeting.id}
                 style={{ marginBottom: "15px", backgroundColor: officeColor }}
@@ -211,7 +211,7 @@ export default function MeetingInTeamsPage() {
         {pastMeetings.length > 0 && (
           <Box>
             <Typography variant="h5">Passerade möten</Typography>
-            {pastMeetings?.map((meeting) => (
+            {pastMeetings?.map((meeting: MeetingOccasion) => (
               <Card
                 key={meeting.id}
                 style={{ marginBottom: "15px", backgroundColor: chatRoomColor }}

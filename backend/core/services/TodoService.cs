@@ -36,31 +36,31 @@ public class TodoService : ITodoService
                 loggedInUser.Id,
                 todo.TeamId
             ) ?? throw new Exception("Ingen profil i teamet");
-            Todo newTodo =
-                 new(
-                     Utils.GenerateRandomId(),
-                     todo.TeamId,
-                     todo.Description,
-                     todo.Title,
-                     todo.Date
-                 );
+            Todo newTodo = new(); 
+                 {
+                     newTodo.Id = Utils.GenerateRandomId();
+                     newTodo.Description = todo.Description;
+                     newTodo.TeamId = todo.TeamId;
+                    newTodo.Title = todo.Title;
+                     newTodo.Date = todo.Date.AddHours(1);
+                 };
+                 
 
 
-            Todo createdTodo = await _todoRepository.CreateAsync(
-                newTodo
-            );
+            Todo createdTodo = await _todoRepository.CreateAsync(newTodo);
 
-               TodoDTO newTodoDTO =
-                 new(
-                     createdTodo.Id,
-                     createdTodo.TeamId,
-                     createdTodo.Description,
-                      createdTodo.Date,
-                     createdTodo.Title
-                    
-                 );
+             TodoDTO newTodoDTO = new(); 
+                 {
+                     newTodoDTO.Id = createdTodo.Id;
+                     newTodoDTO.Description = createdTodo.Description;
+                     newTodoDTO.TeamId = createdTodo.TeamId;
+                    newTodoDTO.Title = createdTodo.Title;
+                     newTodoDTO.Date = createdTodo.Date.AddHours(1);
+                 };
 
-            return newTodoDTO;
+                return newTodoDTO;
+           
+        
         }
         catch (Exception e)
         {
