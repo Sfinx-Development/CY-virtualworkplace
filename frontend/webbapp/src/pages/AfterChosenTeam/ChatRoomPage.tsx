@@ -1,13 +1,18 @@
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
 import {
+  Avatar,
   Button,
   Card,
-  Container,
+  IconButton,
   TextField,
   Typography,
   styled,
 } from "@mui/material";
+import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
+import { is800Mobile, isMobile } from "../../../globalConstants";
 import {
   ConversationParticipant,
   Message,
@@ -38,8 +43,16 @@ import { theme1 } from "../../theme";
 import ChatConnector from "./ChatConnection";
 
 const StyledTextField = styled(TextField)({
-  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "lightgray",
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "lightgray",
+    },
+    "&:hover fieldset": {
+      borderColor: "lightgray",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "lightgray",
+    },
   },
 });
 
@@ -224,14 +237,24 @@ export default function ChatRoom() {
   };
 
   const chatColor = theme1.palette.chat.main;
+
+  function formatDate(dateString: Date) {
+    const date = new Date(dateString);
+    return format(date, "yyyy-MM-dd HH:mm");
+  }
+
   return (
-    <Container
-      sx={{
-        padding: "20px",
-        minHeight: "100vh",
+    <div
+      style={{
+        padding: isMobile ? 2 : "20px",
+        minHeight: "100%",
         display: "flex",
+        width: "100%",
         flexDirection: "column",
+        alignItems: "center",
         justifyContent: "space-between",
+        // background: "linear-gradient(45deg, #333333, #666666)",
+        // animation: `${gradientAnimation} 10s ease infinite`,
       }}
     >
       <audio
@@ -244,8 +267,9 @@ export default function ChatRoom() {
         className="card-content"
         sx={{
           padding: 2,
-          backgroundColor: "#f5f5f5",
-          height: "350px",
+          backgroundColor: "transparent",
+          height: is800Mobile ? "650px" : "500px",
+          width: "80%",
           flexGrow: 1,
           overflow: "auto",
         }}
@@ -256,42 +280,108 @@ export default function ChatRoom() {
           messages.map((message) => {
             if (message.id) {
               return (
-                <ChatMessage
-                  message={message}
-                  key={message.id}
-                  activeParticipant={activeParticipant}
-                  getProfilesAvatar={() => getProfilesAvatar(message.profileId)}
-                  handleDeleteMessage={() => handleDeleteMessage(message.id)}
-                  handleSetEditMode={() => handleSetEditMode(message)}
-                  isEditMode={isEditMode}
-                  messageIdToEdit={messageIdToEdit}
-                  handleKeyPress={(event) => handleKeyPress(event)}
-                  editedContent={editedContent}
-                  setEditedContent={setEditedContent}
-                />
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: 2,
+                      justifyContent:
+                        message.profileId == activeProfile?.id
+                          ? "flex-end"
+                          : "flex-start",
+                    }}
+                  >
+                    {message.fullName && (
+                      <Avatar
+                        src={getProfilesAvatar(message.profileId)}
+                        alt={message.fullName}
+                        sx={{
+                          marginRight: 1,
+                          width: isMobile ? 18 : 23,
+                          height: isMobile ? 18 : 23,
+                        }}
+                      />
+                    )}
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: isMobile ? 10 : 13,
+                        color: "#666666",
+                      }}
+                    >
+                      {message.fullName}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        marginLeft: 1,
+                        fontSize: isMobile ? 10 : 13,
+                        color: "#666666",
+                      }}
+                    >
+                      {formatDate(message.dateCreated)}
+                    </Typography>
+                    {message.profileId == activeProfile?.id ? (
+                      <div>
+                        <IconButton
+                          size="small"
+                          sx={{ padding: 0, marginLeft: 1 }}
+                          onClick={() => handleSetEditMode(message)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          sx={{ padding: 0, marginLeft: 1 }}
+                          onClick={() => handleDeleteMessage(message.id)}
+                        >
+                          <DeleteOutlineIcon />
+                        </IconButton>
+                      </div>
+                    ) : null}
+                  </div>
+                  <ChatMessage
+                    message={message}
+                    key={message.id}
+                    activeParticipant={activeParticipant}
+                    getProfilesAvatar={() =>
+                      getProfilesAvatar(message.profileId)
+                    }
+                    handleDeleteMessage={() => handleDeleteMessage(message.id)}
+                    handleSetEditMode={() => handleSetEditMode(message)}
+                    isEditMode={isEditMode}
+                    messageIdToEdit={messageIdToEdit}
+                    handleKeyPress={(event) => handleKeyPress(event)}
+                    editedContent={editedContent}
+                    setEditedContent={setEditedContent}
+                  />
+                </div>
               );
             }
             return null;
           })}
         <div ref={messagesEndRef} />
       </Card>
-      <Container
-        sx={{
+      <div
+        style={{
           display: "flex",
           alignItems: "center",
           marginTop: "10px",
+          width: "80%",
         }}
       >
         <StyledTextField
           fullWidth
           variant="outlined"
           value={content}
+          type="text"
+          label="Skriv ett meddelande"
           onChange={(e) => setContent(e.target.value)}
           sx={{
             input: {
               color: "black",
-              marginRight: "10px",
               borderColor: chatColor,
+              backgroundColor: "white",
             },
           }}
           onKeyDown={(e) => {
@@ -308,7 +398,7 @@ export default function ChatRoom() {
         >
           <SendIcon sx={{ color: "white" }} />
         </Button>
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 }
