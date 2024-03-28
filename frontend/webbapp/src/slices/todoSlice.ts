@@ -9,10 +9,10 @@ export interface TodoState {
 }
 
 const saveTodoToLocalStorage = (activeTodo: Todo) => {
-  localStorage.setItem("activeTeam", JSON.stringify(activeTodo));
+  localStorage.setItem("activeTodo", JSON.stringify(activeTodo));
 };
 const loadTodoFromLocalStorage = (): Todo | undefined => {
-  const storedTodo = localStorage.getItem("activeTdoId");
+  const storedTodo = localStorage.getItem("activeTodo");
   return storedTodo ? JSON.parse(storedTodo) : undefined;
 };
 
