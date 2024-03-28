@@ -1,9 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
-import { Container, Button, Typography, TextField } from "@mui/material";
+import { unwrapResult } from "@reduxjs/toolkit";
+
+import {
+  Container,
+  Button,
+  Typography,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Card,
+} from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../slices/store";
-import { getActiveTeam } from "../../slices/teamSlice";
-import { createTeamTodoAsync } from "../../slices/todoSlice";
+import { getActiveTeam, teamReducer } from "../../slices/teamSlice";
+import {
+  createTeamTodoAsync,
+  getTodoAsync,
+  // setTeamTodos,
+} from "../../slices/todoSlice";
 import { Todo } from "../../../types";
 import { format, addMonths, subMonths, setDate } from "date-fns";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
@@ -26,6 +42,9 @@ export default function CalendarPage() {
   const [todoDate, setTodoDate] = useState("");
   const [fieldError, setFieldError] = useState(false);
 
+  const [openDialog, setOpenDialog] = useState(false);
+  // const [alltodos, setTodos] = useState<Todo[]>([]);
+
   const dispatch = useAppDispatch();
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
 
@@ -34,6 +53,8 @@ export default function CalendarPage() {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
+
+  const todosInTeam = useAppSelector((state) => state.todoSlice.todos);
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -56,6 +77,32 @@ export default function CalendarPage() {
     initCalendar();
   }, [month, year]);
 
+  // const [todosDates, setTodosDates] = useState<number[]>([]);
+
+  // useEffect(() => {
+  //   if (todosInTeam) { // Kontrollera om todosInTeam är definierad först
+  //     const dates = todosInTeam.map(todo => todo.date.getDate());
+  //     setTodosDates(dates);
+  //   }
+  // }, [todosInTeam]);
+
+  const [todosen, setTodos] = useState<Todo[]>([]);
+
+  const handleGetTodos = async () => {
+    try {
+      if (activeTeam) {
+        const actionResult = await dispatch(getTodoAsync(activeTeam.id));
+        const todos = unwrapResult(actionResult); // Extract the actual data from the action result
+        if (todos) {
+          setTodos(todos);
+          setOpenDialog(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
+  };
+
   const handleCreateTodo = async () => {
     if (!description || !todoDate) {
       setFieldError(true);
@@ -70,7 +117,7 @@ export default function CalendarPage() {
       description: description,
       title: title,
       date: parsedStartDate,
-      teamId: activeTeam.id,
+      teamId: activeTeam?.id,
     };
 
     console.log("newtodo", newTodo);
@@ -289,17 +336,17 @@ export default function CalendarPage() {
             Lägg till todo i kalender
           </Button>
           <TextField
-                label="Enter todo titel"
-                type="text"
-                value={title}
-                onChange={(e) => SetTitle(e.target.value)}
-                variant="outlined"
-                sx={{
-                backgroundColor: "white",
-                borderRadius: "4px", 
-                marginTop: "10px",
-                }}
-              />
+            label="Enter todo titel"
+            type="text"
+            value={title}
+            onChange={(e) => SetTitle(e.target.value)}
+            variant="outlined"
+            sx={{
+              backgroundColor: "white",
+              borderRadius: "4px",
+              marginTop: "10px",
+            }}
+          />
 
           <div>
             <input
@@ -308,7 +355,7 @@ export default function CalendarPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               style={{
-                borderRadius: "4px", 
+                borderRadius: "4px",
                 marginTop: "20px",
                 marginLeft: "20px",
                 height: "80px",
@@ -352,38 +399,28 @@ export default function CalendarPage() {
               <Typography color="error">Please fill all fields</Typography>
             )}
           </div>
-          {/* <Button
-              variant="contained"
-              onClick={handleCreateTodo}
-              sx={{ margin: 1, fontSize: 20 }}
-                  style={{
-                    padding: "4px 12px",
-                    color: "aliceblue",
-                    backgroundColor: "rgb(11, 11, 11)",
-                    fontFamily: '"Helvetica", Arial, sans-serif',
-                    letterSpacing: "1px",
-                    border: "none",
-                    borderRadius: "2px",
-                    height: "30px",
-                    fontSize: "12px",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Add todo
-                </Button> */}
         </div>
 
         <div id="todo-list-div" className="alltodos-div">
-          <div className="my-todos-div">
+          <div
+            className="my-todos-div"
+            style={{
+              backgroundColor: "rgb(211, 145, 158)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <Button
               id="show-todos-btn"
               variant="outlined"
               style={{
-                backgroundColor: "rgb(19, 19, 19)",
-                padding: "4px",
-                color: "rgb(255, 255, 255)",
+                color: "white",
                 border: "none",
                 borderRadius: "2px",
+                backgroundColor: "rgb(171, 92, 121)",
+
+                top: "15px",
                 height: "50px",
                 width: "280px",
                 letterSpacing: "2px",
@@ -391,14 +428,45 @@ export default function CalendarPage() {
                 fontFamily: '"Helvetica", Arial, sans-serif',
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "space-around",
+                justifyContent: "center",
                 position: "relative",
                 overflow: "hidden",
                 transition: "width 0.3s ease",
               }}
+              onClick={handleGetTodos}
             >
-              Teamets todos
+              Teamets Todos
             </Button>
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+              <DialogTitle>Teamets Todos</DialogTitle>
+              <DialogContent dividers>
+                {todosInTeam?.map((todo) => (
+                  <Card
+                    key={todo.id}
+                    style={{
+                      marginBottom: "10px",
+                      padding: "10px",
+                      backgroundColor: "lightgrey",
+                    }}
+                  >
+                    <Typography variant="subtitle1">{todo.title}</Typography>
+                    <Typography
+                      variant="body2"
+                      style={{ wordWrap: "break-word" }}
+                    >
+                      {todo.description}
+                    </Typography>
+                    <Typography variant="body2">
+                      {todo.date.toString()}
+                    </Typography>
+                  </Card>
+                ))}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenDialog(false)}>Stäng</Button>
+              </DialogActions>
+            </Dialog>
             <Button id="read-todos-btn" aria-label="headphone icon">
               <i className="fa-solid fa-headphones" id="headphone-icon"></i>
             </Button>
@@ -497,7 +565,16 @@ export default function CalendarPage() {
             {generateCalendarRows(holidays).map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {row.map((day, dayIndex) => {
-                  // Kolla om dagen är en helgdag och hämta helgdagsnamnet
+                  // const dayNumber = parseInt(day);
+                  // const holidayName = holidays.find(
+                  //   (holiday) =>
+                  //     parseInt(holiday.datum.split("-")[2]) === dayNumber
+                  // )?.helgdag;
+                  // const isSunday = dayIndex === 6;
+                  // const isTodayCell = isToday(year, month, dayNumber);
+                  // const isTodoDay = todosDates.includes(dayNumber); // Kolla om det finns todos för detta datum
+                
+                      // KAN INTE GÖR ZXC SÅ KOMMENTERAR UT DEN GAMLA SÅ LÄNGE HÄR UNDER
                   const holidayName = holidays.find(
                     (holiday) =>
                       parseInt(holiday.datum.split("-")[2]) === parseInt(day)
@@ -563,7 +640,28 @@ export default function CalendarPage() {
                         >
                           {holidayName}
                         </div>
-                      )}
+                           )}
+                           {/* {isTodoDay && (
+                      
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            fontSize: "12px",
+                            backgroundColor: "green",
+                            color: "white",
+                            borderRadius: "50%",
+                            width: "20px",
+                            height: "20px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          {todosInTeam?.filter(todo => todo.date.getDate() === dayNumber).length}
+                        </div>
+                      )} */}
                     </td>
                   );
                 })}

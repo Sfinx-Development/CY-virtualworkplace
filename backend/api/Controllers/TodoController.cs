@@ -60,9 +60,9 @@ var createdTodo = await _todoService.CreateTodo(todo, loggedInUser);
         }
 
         //    hämta alla by teamet på profilid samt som gäller för nutiden
-        [HttpPost("getByteam")]
+        [HttpPost("getTodos")]
         [Authorize]
-        public async Task<ActionResult<List<Todo>>> Get([FromBody] string teamId)
+        public async Task<ActionResult<List<TodoDTO>>> Get([FromBody] string teamId)
         {
             try
             {
@@ -81,13 +81,24 @@ var createdTodo = await _todoService.CreateTodo(todo, loggedInUser);
 
                 var todos = await _todoService.GetByTeam(teamId,loggedInUser);
 
-                return Ok(todos);
+             var todosDTO = new List<TodoDTO>();
+               todosDTO = todos
+                    .Select(
+                        t => new TodoDTO(t.Id, t.TeamId, t.Description, t.Date, t.Title)
+                    )
+                    .OrderBy(t => t.Date)
+                    .ToList();
+       
+
+                return Ok(todosDTO);
             }
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+
+
 
                [HttpPost("getOneById")]
         [Authorize]
