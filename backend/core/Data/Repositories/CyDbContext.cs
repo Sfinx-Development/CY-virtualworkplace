@@ -18,6 +18,9 @@ public class CyDbContext : DbContext
     public DbSet<Conversation> Conversations { get; set; }
     public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
     public DbSet<Todo> Todos { get; set; }
+    public DbSet<Project> Projects { get; set; }
+    public DbSet<ProjectUpdate> ProjectUpdates { get; set; }
+    public DbSet<UpdateComment> UpdateComments { get; set; }
 
     public CyDbContext() { }
 
@@ -39,6 +42,14 @@ public class CyDbContext : DbContext
 
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
+        //använd denna istället för att göra migration till lokala databasen:
+        // if (!options.IsConfigured)
+        // {
+        //     options.UseMySql(
+        //         "server=localhost;database=cy;user=root;password=",
+        //         ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
+        //     );
+        // }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,5 +81,9 @@ public class CyDbContext : DbContext
         modelBuilder.Entity<ConversationParticipant>().HasOne(cp => cp.Conversation);
 
         modelBuilder.Entity<Conversation>().HasMany(c => c.Messages);
+
+        modelBuilder.Entity<ProjectUpdate>().HasOne(p => p.Project);
+        modelBuilder.Entity<UpdateComment>().HasOne(p => p.ProjectUpdate);
+        modelBuilder.Entity<Project>().HasOne(p => p.Team);
     }
 }

@@ -14,4 +14,7 @@ public class Project
     public string Description { get; set; }
     public DateTime DateCreated { get; set; }
     public string TeamId { get; set; }
+    public Team Team{get;set;}
+
+    public Project() { }
 }
