@@ -4,14 +4,11 @@ public interface IUpdateCommentRepository
 {
     Task<UpdateComment> CreateAsync(UpdateComment updateComment);
 
-    Task DeleteByIdAsync(string id, User loggedInUser);
+    Task DeleteByIdAsync(string id);
 
-    Task<IEnumerable<UpdateCommentDTO>> GetAllByProjectUpdate(
-        string projectUpdateId,
-        User loggedInUser
-    );
+    Task<IEnumerable<UpdateComment>> GetAllByProjectUpdate(string projectUpdateId);
 
-    Task<UpdateCommentDTO> GetByIdAsync(string id);
+    Task<UpdateComment> GetByIdAsync(string id);
 
-    Task<UpdateCommentDTO> UpdateAsync(UpdateCommentDTO updateCommentDTO, User loggedInUser);
+    Task<UpdateComment> UpdateAsync(UpdateComment updateComment);
 }

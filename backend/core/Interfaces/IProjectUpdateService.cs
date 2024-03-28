@@ -10,5 +10,5 @@ public interface IProjectUpdateService
 
     Task<ProjectUpdateDTO> GetByIdAsync(string id);
 
-    Task<UpdateCommentDTO> UpdateAsync(UpdateCommentDTO updateCommentDTO, User loggedInUser);
+    Task<ProjectUpdateDTO> UpdateAsync(ProjectUpdateDTO projectUpdateDTO, User loggedInUser);
 }

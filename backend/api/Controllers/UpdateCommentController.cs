@@ -1,26 +1,36 @@
+using System;
+using System.Security.Permissions;
+using System.Threading.Tasks;
+using api;
 using core;
+using core.Migrations;
+using Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProjectUpdateController : ControllerBase
+    public class UpdateCommentController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly IProjectUpdateService _updateService;
+        private readonly IUpdateCommentService _updateCommentService;
 
-        public ProjectUpdateController(JwtService jwtService, IProjectUpdateService updateService)
+        public UpdateCommentController(
+            JwtService jwtService,
+            IUpdateCommentService updateCommentService
+        )
         {
             _jwtService = jwtService;
-            _updateService = updateService;
+            _updateCommentService = updateCommentService;
         }
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<HealthCheck>> Post(
-            [FromBody] ProjectUpdateDTO projectUpdateDTO
+        public async Task<ActionResult<ProfileHealthCheckDTO>> Post(
+            [FromBody] UpdateCommentDTO updateCommentDTO
         )
         {
             try
@@ -37,20 +47,19 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                var updateCreated = await _updateService.CreateAsync(
-                    projectUpdateDTO,
+                var updateComment = await _updateCommentService.CreateAsync(
+                    updateCommentDTO,
                     loggedInUser
                 );
 
-                if (updateCreated == null)
+                if (updateComment == null)
                 {
-                    return BadRequest("Failed to create project update.");
+                    return BadRequest("Failed to create update comment.");
                 }
-
                 return CreatedAtAction(
                     nameof(GetById),
-                    new { id = updateCreated.Id },
-                    updateCreated
+                    new { id = updateComment.Id },
+                    updateComment
                 );
             }
             catch (Exception e)
@@ -78,9 +87,9 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                await _updateService.DeleteByIdAsync(id, loggedInUser);
+                await _updateCommentService.DeleteByIdAsync(id, loggedInUser);
 
-                return Ok("Successfully deleted HealthCheck.");
+                return Ok("Successfully deleted update comment.");
             }
             catch (Exception e)
             {
@@ -88,42 +97,44 @@ namespace Controllers
             }
         }
 
-        // [HttpPut]
-        // [Authorize]
-        // public async Task<ActionResult<UpdateCommentDTO>> Update(
-        //     [FromBody] UpdateCommentDTO updateCommentDTO
-        // )
-        // {
-        //     try
-        //     {
-        //         var jwt = Request.Cookies["jwttoken"];
-
-        //         if (string.IsNullOrWhiteSpace(jwt))
-        //         {
-        //             return BadRequest("JWT token is missing.");
-        //         }
-        //         var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-        //         if (loggedInUser == null)
-        //         {
-        //             return BadRequest("JWT token is missing.");
-        //         }
-
-        //         UpdateCommentDTO updatedCommentDTO = await _updateService.UpdateAsync(
-        //             updateCommentDTO,
-        //             loggedInUser
-        //         );
-        //         return Ok(updatedCommentDTO);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-        //     }
-        // }
-
-        [HttpPost("byproject")]
+        [HttpPut]
         [Authorize]
-        public async Task<ActionResult<List<ProjectUpdateDTO>>> Get([FromBody] string projectId)
+        public async Task<ActionResult<ProfileHealthCheckDTO>> Update(
+            [FromBody] UpdateCommentDTO updateCommentDTO
+        )
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var updateComment = await _updateCommentService.UpdateAsync(
+                    updateCommentDTO,
+                    loggedInUser
+                );
+                return Ok(updateComment);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("byprojectupdate")]
+        [Authorize]
+        public async Task<ActionResult<List<UpdateCommentDTO>>> Get(
+            [FromBody] string projectUpdateId
+        )
         {
             try
             {
@@ -140,9 +151,12 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                var updates = await _updateService.GetAllByProject(projectId, loggedInUser);
+                var updateComments = await _updateCommentService.GetAllByProjectUpdate(
+                    projectUpdateId,
+                    loggedInUser
+                );
 
-                return Ok(updates);
+                return Ok(updateComments);
             }
             catch (Exception e)
             {
@@ -152,7 +166,7 @@ namespace Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<ProjectUpdateDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<UpdateCommentDTO>> GetById([FromBody] string id)
         {
             try
             {
@@ -170,9 +184,9 @@ namespace Controllers
                 }
                 //någon mer check så rätt person hämtar rätt project? denna ska inte användas förutom från detta projectet
 
-                var projectUpdate = await _updateService.GetByIdAsync(id);
+                var updateComment = await _updateCommentService.GetByIdAsync(id);
 
-                return Ok(projectUpdate);
+                return Ok(updateComment);
             }
             catch (Exception e)
             {

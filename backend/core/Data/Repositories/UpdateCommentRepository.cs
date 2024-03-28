@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
 namespace core;
@@ -26,26 +25,66 @@ public class UpdateCommentRepository : IUpdateCommentRepository
         }
     }
 
-    public Task DeleteByIdAsync(string id, User loggedInUser)
+    public async Task DeleteByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var foundUpdateComment = await _cyDbContext.UpdateComments.FindAsync(id);
+            if (foundUpdateComment != null)
+            {
+                _cyDbContext.UpdateComments.Remove(foundUpdateComment);
+                await _cyDbContext.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public Task<IEnumerable<UpdateCommentDTO>> GetAllByProjectUpdate(
-        string projectUpdateId,
-        User loggedInUser
-    )
+    public async Task<IEnumerable<UpdateComment>> GetAllByProjectUpdate(string projectUpdateId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var updateComments = await _cyDbContext
+                .UpdateComments.Where(u => u.ProjectUpdate.Id == projectUpdateId)
+                .ToListAsync();
+            return updateComments;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public Task<UpdateCommentDTO> GetByIdAsync(string id)
+    public async Task<UpdateComment> GetByIdAsync(string id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var updateComment = await _cyDbContext
+                .UpdateComments.Include(u => u.ProjectUpdate)
+                .ThenInclude(p => p.Project)
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();
+            return updateComment;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public Task<UpdateCommentDTO> UpdateAsync(UpdateCommentDTO updateCommentDTO, User loggedInUser)
+    public async Task<UpdateComment> UpdateAsync(UpdateComment updateComment)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _cyDbContext.UpdateComments.Update(updateComment);
+            await _cyDbContext.SaveChangesAsync();
+            return updateComment;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }

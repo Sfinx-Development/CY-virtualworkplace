@@ -30,7 +30,16 @@ public class ProjectUpdateRepository : IProjectUpdateRepository
     {
         try
         {
+            //såhär kan man visst radera direkt istället för de som ska raderas samtidigt. tex
+            //teamets profiler, konversationer osv samt profile health checks
             var projectUpdate = await _cyDbContext.ProjectUpdates.FindAsync(id);
+
+            var updateComments = await _cyDbContext
+                .UpdateComments.Where(comment => comment.ProjectUpdateId == id)
+                .ToListAsync();
+
+            _cyDbContext.UpdateComments.RemoveRange(updateComments);
+
             if (projectUpdate != null)
             {
                 _cyDbContext.ProjectUpdates.Remove(projectUpdate);

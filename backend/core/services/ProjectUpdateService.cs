@@ -79,6 +79,7 @@ public class ProjectUpdateService : IProjectUpdateService
             {
                 throw new Exception("User does not belong to this profile.");
             }
+
             await _projectUpdateRepository.DeleteByIdAsync(id);
         }
         catch (Exception e)
@@ -132,47 +133,12 @@ public class ProjectUpdateService : IProjectUpdateService
         }
     }
 
-    public async Task<UpdateCommentDTO> UpdateAsync(
-        UpdateCommentDTO updateCommentDTO,
+    Task<ProjectUpdateDTO> IProjectUpdateService.UpdateAsync(
+        ProjectUpdateDTO projectUpdateDTO,
         User loggedInUser
     )
     {
-        try
-        {
-            var existingProjectUpdate = await _projectUpdateRepository.GetByIdAsync(
-                updateCommentDTO.ProjectUpdateId
-            );
-
-            var profile = await _profileRepository.GetByUserAndTeamIdAsync(
-                loggedInUser.Id,
-                existingProjectUpdate.Project.TeamId
-            );
-
-            if (profile.UserId != loggedInUser.Id)
-            {
-                throw new Exception("User does not belong to this profile.");
-            }
-
-            var newUpdate = new UpdateComment(
-                Utils.GenerateRandomId(),
-                updateCommentDTO.Text,
-                updateCommentDTO.ProfileId,
-                updateCommentDTO.ProjectUpdateId,
-                DateTime.Now
-            );
-            var createdUpdate = await _updateRepository.CreateAsync(newUpdate);
-            var createdUpdateDTO = new UpdateCommentDTO(
-                createdUpdate.Id,
-                createdUpdate.Text,
-                createdUpdate.ProfileId,
-                createdUpdate.ProjectUpdateId,
-                createdUpdate.DateCreated
-            );
-            return createdUpdateDTO;
-        }
-        catch (Exception e)
-        {
-            throw new(e.Message);
-        }
+        //tills vi vet om vi har något att uppdatera på liksom
+        throw new NotImplementedException();
     }
 }
