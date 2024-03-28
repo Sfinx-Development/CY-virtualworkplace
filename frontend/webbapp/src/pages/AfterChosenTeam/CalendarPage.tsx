@@ -58,34 +58,6 @@ export default function CalendarPage() {
 
   const todosInTeam = useAppSelector((state) => state.todoSlice.todos);
 
-  const [calendarData, setCalendarData] = useState(
-    loadCalendarDataFromStorage()
-  );
-
-  // Funktion för att ladda kalenderdata från localStorage
-  function loadCalendarDataFromStorage() {
-    const storedData = localStorage.getItem("calendarData");
-    return storedData ? JSON.parse(storedData) : null;
-  }
-
-  // Funktion för att spara kalenderdata till localStorage
-  function saveCalendarDataToStorage(data) {
-    localStorage.setItem("calendarData", JSON.stringify(data));
-  }
-
-  // Uppdatera kalenderdata och spara till localStorage när det ändras
-  useEffect(() => {
-    saveCalendarDataToStorage(calendarData);
-  }, [calendarData]);
-
-  // Återställ kalenderdata när komponenten monteras
-  // Återställ kalenderdata när komponenten monteras
-  useEffect(() => {
-    const storedData = loadCalendarDataFromStorage();
-    if (storedData) {
-      setCalendarData(storedData);
-    }
-  }, []);
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -95,6 +67,7 @@ export default function CalendarPage() {
     if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
+      dispatch(getTodoAsync(activeTeam.id));
     }
   }, [dispatch, activeTeam]);
 
@@ -119,31 +92,32 @@ export default function CalendarPage() {
 
   const handleDayClick = (day: string) => {
     // Filtera todos för den valda dagen
-    const todosForDay = todosInTeam.filter((todo) => {
-      const todoDate = new Date(todo.date);
-      return (
-        todoDate.getDate() === parseInt(day) &&
-        todoDate.getMonth() === month &&
-        todoDate.getFullYear() === year
-      );
-    });
-    // Uppdatera state med de valda todos
-    setSelectedDayTodos(todosForDay);
-    // Öppna den nya pop-upen
-    setOpenTodoPopup(true);
+    if(todosInTeam) {
+      const todosForDay = todosInTeam.filter((todo) => {
+        const todoDate = new Date(todo.date);
+        return (
+          todoDate.getDate() === parseInt(day) &&
+          todoDate.getMonth() === month &&
+          todoDate.getFullYear() === year
+        );
+      });
+      // Uppdatera state med de valda todos
+      setSelectedDayTodos(todosForDay);
+      // Öppna den nya pop-upen
+      setOpenTodoPopup(true);
+    }
+    
   };
 
   const [todosen, setTodos] = useState<Todo[]>([]);
 
   const handleGetTodos = async () => {
     try {
-      if (activeTeam) {
-        const actionResult = await dispatch(getTodoAsync(activeTeam.id));
-        const todos = unwrapResult(actionResult); // Extract the actual data from the action result
-        if (todos) {
-          setTodos(todos);
-          setOpenDialog(true);
-        }
+      // const actionResult = await dispatch(getTodoAsync(activeTeam.id));
+      // const todos = unwrapResult(actionResult); // Extract the actual data from the action result
+      if (todosInTeam) {
+        setTodos(todosInTeam);
+        setOpenDialog(true);
       }
     } catch (error) {
       console.error("Error fetching todos:", error);
@@ -655,7 +629,7 @@ export default function CalendarPage() {
                     backgroundColor: "rgb(214, 196, 203)",
                   };
 
-                  const todoCount = todosInTeam.filter((todo) => {
+                  const todoCount = todosInTeam?.filter((todo) => {
                     const todoDate = new Date(todo.date);
                     const todoDay = todoDate.getDate();
                     const todoMonth = todoDate.getMonth();
@@ -718,7 +692,7 @@ export default function CalendarPage() {
                           {holidayName}
                         </div>
                       )}
-                      {todoCount > 0 && (
+                      {todoCount > 0 &&  (
                         <div
                           style={{
                             position: "absolute",
