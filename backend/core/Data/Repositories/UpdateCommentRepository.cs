@@ -25,4 +25,27 @@ public class UpdateCommentRepository : IUpdateCommentRepository
             throw new Exception(e.Message);
         }
     }
+
+    public Task DeleteByIdAsync(string id, User loggedInUser)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<UpdateCommentDTO>> GetAllByProjectUpdate(
+        string projectUpdateId,
+        User loggedInUser
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<UpdateCommentDTO> GetByIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<UpdateCommentDTO> UpdateAsync(UpdateCommentDTO updateCommentDTO, User loggedInUser)
+    {
+        throw new NotImplementedException();
+    }
 }

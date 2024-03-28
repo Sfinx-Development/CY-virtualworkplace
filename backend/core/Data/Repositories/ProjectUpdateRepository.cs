@@ -80,15 +80,16 @@ public class ProjectUpdateRepository : IProjectUpdateRepository
         {
             var latestUpdate = await _cyDbContext
                 .ProjectUpdates.Where(p => p.ProjectId == projectId)
-                .OrderByDescending(p => p.DateCreated)
-                .FirstAsync();
-            if (latestUpdate != null)
+                .OrderByDescending(p => p.Version)
+                .FirstOrDefaultAsync();
+
+            if (latestUpdate == null)
             {
-                return latestUpdate.Version;
+                return 0;
             }
             else
             {
-                throw new Exception("No latest update found.");
+                return latestUpdate.Version;
             }
         }
         catch (Exception e)

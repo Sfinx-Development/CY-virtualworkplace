@@ -35,7 +35,7 @@ public class ProjectUpdateService : IProjectUpdateService
             var project = await _projectRepository.GetByIdAsync(projectUpdateDTO.ProjectId);
             var profile = await _profileRepository.GetByUserAndTeamIdAsync(
                 loggedInUser.Id,
-                project.Id
+                project.TeamId
             );
             if (profile.UserId != loggedInUser.Id)
             {
@@ -145,7 +145,7 @@ public class ProjectUpdateService : IProjectUpdateService
 
             var profile = await _profileRepository.GetByUserAndTeamIdAsync(
                 loggedInUser.Id,
-                existingProjectUpdate.ProjectId
+                existingProjectUpdate.Project.TeamId
             );
 
             if (profile.UserId != loggedInUser.Id)
@@ -170,7 +170,7 @@ public class ProjectUpdateService : IProjectUpdateService
             );
             return createdUpdateDTO;
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             throw new(e.Message);
         }

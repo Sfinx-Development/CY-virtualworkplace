@@ -29,8 +29,7 @@ public class ProjectService : IProjectService
                     Utils.GenerateRandomId(),
                     projectDTO.Title,
                     projectDTO.Description,
-                    // projectDTO.DateCreated.AddHours(1),
-                    new DateTime(),
+                    DateTime.UtcNow,
                     projectDTO.EndDate,
                     projectDTO.TeamId
                 );

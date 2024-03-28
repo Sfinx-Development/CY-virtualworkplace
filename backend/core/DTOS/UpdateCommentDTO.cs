@@ -14,13 +14,13 @@ public class UpdateCommentDTO
         string text,
         string profileId,
         string projectUpdateId,
-        DateTime dateCreateed
+        DateTime dateCreated
     )
     {
         Id = id;
         Text = text;
         ProfileId = profileId;
         ProjectUpdateId = projectUpdateId;
-        DateCreated = dateCreateed;
+        DateCreated = dateCreated;
     }
 }
