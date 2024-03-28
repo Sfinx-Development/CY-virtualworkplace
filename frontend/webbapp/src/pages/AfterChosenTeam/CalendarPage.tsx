@@ -58,6 +58,35 @@ export default function CalendarPage() {
 
   const todosInTeam = useAppSelector((state) => state.todoSlice.todos);
 
+  const [calendarData, setCalendarData] = useState(
+    loadCalendarDataFromStorage()
+  );
+
+  // Funktion för att ladda kalenderdata från localStorage
+  function loadCalendarDataFromStorage() {
+    const storedData = localStorage.getItem("calendarData");
+    return storedData ? JSON.parse(storedData) : null;
+  }
+
+  // Funktion för att spara kalenderdata till localStorage
+  function saveCalendarDataToStorage(data) {
+    localStorage.setItem("calendarData", JSON.stringify(data));
+  }
+
+  // Uppdatera kalenderdata och spara till localStorage när det ändras
+  useEffect(() => {
+    saveCalendarDataToStorage(calendarData);
+  }, [calendarData]);
+
+  // Återställ kalenderdata när komponenten monteras
+  // Återställ kalenderdata när komponenten monteras
+  useEffect(() => {
+    const storedData = loadCalendarDataFromStorage();
+    if (storedData) {
+      setCalendarData(storedData);
+    }
+  }, []);
+
   useEffect(() => {
     dispatch(getActiveTeam());
   }, []);
@@ -246,8 +275,6 @@ export default function CalendarPage() {
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-
-
 
   function handlePrevMonth() {
     changeMonth(-1);
@@ -446,10 +473,7 @@ export default function CalendarPage() {
                     }}
                   >
                     <Typography>{todo.title}</Typography>
-                    <Typography
-                      
-                      style={{ wordWrap: "break-word" }}
-                    >
+                    <Typography style={{ wordWrap: "break-word" }}>
                       {todo.description}
                     </Typography>
                     <Typography>{todo.date.toString()}</Typography>
@@ -615,16 +639,6 @@ export default function CalendarPage() {
             {generateCalendarRows(holidays).map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {row.map((day, dayIndex) => {
-                  // const dayNumber = parseInt(day);
-                  // const holidayName = holidays.find(
-                  //   (holiday) =>
-                  //     parseInt(holiday.datum.split("-")[2]) === dayNumber
-                  // )?.helgdag;
-                  // const isSunday = dayIndex === 6;
-                  // const isTodayCell = isToday(year, month, dayNumber);
-                  // const isTodoDay = todosDates.includes(dayNumber); // Kolla om det finns todos för detta datum
-
-                  // KAN INTE GÖR ZXC SÅ KOMMENTERAR UT DEN GAMLA SÅ LÄNGE HÄR UNDER
                   const holidayName = holidays.find(
                     (holiday) =>
                       parseInt(holiday.datum.split("-")[2]) === parseInt(day)
