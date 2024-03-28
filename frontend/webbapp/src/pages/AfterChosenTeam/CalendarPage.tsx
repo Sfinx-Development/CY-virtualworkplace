@@ -591,6 +591,14 @@ export default function CalendarPage() {
                     backgroundColor: "rgb(214, 196, 203)",
                   };
 
+                  const todoCount = todosInTeam.filter(todo => {
+                    const todoDate = new Date(todo.date);
+                    const todoDay = todoDate.getDate();
+                    const todoMonth = todoDate.getMonth();
+                    const todoYear = todoDate.getFullYear();
+                    return todoDay === parseInt(day) && todoMonth === month && todoYear === year;
+                  }).length;
+
                   return (
                     <td
                       key={dayIndex}
@@ -641,27 +649,29 @@ export default function CalendarPage() {
                           {holidayName}
                         </div>
                            )}
-                           {/* {isTodoDay && (
-                      
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            right: 0,
-                            fontSize: "12px",
-                            backgroundColor: "green",
-                            color: "white",
-                            borderRadius: "50%",
-                            width: "20px",
-                            height: "20px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          {todosInTeam?.filter(todo => todo.date.getDate() === dayNumber).length}
-                        </div>
-                      )} */}
+                           {todoCount > 0 && (
+                             <div
+                               style={{
+                                 position: "absolute",
+                                 top: 0,
+                                 right: 0,
+                                 fontSize: "12px",
+                                   fontWeight: "bold",
+                                 color: "black",
+                                 borderRadius: "50%",
+                                 width: "20px",
+                                 height: "20px",
+                                 display: "flex",
+                                 justifyContent: "center",
+                                 alignItems: "center",
+                                
+                                 fontStyle: "italic",
+                               
+                               }}
+                             >
+                               {todoCount}
+                             </div>
+                           )}
                     </td>
                   );
                 })}
