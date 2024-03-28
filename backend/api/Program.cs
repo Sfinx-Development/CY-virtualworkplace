@@ -80,6 +80,7 @@ builder.Services.AddScoped<LogInRepository>();
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 builder.Services.AddScoped<IConversationParticipantRepository, ConversationParticipantRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectUpdateRepository, ProjectUpdateRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
