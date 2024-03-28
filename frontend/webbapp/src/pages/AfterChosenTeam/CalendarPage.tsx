@@ -43,7 +43,9 @@ export default function CalendarPage() {
   const [fieldError, setFieldError] = useState(false);
 
   const [openDialog, setOpenDialog] = useState(false);
-  // const [alltodos, setTodos] = useState<Todo[]>([]);
+
+  const [openTodoPopup, setOpenTodoPopup] = useState(false);
+  const [selectedDayTodos, setSelectedDayTodos] = useState<Todo[]>([]);
 
   const dispatch = useAppDispatch();
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
@@ -85,6 +87,22 @@ export default function CalendarPage() {
   //     setTodosDates(dates);
   //   }
   // }, [todosInTeam]);
+
+  const handleDayClick = (day: string) => {
+    // Filtera todos för den valda dagen
+    const todosForDay = todosInTeam.filter((todo) => {
+      const todoDate = new Date(todo.date);
+      return (
+        todoDate.getDate() === parseInt(day) &&
+        todoDate.getMonth() === month &&
+        todoDate.getFullYear() === year
+      );
+    });
+    // Uppdatera state med de valda todos
+    setSelectedDayTodos(todosForDay);
+    // Öppna den nya pop-upen
+    setOpenTodoPopup(true);
+  };
 
   const [todosen, setTodos] = useState<Todo[]>([]);
 
@@ -188,17 +206,6 @@ export default function CalendarPage() {
   }
 
   //uppdaterar kalender celler
-
-  function updateCalendarMonthLabel() {
-    const date = new Date(year, month, 1);
-    const monthString = date.toLocaleString("default", { month: "long" });
-    return capitalizeFirstLetter(monthString) + " " + year;
-  }
-
-  function capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
   function generateCalendarRows(_holidays: unknown[]) {
     const firstDayOfMonth = new Date(year, month, 0);
     const lastDayOfMonth = new Date(year, month + 1, 0);
@@ -229,6 +236,18 @@ export default function CalendarPage() {
 
     return calendarRows;
   }
+
+  function updateCalendarMonthLabel() {
+    const date = new Date(year, month, 1);
+    const monthString = date.toLocaleString("default", { month: "long" });
+    return capitalizeFirstLetter(monthString) + " " + year;
+  }
+
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+
 
   function handlePrevMonth() {
     changeMonth(-1);
@@ -411,6 +430,37 @@ export default function CalendarPage() {
               alignItems: "center",
             }}
           >
+            <Dialog
+              open={openTodoPopup}
+              onClose={() => setOpenTodoPopup(false)}
+            >
+              <DialogTitle>Dagens todo</DialogTitle>
+              <DialogContent dividers>
+                {selectedDayTodos.map((todo) => (
+                  <Card
+                    key={todo.id}
+                    style={{
+                      marginBottom: "10px",
+                      padding: "10px",
+                      backgroundColor: "lightgrey",
+                    }}
+                  >
+                    <Typography>{todo.title}</Typography>
+                    <Typography
+                      
+                      style={{ wordWrap: "break-word" }}
+                    >
+                      {todo.description}
+                    </Typography>
+                    <Typography>{todo.date.toString()}</Typography>
+                  </Card>
+                ))}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+              </DialogActions>
+            </Dialog>
+
             <Button
               id="show-todos-btn"
               variant="outlined"
@@ -573,8 +623,8 @@ export default function CalendarPage() {
                   // const isSunday = dayIndex === 6;
                   // const isTodayCell = isToday(year, month, dayNumber);
                   // const isTodoDay = todosDates.includes(dayNumber); // Kolla om det finns todos för detta datum
-                
-                      // KAN INTE GÖR ZXC SÅ KOMMENTERAR UT DEN GAMLA SÅ LÄNGE HÄR UNDER
+
+                  // KAN INTE GÖR ZXC SÅ KOMMENTERAR UT DEN GAMLA SÅ LÄNGE HÄR UNDER
                   const holidayName = holidays.find(
                     (holiday) =>
                       parseInt(holiday.datum.split("-")[2]) === parseInt(day)
@@ -591,17 +641,22 @@ export default function CalendarPage() {
                     backgroundColor: "rgb(214, 196, 203)",
                   };
 
-                  const todoCount = todosInTeam.filter(todo => {
+                  const todoCount = todosInTeam.filter((todo) => {
                     const todoDate = new Date(todo.date);
                     const todoDay = todoDate.getDate();
                     const todoMonth = todoDate.getMonth();
                     const todoYear = todoDate.getFullYear();
-                    return todoDay === parseInt(day) && todoMonth === month && todoYear === year;
+                    return (
+                      todoDay === parseInt(day) &&
+                      todoMonth === month &&
+                      todoYear === year
+                    );
                   }).length;
 
                   return (
                     <td
                       key={dayIndex}
+                      onClick={() => handleDayClick(day)}
                       style={{
                         border: "1px solid black",
                         padding: "2.8vw 2.8vw",
@@ -648,30 +703,29 @@ export default function CalendarPage() {
                         >
                           {holidayName}
                         </div>
-                           )}
-                           {todoCount > 0 && (
-                             <div
-                               style={{
-                                 position: "absolute",
-                                 top: 0,
-                                 right: 0,
-                                 fontSize: "12px",
-                                   fontWeight: "bold",
-                                 color: "black",
-                                 borderRadius: "50%",
-                                 width: "20px",
-                                 height: "20px",
-                                 display: "flex",
-                                 justifyContent: "center",
-                                 alignItems: "center",
-                                
-                                 fontStyle: "italic",
-                               
-                               }}
-                             >
-                               {todoCount}
-                             </div>
-                           )}
+                      )}
+                      {todoCount > 0 && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            color: "black",
+                            borderRadius: "50%",
+                            width: "20px",
+                            height: "20px",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+
+                            fontStyle: "italic",
+                          }}
+                        >
+                          {todoCount}
+                        </div>
+                      )}
                     </td>
                   );
                 })}
