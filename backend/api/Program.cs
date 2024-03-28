@@ -106,6 +106,7 @@ builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectUpdateService, ProjectUpdateService>();
 builder.Services.AddScoped<IUpdateCommentService, UpdateCommentService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

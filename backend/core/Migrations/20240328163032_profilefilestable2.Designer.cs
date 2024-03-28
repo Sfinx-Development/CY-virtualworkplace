@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240328162124_projectfiles")]
-    partial class projectfiles
+    [Migration("20240328163032_profilefilestable2")]
+    partial class profilefilestable2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -323,7 +323,7 @@ namespace core.Migrations
 
                     b.HasIndex("UpdateCommentId");
 
-                    b.ToTable("ProjectFile");
+                    b.ToTable("ProjectFiles");
                 });
 
             modelBuilder.Entity("core.ProjectUpdate", b =>
@@ -444,7 +444,7 @@ namespace core.Migrations
 
                     b.HasIndex("ProjectUpdateId");
 
-                    b.ToTable("UpdateComment");
+                    b.ToTable("UpdateComments");
                 });
 
             modelBuilder.Entity("core.User", b =>

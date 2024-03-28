@@ -320,7 +320,7 @@ namespace core.Migrations
 
                     b.HasIndex("UpdateCommentId");
 
-                    b.ToTable("ProjectFile");
+                    b.ToTable("ProjectFiles");
                 });
 
             modelBuilder.Entity("core.ProjectUpdate", b =>
@@ -441,7 +441,7 @@ namespace core.Migrations
 
                     b.HasIndex("ProjectUpdateId");
 
-                    b.ToTable("UpdateComment");
+                    b.ToTable("UpdateComments");
                 });
 
             modelBuilder.Entity("core.User", b =>
