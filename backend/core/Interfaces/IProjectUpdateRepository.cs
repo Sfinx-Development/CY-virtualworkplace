@@ -10,5 +10,6 @@ public interface IProjectUpdateRepository
 
     Task<ProjectUpdate> GetByIdAsync(string id);
 
-    Task<ProfileHealthCheck> UpdateAsync(ProfileHealthCheck healthCheck);
+    Task<ProjectUpdate> UpdateAsync(ProjectUpdate projectUpdate);
+    Task<int> GetLatestVersion(string projectId);
 }

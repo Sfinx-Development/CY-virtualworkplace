@@ -1,6 +1,6 @@
 namespace core;
 
-public class UpdateComment
+public class UpdateCommentDTO
 {
     public string Id { get; set; }
     public string Text { get; set; }
@@ -9,21 +9,18 @@ public class UpdateComment
 
     public DateTime DateCreated { get; set; }
 
-    // public List<File> AttachedFiles { get; set; }
-    public ProjectUpdate ProjectUpdate { get; set; }
-
-    public UpdateComment(
+    public UpdateCommentDTO(
         string id,
         string text,
         string profileId,
         string projectUpdateId,
-        DateTime dateCreated
+        DateTime dateCreateed
     )
     {
         Id = id;
         Text = text;
         ProfileId = profileId;
         ProjectUpdateId = projectUpdateId;
-        DateCreated = dateCreated;
+        DateCreated = dateCreateed;
     }
 }

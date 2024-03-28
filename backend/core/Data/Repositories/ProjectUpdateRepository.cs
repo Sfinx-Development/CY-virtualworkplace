@@ -63,7 +63,8 @@ public class ProjectUpdateRepository : IProjectUpdateRepository
         try
         {
             var projectUpdate = await _cyDbContext
-                .ProjectUpdates.Where(p => p.Id == id)
+                .ProjectUpdates.Include(p => p.Project)
+                .Where(p => p.Id == id)
                 .FirstAsync();
             return projectUpdate;
         }
@@ -73,13 +74,36 @@ public class ProjectUpdateRepository : IProjectUpdateRepository
         }
     }
 
-    public async Task<ProfileHealthCheck> UpdateAsync(ProfileHealthCheck healthCheck)
+    public async Task<int> GetLatestVersion(string projectId)
     {
         try
         {
-            _cyDbContext.ProfileHealthChecks.Update(healthCheck);
+            var latestUpdate = await _cyDbContext
+                .ProjectUpdates.Where(p => p.ProjectId == projectId)
+                .OrderByDescending(p => p.DateCreated)
+                .FirstAsync();
+            if (latestUpdate != null)
+            {
+                return latestUpdate.Version;
+            }
+            else
+            {
+                throw new Exception("No latest update found.");
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<ProjectUpdate> UpdateAsync(ProjectUpdate projectUpdate)
+    {
+        try
+        {
+            _cyDbContext.ProjectUpdates.Update(projectUpdate);
             await _cyDbContext.SaveChangesAsync();
-            return healthCheck;
+            return projectUpdate;
         }
         catch (Exception e)
         {
