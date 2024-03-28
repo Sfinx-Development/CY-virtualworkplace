@@ -89,7 +89,7 @@ namespace Controllers
 
                 await _updateCommentService.DeleteByIdAsync(id, loggedInUser);
 
-                return Ok("Successfully deleted update comment.");
+                return NoContent();
             }
             catch (Exception e)
             {

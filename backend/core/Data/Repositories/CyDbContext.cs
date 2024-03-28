@@ -21,6 +21,7 @@ public class CyDbContext : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectUpdate> ProjectUpdates { get; set; }
     public DbSet<UpdateComment> UpdateComments { get; set; }
+    public DbSet<UpdateComment> ProjectFiles { get; set; }
 
     public CyDbContext() { }
 
@@ -85,5 +86,6 @@ public class CyDbContext : DbContext
         modelBuilder.Entity<ProjectUpdate>().HasOne(p => p.Project);
         modelBuilder.Entity<UpdateComment>().HasOne(p => p.ProjectUpdate);
         modelBuilder.Entity<Project>().HasOne(p => p.Team);
+        modelBuilder.Entity<ProjectFile>().HasOne(p => p.UpdateComment);
     }
 }
