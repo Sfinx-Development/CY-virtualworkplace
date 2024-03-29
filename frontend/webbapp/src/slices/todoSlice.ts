@@ -1,22 +1,24 @@
-
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Todo} from "../../types";
-
-import { FetchCreateTeamTodo, FetchGetTodo } from "../api/todo";
+import { Todo } from "../../types";
+import { FetchCreateTeamTodo, FetchGetTodo, FetchDeleteTodo } from "../api/todo";
 
 export interface TodoState {
   todos: Todo[] | undefined;
-  activeTodoId: string | undefined;
-  teamTodos: Todo[] | undefined;
-  // deletemeeting: MeetingOccasion | undefined;
+  activeTodo: Todo | undefined;
   error: string | null;
 }
 
+const saveTodoToLocalStorage = (activeTodo: Todo) => {
+  localStorage.setItem("activeTodo", JSON.stringify(activeTodo));
+};
+const loadTodoFromLocalStorage = (): Todo | undefined => {
+  const storedTodo = localStorage.getItem("activeTodo");
+  return storedTodo ? JSON.parse(storedTodo) : undefined;
+};
+
 export const initialState: TodoState = {
-  todos: undefined,
-  activeTodoId: undefined,
-  teamTodos: undefined,
-  // deletemeeting: undefined,
+  todos: [],
+  activeTodo: undefined,
   error: null,
 };
 
@@ -39,46 +41,90 @@ export const createTeamTodoAsync = createAsyncThunk<
   }
 });
 
-
-
-
-export const getTodoAsync = createAsyncThunk<Todo>("todo/getTodo", async () => {
+export const getTodoAsync = createAsyncThunk<
+  Todo[],
+  string,
+  { rejectValue: string }
+>("todo/getTodo", async (teamId, thunkAPI) => {
   try {
-    const todo = await FetchGetTodo();
-    return todo;
+    console.log("TEAMID :", teamId);
+    const todos = await FetchGetTodo(teamId);
+    return todos;
   } catch (error) {
-    console.error(error);
-    throw new Error("Ett fel uppstod vid inloggningen.");
+    console.error("Error getting todo:", error);
+    return thunkAPI.rejectWithValue("Något gick fel.");
   }
 });
+
+export const DeleteTodoAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("message/deleteTodo", async (todoId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteTodo(todoId);
+    if (isDeleted) {
+      return todoId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid raderande av todon."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid raderande av todo."
+    );
+  }
+});
+
 
 
 const todoSlice = createSlice({
   name: "todo",
   initialState,
-  reducers: {},
+  reducers: {
+   setActiveTodo: (state, action) => {
+  const todoId = action.payload;
+  const activeTodo = state.todos?.find((todo) => todo.id === todoId);
+  if (activeTodo) {
+    state.activeTodo = activeTodo; 
+    saveTodoToLocalStorage(activeTodo);
+  }
+},
+ 
+    getActiveTodo: (state) => {
+      const activeTodoId = loadTodoFromLocalStorage();
+      if (activeTodoId) {
+        console.log("ACTIVE TEAM: ", activeTodoId);
+        state.activeTodo = activeTodoId;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(getTodoAsync.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.todos = action.payload;
-          state.error = null;
-        }
-      })
+    .addCase(createTeamTodoAsync.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.todos = state.todos ?? []; // Ensure state.todos is initialized
+        state.todos.push(action.payload);
+        state.error = null;
+      }
+    })
+    .addCase(getTodoAsync.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.todos = action.payload;
+        state.error = null;
+      }
+    })
       .addCase(getTodoAsync.rejected, (state) => {
         state.todos = undefined;
         state.error = "Auth is not correct.";
       })
-      .addCase(createTeamTodoAsync.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.error = null;
-        }
-      })
       .addCase(createTeamTodoAsync.rejected, (state) => {
-        state.teamTodos = undefined;
+        state.todos = undefined;
         state.error = "Något gick fel med skapandet av konto.";
       });
   },
 });
 
 export const todoReducer = todoSlice.reducer;
+export const { setActiveTodo } = todoSlice.actions;

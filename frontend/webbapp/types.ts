@@ -1,10 +1,15 @@
 export interface Todo {
   id: string;
-  description: string;
-  title?: string;
-  date: Date;
   teamId?: string;
+  description: string;
+  date: Date;
+  title?: string;
+  
+ 
 }
+
+// DateTime date,
+
 
 export interface User {
   id: string;

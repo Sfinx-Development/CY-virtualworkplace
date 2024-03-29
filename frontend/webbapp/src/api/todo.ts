@@ -1,37 +1,98 @@
 import { Todo } from "../../types";
 import { getApiUrl } from "./config";
 
-// const apiUrl = getApiUrl() + "/todo";
-const todoapiUrl = getApiUrl() + `/todo`;
+const apiUrl = getApiUrl() + "/todo"; 
 
-export const FetchGetTodo = async (): Promise<Todo> => {
+
+export const FetchDeleteTodo = async (
+
+  todoId: string
+): Promise<boolean> => {
   try {
-    const response = await fetch(todoapiUrl, {
-      method: "POST",
+    const response = await fetch(apiUrl, {
+      method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(todoId),
     });
 
     if (!response.ok) {
-      throw new Error("Något gick fel vid hämtning av user");
+      throw new Error("Något gick fel vid radering av todo");
+    } else {
+      return true;
     }
-
-    const data = await response.json();
-
-    return data as Todo;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
 
+export const FetchGetTodo = async (
+  teamId: string
+): Promise<Todo[]> => {
+  try {
+    const response = await fetch(apiUrl + "/getTodos", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(teamId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av teamets healthchecks");
+    }
+
+    const responseBody = await response.json();
+  
+    const todos = responseBody.$values as Todo[];
+    console.log("TOOODOOOOS: ", todos);
+    return todos;
+
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
+// export const FetchGetTodo = async (
+//   teamId:string
+//   ): Promise<Todo[]> => {
+//   try {
+//     console.log("teamid", teamId)
+//     const response = await fetch(apiUrl + "/getTodos",{
+      
+//       method: "POST",
+//       credentials: "include",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       //  body: JSON.stringify({teamId}), 
+//     });
+//     const responseBody = await response.json();
+
+//     if (!response.ok) {
+//       throw new Error("Något gick fel vid hämtning av teams");
+//     }
+//     // const data = responseBody.$values as Todo[];
+//     return responseBody as Todo[];
+//     // return data;
+//   } catch (error) {
+//     console.error(error);
+//     throw error;
+//   }
+// };
+
+
 export const FetchCreateTeamTodo = async (
   newTodo: Todo
 ): Promise<Todo> => {
   try {
-    const response = await fetch(todoapiUrl + "/create", {
+    const response = await fetch(apiUrl + "/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
