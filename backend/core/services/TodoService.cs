@@ -99,10 +99,10 @@ public class TodoService : ITodoService
                 todoDTO.TeamId
             );
 
-            if (!profile.IsOwner)
-            {
-                throw new Exception("Only owner of team can update healthcheck");
-            }
+            // if (!profile.IsOwner)
+            // {
+            //     throw new Exception("Only owner of team can update healthcheck");
+            // }
 
             foundTodo.Title = todoDTO.Title ?? foundTodo.Title;
             foundTodo.Description = todoDTO.Description;
