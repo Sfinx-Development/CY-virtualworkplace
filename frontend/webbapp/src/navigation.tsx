@@ -3,8 +3,11 @@
 import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
+import CalendarPage from "./pages/AfterChosenTeam/CalendarPage";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
+import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
+import CreateProject from "./pages/AfterChosenTeam/CreateProject";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 import HealthCheckHub from "./pages/AfterChosenTeam/HealthCheckPage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
@@ -22,19 +25,17 @@ import RootLayout from "./pages/RootLayout";
 import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
-import CalendarPage from "./pages/AfterChosenTeam/CalendarPage";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
-import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
-import { GetMyTeamsAsync } from "./slices/teamSlice";
+import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
   const user = useAppSelector((state) => state.userSlice.user);
-  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const activeProfile = useAppSelector(
-    (state) => state.profileSlice.activeProfile
-  );
+  // const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  // const activeProfile = useAppSelector(
+  //   (state) => state.profileSlice.activeProfile
+  // );
 
   const dispatch = useAppDispatch();
 
@@ -89,6 +90,8 @@ const Navigation = () => {
           <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
           <Route path="joinmeeting" element={<OngoingMeeting />} />
           <Route path="calendar" element={<CalendarPage />} />
+          <Route path="createproject" element={<CreateProject />} />
+          <Route path="createupdate" element={<CreateUpdate />} />
 
           {/* <Route
             path="connect"

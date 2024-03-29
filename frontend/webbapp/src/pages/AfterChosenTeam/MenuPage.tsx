@@ -1,11 +1,20 @@
 import GroupsIcon from "@mui/icons-material/Groups";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { Alert, Avatar, Box, Button, Popper, Typography } from "@mui/material";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Popper,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isMobile } from "../../../globalConstants";
+import { is800Mobile, isMobile } from "../../../globalConstants";
 import NavCard from "../../components/NavCard";
+import ProgressBar from "../../components/ProgressBar";
 import {
   GetConversationParticipant,
   GetTeamConversation,
@@ -17,6 +26,7 @@ import {
   GetTeamProfiles,
   getActiveProfile,
 } from "../../slices/profileSlice";
+import { GetTeamProjectsAsync } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -46,6 +56,7 @@ export default function Menu() {
   const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
+  const projects = useAppSelector((state) => state.projectSlice.projects);
   const now = new Date();
   const navigate = useNavigate();
   const ongoingMeeting = occasions
@@ -68,6 +79,7 @@ export default function Menu() {
       dispatch(GetTeamProfiles(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
       dispatch(GetTeamConversation(activeTeam.id));
+      dispatch(GetTeamProjectsAsync(activeTeam.id));
     }
   }, [activeTeam]);
 
@@ -307,17 +319,37 @@ export default function Menu() {
           />
         </Box>
       </Box>
+
+      <Container
+        sx={{
+          marginTop: 15,
+          display: "flex",
+          flexDirection: "column",
+          height: is800Mobile ? "350px" : "300px",
+          flexGrow: 1,
+          overflow: "auto",
+          width: "100%",
+        }}
+        className="project-list-container"
+      >
+        {projects ? (
+          <Box>
+            {projects.map((p) => (
+              <ProgressBar project={p} key={p.id} />
+            ))}
+          </Box>
+        ) : null}
+      </Container>
+
       <Typography
         component="a"
         href="https://www.freepik.com/"
         target="_blank"
         rel="noopener noreferrer"
         sx={{
-          position: "absolute",
           bottom: 0,
           textDecoration: "none",
           color: "black",
-          mt: 4,
         }}
       >
         Designed by Freepik

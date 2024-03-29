@@ -265,6 +265,86 @@ namespace core.Migrations
                     b.ToTable("ProfileHealthChecks");
                 });
 
+            modelBuilder.Entity("core.Project", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("TeamId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("core.ProjectFile", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("longblob");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UpdateCommentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UpdateCommentId");
+
+                    b.ToTable("ProjectFiles");
+                });
+
+            modelBuilder.Entity("core.ProjectUpdate", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ProjectId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectUpdates");
+                });
+
             modelBuilder.Entity("core.Room", b =>
                 {
                     b.Property<string>("Id")
@@ -335,6 +415,33 @@ namespace core.Migrations
                     b.HasIndex("TeamId");
 
                     b.ToTable("Todos");
+                });
+
+            modelBuilder.Entity("core.UpdateComment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ProfileId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProjectUpdateId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectUpdateId");
+
+                    b.ToTable("UpdateComments");
                 });
 
             modelBuilder.Entity("core.User", b =>
@@ -518,6 +625,39 @@ namespace core.Migrations
                     b.Navigation("Profile");
                 });
 
+            modelBuilder.Entity("core.Project", b =>
+                {
+                    b.HasOne("core.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("core.ProjectFile", b =>
+                {
+                    b.HasOne("core.UpdateComment", "UpdateComment")
+                        .WithMany()
+                        .HasForeignKey("UpdateCommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UpdateComment");
+                });
+
+            modelBuilder.Entity("core.ProjectUpdate", b =>
+                {
+                    b.HasOne("core.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("core.Todo", b =>
                 {
                     b.HasOne("core.Team", "Team")
@@ -525,6 +665,17 @@ namespace core.Migrations
                         .HasForeignKey("TeamId");
 
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("core.UpdateComment", b =>
+                {
+                    b.HasOne("core.ProjectUpdate", "ProjectUpdate")
+                        .WithMany()
+                        .HasForeignKey("ProjectUpdateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectUpdate");
                 });
 
             modelBuilder.Entity("core.MeetingRoom", b =>
