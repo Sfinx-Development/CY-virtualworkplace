@@ -4,6 +4,31 @@ import { getApiUrl } from "./config";
 const apiUrl = getApiUrl() + "/todo"; 
 
 
+export const FetchDeleteTodo = async (
+
+  todoId: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todoId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid radering av todo");
+    } else {
+      return true;
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const FetchGetTodo = async (
   teamId: string
 ): Promise<Todo[]> => {

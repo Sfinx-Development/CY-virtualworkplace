@@ -56,6 +56,28 @@ export const getTodoAsync = createAsyncThunk<
   }
 });
 
+export const DeleteTodoAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("message/deleteTodo", async (todoId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteTodo(todoId);
+    if (isDeleted) {
+      return todoId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid raderande av todon."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid raderande av todo."
+    );
+  }
+});
+
+
 
 const todoSlice = createSlice({
   name: "todo",
