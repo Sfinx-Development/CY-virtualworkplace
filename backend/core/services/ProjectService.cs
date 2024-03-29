@@ -16,7 +16,10 @@ public class ProjectService : IProjectService
         _projectRepository = projectRepository;
     }
 
-    public async Task<ProjectDTO> CreateProjectAsync(ProjectDTO projectDTO, User loggedInUser)
+    public async Task<OutgoingProjectDTO> CreateProjectAsync(
+        ProjectDTO projectDTO,
+        User loggedInUser
+    )
     {
         try
         {
@@ -35,15 +38,14 @@ public class ProjectService : IProjectService
                 );
 
             Project createdProject = await _projectRepository.CreateAsync(newProject);
-            var createdDTO = new ProjectDTO()
-            {
-                Id = createdProject.Id,
-                Title = createdProject.Title,
-                Description = createdProject.Description,
-                DateCreated = createdProject.DateCreated,
-                EndDate = createdProject.EndDate,
-                TeamId = createdProject.TeamId
-            };
+            var createdDTO = new OutgoingProjectDTO(
+                createdProject.Id,
+                createdProject.Title,
+                createdProject.Description,
+                createdProject.DateCreated,
+                createdProject.EndDate,
+                createdProject.TeamId
+            );
 
             return createdDTO;
         }
@@ -53,7 +55,7 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<ProjectDTO> UpdateProject(ProjectDTO projectDTO, User loggedInUser)
+    public async Task<OutgoingProjectDTO> UpdateProject(ProjectDTO projectDTO, User loggedInUser)
     {
         try
         {
@@ -74,16 +76,14 @@ public class ProjectService : IProjectService
             project.EndDate = projectDTO.EndDate;
 
             var updatedProject = await _projectRepository.UpdateAsync(project);
-            var updatedDTO = new ProjectDTO()
-            {
-                Id = updatedProject.Id,
-                Title = updatedProject.Title,
-                Description = updatedProject.Description,
-                DateCreated = updatedProject.DateCreated,
-                EndDate = updatedProject.EndDate,
-                TeamId = updatedProject.TeamId
-            };
-
+            var updatedDTO = new OutgoingProjectDTO(
+                updatedProject.Id,
+                updatedProject.Title,
+                updatedProject.Description,
+                updatedProject.DateCreated,
+                updatedProject.EndDate,
+                updatedProject.TeamId
+            );
             return updatedDTO;
         }
         catch (Exception e)
@@ -92,7 +92,7 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<ProjectDTO> GetProjectBykId(string id)
+    public async Task<OutgoingProjectDTO> GetProjectBykId(string id)
     {
         try
         {
@@ -104,15 +104,14 @@ public class ProjectService : IProjectService
             }
             else
             {
-                var projectDTO = new ProjectDTO()
-                {
-                    Id = project.Id,
-                    Title = project.Title,
-                    Description = project.Description,
-                    DateCreated = project.DateCreated,
-                    EndDate = project.EndDate,
-                    TeamId = project.TeamId
-                };
+                var projectDTO = new OutgoingProjectDTO(
+                    project.Id,
+                    project.Title,
+                    project.Description,
+                    project.DateCreated,
+                    project.EndDate,
+                    project.TeamId
+                );
 
                 return projectDTO;
             }
@@ -123,7 +122,7 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<List<ProjectDTO>> GetByTeam(string teamId, User loggedInUser)
+    public async Task<List<OutgoingProjectDTO>> GetByTeam(string teamId, User loggedInUser)
     {
         try
         {
@@ -137,20 +136,19 @@ public class ProjectService : IProjectService
             // var healthChecksValidNow = healthChecks.FindAll(
             //     h => h.StartTime >= now && h.EndTime < now
             // );
-            var projectDTOs = new List<ProjectDTO>();
+            var projectDTOs = new List<OutgoingProjectDTO>();
 
             projectDTOs = projects
                 .Select(
                     p =>
-                        new ProjectDTO()
-                        {
-                            Id = p.Id,
-                            Title = p.Title,
-                            Description = p.Description,
-                            DateCreated = p.DateCreated,
-                            EndDate = p.EndDate,
-                            TeamId = p.TeamId
-                        }
+                        new OutgoingProjectDTO(
+                            p.Id,
+                            p.Title,
+                            p.Description,
+                            p.DateCreated,
+                            p.EndDate,
+                            p.TeamId
+                        )
                 )
                 .OrderBy(p => p.DateCreated)
                 .ToList();
@@ -177,14 +175,6 @@ public class ProjectService : IProjectService
             {
                 throw new Exception("Only team owner can delete project.");
             }
-            //radera alla updates och comments sen med:
-            // var profileHealthChecks = await _profileHealthCheckRepository.GetAllByHealthCheck(
-            //     healthCheck.Id
-            // );
-            // foreach (var profileHC in profileHealthChecks)
-            // {
-            //     await _profileHealthCheckRepository.DeleteByIdAsync(profileHC.Id);
-            // }
             await _projectRepository.DeleteByIdAsync(id);
         }
         catch (Exception e)

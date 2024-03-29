@@ -1,60 +1,151 @@
-import React from "react";
-import { Project } from "../../types";
+import AddIcon from "@mui/icons-material/Add";
+import { Box, Button, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../globalConstants";
+import { Project, ProjectUpdate } from "../../types";
+import {
+  GetUpdatesByProjectAsync,
+  setActiveProject,
+} from "../slices/projectSlice";
+import { useAppDispatch } from "../slices/store";
 
 interface ProgressBarProps {
   project: Project;
-  updateDates?: Date[]; // Datum för varje uppdatering
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ project, updateDates }) => {
-  // Beräkna totala antalet dagar mellan dateCreated och endDate
-  const totalDays = Math.floor(
-    (new Date(project.endDate).getTime() -
-      new Date(project.dateCreated).getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
+const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  // const projectUpdates = useAppSelector(
+  //   (state) => state.projectSlice.activeProjectUpdates
+  // );
+  const [updates, setUpdates] = useState<ProjectUpdate[] | undefined>();
+  const [updateDates, setUpdateDates] = useState<Date[]>();
+  const [progress, setProgress] = useState<number>(0);
+  const [daysSinceStart, setDaysSinceStart] = useState<number>(0);
+  const [totalDays, setTotalDays] = useState<number>(0);
+  const [fillerWidths, setFillerWidths] = useState<number[]>();
 
-  // Beräkna antalet uppdateringar avslutade fram till nu
-  const completedUpdates = updateDates
-    ? updateDates.filter((date) => date <= new Date()).length
-    : 0;
+  useEffect(() => {
+    (async () => {
+      try {
+        const updates = await GetUpdatesByProjectAsync(project.id);
+        setUpdates(updates);
+      } catch (error) {
+        console.error("Error fetching updates:", error);
+      }
+    })();
+  }, [project]);
 
-  // Beräkna antalet dagar sedan processen startade
-  const daysSinceStart = Math.floor(
-    (new Date().getTime() - new Date(project.dateCreated).getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
+  useEffect(() => {
+    if (updates) {
+      const dateCreatedDates = updates
+        .filter((update) => update.dateCreated)
+        .map((update) => update.dateCreated);
+      setUpdateDates(dateCreatedDates);
+    }
+  }, [updates]);
 
-  // Beräkna procent av tid som har gått sedan processen startade
-  const progress = (daysSinceStart / totalDays) * 100;
-
-  // Skapa en array med färger för varje fyllare
-  const colors = ["#007bff", "#28a745", "#dc3545", "#ffc107"]; // Lägg till fler färger vid behov
-
-  // Tilldela en unik färg till varje fyllare baserat på dess index
-  const fillerStyles = updateDates?.map((date, index) => ({
-    width: `${
-      ((date.getTime() - new Date(project.dateCreated).getTime()) /
+  useEffect(() => {
+    if (updates && project.endDate) {
+      const totalDays = Math.floor(
         (new Date(project.endDate).getTime() -
-          new Date(project.dateCreated).getTime())) *
-      100
-    }%`,
-    backgroundColor: colors[index % colors.length], // Loopa genom färgarrayen med modulo för att återanvända färger
-  }));
+          new Date(project.dateCreated).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+      setTotalDays(totalDays);
+      const daysSinceStart = Math.floor(
+        (new Date().getTime() - new Date(project.dateCreated).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+      setDaysSinceStart(daysSinceStart);
+
+      const progress =
+        new Date() >= new Date(project.endDate)
+          ? 100
+          : (daysSinceStart / totalDays) * 100;
+      const progressResult = isNaN(progress) ? 0 : progress;
+
+      setProgress(progressResult);
+    }
+  }, [updates, project]);
+
+  useEffect(() => {
+    if (updateDates && totalDays) {
+      const totalUpdates = updateDates.length;
+      const updateWidth = 100 / totalUpdates;
+      const fillerWidths = updateDates.map(
+        (_, index) => (index + 1) * updateWidth
+      );
+      setFillerWidths(fillerWidths);
+    }
+  }, [updateDates, totalDays]);
+
+  const colors = [
+    "#ABEBC6",
+    "#82E0AA",
+    "#58D68D",
+    "#2ECC71",
+    "#28B463",
+    "#239B56",
+    "#1D8348",
+    "#186A3B",
+    "#186A3B",
+    "#186A3B",
+    "#186A3B",
+    "#186A3B",
+  ];
+
+  const handleCreateUpdate = () => {
+    dispatch(setActiveProject(project.id));
+    navigate("/createupdate");
+  };
 
   return (
-    <div className="progress-bar-container">
-      <p>{project.title}</p>
+    <div style={{ width: "100%", marginTop: 10 }}>
+      <Box display="flex" flexDirection="row" justifyContent={"space-between"}>
+        <Typography variant="h6">{project.title}</Typography>
+        <Button onClick={handleCreateUpdate}>
+          <Box sx={{ display: "flex" }}>
+            <AddIcon
+              sx={{
+                textAlign: "center",
+                fontSize: isMobile ? "20" : "30",
+              }}
+            />
+            <Typography>UPPDATERING</Typography>
+          </Box>
+        </Button>
+      </Box>
       <div className="progress-bar">
         {updateDates?.map((date, index) => (
-          <div key={index} className="filler" style={fillerStyles[index]} />
+          <div
+            key={index}
+            className="filler"
+            style={{
+              width: `${fillerWidths?.[index]}%`,
+              backgroundColor: colors[index],
+            }}
+          >
+            <Typography variant="caption">
+              {new Date(date).toLocaleDateString("sv-SE", {
+                day: "2-digit",
+                month: "2-digit",
+              })}
+            </Typography>
+          </div>
         ))}
       </div>
-      <div className="progress-text">{`${progress.toFixed(
-        2
-      )}% Complete (${completedUpdates} / ${
-        updateDates?.length ?? 0
-      } updates, ${daysSinceStart} / ${totalDays} days)`}</div>
+
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography>{`${progress.toFixed(2)}% AVKLARAT`}</Typography>
+        <Typography>
+          {updateDates?.length ?? 0}{" "}
+          {updateDates?.length == 1 ? "UPPDATERING" : "UPPDATERINGAR"}
+        </Typography>
+        <Typography>{`${daysSinceStart} / ${totalDays} DAGAR`}</Typography>
+      </div>
     </div>
   );
 };

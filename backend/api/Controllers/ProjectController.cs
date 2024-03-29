@@ -26,7 +26,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<ProjectDTO>> Post([FromBody] ProjectDTO projectDTO)
+        public async Task<ActionResult<OutgoingProjectDTO>> Post([FromBody] ProjectDTO projectDTO)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<ProjectDTO>> Update([FromBody] ProjectDTO projectDTO)
+        public async Task<ActionResult<OutgoingProjectDTO>> Update([FromBody] ProjectDTO projectDTO)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace Controllers
                     return BadRequest("JWT token is missing.");
                 }
 
-                ProjectDTO updatedProject = await _projectService.UpdateProject(
+                OutgoingProjectDTO updatedProject = await _projectService.UpdateProject(
                     projectDTO,
                     loggedInUser
                 );
@@ -126,7 +126,7 @@ namespace Controllers
         [HttpPost("byteam")]
         [Authorize]
         //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<List<ProjectDTO>>> Get([FromBody] string teamId)
+        public async Task<ActionResult<List<OutgoingProjectDTO>>> Get([FromBody] string teamId)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace Controllers
         [HttpGet]
         [Authorize]
         //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<ProjectDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<OutgoingProjectDTO>> GetById([FromBody] string id)
         {
             try
             {

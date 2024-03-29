@@ -25,7 +25,7 @@ public class ProjectUpdateService : IProjectUpdateService
         _updateRepository = updateCommentRepository;
     }
 
-    public async Task<ProjectUpdateDTO> CreateAsync(
+    public async Task<OutgoingUpdateDTO> CreateAsync(
         ProjectUpdateDTO projectUpdateDTO,
         User loggedInUser
     )
@@ -53,14 +53,14 @@ public class ProjectUpdateService : IProjectUpdateService
                     latestVersion + 1
                 );
             var createdProjectUpdate = await _projectUpdateRepository.CreateAsync(projectUpdate);
-            return new ProjectUpdateDTO(
+            return new OutgoingUpdateDTO(
                 createdProjectUpdate.Id,
                 createdProjectUpdate.ProjectId,
                 createdProjectUpdate.DateCreated,
                 createdProjectUpdate.Version
             );
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             throw new(e.Message);
         }
@@ -88,7 +88,7 @@ public class ProjectUpdateService : IProjectUpdateService
         }
     }
 
-    public async Task<IEnumerable<ProjectUpdateDTO>> GetAllByProject(
+    public async Task<IEnumerable<OutgoingUpdateDTO>> GetAllByProject(
         string projectId,
         User loggedInUser
     )
@@ -104,9 +104,9 @@ public class ProjectUpdateService : IProjectUpdateService
             }
             var projectUpdates = await _projectUpdateRepository.GetAllByProject(project.Id);
             var projectUpdateDTOs = projectUpdates.Select(
-                h => new ProjectUpdateDTO(h.Id, h.ProjectId, h.DateCreated, h.Version)
+                h => new OutgoingUpdateDTO(h.Id, h.ProjectId, h.DateCreated, h.Version)
             );
-            return projectUpdateDTOs ?? new List<ProjectUpdateDTO>();
+            return projectUpdateDTOs ?? new List<OutgoingUpdateDTO>();
         }
         catch (System.Exception e)
         {
@@ -114,13 +114,13 @@ public class ProjectUpdateService : IProjectUpdateService
         }
     }
 
-    public async Task<ProjectUpdateDTO> GetByIdAsync(string id)
+    public async Task<OutgoingUpdateDTO> GetByIdAsync(string id)
     {
         try
         {
             //villkor?
             var projectUpdate = await _projectUpdateRepository.GetByIdAsync(id);
-            return new ProjectUpdateDTO(
+            return new OutgoingUpdateDTO(
                 projectUpdate.Id,
                 projectUpdate.ProjectId,
                 projectUpdate.DateCreated,
@@ -133,7 +133,7 @@ public class ProjectUpdateService : IProjectUpdateService
         }
     }
 
-    Task<ProjectUpdateDTO> IProjectUpdateService.UpdateAsync(
+    Task<OutgoingUpdateDTO> IProjectUpdateService.UpdateAsync(
         ProjectUpdateDTO projectUpdateDTO,
         User loggedInUser
     )

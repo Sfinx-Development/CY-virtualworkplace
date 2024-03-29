@@ -143,13 +143,6 @@ export interface Conversation {
   teamId?: string;
 }
 
-// public string Id { get; set; }
-// public string ConversationId { get; set; }
-// public string ProfileId { get; set; }
-// public Profile Profile { get; set; }
-// public Conversation Conversation { get; set; }
-// public string FullName { get; set; }
-
 export interface ConversationParticipant {
   id: string;
   profileId: string;
@@ -178,4 +171,11 @@ export interface Project {
   dateCreated: Date;
   endDate: Date;
   teamId: string;
+}
+
+export interface ProjectUpdate {
+  id: string;
+  projectId: string;
+  dateCreated: Date;
+  version: number;
 }

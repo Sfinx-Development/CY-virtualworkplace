@@ -1,15 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Project } from "../../types";
-import { FetchCreateProject, FetchGetTeamProjects } from "../api/project";
+import { Project, ProjectUpdate } from "../../types";
+import {
+  FetchCreateProject,
+  FetchCreateProjectuPDATE,
+  FetchGetProjectUpdates,
+  FetchGetTeamProjects,
+} from "../api/project";
 import { CreateHealthCheckAsync } from "./healthcheck";
 
 export interface ProjectState {
   projects: Project[] | undefined;
+  activeProject: Project | undefined;
+  activeProjectUpdates: ProjectUpdate[] | undefined;
   error: string | null;
 }
 
 export const initialState: ProjectState = {
   projects: undefined,
+  activeProject: undefined,
+  activeProjectUpdates: undefined,
   error: null,
 };
 
@@ -55,85 +64,86 @@ export const GetTeamProjectsAsync = createAsyncThunk<
   }
 });
 
-// export const GetProfileHealthChecksAsync = createAsyncThunk<
-//   ProfileHealthCheck[],
-//   string,
-//   { rejectValue: string }
-// >("healthcheck/getprofilehealthchecks", async (healthcheckId, thunkAPI) => {
-//   try {
-//     const profileHealthChecks = await FetchGetProfileHealthChecks(
-//       healthcheckId
-//     );
-//     if (profileHealthChecks) {
-//       return profileHealthChecks;
-//     } else {
-//       return thunkAPI.rejectWithValue(
-//         "Ett fel inträffade vid hämtande av profilehealthchecks."
-//       );
-//     }
-//   } catch (error) {
-//     return thunkAPI.rejectWithValue(
-//       "Ett fel inträffade vid hämtande av profilehealthchecks."
-//     );
-//   }
-// });
+export const CreateProjectUpdateAsync = createAsyncThunk<
+  ProjectUpdate,
+  ProjectUpdate,
+  { rejectValue: string }
+>("project/createprojectupdate", async (projectUpdate, thunkAPI) => {
+  try {
+    const createdProjectUpdate = await FetchCreateProjectuPDATE(projectUpdate);
+    if (createdProjectUpdate) {
+      return createdProjectUpdate;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid skapande av projekt uppdatering."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid skapande av projekt uppdatering."
+    );
+  }
+});
 
-// export const GetProfileHealthChecksByProfileAsync = createAsyncThunk<
-//   ProfileHealthCheck[],
-//   string,
-//   { rejectValue: string }
-// >(
-//   "healthcheck/getprofilehealthchecksbyprofile",
-//   async (profileId, thunkAPI) => {
-//     try {
-//       const profileHealthChecks = await FetchGetProfileHealthChecksByProfile(
-//         profileId
-//       );
-//       if (profileHealthChecks) {
-//         return profileHealthChecks;
-//       } else {
-//         return thunkAPI.rejectWithValue(
-//           "Ett fel inträffade vid hämtande av profilehealthchecks."
-//         );
-//       }
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(
-//         "Ett fel inträffade vid hämtande av profilehealthchecks."
-//       );
-//     }
-//   }
-// );
+export const GetProjectUpdatesAsync = createAsyncThunk<
+  ProjectUpdate[],
+  string,
+  { rejectValue: string }
+>("project/getUpdates", async (projectId, thunkAPI) => {
+  try {
+    const updates = await FetchGetProjectUpdates(projectId);
+    if (updates) {
+      return updates;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtande av projektuppdateringar."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtande av projektuppdateringar."
+    );
+  }
+});
 
-// export const CreateProfileHealthCheckAsync = createAsyncThunk<
-//   ProfileHealthCheck,
-//   ProfileHealthCheck,
-//   { rejectValue: string }
-// >(
-//   "healthcheck/createprofilehealthcheck",
-//   async (profileHealthCheck, thunkAPI) => {
-//     try {
-//       const createdProfileHealthCheck = await FetchCreateProfileHealthCheck(
-//         profileHealthCheck
-//       );
-//       if (createdProfileHealthCheck) {
-//         return createdProfileHealthCheck;
-//       } else {
-//         return thunkAPI.rejectWithValue(
-//           "Ett fel inträffade vid skapande av profile healthcheck."
-//         );
-//       }
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(
-//         "Ett fel inträffade vid skapande av profile healthcheck."
-//       );
-//     }
-//   }
-// );
+export const GetUpdatesByProjectAsync = async (projectId: string) => {
+  try {
+    const updates = await FetchGetProjectUpdates(projectId);
+    return updates;
+  } catch (error) {
+    console.log("no updates");
+  }
+};
+
+const saveActiveProjectToLocalStorage = (project: Project) => {
+  localStorage.setItem("activeProject", JSON.stringify(project));
+};
+const loadActiveProjectFromLocalStorage = (): Project | undefined => {
+  const storedActiveProject = localStorage.getItem("activeProject");
+  return storedActiveProject ? JSON.parse(storedActiveProject) : undefined;
+};
 
 const projectSlice = createSlice({
   name: "project",
   initialState,
-  reducers: {},
+  reducers: {
+    setActiveProject: (state, action) => {
+      const projectId = action.payload;
+      const activeProject = state.projects?.find(
+        (project: Project) => project.id === projectId
+      );
+      if (activeProject) {
+        state.activeProject = activeProject;
+        saveActiveProjectToLocalStorage(activeProject);
+      }
+    },
+    getActiveProject: (state) => {
+      const activeProject = loadActiveProjectFromLocalStorage();
+      if (activeProject) {
+        state.activeProject = activeProject;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(CreateProjectAsync.fulfilled, (state, action) => {
@@ -158,51 +168,32 @@ const projectSlice = createSlice({
       })
       .addCase(GetTeamProjectsAsync.rejected, (state) => {
         state.error = "Något gick fel.";
+      })
+      .addCase(CreateProjectUpdateAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          if (state.activeProjectUpdates) {
+            state.activeProjectUpdates.push(action.payload);
+          } else {
+            state.activeProjectUpdates = [];
+            state.activeProjectUpdates.push(action.payload);
+          }
+          state.error = null;
+        }
+      })
+      .addCase(CreateProjectUpdateAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
+      })
+      .addCase(GetProjectUpdatesAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeProjectUpdates = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetProjectUpdatesAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
       });
-    //   .addCase(GetTeamHealthChecksAsync.fulfilled, (state, action) => {
-    //     if (action.payload) {
-    //       console.log("HÄMTAT: ", action.payload);
-    //       state.healthchecks = action.payload;
-    //       state.error = null;
-    //     }
-    //   })
-    //   .addCase(GetTeamHealthChecksAsync.rejected, (state) => {
-    //     state.healthchecks = undefined;
-    //     state.error = "Något gick fel.";
-    //   })
-    //   .addCase(GetProfileHealthChecksAsync.fulfilled, (state, action) => {
-    //     if (action.payload) {
-    //       state.profileHealthChecks = action.payload;
-    //       state.error = null;
-    //     }
-    //   })
-    //   .addCase(GetProfileHealthChecksAsync.rejected, (state) => {
-    //     state.profileHealthChecks = undefined;
-    //     state.error = "Något gick fel.";
-    //   })
-    //   .addCase(
-    //     GetProfileHealthChecksByProfileAsync.fulfilled,
-    //     (state, action) => {
-    //       if (action.payload) {
-    //         state.profileHealthChecks = action.payload;
-    //         state.error = null;
-    //       }
-    //     }
-    //   )
-    //   .addCase(GetProfileHealthChecksByProfileAsync.rejected, (state) => {
-    //     state.profileHealthChecks = undefined;
-    //     state.error = "Något gick fel.";
-    //   })
-    //   .addCase(CreateProfileHealthCheckAsync.fulfilled, (state, action) => {
-    //     if (action.payload) {
-    //       state.profileHealthChecks?.push(action.payload);
-    //       state.error = null;
-    //     }
-    //   })
-    //   .addCase(CreateProfileHealthCheckAsync.rejected, (state) => {
-    //     state.error = "Något gick fel.";
-    //   });
   },
 });
 
+export const { getActiveProject, setActiveProject } = projectSlice.actions;
 export const projectReducer = projectSlice.reducer;

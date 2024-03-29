@@ -1,7 +1,8 @@
-import { Project } from "../../types";
+import { Project, ProjectUpdate } from "../../types";
 import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + `/project`;
+const apiUpdateUrl = getApiUrl() + `/projectUpdate`;
 
 export const FetchCreateProject = async (
   project: Project
@@ -22,7 +23,12 @@ export const FetchCreateProject = async (
 
     const responseBody = (await response.json()) as Project;
 
-    return responseBody;
+    const updatedProject = {
+      ...responseBody,
+      dateCreated: new Date(responseBody.dateCreated),
+      endDate: new Date(responseBody.endDate),
+    };
+    return updatedProject;
   } catch (error) {
     console.error(error);
     throw error;
@@ -48,7 +54,11 @@ export const FetchGetTeamProjects = async (
 
     const responseBody = await response.json();
 
-    const projects = responseBody.$values as Project[];
+    const projects = responseBody.$values.map((project: Project) => ({
+      ...project,
+      dateCreated: new Date(project.dateCreated),
+    })) as Project[];
+
     return projects;
   } catch (error) {
     console.error(error);
@@ -56,80 +66,67 @@ export const FetchGetTeamProjects = async (
   }
 };
 
-// export const FetchCreateProfileHealthCheck = async (
-//   profileHealthcheck: ProfileHealthCheck
-// ): Promise<ProfileHealthCheck> => {
-//   try {
-//     const response = await fetch(profileHealthCheckUrl + "/create", {
-//       method: "POST",
-//       credentials: "include",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(profileHealthcheck),
-//     });
+/////////////////////////////////PROJECTUPDATE
+export const FetchCreateProjectuPDATE = async (
+  projectUpdate: ProjectUpdate
+): Promise<ProjectUpdate> => {
+  try {
+    const response = await fetch(apiUpdateUrl + "/create", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(projectUpdate),
+    });
 
-//     if (!response.ok) {
-//       throw new Error("Något gick fel vid skapandet av profile health check");
-//     }
+    if (!response.ok) {
+      throw new Error("Något gick fel vid skapandet av projekt uppdateringen");
+    }
 
-//     const responseBody = (await response.json()) as ProfileHealthCheck;
+    const responseBody = (await response.json()) as ProjectUpdate;
 
-//     return responseBody;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
+    const updatedProjectUpdate = {
+      ...responseBody,
+      dateCreated: new Date(responseBody.dateCreated),
+    };
 
-// export const FetchGetProfileHealthChecks = async (
-//   healthCheckId: string
-// ): Promise<ProfileHealthCheck[]> => {
-//   try {
-//     const response = await fetch(profileHealthCheckUrl + "/byhealthcheck", {
-//       method: "POST",
-//       credentials: "include",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(healthCheckId),
-//     });
+    return updatedProjectUpdate;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
-//     if (!response.ok) {
-//       throw new Error("Något gick fel vid hämtandet av profile health checks");
-//     }
-//     const responseBody = await response.json();
-//     const profileHealthchecks = responseBody.$values as ProfileHealthCheck[];
+export const FetchGetProjectUpdates = async (
+  projectId: string
+): Promise<ProjectUpdate[]> => {
+  try {
+    const response = await fetch(apiUpdateUrl + "/byproject", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(projectId),
+    });
 
-//     return profileHealthchecks;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
+    if (!response.ok) {
+      throw new Error(
+        "Något gick fel vid hämtning av teamets projektuppdateringar"
+      );
+    }
 
-// export const FetchGetProfileHealthChecksByProfile = async (
-//   profileId: string
-// ): Promise<ProfileHealthCheck[]> => {
-//   try {
-//     const response = await fetch(profileHealthCheckUrl + "/byprofile", {
-//       method: "POST",
-//       credentials: "include",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(profileId),
-//     });
+    const responseBody = await response.json();
 
-//     if (!response.ok) {
-//       throw new Error("Något gick fel vid hämtandet av profile health checks");
-//     }
-//     const responseBody = await response.json();
-//     const profileHealthchecks = responseBody.$values as ProfileHealthCheck[];
+    const updates = responseBody.$values.map((update: ProjectUpdate) => ({
+      ...update,
+      dateCreated: new Date(update.dateCreated),
+    })) as ProjectUpdate[];
 
-//     return profileHealthchecks;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
+    return updates;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -19,7 +19,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<HealthCheck>> Post(
+        public async Task<ActionResult<OutgoingUpdateDTO>> Post(
             [FromBody] ProjectUpdateDTO projectUpdateDTO
         )
         {
@@ -123,7 +123,7 @@ namespace Controllers
 
         [HttpPost("byproject")]
         [Authorize]
-        public async Task<ActionResult<List<ProjectUpdateDTO>>> Get([FromBody] string projectId)
+        public async Task<ActionResult<List<OutgoingUpdateDTO>>> Get([FromBody] string projectId)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<ProjectUpdateDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<OutgoingUpdateDTO>> GetById([FromBody] string id)
         {
             try
             {

@@ -27,6 +27,7 @@ import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
+import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
@@ -90,6 +91,7 @@ const Navigation = () => {
           <Route path="joinmeeting" element={<OngoingMeeting />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="createproject" element={<CreateProject />} />
+          <Route path="createupdate" element={<CreateUpdate />} />
 
           {/* <Route
             path="connect"

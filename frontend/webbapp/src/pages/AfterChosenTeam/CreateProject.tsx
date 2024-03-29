@@ -76,12 +76,12 @@ export default function CreateProject() {
           <Typography
             sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
           >
-            Skapa ett projekt för erat team, där alla kan se processen
+            Skapa ett projekt där alla i teamet kan följa processen
           </Typography>
           <Typography
             sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
           >
-            Ni kan fylla på projektet med uppdateringar under tidens gång
+            Fyll på med uppdateringar under tidens gång
           </Typography>
         </div>
         <TextField
