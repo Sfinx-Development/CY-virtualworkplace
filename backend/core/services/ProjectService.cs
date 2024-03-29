@@ -123,11 +123,11 @@ public class ProjectService : IProjectService
         }
     }
 
-    public async Task<List<ProjectDTO>> GetByTeam(string profileId, User loggedInUser)
+    public async Task<List<ProjectDTO>> GetByTeam(string teamId, User loggedInUser)
     {
         try
         {
-            var profile = await _profileRepository.GetByIdAsync(profileId);
+            var profile = await _profileRepository.GetByUserAndTeamIdAsync(loggedInUser.Id, teamId);
             if (profile.UserId != loggedInUser.Id)
             {
                 throw new Exception("Not valid user");

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace core;
 
-public class FileRepository
+public class FileRepository : IFileRepository
 {
     private readonly CyDbContext _cyDbContext;
 
@@ -25,22 +25,19 @@ public class FileRepository
         }
     }
 
-    public async Task<Project> GetByIdAsync(string id)
+    public async Task<ProjectFile> GetByIdAsync(string id)
     {
         try
         {
-            Project project = await _cyDbContext
-                .Projects.Include(h => h.Team)
-                .Where(m => m.Id == id)
-                .FirstAsync();
+            ProjectFile file = await _cyDbContext.ProjectFiles.Where(m => m.Id == id).FirstAsync();
 
-            if (project != null)
+            if (file != null)
             {
-                return project;
+                return file;
             }
             else
             {
-                throw new Exception("project not found.");
+                throw new Exception("file not found.");
             }
         }
         catch (Exception e)
@@ -49,14 +46,14 @@ public class FileRepository
         }
     }
 
-    public async Task<Project> UpdateAsync(Project project)
+    public async Task<ProjectFile> UpdateAsync(ProjectFile file)
     {
         try
         {
-            _cyDbContext.Projects.Update(project);
+            _cyDbContext.ProjectFiles.Update(file);
 
             await _cyDbContext.SaveChangesAsync();
-            return project;
+            return file;
         }
         catch (Exception e)
         {
@@ -68,10 +65,10 @@ public class FileRepository
     {
         try
         {
-            var projectToDelete = await _cyDbContext.Projects.FindAsync(id);
-            if (projectToDelete != null)
+            var fileToDelete = await _cyDbContext.ProjectFiles.FindAsync(id);
+            if (fileToDelete != null)
             {
-                _cyDbContext.Projects.Remove(projectToDelete);
+                _cyDbContext.ProjectFiles.Remove(fileToDelete);
                 await _cyDbContext.SaveChangesAsync();
             }
         }
@@ -81,12 +78,14 @@ public class FileRepository
         }
     }
 
-    public async Task<List<Project>> GetAllByTeam(string teamId)
+    public async Task<List<ProjectFile>> GetAllByUpdateComment(string updateCommentId)
     {
         try
         {
-            var projects = await _cyDbContext.Projects.Where(m => m.TeamId == teamId).ToListAsync();
-            return projects;
+            var files = await _cyDbContext
+                .ProjectFiles.Where(m => m.UpdateCommentId == updateCommentId)
+                .ToListAsync();
+            return files;
         }
         catch (Exception e)
         {

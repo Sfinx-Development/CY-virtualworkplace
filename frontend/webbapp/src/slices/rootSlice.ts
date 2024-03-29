@@ -5,6 +5,7 @@ import { HealthCheckState, healthcheckReducer } from "./healthcheck";
 import { MeetingState, meetingReducer } from "./meetingSlice";
 import { MessageState, messageReducer } from "./messageSlice";
 import { ProfileState, profileReducer } from "./profileSlice";
+import { ProjectState, projectReducer } from "./projectSlice";
 import { TeamState, teamReducer } from "./teamSlice";
 import { UserState, userReducer } from "./userSlice";
 
@@ -17,6 +18,7 @@ export interface RootState {
   conversationSlice: ConversationState;
   messageSlice: MessageState;
   healthcheckSlice: HealthCheckState;
+  projectSlice: ProjectState;
 }
 
 const appReducer = combineReducers({
@@ -27,7 +29,8 @@ const appReducer = combineReducers({
   meetingSlice: meetingReducer,
   conversationSlice: conversationReducer,
   messageSlice: messageReducer,
-  healthcheckSlice: healthcheckReducer
+  healthcheckSlice: healthcheckReducer,
+  projectSlice: projectReducer,
 });
 
 const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {

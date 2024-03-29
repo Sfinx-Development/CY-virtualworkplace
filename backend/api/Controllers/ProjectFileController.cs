@@ -13,20 +13,22 @@ namespace Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProjectController : ControllerBase
+    public class ProjectFileController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly IProjectService _projectService;
+        private readonly IFileService _fileService;
 
-        public ProjectController(JwtService jwtService, IProjectService projectService)
+        public ProjectFileController(JwtService jwtService, IFileService fileService)
         {
             _jwtService = jwtService;
-            _projectService = projectService;
+            _fileService = fileService;
         }
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<ProjectDTO>> Post([FromBody] ProjectDTO projectDTO)
+        public async Task<ActionResult<ProjectFileDTO>> Post(
+            [FromBody] ProjectFileDTO projectFileDTO
+        )
         {
             try
             {
@@ -41,21 +43,14 @@ namespace Controllers
                 {
                     return BadRequest("Failed to get user.");
                 }
+                //ta in logged in user:
+                var file = await _fileService.CreateAsync(projectFileDTO);
 
-                var projectCreated = await _projectService.CreateProjectAsync(
-                    projectDTO,
-                    loggedInUser
-                );
-
-                if (projectCreated == null)
+                if (file == null)
                 {
-                    return BadRequest("Failed to create Project.");
+                    return BadRequest("Failed to create file.");
                 }
-                return CreatedAtAction(
-                    nameof(GetById),
-                    new { id = projectCreated.Id },
-                    projectCreated
-                );
+                return CreatedAtAction(nameof(GetById), new { id = file.Id }, file);
             }
             catch (Exception e)
             {
@@ -82,7 +77,7 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                await _projectService.DeleteById(id, loggedInUser);
+                await _fileService.DeleteById(id, loggedInUser);
 
                 return NoContent();
             }
@@ -94,7 +89,9 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<ProjectDTO>> Update([FromBody] ProjectDTO projectDTO)
+        public async Task<ActionResult<ProjectFileDTO>> Update(
+            [FromBody] ProjectFileDTO projectFileDTO
+        )
         {
             try
             {
@@ -111,11 +108,8 @@ namespace Controllers
                     return BadRequest("JWT token is missing.");
                 }
 
-                ProjectDTO updatedProject = await _projectService.UpdateProject(
-                    projectDTO,
-                    loggedInUser
-                );
-                return Ok(updatedProject);
+                var updatedFile = await _fileService.UpdateAsync(projectFileDTO, loggedInUser);
+                return Ok(updatedFile);
             }
             catch (Exception e)
             {
@@ -123,10 +117,9 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byteam")]
+        [HttpPost("byupdatecomment")]
         [Authorize]
-        //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<List<ProjectDTO>>> Get([FromBody] string teamId)
+        public async Task<ActionResult<List<ProjectFileDTO>>> Get([FromBody] string updateCommentId)
         {
             try
             {
@@ -143,9 +136,9 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                var projects = await _projectService.GetByTeam(teamId, loggedInUser);
+                var files = await _fileService.GetByUpdateComment(updateCommentId, loggedInUser);
 
-                return Ok(projects);
+                return Ok(files);
             }
             catch (Exception e)
             {
@@ -155,8 +148,7 @@ namespace Controllers
 
         [HttpGet]
         [Authorize]
-        //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<ProjectDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<ProjectFileDTO>> GetById([FromBody] string id)
         {
             try
             {
@@ -174,9 +166,9 @@ namespace Controllers
                 }
                 //någon mer check så rätt person hämtar rätt project? denna ska inte användas förutom från detta projectet
 
-                var project = await _projectService.GetProjectBykId(id);
+                var file = await _fileService.GetById(id, loggedInUser);
 
-                return Ok(project);
+                return Ok(file);
             }
             catch (Exception e)
             {

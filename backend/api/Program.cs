@@ -82,6 +82,7 @@ builder.Services.AddScoped<IConversationParticipantRepository, ConversationParti
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectUpdateRepository, ProjectUpdateRepository>();
 builder.Services.AddScoped<IUpdateCommentRepository, UpdateCommentRepository>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -107,6 +108,12 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectUpdateService, ProjectUpdateService>();
 builder.Services.AddScoped<IUpdateCommentService, UpdateCommentService>();
 builder.Services.AddScoped<IFileService, FileService>();
+
+var serviceProvider = builder.Services.BuildServiceProvider();
+var projectRepository = serviceProvider.GetRequiredService<IProjectRepository>();
+var fileRepository = serviceProvider.GetRequiredService<IFileRepository>();
+var updateCommentRepository = serviceProvider.GetRequiredService<IUpdateCommentRepository>();
+var profileRepository = serviceProvider.GetRequiredService<IProfileRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

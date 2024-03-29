@@ -170,3 +170,12 @@ export interface GetParticipantDTO {
   profileId: string;
   conversationId: string;
 }
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  dateCreated: Date;
+  endDate: Date;
+  teamId: string;
+}

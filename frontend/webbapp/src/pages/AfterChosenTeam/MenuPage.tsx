@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import NavCard from "../../components/NavCard";
+import ProgressBar from "../../components/ProgressBar";
 import {
   GetConversationParticipant,
   GetTeamConversation,
@@ -17,6 +18,7 @@ import {
   GetTeamProfiles,
   getActiveProfile,
 } from "../../slices/profileSlice";
+import { GetTeamProjectsAsync } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -46,6 +48,7 @@ export default function Menu() {
   const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
+  const projects = useAppSelector((state) => state.projectSlice.projects);
   const now = new Date();
   const navigate = useNavigate();
   const ongoingMeeting = occasions
@@ -58,6 +61,12 @@ export default function Menu() {
       })
     : null;
 
+  const updateDates: Date[] = [
+    new Date("2024-04-15T10:30:00.000Z"),
+    new Date("2024-04-15"),
+    new Date("2024-04-20"),
+  ];
+
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
@@ -68,6 +77,7 @@ export default function Menu() {
       dispatch(GetTeamProfiles(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
       dispatch(GetTeamConversation(activeTeam.id));
+      dispatch(GetTeamProjectsAsync(activeTeam.id));
     }
   }, [activeTeam]);
 
@@ -307,6 +317,20 @@ export default function Menu() {
           />
         </Box>
       </Box>
+
+      {projects ? (
+        <Box sx={{ mt: 15 }}>
+          {projects.length} PROJEKT
+          {projects.map((p) => (
+            <ProgressBar
+              endDate={new Date(p.endDate)}
+              key={p.id}
+              updateDates={updateDates}
+            />
+          ))}
+        </Box>
+      ) : null}
+
       <Typography
         component="a"
         href="https://www.freepik.com/"

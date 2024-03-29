@@ -10,6 +10,6 @@ public interface IProjectService
     Task<ProjectDTO> UpdateProject(ProjectDTO healthCheck, User loggedInUser);
 
     Task<ProjectDTO> GetProjectBykId(string id);
-    Task<List<ProjectDTO>> GetByTeam(string profileId, User loggedInUser);
+    Task<List<ProjectDTO>> GetByTeam(string teamId, User loggedInUser);
     Task DeleteById(string id, User loggedInUser);
 }
