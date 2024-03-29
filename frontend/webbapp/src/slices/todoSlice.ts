@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Todo } from "../../types";
-import { FetchCreateTeamTodo, FetchGetTodo } from "../api/todo";
+import { FetchCreateTeamTodo, FetchGetTodo, FetchDeleteTodo } from "../api/todo";
 
 export interface TodoState {
   todos: Todo[] | undefined;
@@ -55,6 +55,28 @@ export const getTodoAsync = createAsyncThunk<
     return thunkAPI.rejectWithValue("Något gick fel.");
   }
 });
+
+export const DeleteTodoAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("message/deleteTodo", async (todoId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteTodo(todoId);
+    if (isDeleted) {
+      return todoId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid raderande av todon."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid raderande av todo."
+    );
+  }
+});
+
 
 
 const todoSlice = createSlice({
