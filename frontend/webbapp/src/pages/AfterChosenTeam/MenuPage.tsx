@@ -62,9 +62,9 @@ export default function Menu() {
     : null;
 
   const updateDates: Date[] = [
-    new Date("2024-04-15T10:30:00.000Z"),
-    new Date("2024-04-15"),
-    new Date("2024-04-20"),
+    new Date("2024-03-29T13:23:26.79656"),
+    new Date("2024-03-29T20:23:26.79656"),
+    new Date("2024-03-30T13:23:26.79656"),
   ];
 
   useEffect(() => {
@@ -80,6 +80,10 @@ export default function Menu() {
       dispatch(GetTeamProjectsAsync(activeTeam.id));
     }
   }, [activeTeam]);
+
+  useEffect(() => {
+    console.log("PROJECTS: ", projects);
+  }, [projects]);
 
   useEffect(() => {
     if (activeProfile) {
@@ -322,11 +326,7 @@ export default function Menu() {
         <Box sx={{ mt: 15 }}>
           {projects.length} PROJEKT
           {projects.map((p) => (
-            <ProgressBar
-              endDate={new Date(p.endDate)}
-              key={p.id}
-              updateDates={updateDates}
-            />
+            <ProgressBar project={p} key={p.id} updateDates={updateDates} />
           ))}
         </Box>
       ) : null}
