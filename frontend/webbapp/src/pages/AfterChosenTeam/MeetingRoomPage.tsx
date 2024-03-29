@@ -296,6 +296,45 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           sx={{
             display: "flex",
             minWidth: isMobile ? "170px" : "200px",
+            backgroundColor: meetingRoomColor,
+          }}
+        >
+          <CardActionArea
+            onClick={() => {
+              navigate("/createproject");
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <CardContent
+                sx={{
+                  flex: "1 0 auto",
+                  flexDirection: "row",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <AddIcon
+                  sx={{
+                    textAlign: "center",
+                    fontSize: isMobile ? "10" : "22",
+                    marginRight: 0.5,
+                  }}
+                />
+                <Typography
+                  component="div"
+                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
+                >
+                  Nytt projekt
+                </Typography>
+              </CardContent>
+            </Box>
+          </CardActionArea>
+        </Card>
+
+        <Card
+          sx={{
+            display: "flex",
+            minWidth: isMobile ? "170px" : "200px",
             backgroundColor: leaveColor,
           }}
         >

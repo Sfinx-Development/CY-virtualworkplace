@@ -5,6 +5,7 @@ import { HealthCheckState, healthcheckReducer } from "./healthcheck";
 import { MeetingState, meetingReducer } from "./meetingSlice";
 import { MessageState, messageReducer } from "./messageSlice";
 import { ProfileState, profileReducer } from "./profileSlice";
+import { ProjectState, projectReducer } from "./projectSlice";
 import { TeamState, teamReducer } from "./teamSlice";
 import { UserState, userReducer } from "./userSlice";
 import {TodoState, todoReducer } from "./todoSlice"; 
@@ -19,6 +20,7 @@ export interface RootState {
   conversationSlice: ConversationState;
   messageSlice: MessageState;
   healthcheckSlice: HealthCheckState;
+  projectSlice: ProjectState;
   todoSlice: TodoState;
 }
 
@@ -31,6 +33,7 @@ const appReducer = combineReducers({
   conversationSlice: conversationReducer,
   messageSlice: messageReducer,
   healthcheckSlice: healthcheckReducer,
+  projectSlice: projectReducer,
   todoSlice: todoReducer
 });
 
