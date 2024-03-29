@@ -178,13 +178,14 @@ var createdTodo = await _todoService.CreateTodo(todo, loggedInUser);
                 }
 
                 Todo updatedTodo = await _todoService.UpdateTodo(
-                    todoDTO
+                    todoDTO, loggedInUser
                 
                 );
                 return Ok(updatedTodo);
             }
             catch (Exception e)
             {
+              
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
