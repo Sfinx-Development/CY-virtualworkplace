@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import {
   Container,
@@ -12,12 +13,14 @@ import {
   DialogContent,
   DialogActions,
   Card,
+  IconButton,
 } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../slices/store";
 import { getActiveTeam, teamReducer } from "../../slices/teamSlice";
 import {
   createTeamTodoAsync,
   getTodoAsync,
+  DeleteTodoAsync
   // setTeamTodos,
 } from "../../slices/todoSlice";
 import { Todo } from "../../../types";
@@ -89,6 +92,10 @@ export default function CalendarPage() {
   //     setTodosDates(dates);
   //   }
   // }, [todosInTeam]);
+
+  const handleDeleteTodo = (todoId: string) => {
+    dispatch(DeleteTodoAsync(todoId));
+  };
 
   const handleDayClick = (day: string) => {
     // Filtera todos för den valda dagen
@@ -451,6 +458,19 @@ export default function CalendarPage() {
                       {todo.description}
                     </Typography>
                     <Typography>{todo.date.toString()}</Typography>
+                    <div>
+                    <IconButton
+                      onClick={() => handleDeleteTodo(todo.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    {/* <IconButton
+                      size="small"
+                      onClick={() => handleSetEditMode(meeting.meetingId)}
+                    >
+                      <EditIcon />
+                    </IconButton> */}
+                  </div>
                   </Card>
                 ))}
               </DialogContent>
@@ -508,6 +528,19 @@ export default function CalendarPage() {
                     <Typography variant="body2">
                       {todo.date.toString()}
                     </Typography>
+                    <div>
+                    <IconButton
+                      onClick={() => handleDeleteTodo(todo.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    {/* <IconButton
+                      size="small"
+                      onClick={() => handleSetEditMode(meeting.meetingId)}
+                    >
+                      <EditIcon />
+                    </IconButton> */}
+                  </div>
                   </Card>
                 ))}
               </DialogContent>

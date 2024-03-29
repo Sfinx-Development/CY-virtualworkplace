@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Todo } from "../../types";
-import { FetchCreateTeamTodo, FetchGetTodo } from "../api/todo";
+import { FetchCreateTeamTodo, FetchGetTodo, FetchDeleteTodo } from "../api/todo";
 
 export interface TodoState {
   todos: Todo[] | undefined;
