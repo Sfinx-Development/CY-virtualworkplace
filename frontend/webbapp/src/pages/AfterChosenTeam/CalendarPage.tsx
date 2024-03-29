@@ -93,9 +93,33 @@ export default function CalendarPage() {
   //   }
   // }, [todosInTeam]);
 
-  const handleDeleteTodo = (todoId: string) => {
-    dispatch(DeleteTodoAsync(todoId));
+  // const handleDeleteTodo = (todoId: string) => {
+  //   dispatch(DeleteTodoAsync(todoId));
+
+  //   setSelectedDayTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
+  // };
+
+  const handleDeleteTodo = async (todoId: string) => {
+    try {
+      await dispatch(DeleteTodoAsync(todoId));
+      
+      if(todosInTeam){
+        const updatedTodosInTeam = todosInTeam.filter((todo) => todo.id !== todoId);
+        setTodos(updatedTodosInTeam);
+    
+        const updatedSelectedDayTodos = selectedDayTodos.filter((todo) => todo.id !== todoId);
+        setSelectedDayTodos(updatedSelectedDayTodos);
+      }
+ 
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+    }
   };
+  
+  
+  
+  
+  
 
   const handleDayClick = (day: string) => {
     // Filtera todos för den valda dagen
