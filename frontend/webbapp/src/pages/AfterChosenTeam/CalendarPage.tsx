@@ -113,6 +113,29 @@ export default function CalendarPage() {
     }
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleEditTodo();
+      setIsEditMode(false);
+    }
+  };
+
+  const handleSetEditMode = (todoId: string) => {
+    if (todosInTeam) {
+      const todoToEdit = todosInTeam.find((t: { id: string; }) => t.id == todoId);
+      if (todoToEdit) {
+        setIsEditMode(true);
+        setEditedTitle(todoToEdit?.title);
+        setEditedDescription(todoToEdit?.description);
+        const localDate = new Date(todoToEdit.date).toLocaleString("sv-SE", {
+          timeZone: "Europe/Stockholm",
+        });
+        setEditedDate(localDate);
+        setTodoIdToEdit(todoToEdit.id);
+      }
+    }
+  };
+
   const handleDeleteTodo = async (todoId: string) => {
     try {
       await dispatch(DeleteTodoAsync(todoId));
