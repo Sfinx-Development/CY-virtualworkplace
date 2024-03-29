@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Todo } from "../../types";
-import { FetchCreateTeamTodo, FetchGetTodo, FetchDeleteTodo } from "../api/todo";
+import { FetchCreateTeamTodo, FetchGetTodo, FetchDeleteTodo, FetchEditTodo } from "../api/todo";
 
 export interface TodoState {
   todos: Todo[] | undefined;
@@ -21,6 +21,25 @@ export const initialState: TodoState = {
   activeTodo: undefined,
   error: null,
 };
+
+export const EditTodoAsync = createAsyncThunk<
+  Todo,
+  Todo,
+  { rejectValue: string }
+>("meeting/edittodo", async (todo, thunkAPI) => {
+  try {
+    const editedTodo = await FetchEditTodo(todo);
+    if (editedTodo) {
+      return editedTodo;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av todo."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av lag.");
+  }
+});
 
 
 export const createTeamTodoAsync = createAsyncThunk<

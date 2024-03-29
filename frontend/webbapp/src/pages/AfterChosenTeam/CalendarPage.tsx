@@ -20,8 +20,8 @@ import { getActiveTeam, teamReducer } from "../../slices/teamSlice";
 import {
   createTeamTodoAsync,
   getTodoAsync,
-  DeleteTodoAsync
-  // setTeamTodos,
+  DeleteTodoAsync,
+  EditTodoAsync,
 } from "../../slices/todoSlice";
 import { Todo } from "../../../types";
 import { format, addMonths, subMonths, setDate } from "date-fns";
@@ -49,6 +49,12 @@ export default function CalendarPage() {
 
   const [openTodoPopup, setOpenTodoPopup] = useState(false);
   const [selectedDayTodos, setSelectedDayTodos] = useState<Todo[]>([]);
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [todoIdToEdit, setTodoIdToEdit] = useState("");
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedDescription, setEditedDescription] = useState("");
+  const [editedDate, setEditedDate] = useState("");
 
   const dispatch = useAppDispatch();
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
@@ -84,20 +90,28 @@ export default function CalendarPage() {
     initCalendar();
   }, [month, year]);
 
-  // const [todosDates, setTodosDates] = useState<number[]>([]);
+  const handleEditTodo = () => {
+    if (todoIdToEdit && isEditMode) {
+      const todoToUpdate = todosInTeam?.find((t: { id: string; }) => t.id == todoIdToEdit);
+      if (todoToUpdate) {
+        // Använd Date.parse() för att tolka datumsträngen i lokala tidszonen
+        const parsedDate = Date.parse(editedDate);
 
-  // useEffect(() => {
-  //   if (todosInTeam) { // Kontrollera om todosInTeam är definierad först
-  //     const dates = todosInTeam.map(todo => todo.date.getDate());
-  //     setTodosDates(dates);
-  //   }
-  // }, [todosInTeam]);
-
-  // const handleDeleteTodo = (todoId: string) => {
-  //   dispatch(DeleteTodoAsync(todoId));
-
-  //   setSelectedDayTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
-  // };
+        if (!isNaN(parsedDate)) {
+          // Kontrollera att tolkningen är giltig
+          const updatedTodo: Todo = {
+            ...todoToUpdate,
+            title: editedTitle,
+            description: editedDescription,
+            date: new Date(parsedDate),
+          };
+          dispatch(EditTodoAsync(updatedTodo));
+        } else {
+          console.error("Ogiltig datumsträng");
+        }
+      }
+    }
+  };
 
   const handleDeleteTodo = async (todoId: string) => {
     try {
