@@ -68,57 +68,54 @@ public class TodoService : ITodoService
         }
     }
 
-      public async Task<Todo> UpdateTodo(TodoDTO todoDTO)
+    //   public async Task<Todo> UpdateTodo(TodoDTO todoDTO)
+    // {
+    //     try
+    //     {
+    //         var foundTodo =
+    //             await _todoRepository.GetByIdAsync(todoDTO.Id) ?? throw new Exception();
+
+    //         foundTodo.Title = todoDTO.Title ?? foundTodo.Title;
+    //         foundTodo.Description = todoDTO.Description ?? foundTodo.Description;
+    //         foundTodo.Date = todoDTO.Date.AddHours(1);
+    //         var updatedTodo = await _todoRepository.UpdateAsync(foundTodo);
+    //         return updatedTodo;
+    //     }
+    //     catch (Exception)
+    //     {
+    //         throw new Exception();
+    //     }
+    // }
+
+    public async Task<Todo> UpdateTodo(TodoDTO todoDTO, User loggedInUser)
     {
         try
         {
             var foundTodo =
-                await _todoRepository.GetByIdAsync(todoDTO.Id) ?? throw new Exception();
+            await _todoRepository.GetByIdAsync(todoDTO.Id) ?? throw new Exception();
+              
+            var profile = await _profileRepository.GetByUserAndTeamIdAsync(
+                loggedInUser.Id,
+                todoDTO.TeamId
+            );
+
+            // if (!profile.IsOwner)
+            // {
+            //     throw new Exception("Only owner of team can update healthcheck");
+            // }
 
             foundTodo.Title = todoDTO.Title ?? foundTodo.Title;
-            foundTodo.Description = todoDTO.Description ?? foundTodo.Description;
-            foundTodo.Date = todoDTO.Date.AddHours(1);
-            // foundMeeting.Minutes = meeting.Minutes;
-            // foundMeeting.IsRepeating = meeting.IsRepeating;
-            // foundMeeting.Interval = meeting.Interval;
-            // foundMeeting.EndDate = meeting.EndDate;
-            var updatedTodo = await _todoRepository.UpdateAsync(foundTodo);
+            foundTodo.Description = todoDTO.Description;
+            foundTodo.Date = todoDTO.Date;
+
+            var updatedTodo= await _todoRepository.UpdateAsync(foundTodo);
             return updatedTodo;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
-
-    // public async Task<HealthCheck> UpdateHealthCheck(HealthCheckDTO healthCheck, User loggedInUser)
-    // {
-    //     try
-    //     {
-    //         var foundHealthCheck =
-    //             await _healthCheckRepository.GetByIdAsync(healthCheck.Id) ?? throw new Exception();
-    //         var profile = await _profileRepository.GetByUserAndTeamIdAsync(
-    //             loggedInUser.Id,
-    //             healthCheck.TeamId
-    //         );
-
-    //         if (!profile.IsOwner)
-    //         {
-    //             throw new Exception("Only owner of team can update healthcheck");
-    //         }
-
-    //         foundHealthCheck.Question = healthCheck.Question ?? foundHealthCheck.Question;
-    //         foundHealthCheck.StartTime = healthCheck.StartTime;
-    //         foundHealthCheck.EndTime = healthCheck.EndTime;
-
-    //         var updatedHealthCheck = await _healthCheckRepository.UpdateAsync(foundHealthCheck);
-    //         return updatedHealthCheck;
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
 
     public async Task<Todo> GetTodoById(string id)
     {
