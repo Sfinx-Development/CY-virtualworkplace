@@ -184,3 +184,11 @@ export interface ProjectUpdate {
   dateCreated: Date;
   version: number;
 }
+
+export interface UpdateComment{
+  id:string;
+  text:string;
+  profileId:string;
+  projectUpdateId:string;
+  dateCreated: Date;
+}

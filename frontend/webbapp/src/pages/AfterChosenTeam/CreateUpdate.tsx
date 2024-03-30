@@ -2,7 +2,7 @@ import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { ProjectUpdate } from "../../../types";
+import { ProjectUpdate, UpdateComment } from "../../../types";
 import { getActiveProfile } from "../../slices/profileSlice";
 import {
   CreateProjectUpdateAsync,
@@ -20,6 +20,10 @@ export default function CreateUpdate() {
     (state) => state.projectSlice.activeProject
   );
 
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
+
   const [comment, setComment] = useState("");
   const [fieldError, setFieldError] = useState(false);
 
@@ -30,7 +34,7 @@ export default function CreateUpdate() {
   }, []);
 
   const handleCreateUpdate = async () => {
-    if (comment !== "" && activeTeam && activeProject) {
+    if (activeTeam && activeProject && activeProfile) {
       setFieldError(false);
 
       const update: ProjectUpdate = {
@@ -40,9 +44,21 @@ export default function CreateUpdate() {
         version: 0,
       };
 
-      await dispatch(CreateProjectUpdateAsync(update));
+      const updateComment: UpdateComment = {
+        id: "undefined",
+        text: comment,
+        profileId: activeProfile?.id,
+        projectUpdateId: "undefined",
+        dateCreated: new Date(),
+      };
 
-      setComment("");
+      await dispatch(
+        CreateProjectUpdateAsync({
+          updateComment: updateComment,
+          projectUpdate: update,
+        })
+      );
+
       navigate("/menu");
     } else {
       setFieldError(true);
@@ -86,7 +102,7 @@ export default function CreateUpdate() {
           onClick={handleCreateUpdate}
           sx={{ marginTop: 2 }}
         >
-          Spara 
+          Spara
         </Button>
       </div>
     </Container>

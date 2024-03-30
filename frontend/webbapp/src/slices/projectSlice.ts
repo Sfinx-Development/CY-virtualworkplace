@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Project, ProjectUpdate } from "../../types";
+import { Project, ProjectUpdate, UpdateComment } from "../../types";
 import {
   FetchCreateProject,
   FetchCreateProjectuPDATE,
+  FetchCreateUpdateComment,
+  FetchGetCommentsByUpdate,
   FetchGetProjectUpdates,
   FetchGetTeamProjects,
 } from "../api/project";
@@ -12,6 +14,7 @@ export interface ProjectState {
   projects: Project[] | undefined;
   activeProject: Project | undefined;
   activeProjectUpdates: ProjectUpdate[] | undefined;
+  activeUpdate: ProjectUpdate | undefined;
   error: string | null;
 }
 
@@ -19,6 +22,7 @@ export const initialState: ProjectState = {
   projects: undefined,
   activeProject: undefined,
   activeProjectUpdates: undefined,
+  activeUpdate: undefined,
   error: null,
 };
 
@@ -64,26 +68,60 @@ export const GetTeamProjectsAsync = createAsyncThunk<
   }
 });
 
+// export const CreateProjectUpdateAsync = createAsyncThunk<
+//   ProjectUpdate,
+//   ProjectUpdate,
+//   { rejectValue: string }
+// >("project/createprojectupdate", async (projectUpdate, thunkAPI) => {
+//   try {
+//     const createdProjectUpdate = await FetchCreateProjectuPDATE(projectUpdate);
+//     if (createdProjectUpdate) {
+//       return createdProjectUpdate;
+//     } else {
+//       return thunkAPI.rejectWithValue(
+//         "Ett fel inträffade vid skapande av projekt uppdatering."
+//       );
+//     }
+//   } catch (error) {
+//     return thunkAPI.rejectWithValue(
+//       "Ett fel inträffade vid skapande av projekt uppdatering."
+//     );
+//   }
+// });
+
 export const CreateProjectUpdateAsync = createAsyncThunk<
-  ProjectUpdate,
-  ProjectUpdate,
+  { projectUpdate: ProjectUpdate; updateComment: UpdateComment }, // Typen av returvärdet
+  { projectUpdate: ProjectUpdate; updateComment: UpdateComment }, // Typen av argumentet
   { rejectValue: string }
->("project/createprojectupdate", async (projectUpdate, thunkAPI) => {
-  try {
-    const createdProjectUpdate = await FetchCreateProjectuPDATE(projectUpdate);
-    if (createdProjectUpdate) {
-      return createdProjectUpdate;
-    } else {
+>(
+  "project/createprojectupdate",
+  async ({ projectUpdate, updateComment }, thunkAPI) => {
+    try {
+      const createdProjectUpdate = await FetchCreateProjectuPDATE(
+        projectUpdate
+      );
+      updateComment.projectUpdateId = createdProjectUpdate.id;
+      const createdUpdateComment = await FetchCreateUpdateComment(
+        updateComment
+      );
+
+      if (createdProjectUpdate && createdUpdateComment) {
+        return {
+          projectUpdate: createdProjectUpdate,
+          updateComment: createdUpdateComment,
+        };
+      } else {
+        return thunkAPI.rejectWithValue(
+          "Ett fel inträffade vid skapande av projektuppdatering eller kommentar."
+        );
+      }
+    } catch (error) {
       return thunkAPI.rejectWithValue(
-        "Ett fel inträffade vid skapande av projekt uppdatering."
+        "Ett fel inträffade vid skapande av projektuppdatering eller kommentar."
       );
     }
-  } catch (error) {
-    return thunkAPI.rejectWithValue(
-      "Ett fel inträffade vid skapande av projekt uppdatering."
-    );
   }
-});
+);
 
 export const GetProjectUpdatesAsync = createAsyncThunk<
   ProjectUpdate[],
@@ -106,12 +144,42 @@ export const GetProjectUpdatesAsync = createAsyncThunk<
   }
 });
 
+export const CreateCommentAsync = createAsyncThunk<
+  UpdateComment,
+  UpdateComment,
+  { rejectValue: string }
+>("project/createupdatecomment", async (updateComment, thunkAPI) => {
+  try {
+    const createdComment = await FetchCreateUpdateComment(updateComment);
+    if (createdComment) {
+      return createdComment;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid skapande av uppdaterings kommentar."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid skapande av projekt uppdatering."
+    );
+  }
+});
+
 export const GetUpdatesByProjectAsync = async (projectId: string) => {
   try {
     const updates = await FetchGetProjectUpdates(projectId);
     return updates;
   } catch (error) {
     console.log("no updates");
+  }
+};
+
+export const GetCommentsByProjectAsync = async (projectUpdateId: string) => {
+  try {
+    const comments = await FetchGetCommentsByUpdate(projectUpdateId);
+    return comments;
+  } catch (error) {
+    console.log("no comments");
   }
 };
 
@@ -172,15 +240,17 @@ const projectSlice = createSlice({
       .addCase(CreateProjectUpdateAsync.fulfilled, (state, action) => {
         if (action.payload) {
           if (state.activeProjectUpdates) {
-            state.activeProjectUpdates.push(action.payload);
+            state.activeProjectUpdates.push(action.payload.projectUpdate);
+            state.activeUpdate = action.payload.projectUpdate;
           } else {
             state.activeProjectUpdates = [];
-            state.activeProjectUpdates.push(action.payload);
+            state.activeProjectUpdates.push(action.payload.projectUpdate);
           }
           state.error = null;
         }
       })
       .addCase(CreateProjectUpdateAsync.rejected, (state) => {
+        state.activeUpdate = undefined;
         state.error = "Något gick fel.";
       })
       .addCase(GetProjectUpdatesAsync.fulfilled, (state, action) => {
