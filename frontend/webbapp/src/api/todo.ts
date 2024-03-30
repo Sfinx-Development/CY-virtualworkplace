@@ -4,6 +4,29 @@ import { getApiUrl } from "./config";
 const apiUrl = getApiUrl() + "/todo"; 
 
 
+export const FetchEditTodo = async (todo: Todo): Promise<Todo> => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todo),
+    });
+    const responseBody = await response.json();
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid redigering av mötet");
+    }
+    const data = responseBody as Todo;
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const FetchDeleteTodo = async (
 
   todoId: string

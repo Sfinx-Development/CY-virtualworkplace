@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
+import EditIcon from "@mui/icons-material/Edit";
 import { unwrapResult } from "@reduxjs/toolkit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -20,8 +21,8 @@ import { getActiveTeam, teamReducer } from "../../slices/teamSlice";
 import {
   createTeamTodoAsync,
   getTodoAsync,
-  DeleteTodoAsync
-  // setTeamTodos,
+  DeleteTodoAsync,
+  EditTodoAsync,
 } from "../../slices/todoSlice";
 import { Todo } from "../../../types";
 import { format, addMonths, subMonths, setDate } from "date-fns";
@@ -50,6 +51,12 @@ export default function CalendarPage() {
   const [openTodoPopup, setOpenTodoPopup] = useState(false);
   const [selectedDayTodos, setSelectedDayTodos] = useState<Todo[]>([]);
 
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [todoIdToEdit, setTodoIdToEdit] = useState("");
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedDescription, setEditedDescription] = useState("");
+  const [editedDate, setEditedDate] = useState("");
+
   const dispatch = useAppDispatch();
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
 
@@ -60,7 +67,6 @@ export default function CalendarPage() {
   );
 
   const todosInTeam = useAppSelector((state) => state.todoSlice.todos);
-
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -84,46 +90,80 @@ export default function CalendarPage() {
     initCalendar();
   }, [month, year]);
 
-  // const [todosDates, setTodosDates] = useState<number[]>([]);
+  const handleEditTodo = () => {
+    if (todoIdToEdit && isEditMode) {
+      const todoToUpdate = todosInTeam?.find(
+        (t: { id: string }) => t.id == todoIdToEdit
+      );
+      if (todoToUpdate) {
+        // Använd Date.parse() för att tolka datumsträngen i lokala tidszonen
+        const parsedDate = Date.parse(editedDate);
 
-  // useEffect(() => {
-  //   if (todosInTeam) { // Kontrollera om todosInTeam är definierad först
-  //     const dates = todosInTeam.map(todo => todo.date.getDate());
-  //     setTodosDates(dates);
-  //   }
-  // }, [todosInTeam]);
+        if (!isNaN(parsedDate)) {
+          
+          const updatedTodo: Todo = {
+            ...todoToUpdate,
+            title: editedTitle,
+            description: editedDescription,
+            date: new Date(parsedDate),
+          };
+          dispatch(EditTodoAsync(updatedTodo));
+          setIsEditMode(false);
+        } else {
+          console.error("Ogiltig datumsträng");
+        }
+      }
+    }
+  };
 
-  // const handleDeleteTodo = (todoId: string) => {
-  //   dispatch(DeleteTodoAsync(todoId));
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleEditTodo();
+      setIsEditMode(false);
+    }
+  };
 
-  //   setSelectedDayTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
-  // };
+  const handleSetEditMode = (todoId: string) => {
+    if (todosInTeam) {
+      const todoToEdit = todosInTeam.find(
+        (t: { id: string }) => t.id == todoId
+      );
+      if (todoToEdit) {
+        setIsEditMode(true);
+        setEditedTitle(todoToEdit?.title);
+        setEditedDescription(todoToEdit?.description);
+        const localDate = new Date(todoToEdit.date).toLocaleString("sv-SE", {
+          timeZone: "Europe/Stockholm",
+        });
+        setEditedDate(localDate);
+        setTodoIdToEdit(todoToEdit.id);
+      }
+    }
+  };
 
   const handleDeleteTodo = async (todoId: string) => {
     try {
       await dispatch(DeleteTodoAsync(todoId));
-      
-      if(todosInTeam){
-        const updatedTodosInTeam = todosInTeam.filter((todo) => todo.id !== todoId);
+
+      if (todosInTeam) {
+        const updatedTodosInTeam = todosInTeam.filter(
+          (todo) => todo.id !== todoId
+        );
         setTodos(updatedTodosInTeam);
-    
-        const updatedSelectedDayTodos = selectedDayTodos.filter((todo) => todo.id !== todoId);
+
+        const updatedSelectedDayTodos = selectedDayTodos.filter(
+          (todo) => todo.id !== todoId
+        );
         setSelectedDayTodos(updatedSelectedDayTodos);
       }
- 
     } catch (error) {
       console.error("Error deleting todo:", error);
     }
   };
-  
-  
-  
-  
-  
 
   const handleDayClick = (day: string) => {
-    // Filtera todos för den valda dagen
-    if(todosInTeam) {
+   
+    if (todosInTeam) {
       const todosForDay = todosInTeam.filter((todo) => {
         const todoDate = new Date(todo.date);
         return (
@@ -137,7 +177,6 @@ export default function CalendarPage() {
       // Öppna den nya pop-upen
       setOpenTodoPopup(true);
     }
-    
   };
 
   const [todosen, setTodos] = useState<Todo[]>([]);
@@ -477,24 +516,64 @@ export default function CalendarPage() {
                       backgroundColor: "lightgrey",
                     }}
                   >
-                    <Typography>{todo.title}</Typography>
-                    <Typography style={{ wordWrap: "break-word" }}>
-                      {todo.description}
-                    </Typography>
-                    <Typography>{todo.date.toString()}</Typography>
+                    {isEditMode && todoIdToEdit === todo.id ? (
+                      <TextField
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        onKeyDown={handleKeyPress}
+                      />
+                    ) : (
+                      <Typography variant="subtitle1">{todo.title}</Typography>
+                    )}
+                    {isEditMode && todo.id === todoIdToEdit ? (
+                      <TextField
+                        label="Date"
+                        type="datetime-local"
+                        value={editedDate}
+                        onChange={(e) => setEditedDate(e.target.value)}
+                        variant="outlined"
+                        sx={{ width: "250px", marginTop: 2 }}
+                        onKeyDown={handleKeyPress}
+                      />
+                    ) : (
+                      <Typography variant="body2">
+                        {todo.date.toString()}
+                      </Typography>
+                    )}
+                    {isEditMode && todoIdToEdit === todo.id ? (
+                      <TextField
+                        value={editedDescription}
+                        onChange={(e) => setEditedDescription(e.target.value)}
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        onKeyDown={handleKeyPress}
+                      />
+                    ) : (
+                      <Typography variant="subtitle1">
+                        {todo.description}
+                      </Typography>
+                    )}
+
                     <div>
-                    <IconButton
-                      onClick={() => handleDeleteTodo(todo.id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                    {/* <IconButton
-                      size="small"
-                      onClick={() => handleSetEditMode(meeting.meetingId)}
-                    >
-                      <EditIcon />
-                    </IconButton> */}
-                  </div>
+                      <IconButton onClick={() => handleDeleteTodo(todo.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleSetEditMode(todo.id)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      {isEditMode && todo.id === todoIdToEdit && (
+                        <Button onClick={handleEditTodo}>
+                          Spara ändringar
+                        </Button>
+                      )}
+                    </div>
                   </Card>
                 ))}
               </DialogContent>
@@ -542,29 +621,64 @@ export default function CalendarPage() {
                       backgroundColor: "lightgrey",
                     }}
                   >
-                    <Typography variant="subtitle1">{todo.title}</Typography>
-                    <Typography
-                      variant="body2"
-                      style={{ wordWrap: "break-word" }}
-                    >
-                      {todo.description}
-                    </Typography>
-                    <Typography variant="body2">
-                      {todo.date.toString()}
-                    </Typography>
+                    {isEditMode && todoIdToEdit === todo.id ? (
+                      <TextField
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        onKeyDown={handleKeyPress}
+                      />
+                    ) : (
+                      <Typography variant="subtitle1">{todo.title}</Typography>
+                    )}
+                    {isEditMode && todo.id === todoIdToEdit ? (
+                      <TextField
+                        label="Date"
+                        type="datetime-local"
+                        value={editedDate}
+                        onChange={(e) => setEditedDate(e.target.value)}
+                        variant="outlined"
+                        sx={{ width: "250px", marginTop: 2 }}
+                        onKeyDown={handleKeyPress}
+                      />
+                    ) : (
+                      <Typography variant="body2">
+                        {todo.date.toString()}
+                      </Typography>
+                    )}
+                    {isEditMode && todoIdToEdit === todo.id ? (
+                      <TextField
+                        value={editedDescription}
+                        onChange={(e) => setEditedDescription(e.target.value)}
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        onKeyDown={handleKeyPress}
+                      />
+                    ) : (
+                      <Typography variant="subtitle1">
+                        {todo.description}
+                      </Typography>
+                    )}
+
                     <div>
-                    <IconButton
-                      onClick={() => handleDeleteTodo(todo.id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                    {/* <IconButton
-                      size="small"
-                      onClick={() => handleSetEditMode(meeting.meetingId)}
-                    >
-                      <EditIcon />
-                    </IconButton> */}
-                  </div>
+                      <IconButton onClick={() => handleDeleteTodo(todo.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleSetEditMode(todo.id)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      {isEditMode && todo.id === todoIdToEdit && (
+                        <Button onClick={handleEditTodo}>
+                          Spara ändringar
+                        </Button>
+                      )}
+                    </div>
                   </Card>
                 ))}
               </DialogContent>
@@ -572,6 +686,7 @@ export default function CalendarPage() {
                 <Button onClick={() => setOpenDialog(false)}>Stäng</Button>
               </DialogActions>
             </Dialog>
+
             <Button id="read-todos-btn" aria-label="headphone icon">
               <i className="fa-solid fa-headphones" id="headphone-icon"></i>
             </Button>
@@ -749,7 +864,7 @@ export default function CalendarPage() {
                           {holidayName}
                         </div>
                       )}
-                      {todoCount > 0 &&  (
+                      {todoCount > 0 && (
                         <div
                           style={{
                             position: "absolute",
