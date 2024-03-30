@@ -65,6 +65,7 @@ public class TodoServiceTest
             profileHealthCheckRepositoryMock.Object,
             todoRepositoryMock.Object
         );
+         var loggedInUser = new User { Id = "userId123" };
 
         var todoDTO = new TodoDTO
         {
@@ -82,7 +83,7 @@ public class TodoServiceTest
             .Setup(repo => repo.UpdateAsync(It.IsAny<Todo>()))
             .ReturnsAsync(new Todo { Id = "testTodoId", Title = "Updated Title" });
     
-        var updatedTodo = await todoService.UpdateTodo(todoDTO);
+        var updatedTodo = await todoService.UpdateTodo(todoDTO, loggedInUser);
   
         Assert.NotNull(updatedTodo);
         Assert.Equal("Updated Title", updatedTodo.Title);
