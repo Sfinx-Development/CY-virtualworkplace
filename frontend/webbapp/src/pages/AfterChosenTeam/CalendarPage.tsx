@@ -162,7 +162,7 @@ export default function CalendarPage() {
   };
 
   const handleDayClick = (day: string) => {
-    // Filtera todos för den valda dagen
+   
     if (todosInTeam) {
       const todosForDay = todosInTeam.filter((todo) => {
         const todoDate = new Date(todo.date);
