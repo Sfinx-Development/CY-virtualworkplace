@@ -100,7 +100,7 @@ export default function CalendarPage() {
         const parsedDate = Date.parse(editedDate);
 
         if (!isNaN(parsedDate)) {
-          // Kontrollera att tolkningen är giltig
+          
           const updatedTodo: Todo = {
             ...todoToUpdate,
             title: editedTitle,
