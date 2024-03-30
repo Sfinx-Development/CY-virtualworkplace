@@ -15,6 +15,7 @@ export interface ProjectState {
   activeProject: Project | undefined;
   activeProjectUpdates: ProjectUpdate[] | undefined;
   activeUpdate: ProjectUpdate | undefined;
+  activeComments: UpdateComment[] | undefined;
   error: string | null;
 }
 
@@ -23,6 +24,7 @@ export const initialState: ProjectState = {
   activeProject: undefined,
   activeProjectUpdates: undefined,
   activeUpdate: undefined,
+  activeComments: undefined,
   error: null,
 };
 
@@ -144,6 +146,27 @@ export const GetProjectUpdatesAsync = createAsyncThunk<
   }
 });
 
+export const GetUpdateCommentsAsync = createAsyncThunk<
+  UpdateComment[],
+  string,
+  { rejectValue: string }
+>("project/getcomments", async (projectUpdateId, thunkAPI) => {
+  try {
+    const updates = await FetchGetCommentsByUpdate(projectUpdateId);
+    if (updates) {
+      return updates;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtande av kommentarer."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtande av projektuppdateringar."
+    );
+  }
+});
+
 export const CreateCommentAsync = createAsyncThunk<
   UpdateComment,
   UpdateComment,
@@ -165,30 +188,38 @@ export const CreateCommentAsync = createAsyncThunk<
   }
 });
 
-export const GetUpdatesByProjectAsync = async (projectId: string) => {
-  try {
-    const updates = await FetchGetProjectUpdates(projectId);
-    return updates;
-  } catch (error) {
-    console.log("no updates");
-  }
-};
+// export const GetUpdatesByProjectAsync = async (projectId: string) => {
+//   try {
+//     const updates = await FetchGetProjectUpdates(projectId);
+//     await GetProjectUpdatesAsync(projectId);
+//     return updates;
+//   } catch (error) {
+//     console.log("no updates");
+//   }
+// };
 
-export const GetCommentsByProjectAsync = async (projectUpdateId: string) => {
-  try {
-    const comments = await FetchGetCommentsByUpdate(projectUpdateId);
-    return comments;
-  } catch (error) {
-    console.log("no comments");
-  }
-};
+// export const GetCommentsByProjectAsync = async (projectUpdateId: string) => {
+//   try {
+//     const comments = await FetchGetCommentsByUpdate(projectUpdateId);
+//     return comments;
+//   } catch (error) {
+//     console.log("no comments");
+//   }
+// };
 
 const saveActiveProjectToLocalStorage = (project: Project) => {
   localStorage.setItem("activeProject", JSON.stringify(project));
 };
+const saveActiveUpdateToLocalStorage = (update: ProjectUpdate) => {
+  localStorage.setItem("activeUpdate", JSON.stringify(update));
+};
 const loadActiveProjectFromLocalStorage = (): Project | undefined => {
   const storedActiveProject = localStorage.getItem("activeProject");
   return storedActiveProject ? JSON.parse(storedActiveProject) : undefined;
+};
+const loadActiveUpdateFromLocalStorage = (): ProjectUpdate | undefined => {
+  const storedActiveUpdate = localStorage.getItem("activeUpdate");
+  return storedActiveUpdate ? JSON.parse(storedActiveUpdate) : undefined;
 };
 
 const projectSlice = createSlice({
@@ -205,10 +236,20 @@ const projectSlice = createSlice({
         saveActiveProjectToLocalStorage(activeProject);
       }
     },
+    setActiveUpdate: (state, action) => {
+      state.activeUpdate = action.payload;
+      saveActiveUpdateToLocalStorage(action.payload);
+    },
     getActiveProject: (state) => {
       const activeProject = loadActiveProjectFromLocalStorage();
       if (activeProject) {
         state.activeProject = activeProject;
+      }
+    },
+    getActiveUpdate: (state) => {
+      const activeUpdate = loadActiveUpdateFromLocalStorage();
+      if (activeUpdate) {
+        state.activeUpdate = activeUpdate;
       }
     },
   },
@@ -261,9 +302,23 @@ const projectSlice = createSlice({
       })
       .addCase(GetProjectUpdatesAsync.rejected, (state) => {
         state.error = "Något gick fel.";
+      })
+      .addCase(GetUpdateCommentsAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeComments = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetUpdateCommentsAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
       });
   },
 });
 
-export const { getActiveProject, setActiveProject } = projectSlice.actions;
+export const {
+  getActiveProject,
+  setActiveProject,
+  setActiveUpdate,
+  getActiveUpdate,
+} = projectSlice.actions;
 export const projectReducer = projectSlice.reducer;

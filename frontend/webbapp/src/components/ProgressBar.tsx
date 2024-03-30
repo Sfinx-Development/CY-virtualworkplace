@@ -5,13 +5,19 @@ import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../globalConstants";
 import { Project, ProjectUpdate } from "../../types";
 import {
-  GetUpdatesByProjectAsync,
+  GetProjectUpdatesAsync,
   setActiveProject,
+  setActiveUpdate,
 } from "../slices/projectSlice";
 import { useAppDispatch } from "../slices/store";
 
 interface ProgressBarProps {
   project: Project;
+}
+
+interface UpdateDatesWithId {
+  id: string;
+  date: Date;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
@@ -20,30 +26,52 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   // const projectUpdates = useAppSelector(
   //   (state) => state.projectSlice.activeProjectUpdates
   // );
-  const [updates, setUpdates] = useState<ProjectUpdate[] | undefined>();
-  const [updateDates, setUpdateDates] = useState<Date[]>();
+  const [updates, setUpdates] = useState<ProjectUpdate[] | undefined>(
+    undefined
+  );
+  const [updateDates, setUpdateDates] = useState<
+    UpdateDatesWithId[] | undefined
+  >(undefined);
   const [progress, setProgress] = useState<number>(0);
   const [daysSinceStart, setDaysSinceStart] = useState<number>(0);
   const [totalDays, setTotalDays] = useState<number>(0);
   const [fillerWidths, setFillerWidths] = useState<number[]>();
 
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       try {
-        const updates = await GetUpdatesByProjectAsync(project.id);
-        setUpdates(updates);
+        const actionResult = await dispatch(GetProjectUpdatesAsync(project.id));
+        const projectUpdates = actionResult.payload; // Extrahera payload från actionResult
+
+        // Kontrollera om resultatet är en array av projektuppdateringar
+        if (Array.isArray(projectUpdates)) {
+          // Uppdatera bara state om resultatet är en array
+          setUpdates(projectUpdates);
+        } else {
+          console.error(
+            "Invalid project updates data received:",
+            projectUpdates
+          );
+        }
       } catch (error) {
         console.error("Error fetching updates:", error);
       }
-    })();
-  }, [project]);
+    };
+
+    fetchData(); // Anropa funktionen omedelbart när komponenten monteras
+
+    // Returnera en funktion som körs när komponenten avmonteras för att rensa upp
+    return () => {
+      // Ta bort eventuell cleanup-kod om det behövs
+    };
+  }, []); // Använd en tom beroendearray för att köra useEffect bara en gång när komponenten monteras
 
   useEffect(() => {
     if (updates) {
-      const dateCreatedDates = updates
+      const updatedDatesWithId = updates
         .filter((update) => update.dateCreated)
-        .map((update) => update.dateCreated);
-      setUpdateDates(dateCreatedDates);
+        .map((update) => ({ date: update.dateCreated, id: update.id }));
+      setUpdateDates(updatedDatesWithId);
     }
   }, [updates]);
 
@@ -102,6 +130,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
     navigate("/createupdate");
   };
 
+  const handleNavigateToUpdateEvents = (projectUpdateId: string) => {
+    console.log("ID: ", projectUpdateId);
+    const update = updates?.find((p) => p.id == projectUpdateId);
+    if (update) {
+      dispatch(setActiveUpdate(update));
+      navigate("/updateevents");
+    }
+  };
+
   return (
     <div style={{ width: "100%", marginTop: 10 }}>
       <Box display="flex" flexDirection="row" justifyContent={"space-between"}>
@@ -119,17 +156,20 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
         </Button>
       </Box>
       <div className="progress-bar">
-        {updateDates?.map((date, index) => (
+        {updateDates?.map((update, index) => (
           <div
             key={index}
             className="filler"
+            onClick={() => {
+              handleNavigateToUpdateEvents(update.id);
+            }}
             style={{
               width: `${fillerWidths?.[index]}%`,
               backgroundColor: colors[index],
             }}
           >
             <Typography variant="caption">
-              {new Date(date).toLocaleDateString("sv-SE", {
+              {new Date(update.date).toLocaleDateString("sv-SE", {
                 day: "2-digit",
                 month: "2-digit",
               })}
