@@ -1,4 +1,5 @@
 using Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace core;
 
@@ -8,25 +9,28 @@ public class FileService : IFileService
     private readonly IFileRepository _fileRepository;
     private readonly IUpdateCommentRepository _updateCommentRepository;
     private readonly IProfileRepository _profileRepository;
+    private readonly IConfiguration _configuration;
 
     public FileService(
         IProjectRepository projectRepository,
         IFileRepository fileRepository,
         IUpdateCommentRepository updateCommentRepository,
-        IProfileRepository profileRepository
+        IProfileRepository profileRepository,
+        IConfiguration configuration
     )
     {
         _projectRepository = projectRepository;
         _fileRepository = fileRepository;
         _updateCommentRepository = updateCommentRepository;
         _profileRepository = profileRepository;
+        _configuration = configuration;
     }
 
     public async Task<ProjectFileDTO> CreateAsync(ProjectFileDTO fileDTO)
     {
         string uniqueFileName = $"{DateTime.Now.Ticks}_{Guid.NewGuid()}_{fileDTO.FileName}";
-
-        string filePath = Path.Combine("files", uniqueFileName);
+        string filesDirectory = _configuration["FileSettings:FilesDirectory"];
+        string filePath = Path.Combine(filesDirectory, uniqueFileName);
 
         try
         {
