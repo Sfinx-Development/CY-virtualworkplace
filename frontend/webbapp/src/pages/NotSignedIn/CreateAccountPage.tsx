@@ -130,7 +130,7 @@ export default function CreateAccount() {
         height: "100%",
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
-        overflowY: "scroll", // Add this line
+        overflowY: "scroll", 
       }}
     >
       <div

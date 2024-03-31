@@ -37,7 +37,7 @@ export default function EnterHouse() {
         style={{ height: "100%", width: "100%", objectFit: "cover" }}
       >
         <source src="https://i.imgur.com/s4D0XN7.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
+        Din webbläsare accepterar inte videotypen.
       </video>
     </div>
   );

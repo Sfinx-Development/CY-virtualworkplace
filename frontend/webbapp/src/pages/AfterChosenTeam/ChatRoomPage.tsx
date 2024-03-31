@@ -252,9 +252,7 @@ export default function ChatRoom() {
         width: "100%",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-between",
-        // background: "linear-gradient(45deg, #333333, #666666)",
-        // animation: `${gradientAnimation} 10s ease infinite`,
+        justifyContent: "space-between"
       }}
     >
       <audio
@@ -274,7 +272,7 @@ export default function ChatRoom() {
           overflow: "auto",
         }}
       >
-        <Typography variant="h6">{activeTeam?.name} - Chat</Typography>
+        <Typography variant="h6">{activeTeam?.name} - Chatt</Typography>
         {Array.isArray(messages) &&
           activeParticipant &&
           messages.map((message) => {

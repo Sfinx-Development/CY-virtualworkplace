@@ -125,7 +125,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   };
 
   const handleNavigateToUpdateEvents = (projectUpdateId: string) => {
-    console.log("ID: ", projectUpdateId);
     const update = updates?.find((p) => p.id == projectUpdateId);
     if (update) {
       dispatch(setActiveUpdate(update));

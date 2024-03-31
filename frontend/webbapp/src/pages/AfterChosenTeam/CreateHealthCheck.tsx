@@ -70,7 +70,7 @@ export default function CreateHealthCheck() {
         {fieldError && (
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
-        <Typography variant={isMobile ? "h5" : "h4"}>Kolla läget</Typography>
+        <Typography variant={isMobile ? "h5" : "h4"}>Ställ en fråga</Typography>
         <div
           style={{
             display: "flex",
@@ -142,8 +142,6 @@ export default function CreateHealthCheck() {
         >
           Skapa
         </Button>
-
-        {/* {error && <Typography color="error">{error}</Typography>} */}
       </div>
     </Container>
   );

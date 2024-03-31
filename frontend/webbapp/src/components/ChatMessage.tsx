@@ -33,50 +33,7 @@ export default function ChatMessage(props: ChatMessageProps) {
           props.message.profileId == activeProfile?.id ? "#F9F3FF" : "white",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        {/* {props.message.conversationParticipantId ===
-          props.activeParticipant.id && (
-          <div>
-            <IconButton
-              size="small"
-              onClick={() => props.handleDeleteMessage(props.message.id)}
-            >
-              <DeleteOutlineIcon />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => props.handleSetEditMode(props.message)}
-            >
-              <EditIcon />
-            </IconButton>
-          </div>
-        )} */}
-        {/* <div style={{ display: "flex", alignItems: "center" }}>
-          {props.message.fullName && (
-            <Avatar
-              src={props.getProfilesAvatar(props.message.profileId)}
-              alt={props.message.fullName}
-              sx={{
-                marginRight: 1,
-                width: isMobile ? 20 : 25,
-                height: isMobile ? 20 : 25,
-              }}
-            />
-          )}
-          <Typography sx={{ fontWeight: 600, fontSize: isMobile ? 15 : 18 }}>
-            {props.message.fullName}
-          </Typography>
-          <Typography
-            sx={{
-              marginLeft: 1,
-              color: "text.secondary",
-              fontSize: isMobile ? 10 : 13,
-            }}
-          >
-            {formatDate(props.message.dateCreated)}
-          </Typography>
-        </div> */}
-      </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}></div>
       <Typography
         variant="body1"
         sx={{ marginLeft: isMobile ? 5 : 25, fontSize: isMobile ? 13 : 16 }}
