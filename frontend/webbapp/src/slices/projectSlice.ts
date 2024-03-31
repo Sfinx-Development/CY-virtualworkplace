@@ -96,19 +96,17 @@ export const CreateProjectUpdateAsync = createAsyncThunk<
   {
     projectUpdate: ProjectUpdate;
     updateComment: UpdateComment;
-    file?: File;
-    fileName?: string;
+    files?: FileList;
   },
   {
     projectUpdate: ProjectUpdate;
     updateComment: UpdateComment;
-    file?: File;
-    fileName?: string;
+    files?: FileList;
   },
   { rejectValue: string }
 >(
   "project/createprojectupdate",
-  async ({ projectUpdate, updateComment, file, fileName }, thunkAPI) => {
+  async ({ projectUpdate, updateComment, files }, thunkAPI) => {
     try {
       const createdProjectUpdate = await FetchCreateProjectuPDATE(
         projectUpdate
@@ -118,12 +116,14 @@ export const CreateProjectUpdateAsync = createAsyncThunk<
         updateComment
       );
 
-      if (file && fileName) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("fileName", fileName);
-        formData.append("updateCommentId", createdUpdateComment.id);
-        await FetchCreateFile(formData);
+      if (files) {
+        Array.from(files).forEach(async (f) => {
+          const formData = new FormData();
+          formData.append("file", f);
+          formData.append("fileName", f.name);
+          formData.append("updateCommentId", createdUpdateComment.id);
+          await FetchCreateFile(formData);
+        });
       }
 
       if (createdProjectUpdate && createdUpdateComment) {
