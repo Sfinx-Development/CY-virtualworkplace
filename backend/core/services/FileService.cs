@@ -40,12 +40,14 @@ public class FileService : IFileService
                 filePath
             );
 
+            var created = await _fileRepository.CreateAsync(savedFile);
+
             return new ProjectFileDTO(
-                savedFile.Id,
-                savedFile.FileName,
-                savedFile.Content,
-                savedFile.UpdateCommentId,
-                savedFile.FilePath
+                created.Id,
+                created.FileName,
+                created.Content,
+                created.UpdateCommentId,
+                created.FilePath
             );
         }
         catch (Exception ex)

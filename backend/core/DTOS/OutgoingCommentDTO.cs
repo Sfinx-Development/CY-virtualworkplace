@@ -6,22 +6,22 @@ public class OutgoingCommentDTO
     public string Text { get; set; }
     public string ProfileId { get; set; }
     public string ProjectUpdateId { get; set; }
-
+    public string ProfileFullName { get; set; }
     public string DateCreated { get; set; }
 
     public OutgoingCommentDTO(
         string id,
         string text,
-        string profileId,
         string projectUpdateId,
-        DateTime dateCreated
+        DateTime dateCreated,
+        Profile profile
     )
     {
         Id = id;
         Text = text;
-        ProfileId = profileId;
+        ProfileId = profile.Id;
         ProjectUpdateId = projectUpdateId;
         DateCreated = dateCreated.ToString("yyyy-MM-ddTHH:mm:ss");
-        ;
+        ProfileFullName = profile.FullName;
     }
 }

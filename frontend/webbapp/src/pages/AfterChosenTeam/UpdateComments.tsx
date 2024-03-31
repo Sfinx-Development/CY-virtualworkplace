@@ -69,6 +69,9 @@ export default function MeetingInTeamsPage() {
                     </Typography>
 
                     <Typography variant="body2">{comment.text}</Typography>
+                    <Typography variant="subtitle2">
+                      {comment.profileFullName}
+                    </Typography>
                   </div>
                   <div>
                     <IconButton

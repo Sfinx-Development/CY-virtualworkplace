@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Project, ProjectUpdate, UpdateComment } from "../../types";
 import {
+  FetchCreateFile,
   FetchCreateProject,
   FetchCreateProjectuPDATE,
   FetchCreateUpdateComment,
@@ -92,12 +93,22 @@ export const GetTeamProjectsAsync = createAsyncThunk<
 // });
 
 export const CreateProjectUpdateAsync = createAsyncThunk<
-  { projectUpdate: ProjectUpdate; updateComment: UpdateComment }, // Typen av returvärdet
-  { projectUpdate: ProjectUpdate; updateComment: UpdateComment }, // Typen av argumentet
+  {
+    projectUpdate: ProjectUpdate;
+    updateComment: UpdateComment;
+    file?: File;
+    fileName?: string;
+  },
+  {
+    projectUpdate: ProjectUpdate;
+    updateComment: UpdateComment;
+    file?: File;
+    fileName?: string;
+  },
   { rejectValue: string }
 >(
   "project/createprojectupdate",
-  async ({ projectUpdate, updateComment }, thunkAPI) => {
+  async ({ projectUpdate, updateComment, file, fileName }, thunkAPI) => {
     try {
       const createdProjectUpdate = await FetchCreateProjectuPDATE(
         projectUpdate
@@ -106,6 +117,14 @@ export const CreateProjectUpdateAsync = createAsyncThunk<
       const createdUpdateComment = await FetchCreateUpdateComment(
         updateComment
       );
+
+      if (file && fileName) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("fileName", fileName);
+        formData.append("updateCommentId", createdUpdateComment.id);
+        await FetchCreateFile(formData);
+      }
 
       if (createdProjectUpdate && createdUpdateComment) {
         return {

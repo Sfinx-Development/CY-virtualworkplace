@@ -1,9 +1,10 @@
-import { Project, ProjectUpdate, UpdateComment } from "../../types";
+import { FileDTO, Project, ProjectUpdate, UpdateComment } from "../../types";
 import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + `/project`;
 const apiUpdateUrl = getApiUrl() + `/projectUpdate`;
 const apiUpdateCommentUrl = getApiUrl() + `/updateComment`;
+const apiFileUrl = getApiUrl() + `/projectFile`;
 
 export const FetchCreateProject = async (
   project: Project
@@ -189,6 +190,56 @@ export const FetchGetCommentsByUpdate = async (
     })) as UpdateComment[];
 
     return comments;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+///////////////////////////////////UPDATECOMMMENT FILES
+export const FetchCreateFile = async (formFile: FormData): Promise<FileDTO> => {
+  try {
+    const response = await fetch(apiFileUrl + "/create", {
+      method: "POST",
+      credentials: "include",
+      body: formFile,
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid skapandet av fil");
+    }
+
+    const responseBody = (await response.json()) as FileDTO;
+
+    return responseBody;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchGetFilesByUpdateComment = async (
+  updateCommentId: string
+): Promise<FileDTO[]> => {
+  try {
+    const response = await fetch(apiFileUrl + "/byupdatecommentid", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateCommentId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av filerna");
+    }
+
+    const responseBody = await response.json();
+
+    const files = responseBody.$values as FileDTO[];
+
+    return files;
   } catch (error) {
     console.error(error);
     throw error;

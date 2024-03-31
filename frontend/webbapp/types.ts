@@ -4,12 +4,9 @@ export interface Todo {
   description: string;
   date: Date;
   title?: string;
-  
- 
 }
 
 // DateTime date,
-
 
 export interface User {
   id: string;
@@ -185,10 +182,19 @@ export interface ProjectUpdate {
   version: number;
 }
 
-export interface UpdateComment{
-  id:string;
-  text:string;
-  profileId:string;
-  projectUpdateId:string;
+export interface UpdateComment {
+  id: string;
+  text: string;
+  profileId: string;
+  projectUpdateId: string;
   dateCreated: Date;
+  profileFullName: string;
+}
+
+export interface FileDTO {
+  id: string;
+  fileName: string;
+  content: Uint8Array;
+  updateCommentId: string;
+  filepath: string;
 }

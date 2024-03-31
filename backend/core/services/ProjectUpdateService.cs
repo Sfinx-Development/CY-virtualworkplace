@@ -105,7 +105,7 @@ public class ProjectUpdateService : IProjectUpdateService
             var projectUpdates = await _projectUpdateRepository.GetAllByProject(project.Id);
             var projectUpdateDTOs = projectUpdates.Select(
                 h => new OutgoingUpdateDTO(h.Id, h.ProjectId, h.DateCreated, h.Version)
-            );
+            ).OrderByDescending(h => h.DateCreated).ToList();
             return projectUpdateDTOs ?? new List<OutgoingUpdateDTO>();
         }
         catch (System.Exception e)

@@ -1,13 +1,8 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
-using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Controllers
 {
@@ -26,9 +21,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<ProjectFileDTO>> Post(
-            [FromBody] ProjectFileDTO projectFileDTO
-        )
+        public async Task<ActionResult<ProjectFileDTO>> Post()
         {
             try
             {
@@ -43,18 +36,52 @@ namespace Controllers
                 {
                     return BadRequest("Failed to get user.");
                 }
-                //ta in logged in user:
-                var file = await _fileService.CreateAsync(projectFileDTO);
+
+                var formFile = Request.Form.Files.GetFile("file");
+                var updateCommentId = Request.Form["updateCommentId"];
+                var fileName = Request.Form["fileName"];
+
+                if (
+                    formFile == null
+                    || string.IsNullOrEmpty(updateCommentId)
+                    || string.IsNullOrEmpty(fileName)
+                )
+                {
+                    return BadRequest("Invalid file or parameters.");
+                }
+
+                // Läs innehållet i filen
+                var content = await ReadFileContentAsync(formFile);
+
+                var fileDto = new ProjectFileDTO(
+                    "undefined",
+                    fileName,
+                    content,
+                    updateCommentId,
+                    "files"
+                );
+
+                var file = await _fileService.CreateAsync(fileDto);
 
                 if (file == null)
                 {
                     return BadRequest("Failed to create file.");
                 }
+
                 return CreatedAtAction(nameof(GetById), new { id = file.Id }, file);
             }
             catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        private async Task<byte[]> ReadFileContentAsync(IFormFile file)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                return memoryStream.ToArray();
             }
         }
 

@@ -52,9 +52,9 @@ public class UpdateCommentService : IUpdateCommentService
             var createdUpdateDTO = new OutgoingCommentDTO(
                 createdUpdate.Id,
                 createdUpdate.Text,
-                createdUpdate.ProfileId,
                 createdUpdate.ProjectUpdateId,
-                createdUpdate.DateCreated
+                createdUpdate.DateCreated,
+                createdUpdate.Profile
             );
             return createdUpdateDTO;
         }
@@ -99,16 +99,19 @@ public class UpdateCommentService : IUpdateCommentService
                 throw new Exception("You can only get results from your own team.");
             }
             var updateComments = await _updateRepository.GetAllByProjectUpdate(projectUpdate.Id);
-            var updateCommentDTOs = updateComments.Select(
-                u =>
-                    new OutgoingCommentDTO(
-                        u.Id,
-                        u.Text,
-                        u.ProfileId,
-                        u.ProjectUpdateId,
-                        u.DateCreated
-                    )
-            );
+            var updateCommentDTOs = updateComments
+                .Select(
+                    u =>
+                        new OutgoingCommentDTO(
+                            u.Id,
+                            u.Text,
+                            u.ProjectUpdateId,
+                            u.DateCreated,
+                            u.Profile
+                        )
+                )
+                .OrderByDescending(h => h.DateCreated)
+                .ToList();
             return updateCommentDTOs ?? new List<OutgoingCommentDTO>();
         }
         catch (Exception e)
@@ -126,9 +129,9 @@ public class UpdateCommentService : IUpdateCommentService
             return new OutgoingCommentDTO(
                 updateComment.Id,
                 updateComment.Text,
-                updateComment.ProfileId,
                 updateComment.ProjectUpdateId,
-                updateComment.DateCreated
+                updateComment.DateCreated,
+                updateComment.Profile
             );
         }
         catch (Exception e)
@@ -165,9 +168,9 @@ public class UpdateCommentService : IUpdateCommentService
             var createdUpdateDTO = new OutgoingCommentDTO(
                 createdUpdate.Id,
                 createdUpdate.Text,
-                createdUpdate.ProfileId,
                 createdUpdate.ProjectUpdateId,
-                createdUpdate.DateCreated
+                createdUpdate.DateCreated,
+                createdUpdate.Profile
             );
             return createdUpdateDTO;
         }

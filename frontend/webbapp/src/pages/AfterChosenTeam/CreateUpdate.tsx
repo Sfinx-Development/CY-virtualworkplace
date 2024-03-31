@@ -1,5 +1,5 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { ProjectUpdate, UpdateComment } from "../../../types";
@@ -27,6 +27,19 @@ export default function CreateUpdate() {
   const [comment, setComment] = useState("");
   const [fieldError, setFieldError] = useState(false);
 
+  const [file, setFile] = useState<File | undefined>(undefined);
+
+  const [fileName, setFileName] = useState<string | undefined>(undefined);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event && event.target && event.target.files) {
+      const selectedFile = event.target.files[0];
+      setFile(selectedFile);
+
+      setFileName(selectedFile.name);
+    }
+  };
+
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
@@ -50,12 +63,15 @@ export default function CreateUpdate() {
         profileId: activeProfile?.id,
         projectUpdateId: "undefined",
         dateCreated: new Date(),
+        profileFullName: activeProfile.fullName,
       };
 
       await dispatch(
         CreateProjectUpdateAsync({
           updateComment: updateComment,
           projectUpdate: update,
+          file: file,
+          fileName: fileName,
         })
       );
 
@@ -96,7 +112,12 @@ export default function CreateUpdate() {
           variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
-
+        <input type="file" onChange={handleFileChange} />
+        {fileName && (
+          <Typography variant="body1" sx={{ marginTop: 1 }}>
+            Vald fil: {fileName}
+          </Typography>
+        )}
         <Button
           variant="contained"
           onClick={handleCreateUpdate}
