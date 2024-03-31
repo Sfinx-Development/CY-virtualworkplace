@@ -9,7 +9,6 @@ public class OutgoingUpdateDTO
 {
     public string Id { get; set; }
     public string ProjectId { get; set; }
-    public Project Project { get; set; }
     public string DateCreated { get; set; }
     public int Version { get; set; }
 

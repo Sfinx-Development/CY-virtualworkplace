@@ -40,12 +40,14 @@ public class FileService : IFileService
                 filePath
             );
 
+            var created = await _fileRepository.CreateAsync(savedFile);
+
             return new ProjectFileDTO(
-                savedFile.Id,
-                savedFile.FileName,
-                savedFile.Content,
-                savedFile.UpdateCommentId,
-                savedFile.FilePath
+                created.Id,
+                created.FileName,
+                created.Content,
+                created.UpdateCommentId,
+                created.FilePath
             );
         }
         catch (Exception ex)
@@ -108,8 +110,7 @@ public class FileService : IFileService
     {
         try
         {
-            var file = await _fileRepository.GetByIdAsync(updateCommentId);
-            var updateComment = await _updateCommentRepository.GetByIdAsync(file.UpdateCommentId);
+            var updateComment = await _updateCommentRepository.GetByIdAsync(updateCommentId);
             var projet = await _projectRepository.GetByIdAsync(
                 updateComment.ProjectUpdate.ProjectId
             );
