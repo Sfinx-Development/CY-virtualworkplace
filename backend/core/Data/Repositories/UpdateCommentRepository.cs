@@ -48,6 +48,7 @@ public class UpdateCommentRepository : IUpdateCommentRepository
         {
             var updateComments = await _cyDbContext
                 .UpdateComments.Where(u => u.ProjectUpdate.Id == projectUpdateId)
+                .Include(p => p.Profile)
                 .ToListAsync();
             return updateComments;
         }
@@ -64,6 +65,7 @@ public class UpdateCommentRepository : IUpdateCommentRepository
             var updateComment = await _cyDbContext
                 .UpdateComments.Include(u => u.ProjectUpdate)
                 .ThenInclude(p => p.Project)
+                .Include(u => u.Profile)
                 .Where(p => p.Id == id)
                 .FirstOrDefaultAsync();
             return updateComment;

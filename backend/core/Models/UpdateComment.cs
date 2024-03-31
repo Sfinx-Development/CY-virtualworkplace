@@ -8,6 +8,7 @@ public class UpdateComment
     public string ProjectUpdateId { get; set; }
 
     public DateTime DateCreated { get; set; }
+    public Profile Profile { get; set; }
 
     // public List<File> AttachedFiles { get; set; }
     public ProjectUpdate ProjectUpdate { get; set; }
