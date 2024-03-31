@@ -56,7 +56,6 @@ export default function Office() {
 
   useEffect(() => {
     if (healthchecks && profilehealthchecks) {
-      console.log("PROFILE HS: ", profilehealthchecks);
       const activeHS = healthchecks.filter(
         (c) =>
           new Date(c.endTime) > new Date() && new Date(c.startTime) < new Date()
@@ -69,7 +68,6 @@ export default function Office() {
       });
 
       setActiveHealthChecks(filteredActiveHS);
-      console.log("AKTIVA: ", filteredActiveHS);
     }
   }, [healthchecks, profilehealthchecks, ratingShow]);
 
