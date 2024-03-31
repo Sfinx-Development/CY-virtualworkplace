@@ -34,7 +34,8 @@ public class FileService : IFileService
 
         try
         {
-            await File.WriteAllBytesAsync(filePath, fileDTO.Content);
+            //provar utan att spara den på servern:
+            // await File.WriteAllBytesAsync(filePath, fileDTO.Content);
 
             var savedFile = new ProjectFile(
                 Utils.GenerateRandomId(),
