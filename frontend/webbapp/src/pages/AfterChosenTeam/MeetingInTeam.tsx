@@ -219,16 +219,17 @@ export default function MeetingInTeamsPage() {
                 <CardContent>
                   <Typography variant="subtitle1">
                     {meeting.name}
-                    {/* <IconButton
-                      style={{ position: "absolute", right: 250 }}
-                        onClick={() => handleDeleteMeeting(meeting.meetingId)}
-                    >
-                      <DeleteIcon />
-                    </IconButton> */}
                   </Typography>
                   <Typography variant="body2">
                     {meeting.date.toString()}
                   </Typography>
+                  <div>
+                    <IconButton
+                      onClick={() => handleDeleteMeeting(meeting.meetingId)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
                 </CardContent>
               </Card>
             ))}
