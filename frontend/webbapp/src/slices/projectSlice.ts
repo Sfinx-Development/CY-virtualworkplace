@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Project, ProjectUpdate, UpdateComment } from "../../types";
+import { FileDTO, Project, ProjectUpdate, UpdateComment } from "../../types";
 import {
   FetchCreateFile,
   FetchCreateProject,
   FetchCreateProjectuPDATE,
   FetchCreateUpdateComment,
   FetchGetCommentsByUpdate,
+  FetchGetFilesByUpdateComment,
   FetchGetProjectUpdates,
   FetchGetTeamProjects,
 } from "../api/project";
@@ -161,6 +162,27 @@ export const GetProjectUpdatesAsync = createAsyncThunk<
   } catch (error) {
     return thunkAPI.rejectWithValue(
       "Ett fel inträffade vid hämtande av projektuppdateringar."
+    );
+  }
+});
+
+export const GetFilesByUpdateCommentAsync = createAsyncThunk<
+  FileDTO[],
+  string,
+  { rejectValue: string }
+>("project/getfiles", async (updateCommentId, thunkAPI) => {
+  try {
+    const files = await FetchGetFilesByUpdateComment(updateCommentId);
+    if (files) {
+      return files;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtande av filer."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtande av filer."
     );
   }
 });

@@ -110,8 +110,7 @@ public class FileService : IFileService
     {
         try
         {
-            var file = await _fileRepository.GetByIdAsync(updateCommentId);
-            var updateComment = await _updateCommentRepository.GetByIdAsync(file.UpdateCommentId);
+            var updateComment = await _updateCommentRepository.GetByIdAsync(updateCommentId);
             var projet = await _projectRepository.GetByIdAsync(
                 updateComment.ProjectUpdate.ProjectId
             );

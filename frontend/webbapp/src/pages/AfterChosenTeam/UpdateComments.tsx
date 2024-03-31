@@ -2,15 +2,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Container,
   IconButton,
   Typography,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { isMobile } from "../../../globalConstants";
 import { UpdateComment } from "../../../types";
+import UpdatePreview from "../../components/UpdatePreview";
 import { getActiveProfile } from "../../slices/profileSlice";
 import {
   GetUpdateCommentsAsync,
@@ -19,17 +21,14 @@ import {
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 
-export default function MeetingInTeamsPage() {
-  //   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  //   const activeProfile = useAppSelector(
-  //     (state) => state.profileSlice.activeProfile
-  //   );
+export default function UpdateComments() {
   const activeUpdate = useAppSelector(
     (state) => state.projectSlice.activeUpdate
   );
 
   const comments = useAppSelector((state) => state.projectSlice.activeComments);
   const dispatch = useAppDispatch();
+  const [commentIds, setCommentIds] = useState<string[] | undefined>(undefined);
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -41,7 +40,24 @@ export default function MeetingInTeamsPage() {
     if (activeUpdate) {
       dispatch(GetUpdateCommentsAsync(activeUpdate.id));
     }
-  }, [activeUpdate]); // Använd en tom beroendearray för att köra useEffect bara en gång när komponenten monteras
+  }, [activeUpdate]);
+
+  const handleSetOpen = (commentId: string) => {
+    if (commentIds) {
+      const updatedIds = [...commentIds, commentId];
+      setCommentIds(updatedIds);
+    } else {
+      const updatedIds = [commentId];
+      setCommentIds(updatedIds);
+    }
+  };
+
+  const handleClose = (commentId: string) => {
+    if (commentIds) {
+      const updatedCommentIds = commentIds.filter((c) => c !== commentId);
+      setCommentIds(updatedCommentIds);
+    }
+  };
 
   return (
     <Container>
@@ -69,6 +85,27 @@ export default function MeetingInTeamsPage() {
                     </Typography>
 
                     <Typography variant="body2">{comment.text}</Typography>
+                    {commentIds?.find((c) => c == comment.id) ? (
+                      <div>
+                        <UpdatePreview updateComment={comment} />
+                        <Button
+                          onClick={() => {
+                            handleClose(comment.id);
+                          }}
+                        >
+                          Stäng
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          handleSetOpen(comment.id);
+                        }}
+                      >
+                        Visa filer
+                      </Button>
+                    )}
+
                     <Typography variant="subtitle2">
                       {comment.profileFullName}
                     </Typography>

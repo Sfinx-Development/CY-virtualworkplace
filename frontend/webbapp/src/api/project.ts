@@ -222,7 +222,7 @@ export const FetchGetFilesByUpdateComment = async (
   updateCommentId: string
 ): Promise<FileDTO[]> => {
   try {
-    const response = await fetch(apiFileUrl + "/byupdatecommentid", {
+    const response = await fetch(apiFileUrl + "/byupdatecomment", {
       method: "POST",
       credentials: "include",
       headers: {

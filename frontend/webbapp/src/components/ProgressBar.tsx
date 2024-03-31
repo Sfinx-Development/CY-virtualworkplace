@@ -41,11 +41,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
     const fetchData = async () => {
       try {
         const actionResult = await dispatch(GetProjectUpdatesAsync(project.id));
-        const projectUpdates = actionResult.payload; // Extrahera payload från actionResult
-
-        // Kontrollera om resultatet är en array av projektuppdateringar
+        const projectUpdates = actionResult.payload;
         if (Array.isArray(projectUpdates)) {
-          // Uppdatera bara state om resultatet är en array
           setUpdates(projectUpdates);
         } else {
           console.error(
@@ -58,13 +55,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
       }
     };
 
-    fetchData(); // Anropa funktionen omedelbart när komponenten monteras
+    fetchData();
 
-    // Returnera en funktion som körs när komponenten avmonteras för att rensa upp
-    return () => {
-      // Ta bort eventuell cleanup-kod om det behövs
-    };
-  }, []); // Använd en tom beroendearray för att köra useEffect bara en gång när komponenten monteras
+    return () => {};
+  }, []);
 
   useEffect(() => {
     if (updates) {
