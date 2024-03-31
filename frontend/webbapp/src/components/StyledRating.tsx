@@ -21,11 +21,11 @@ const customIcons: {
 } = {
   1: {
     icon: <SentimentVeryDissatisfiedIcon color="error" />,
-    label: "Very Dissatisfied",
+    label: "Mycket missnöjd",
   },
   2: {
     icon: <SentimentDissatisfiedIcon color="error" />,
-    label: "Dissatisfied",
+    label: "Missnöjd",
   },
   3: {
     icon: <SentimentSatisfiedIcon color="warning" />,
@@ -33,11 +33,11 @@ const customIcons: {
   },
   4: {
     icon: <SentimentSatisfiedAltIcon color="success" />,
-    label: "Satisfied",
+    label: "Nöjd",
   },
   5: {
     icon: <SentimentVerySatisfiedIcon color="success" />,
-    label: "Very Satisfied",
+    label: "Mycket nöjd",
   },
 };
 
