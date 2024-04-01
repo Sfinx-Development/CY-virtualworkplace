@@ -1,8 +1,9 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   CreateMeetingDTO,
-  Meeting,
+  MeetingNoDate,
   MeetingOccasion,
+  MeetingOccasionNoDate,
   MeetingRoom,
 } from "../../types";
 import {
@@ -17,11 +18,11 @@ import {
 } from "../api/meeting";
 
 export interface MeetingState {
-  meetings: Meeting[] | undefined;
+  meetings: MeetingNoDate[] | undefined;
   activeMeetingId: string | undefined;
-  occasions: MeetingOccasion[] | undefined;
-  teamMeetings: Meeting[] | undefined;
-  pastOccasions: MeetingOccasion[] | undefined;
+  occasions: MeetingOccasionNoDate[] | undefined;
+  teamMeetings: MeetingNoDate[] | undefined;
+  pastOccasions: MeetingOccasionNoDate[] | undefined;
   meetingroom: MeetingRoom | undefined;
   deletemeeting: MeetingOccasion | undefined;
   error: string | null;
@@ -39,7 +40,7 @@ export const initialState: MeetingState = {
 };
 
 export const createMeetingAsync = createAsyncThunk<
-  Meeting,
+  MeetingNoDate,
   CreateMeetingDTO,
   { rejectValue: string }
 >("meeting/createMeeting", async (meeting, thunkAPI) => {
@@ -57,7 +58,7 @@ export const createMeetingAsync = createAsyncThunk<
 });
 
 export const createTeamMeetingAsync = createAsyncThunk<
-  Meeting,
+  MeetingNoDate,
   CreateMeetingDTO,
   { rejectValue: string }
 >("meeting/createTeamMeeting", async (meeting, thunkAPI) => {
@@ -75,7 +76,7 @@ export const createTeamMeetingAsync = createAsyncThunk<
 });
 
 export const GetMyOccasionsAsync = createAsyncThunk<
-  MeetingOccasion[],
+  MeetingOccasionNoDate[],
   string,
   { rejectValue: string }
 >("meeting/getmyoccasions", async (profileId, thunkAPI) => {
@@ -94,7 +95,7 @@ export const GetMyOccasionsAsync = createAsyncThunk<
 });
 
 export const GetMyMeetingsAsync = createAsyncThunk<
-  Meeting[],
+  MeetingNoDate[],
   string,
   { rejectValue: string }
 >("meeting/getmymeetings", async (profileId, thunkAPI) => {
@@ -113,11 +114,12 @@ export const GetMyMeetingsAsync = createAsyncThunk<
 });
 
 export const EditMeetingAsync = createAsyncThunk<
-  Meeting,
-  Meeting,
+  MeetingNoDate,
+  MeetingNoDate,
   { rejectValue: string }
 >("meeting/editmeeting", async (meeting, thunkAPI) => {
   try {
+    console.log("MEETING: ", meeting);
     const editedMeeting = await FetchEditMeeting(meeting);
     if (editedMeeting) {
       return editedMeeting;
@@ -132,7 +134,7 @@ export const EditMeetingAsync = createAsyncThunk<
 });
 
 export const GetMyPastMeetingsAsync = createAsyncThunk<
-  MeetingOccasion[],
+  MeetingOccasionNoDate[],
   string,
   { rejectValue: string }
 >("meeting/getmypastmeetings", async (profileId, thunkAPI) => {
@@ -260,13 +262,29 @@ const meetingSlice = createSlice({
       })
       .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
         if (action.payload) {
-          const filteredMeetings = state.occasions?.filter(
-            (m) => m.meetingId != action.payload
+          const filteredOccasions = state.occasions?.filter(
+            (occasion) => occasion.meetingId !== action.payload
           );
-          state.occasions = filteredMeetings;
+          state.occasions = filteredOccasions;
+      
+          const filteredPastOccasions = state.pastOccasions?.filter(
+            (pastOccasion) => pastOccasion.meetingId !== action.payload
+          );
+          state.pastOccasions = filteredPastOccasions;
+      
           state.error = null;
         }
       })
+      
+      // .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
+      //   if (action.payload) {
+      //     const filteredMeetings = state.occasions?.filter(
+      //       (m) => m.meetingId != action.payload
+      //     );
+      //     state.occasions = filteredMeetings;
+      //     state.error = null;
+      //   }
+      // })
       .addCase(DeleteMeetingAsync.rejected, (state) => {
         state.error = "Något gick fel när meddelandet skulle tas bort.";
       })

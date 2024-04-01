@@ -52,25 +52,8 @@ namespace Controllers
                     var meetingOccasions = await _meetingOccasionService.GetOccasionsByProfileId(
                         profileId
                     );
-                    var outgoingOccasionDtos = new List<OutgoingOcassionDTO>();
 
-                    outgoingOccasionDtos = meetingOccasions
-                        .Select(
-                            m =>
-                                new OutgoingOcassionDTO(
-                                    m.Id,
-                                    m.Meeting.Id,
-                                    m.Profile.Id,
-                                    m.Meeting.Name,
-                                    m.Meeting.Description,
-                                    m.Meeting.Date,
-                                    m.Meeting.Minutes,
-                                    m.Meeting.RoomId
-                                )
-                        )
-                        .ToList();
-
-                    return Ok(outgoingOccasionDtos);
+                    return Ok(meetingOccasions);
                 }
                 else
                 {
@@ -109,25 +92,8 @@ namespace Controllers
                 {
                     var meetingOccasions =
                         await _meetingOccasionService.GetPastOccasionsByProfileId(profileId);
-                    var outgoingOccasionDtos = new List<OutgoingOcassionDTO>();
 
-                    outgoingOccasionDtos = meetingOccasions
-                        .Select(
-                            m =>
-                                new OutgoingOcassionDTO(
-                                    m.Id,
-                                    m.Meeting.Id,
-                                    m.Profile.Id,
-                                    m.Meeting.Name,
-                                    m.Meeting.Description,
-                                    m.Meeting.Date,
-                                    m.Meeting.Minutes,
-                                    m.Meeting.RoomId
-                                )
-                        )
-                        .ToList();
-
-                    return Ok(outgoingOccasionDtos);
+                    return Ok(meetingOccasions);
                 }
                 else
                 {
@@ -172,7 +138,7 @@ namespace Controllers
         [Authorize]
         [HttpPost]
         //ägaren kan lägga till någon till mötestillfället
-        public async Task<ActionResult<MeetingOccasion>> Post(
+        public async Task<ActionResult<OutgoingOcassionDTO>> Post(
             [FromBody] AddToMeetingDTO addToMeetingDTO
         )
         {
