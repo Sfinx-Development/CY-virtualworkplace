@@ -1,12 +1,6 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -32,7 +26,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult<Meeting>> Post(
+        public async Task<ActionResult<OutgoingMeetingDTO>> Post(
             [FromBody] CreateMeetingDTO incomingMeetingDTO
         )
         {
@@ -72,60 +66,63 @@ namespace Controllers
             }
         }
 
-   [Authorize]
-[HttpPost("CreateTeamMeeting")]
-public async Task<ActionResult<Meeting>> PostTeamMeeting(
-    [FromBody] CreateMeetingDTO incomingMeetingDTO
-)
-{
-    try
-    {
-        var jwt = Request.Cookies["jwttoken"];
-        if (string.IsNullOrWhiteSpace(jwt))
+        [Authorize]
+        [HttpPost("CreateTeamMeeting")]
+        public async Task<ActionResult<OutgoingMeetingDTO>> PostTeamMeeting(
+            [FromBody] CreateMeetingDTO incomingMeetingDTO
+        )
         {
-            return BadRequest("JWT token is missing.");
-        }
-
-        var loggedInUser = await _jwtService.GetByJWT(jwt);
-        if (loggedInUser == null)
-        {
-            return BadRequest("Failed to get user.");
-        }
-
-        // Kontrollera överlappande möten
-        // var overlappingMeetings = await _meetingService.GetTeamMeetingsInPeriodAsync(
-        //     incomingMeetingDTO.TeamId,
-        //     incomingMeetingDTO.Date,
-        //     incomingMeetingDTO.Date.AddMinutes(incomingMeetingDTO.Minutes)
-        // );
-
-        // if (overlappingMeetings.Count > 0)
-        // {
-        //     return BadRequest("There are overlapping meetings for the team in the specified time period.");
-        // }
-
-        if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
-        {
-            var meetingCreated = await _meetingService.CreateTeamMeetingAsync(incomingMeetingDTO);
-
-            if (meetingCreated == null)
+            try
             {
-                return BadRequest("Failed to create team.");
+                var jwt = Request.Cookies["jwttoken"];
+                if (string.IsNullOrWhiteSpace(jwt))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+
+                var loggedInUser = await _jwtService.GetByJWT(jwt);
+                if (loggedInUser == null)
+                {
+                    return BadRequest("Failed to get user.");
+                }
+
+                // Kontrollera överlappande möten
+                // var overlappingMeetings = await _meetingService.GetTeamMeetingsInPeriodAsync(
+                //     incomingMeetingDTO.TeamId,
+                //     incomingMeetingDTO.Date,
+                //     incomingMeetingDTO.Date.AddMinutes(incomingMeetingDTO.Minutes)
+                // );
+
+                // if (overlappingMeetings.Count > 0)
+                // {
+                //     return BadRequest("There are overlapping meetings for the team in the specified time period.");
+                // }
+
+                if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
+                {
+                    var meetingCreated = await _meetingService.CreateTeamMeetingAsync(
+                        incomingMeetingDTO
+                    );
+
+                    if (meetingCreated == null)
+                    {
+                        return BadRequest("Failed to create team.");
+                    }
+
+                    return meetingCreated;
+                }
+                else
+                {
+                    throw new Exception(
+                        "The owner of the meeting is not in line with the JWT bearer."
+                    );
+                }
             }
-
-            return meetingCreated;
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
-        else
-        {
-            throw new Exception("The owner of the meeting is not in line with the JWT bearer.");
-        }
-    }
-    catch (Exception e)
-    {
-        return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-    }
-}
-
 
         [HttpPost("meetingroom")]
         [Authorize]
@@ -188,7 +185,9 @@ public async Task<ActionResult<Meeting>> PostTeamMeeting(
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<Meeting>> Update([FromBody] IncomingMeetingDTO meeting)
+        public async Task<ActionResult<OutgoingMeetingDTO>> Update(
+            [FromBody] IncomingMeetingDTO meeting
+        )
         {
             try
             {
@@ -210,7 +209,7 @@ public async Task<ActionResult<Meeting>> PostTeamMeeting(
                     Console.WriteLine(
                         ".------------------------------möte kommer in: " + meeting.Date
                     );
-                    Meeting updatedMeeting = await _meetingService.UpdateMeeting(meeting);
+                    var updatedMeeting = await _meetingService.UpdateMeeting(meeting);
                     return Ok(updatedMeeting);
                 }
                 else
@@ -244,25 +243,8 @@ public async Task<ActionResult<Meeting>> PostTeamMeeting(
                 }
 
                 var meetings = await _meetingService.GetMeetingsByProfile(profileId, loggedInUser);
-                var outgoingMeetings = new List<OutgoingMeetingDTO>();
-                outgoingMeetings = meetings
-                    .Select(
-                        m =>
-                            new OutgoingMeetingDTO(
-                                m.Id,
-                                m.Name,
-                                m.Description,
-                                m.Date,
-                                m.Minutes,
-                                m.IsRepeating,
-                                m.RoomId,
-                                m.OwnerId,
-                                m.Interval,
-                                m.EndDate
-                            )
-                    )
-                    .ToList();
-                return Ok(outgoingMeetings);
+
+                return Ok(meetings);
             }
             catch (Exception e)
             {

@@ -1,7 +1,7 @@
 import {
   CreateMeetingDTO,
-  Meeting,
-  MeetingOccasion,
+  MeetingNoDate,
+  MeetingOccasionNoDate,
   MeetingRoom,
 } from "../../types";
 import { getApiUrl } from "./config";
@@ -11,7 +11,7 @@ const meetingOccasionapiUrl = getApiUrl() + `/meetingoccasion`;
 
 export const FetchGetMyOccasions = async (
   profileId: string
-): Promise<MeetingOccasion[]> => {
+): Promise<MeetingOccasionNoDate[]> => {
   try {
     const response = await fetch(meetingOccasionapiUrl + "/meetingoccasion", {
       method: "POST",
@@ -22,13 +22,10 @@ export const FetchGetMyOccasions = async (
       body: JSON.stringify(profileId),
     });
     const responseBody = await response.json();
-
+    const data = responseBody.$values as MeetingOccasionNoDate[];
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av occasions");
     }
-    //VAFÖR BEHÖVA GÖRA SÅHÄR??
-    const data = responseBody.$values as MeetingOccasion[];
-
     return data;
   } catch (error) {
     console.error(error);
@@ -36,14 +33,9 @@ export const FetchGetMyOccasions = async (
   }
 };
 
-// const formatDate = (date: string) => {
-//   const parsedDate = Date.parse(date);
-//   return new Date(parsedDate);
-// };
-
 export const FetchGetMyMeetings = async (
   profileId: string
-): Promise<Meeting[]> => {
+): Promise<MeetingNoDate[]> => {
   try {
     const response = await fetch(meetingapiUrl + "/allmeetings", {
       method: "POST",
@@ -58,13 +50,7 @@ export const FetchGetMyMeetings = async (
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av meetings");
     }
-    //VAFÖR BEHÖVA GÖRA SÅHÄR??
-    // const data = responseBody.$values as Meeting[];
-    const data = responseBody.$values.map((meeting: Meeting) => ({
-      ...meeting,
-      date: new Date(meeting.date),
-    }));
-
+    const data = responseBody.$values as MeetingNoDate[];
     return data;
   } catch (error) {
     console.error(error);
@@ -74,7 +60,7 @@ export const FetchGetMyMeetings = async (
 
 export const FetchGetMyPastMeetings = async (
   profileId: string
-): Promise<MeetingOccasion[]> => {
+): Promise<MeetingOccasionNoDate[]> => {
   try {
     const response = await fetch(
       meetingOccasionapiUrl + "/pastmeetingoccasion",
@@ -88,12 +74,10 @@ export const FetchGetMyPastMeetings = async (
       }
     );
     const responseBody = await response.json();
-
+    const data = responseBody.$values as MeetingOccasionNoDate[];
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av meetings");
     }
-    //VAFÖR BEHÖVA GÖRA SÅHÄR??
-    const data = responseBody.$values as MeetingOccasion[];
 
     return data;
   } catch (error) {
@@ -104,7 +88,7 @@ export const FetchGetMyPastMeetings = async (
 
 export const FetchCreateMeeting = async (
   newMeeting: CreateMeetingDTO
-): Promise<Meeting> => {
+): Promise<MeetingNoDate> => {
   try {
     const response = await fetch(meetingapiUrl + "/create", {
       method: "POST",
@@ -119,9 +103,9 @@ export const FetchCreateMeeting = async (
       throw new Error("Något gick fel vid skapandet av meeting.");
     }
 
-    const data = await response.json();
+    const responseBody = (await response.json()) as MeetingNoDate;
 
-    return data as Meeting;
+    return responseBody;
   } catch (error) {
     console.error(error);
     throw error;
@@ -130,7 +114,7 @@ export const FetchCreateMeeting = async (
 
 export const FetchCreateTeamMeeting = async (
   newMeeting: CreateMeetingDTO
-): Promise<Meeting> => {
+): Promise<MeetingNoDate> => {
   try {
     const response = await fetch(meetingapiUrl + "/createteammeeting", {
       method: "POST",
@@ -144,10 +128,9 @@ export const FetchCreateTeamMeeting = async (
     if (!response.ok) {
       throw new Error("Något gick fel vid skapandet av meeting.");
     }
+    const responseBody = (await response.json()) as MeetingNoDate;
 
-    const data = await response.json();
-
-    return data as Meeting;
+    return responseBody;
   } catch (error) {
     console.error(error);
     throw error;
@@ -194,7 +177,7 @@ export const FetchDeleteMeeting = async (
     });
 
     if (!response.ok) {
-      throw new Error("Något gick fel vid radering av meddelande");
+      return false;
     } else {
       return true;
     }
@@ -204,23 +187,43 @@ export const FetchDeleteMeeting = async (
   }
 };
 
-export const FetchEditMeeting = async (meeting: Meeting): Promise<Meeting> => {
+export const FetchEditMeeting = async (
+  meeting: MeetingNoDate
+): Promise<MeetingNoDate> => {
   try {
+    const meetingWithDate = {
+      ...meeting,
+      date: new Date(meeting.date),
+      endDate: meeting.endDate ? new Date(meeting.endDate) : null,
+    };
+    console.log("MÖTE MED DATUM : ", meetingWithDate);
     const response = await fetch(meetingapiUrl, {
       method: "PUT",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(meeting),
+      body: JSON.stringify(meetingWithDate),
     });
-    const responseBody = await response.json();
 
     if (!response.ok) {
       throw new Error("Något gick fel vid redigering av mötet");
     }
-    const data = responseBody as Meeting;
-    return data;
+    const responseBody = (await response.json()) as MeetingNoDate;
+    // const createdMeeting = {
+    //   ...responseBody,
+    //   date: new Date(responseBody.date),
+    //   endDate: new Date(responseBody.endDate),
+    // };
+    // const meetingNoDate: MeetingNoDate = {
+    //   ...responseBody,
+    //   date: responseBody.date.toLocaleDateString(),
+    //   endDate: responseBody.endDate
+    //     ? responseBody.endDate.toLocaleDateString()
+    //     : "",
+    // };
+
+    return responseBody;
   } catch (error) {
     console.error(error);
     throw error;

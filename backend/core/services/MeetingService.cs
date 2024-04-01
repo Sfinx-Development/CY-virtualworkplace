@@ -23,7 +23,9 @@ public class MeetingService : IMeetingService
         _meetingOccasionRepository = meetingOccasionRepository;
     }
 
-    public async Task<Meeting> CreateTeamMeetingAsync(CreateMeetingDTO incomingMeetingDTO)
+    public async Task<OutgoingMeetingDTO> CreateTeamMeetingAsync(
+        CreateMeetingDTO incomingMeetingDTO
+    )
     {
         try
         {
@@ -41,7 +43,7 @@ public class MeetingService : IMeetingService
                     Id = Utils.GenerateRandomId(),
                     Name = incomingMeetingDTO.Name,
                     Description = incomingMeetingDTO.Description,
-                    Date = incomingMeetingDTO.Date.AddHours(1),
+                    Date = incomingMeetingDTO.Date.AddHours(2),
                     Minutes = incomingMeetingDTO.Minutes,
                     Room = room,
                     OwnerId = incomingMeetingDTO.OwnerId,
@@ -53,14 +55,6 @@ public class MeetingService : IMeetingService
 
             Meeting createdMeeting = await _meetingRepository.CreateAsync(meeting);
 
-            // MeetingOccasion ownersOccasion =
-            //     new()
-            //     {
-            //         Id = Utils.GenerateRandomId(),
-            //         Profile = profile,
-            //         Meeting = meeting
-            //     };
-            // await _meetingOccasionRepository.CreateAsync(ownersOccasion);
             var profiles = await _profileRepository.GetProfilesInTeamAsync(profile.TeamId);
 
             foreach (Profile p in profiles)
@@ -74,8 +68,21 @@ public class MeetingService : IMeetingService
                     };
                 await _meetingOccasionRepository.CreateAsync(profileOccasion);
             }
+            OutgoingMeetingDTO outgoingMeetingDTO =
+                new(
+                    createdMeeting.Id,
+                    createdMeeting.Name,
+                    createdMeeting.Description,
+                    createdMeeting.Date,
+                    createdMeeting.Minutes,
+                    createdMeeting.IsRepeating,
+                    createdMeeting.RoomId,
+                    createdMeeting.OwnerId,
+                    createdMeeting.Interval,
+                    createdMeeting.EndDate
+                );
 
-            return createdMeeting;
+            return outgoingMeetingDTO;
         }
         catch (Exception)
         {
@@ -83,7 +90,7 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public async Task<Meeting> CreateAsync(CreateMeetingDTO incomingMeetingDTO)
+    public async Task<OutgoingMeetingDTO> CreateAsync(CreateMeetingDTO incomingMeetingDTO)
     {
         try
         {
@@ -97,7 +104,7 @@ public class MeetingService : IMeetingService
                     Id = Utils.GenerateRandomId(),
                     Name = incomingMeetingDTO.Name,
                     Description = incomingMeetingDTO.Description,
-                    Date = incomingMeetingDTO.Date.AddHours(1),
+                    Date = incomingMeetingDTO.Date.AddHours(2),
                     Minutes = incomingMeetingDTO.Minutes,
                     Room = room,
                     OwnerId = incomingMeetingDTO.OwnerId,
@@ -117,7 +124,21 @@ public class MeetingService : IMeetingService
                 };
             await _meetingOccasionRepository.CreateAsync(ownersOccasion);
 
-            return createdMeeting;
+            OutgoingMeetingDTO outgoingMeetingDTO =
+                new(
+                    createdMeeting.Id,
+                    createdMeeting.Name,
+                    createdMeeting.Description,
+                    createdMeeting.Date,
+                    createdMeeting.Minutes,
+                    createdMeeting.IsRepeating,
+                    createdMeeting.RoomId,
+                    createdMeeting.OwnerId,
+                    createdMeeting.Interval,
+                    createdMeeting.EndDate
+                );
+
+            return outgoingMeetingDTO;
         }
         catch (Exception)
         {
@@ -125,7 +146,7 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public async Task<Meeting> UpdateMeeting(IncomingMeetingDTO meeting)
+    public async Task<OutgoingMeetingDTO> UpdateMeeting(IncomingMeetingDTO meeting)
     {
         try
         {
@@ -134,13 +155,26 @@ public class MeetingService : IMeetingService
 
             foundMeeting.Name = meeting.Name ?? foundMeeting.Name;
             foundMeeting.Description = meeting.Description ?? foundMeeting.Description;
-            foundMeeting.Date = meeting.Date.AddHours(1);
+            foundMeeting.Date = meeting.Date.AddHours(2);
             foundMeeting.Minutes = meeting.Minutes;
             foundMeeting.IsRepeating = meeting.IsRepeating;
             foundMeeting.Interval = meeting.Interval;
             foundMeeting.EndDate = meeting.EndDate;
             var updatedMeeting = await _meetingRepository.UpdateAsync(foundMeeting);
-            return updatedMeeting;
+            OutgoingMeetingDTO outgoingMeetingDTO =
+                new(
+                    updatedMeeting.Id,
+                    updatedMeeting.Name,
+                    updatedMeeting.Description,
+                    updatedMeeting.Date,
+                    updatedMeeting.Minutes,
+                    updatedMeeting.IsRepeating,
+                    updatedMeeting.RoomId,
+                    updatedMeeting.OwnerId,
+                    updatedMeeting.Interval,
+                    updatedMeeting.EndDate
+                );
+            return outgoingMeetingDTO;
         }
         catch (Exception)
         {
@@ -148,19 +182,32 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public async Task<Meeting> GetMeetingByTeamId(string teamId)
+    public async Task<OutgoingMeetingDTO> GetMeetingByTeamId(string teamId)
     {
         try
         {
-            var meetings = await _meetingRepository.GetByIdAsync(teamId);
+            var meeting = await _meetingRepository.GetByIdAsync(teamId);
 
-            if (meetings == null)
+            if (meeting == null)
             {
                 throw new Exception("meetingroom can't be found");
             }
             else
             {
-                return meetings;
+                OutgoingMeetingDTO outgoingMeetingDTO =
+                    new(
+                        meeting.Id,
+                        meeting.Name,
+                        meeting.Description,
+                        meeting.Date,
+                        meeting.Minutes,
+                        meeting.IsRepeating,
+                        meeting.RoomId,
+                        meeting.OwnerId,
+                        meeting.Interval,
+                        meeting.EndDate
+                    );
+                return outgoingMeetingDTO;
             }
         }
         catch (Exception)
@@ -200,7 +247,7 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public async Task<Meeting> GetById(string meetingId, string userId)
+    public async Task<OutgoingMeetingDTO> GetById(string meetingId, string userId)
     {
         //om man har ett mötestillfälle i mötet så får man tillgång att hämta mötet
         var profiles = await _profileRepository.GetByUserIdAsync(userId);
@@ -214,7 +261,20 @@ public class MeetingService : IMeetingService
 
             if (anyMatch)
             {
-                return meeting;
+                OutgoingMeetingDTO outgoingMeetingDTO =
+                    new(
+                        meeting.Id,
+                        meeting.Name,
+                        meeting.Description,
+                        meeting.Date,
+                        meeting.Minutes,
+                        meeting.IsRepeating,
+                        meeting.RoomId,
+                        meeting.OwnerId,
+                        meeting.Interval,
+                        meeting.EndDate
+                    );
+                return outgoingMeetingDTO;
             }
             else
             {
@@ -227,7 +287,10 @@ public class MeetingService : IMeetingService
         }
     }
 
-    public async Task<List<Meeting>> GetMeetingsByProfile(string profileId, User loggedInUser)
+    public async Task<List<OutgoingMeetingDTO>> GetMeetingsByProfile(
+        string profileId,
+        User loggedInUser
+    )
     {
         try
         {
@@ -237,7 +300,25 @@ public class MeetingService : IMeetingService
                 throw new Exception("Not correct user");
             }
             var meetings = await _meetingRepository.GetAllByTeam(profile.TeamId);
-            return meetings;
+            var outgoingMeetingDTOs = new List<OutgoingMeetingDTO>();
+            outgoingMeetingDTOs = meetings
+                .Select(
+                    m =>
+                        new OutgoingMeetingDTO(
+                            m.Id,
+                            m.Name,
+                            m.Description,
+                            m.Date,
+                            m.Minutes,
+                            m.IsRepeating,
+                            m.RoomId,
+                            m.OwnerId,
+                            m.Interval,
+                            m.EndDate
+                        )
+                )
+                .ToList();
+            return outgoingMeetingDTOs;
         }
         catch (Exception e)
         {
@@ -260,7 +341,7 @@ public class MeetingService : IMeetingService
     // }
 
 
-    public async Task<List<Meeting>> GetTeamMeetingsInPeriodAsync(
+    public async Task<List<OutgoingMeetingDTO>> GetTeamMeetingsInPeriodAsync(
         string teamId,
         DateTime startDateTime,
         DateTime? endDateTime
@@ -277,7 +358,25 @@ public class MeetingService : IMeetingService
                 .Where(m => startDateTime < m.Date.AddMinutes(m.Minutes) && m.Date < endDateTime)
                 .ToList();
 
-            return overlappingMeetings;
+            var outgoingMeetingDTOs = new List<OutgoingMeetingDTO>();
+            outgoingMeetingDTOs = overlappingMeetings
+                .Select(
+                    m =>
+                        new OutgoingMeetingDTO(
+                            m.Id,
+                            m.Name,
+                            m.Description,
+                            m.Date,
+                            m.Minutes,
+                            m.IsRepeating,
+                            m.RoomId,
+                            m.OwnerId,
+                            m.Interval,
+                            m.EndDate
+                        )
+                )
+                .ToList();
+            return outgoingMeetingDTOs;
         }
         catch (Exception ex)
         {

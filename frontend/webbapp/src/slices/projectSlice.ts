@@ -1,5 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { FileDTO, Project, ProjectUpdate, UpdateComment } from "../../types";
+import {
+  FileDTO,
+  Project,
+  ProjectNoDate,
+  ProjectUpdate,
+  ProjectUpdateNoDate,
+  UpdateComment,
+  UpdateCommentNoDate,
+} from "../../types";
 import {
   FetchCreateFile,
   FetchCreateProject,
@@ -13,11 +21,11 @@ import {
 import { CreateHealthCheckAsync } from "./healthcheck";
 
 export interface ProjectState {
-  projects: Project[] | undefined;
-  activeProject: Project | undefined;
-  activeProjectUpdates: ProjectUpdate[] | undefined;
-  activeUpdate: ProjectUpdate | undefined;
-  activeComments: UpdateComment[] | undefined;
+  projects: ProjectNoDate[] | undefined;
+  activeProject: ProjectNoDate | undefined;
+  activeProjectUpdates: ProjectUpdateNoDate[] | undefined;
+  activeUpdate: ProjectUpdateNoDate | undefined;
+  activeComments: UpdateCommentNoDate[] | undefined;
   error: string | null;
 }
 
@@ -31,7 +39,7 @@ export const initialState: ProjectState = {
 };
 
 export const CreateProjectAsync = createAsyncThunk<
-  Project,
+  ProjectNoDate,
   Project,
   { rejectValue: string }
 >("project/createproject", async (project, thunkAPI) => {
@@ -52,7 +60,7 @@ export const CreateProjectAsync = createAsyncThunk<
 });
 
 export const GetTeamProjectsAsync = createAsyncThunk<
-  Project[],
+  ProjectNoDate[],
   string,
   { rejectValue: string }
 >("project/getProjects", async (teamId, thunkAPI) => {
@@ -95,8 +103,8 @@ export const GetTeamProjectsAsync = createAsyncThunk<
 
 export const CreateProjectUpdateAsync = createAsyncThunk<
   {
-    projectUpdate: ProjectUpdate;
-    updateComment: UpdateComment;
+    projectUpdate: ProjectUpdateNoDate;
+    updateComment: UpdateCommentNoDate;
     files?: FileList;
   },
   {
@@ -146,7 +154,7 @@ export const CreateProjectUpdateAsync = createAsyncThunk<
 );
 
 export const GetProjectUpdatesAsync = createAsyncThunk<
-  ProjectUpdate[],
+  ProjectUpdateNoDate[],
   string,
   { rejectValue: string }
 >("project/getUpdates", async (projectId, thunkAPI) => {
@@ -188,7 +196,7 @@ export const GetFilesByUpdateCommentAsync = createAsyncThunk<
 });
 
 export const GetUpdateCommentsAsync = createAsyncThunk<
-  UpdateComment[],
+  UpdateCommentNoDate[],
   string,
   { rejectValue: string }
 >("project/getcomments", async (projectUpdateId, thunkAPI) => {
@@ -209,7 +217,7 @@ export const GetUpdateCommentsAsync = createAsyncThunk<
 });
 
 export const CreateCommentAsync = createAsyncThunk<
-  UpdateComment,
+  UpdateCommentNoDate,
   UpdateComment,
   { rejectValue: string }
 >("project/createupdatecomment", async (updateComment, thunkAPI) => {
@@ -248,17 +256,19 @@ export const CreateCommentAsync = createAsyncThunk<
 //   }
 // };
 
-const saveActiveProjectToLocalStorage = (project: Project) => {
+const saveActiveProjectToLocalStorage = (project: ProjectNoDate) => {
   localStorage.setItem("activeProject", JSON.stringify(project));
 };
-const saveActiveUpdateToLocalStorage = (update: ProjectUpdate) => {
+const saveActiveUpdateToLocalStorage = (update: ProjectUpdateNoDate) => {
   localStorage.setItem("activeUpdate", JSON.stringify(update));
 };
-const loadActiveProjectFromLocalStorage = (): Project | undefined => {
+const loadActiveProjectFromLocalStorage = (): ProjectNoDate | undefined => {
   const storedActiveProject = localStorage.getItem("activeProject");
   return storedActiveProject ? JSON.parse(storedActiveProject) : undefined;
 };
-const loadActiveUpdateFromLocalStorage = (): ProjectUpdate | undefined => {
+const loadActiveUpdateFromLocalStorage = ():
+  | ProjectUpdateNoDate
+  | undefined => {
   const storedActiveUpdate = localStorage.getItem("activeUpdate");
   return storedActiveUpdate ? JSON.parse(storedActiveUpdate) : undefined;
 };
@@ -270,7 +280,7 @@ const projectSlice = createSlice({
     setActiveProject: (state, action) => {
       const projectId = action.payload;
       const activeProject = state.projects?.find(
-        (project: Project) => project.id === projectId
+        (project: ProjectNoDate) => project.id === projectId
       );
       if (activeProject) {
         state.activeProject = activeProject;
