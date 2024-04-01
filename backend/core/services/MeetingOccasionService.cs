@@ -19,7 +19,7 @@ public class MeetingOccasionService : IMeetingOccasionService
         _meetingRepository = meetingRepository;
     }
 
-    public async Task<List<MeetingOccasion>> GetOccasionsByProfileId(string profileId)
+    public async Task<List<OutgoingOcassionDTO>> GetOccasionsByProfileId(string profileId)
     {
         try
         {
@@ -41,7 +41,24 @@ public class MeetingOccasionService : IMeetingOccasionService
                     occasionsNotPast.Add(occasion);
                 }
             }
-            return occasionsNotPast;
+
+            var occasionsDTOs = new List<OutgoingOcassionDTO>();
+            occasionsDTOs = occasionsNotPast
+                .Select(
+                    p =>
+                        new OutgoingOcassionDTO(
+                            p.Id,
+                            p.MeetingId,
+                            p.ProfileId,
+                            p.Meeting.Name,
+                            p.Meeting.Description,
+                            p.Meeting.Date,
+                            p.Meeting.Minutes,
+                            p.Meeting.RoomId
+                        )
+                )
+                .ToList();
+            return occasionsDTOs;
         }
         catch (Exception)
         {
@@ -49,14 +66,29 @@ public class MeetingOccasionService : IMeetingOccasionService
         }
     }
 
-    public async Task<List<MeetingOccasion>> GetPastOccasionsByProfileId(string profileId)
+    public async Task<List<OutgoingOcassionDTO>> GetPastOccasionsByProfileId(string profileId)
     {
         try
         {
             var occasions = await _meetingOccasionRepository.GetAllOccasionsByProfileId(profileId);
             var pastOccasions = occasions.Where(occasion => IsDatePast(occasion.Meeting)).ToList();
-
-            return pastOccasions;
+            var pastDTOs = new List<OutgoingOcassionDTO>();
+            pastDTOs = pastOccasions
+                .Select(
+                    p =>
+                        new OutgoingOcassionDTO(
+                            p.Id,
+                            p.MeetingId,
+                            p.ProfileId,
+                            p.Meeting.Name,
+                            p.Meeting.Description,
+                            p.Meeting.Date,
+                            p.Meeting.Minutes,
+                            p.Meeting.RoomId
+                        )
+                )
+                .ToList();
+            return pastDTOs;
         }
         catch (Exception)
         {
@@ -122,7 +154,10 @@ public class MeetingOccasionService : IMeetingOccasionService
         }
     }
 
-    public async Task<MeetingOccasion> AddOccasion(AddToMeetingDTO addToMeetingDTO, string userId)
+    public async Task<OutgoingOcassionDTO> AddOccasion(
+        AddToMeetingDTO addToMeetingDTO,
+        string userId
+    )
     {
         try
         {
@@ -148,7 +183,17 @@ public class MeetingOccasionService : IMeetingOccasionService
                     Meeting = meeting
                 };
                 var occasionCreated = await _meetingOccasionRepository.CreateAsync(occasion);
-                return occasionCreated;
+                var occasionDTO = new OutgoingOcassionDTO(
+                    occasionCreated.Id,
+                    occasionCreated.MeetingId,
+                    occasionCreated.ProfileId,
+                    meeting.Name,
+                    meeting.Description,
+                    meeting.Date,
+                    meeting.Minutes,
+                    meeting.RoomId
+                );
+                return occasionDTO;
             }
             else
             {
@@ -161,38 +206,29 @@ public class MeetingOccasionService : IMeetingOccasionService
         }
     }
 
-        public async Task AddOccasionsToNewProfiles(string profileId, string teamId)
+    public async Task AddOccasionsToNewProfiles(string profileId, string teamId)
     {
         try
         {
-                var profile = await _profileRepository.GetByIdAsync(profileId);
+            var profile = await _profileRepository.GetByIdAsync(profileId);
 
-                var meetings = await _meetingOccasionRepository.GetMeetingsByTeamId(teamId);
+            var meetings = await _meetingOccasionRepository.GetMeetingsByTeamId(teamId);
 
-
-     foreach(var meeting in meetings){
-     MeetingOccasion ownersOccasion =
-                new()
-                {
-                    Id = Utils.GenerateRandomId(),
-                    Profile = profile,
-                    Meeting = meeting
-                };
-            await _meetingOccasionRepository.CreateAsync(ownersOccasion);
-       
-     }
-
-       
+            foreach (var meeting in meetings)
+            {
+                MeetingOccasion ownersOccasion =
+                    new()
+                    {
+                        Id = Utils.GenerateRandomId(),
+                        Profile = profile,
+                        Meeting = meeting
+                    };
+                await _meetingOccasionRepository.CreateAsync(ownersOccasion);
+            }
         }
         catch (Exception e)
         {
             throw new Exception(e.Message);
         }
     }
-
-
-
-
-    
-
 }

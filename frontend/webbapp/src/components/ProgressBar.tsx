@@ -3,7 +3,7 @@ import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../globalConstants";
-import { Project, ProjectUpdate } from "../../types";
+import { ProjectNoDate, ProjectUpdateNoDate } from "../../types";
 import {
   GetProjectUpdatesAsync,
   setActiveProject,
@@ -12,7 +12,7 @@ import {
 import { useAppDispatch } from "../slices/store";
 
 interface ProgressBarProps {
-  project: Project;
+  project: ProjectNoDate;
 }
 
 interface UpdateDatesWithId {
@@ -26,7 +26,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   // const projectUpdates = useAppSelector(
   //   (state) => state.projectSlice.activeProjectUpdates
   // );
-  const [updates, setUpdates] = useState<ProjectUpdate[] | undefined>(
+  const [updates, setUpdates] = useState<ProjectUpdateNoDate[] | undefined>(
     undefined
   );
   const [updateDates, setUpdateDates] = useState<
@@ -64,7 +64,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
     if (updates) {
       const updatedDatesWithId = updates
         .filter((update) => update.dateCreated)
-        .map((update) => ({ date: update.dateCreated, id: update.id }));
+        .map((update) => ({
+          date: new Date(update.dateCreated),
+          id: update.id,
+        }));
       setUpdateDates(updatedDatesWithId);
     }
   }, [updates]);
@@ -125,7 +128,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   };
 
   const handleNavigateToUpdateEvents = (projectUpdateId: string) => {
-    console.log("ID: ", projectUpdateId);
     const update = updates?.find((p) => p.id == projectUpdateId);
     if (update) {
       dispatch(setActiveUpdate(update));

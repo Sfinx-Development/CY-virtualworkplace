@@ -19,7 +19,6 @@ import { getActiveTeam } from "../../slices/teamSlice";
 
 export default function CreateMeetingPage() {
   const dispatch = useAppDispatch();
-  // const meetings = useAppSelector((state) => state.meetingSlice.meetings);
   const meetingroom = useAppSelector((state) => state.meetingSlice.meetingroom);
   const error = useAppSelector((state) => state.meetingSlice.error);
   const navigate = useNavigate();
@@ -107,16 +106,16 @@ export default function CreateMeetingPage() {
         {fieldError && (
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
-        <Typography variant="h4">Create Meeting</Typography>
+        <Typography variant="h4">Nytt Möte</Typography>
         <TextField
-          label="Meeting Name"
+          label="Mötesnamn"
           value={newMeetingName}
           onChange={(e) => setNewMeetingName(e.target.value)}
           variant="outlined"
           sx={{ width: "250px", marginTop: 2 }}
         />
         <TextField
-          label="Description"
+          label="Beskrivning"
           value={newMeetingDescription}
           onChange={(e) => setNewMeetingDescription(e.target.value)}
           variant="outlined"
@@ -124,7 +123,7 @@ export default function CreateMeetingPage() {
         />
 
         <TextField
-          label="Date"
+          label="Datum"
           type="datetime-local"
           value={newMeetingDate}
           onChange={(e) => setNewMeetingDate(e.target.value)}
@@ -162,7 +161,7 @@ export default function CreateMeetingPage() {
         {newMeetingIsRepeating && (
           <>
             <TextField
-              label="Interval"
+              label="Intervall"
               type="number"
               value={newMeetingInterval}
               onChange={(e) =>
@@ -172,7 +171,7 @@ export default function CreateMeetingPage() {
               sx={{ width: "250px", marginTop: 2 }}
             />
             <TextField
-              label="End Date"
+              label="Slutdatum"
               type="datetime-local"
               value={newMeetingEndDate}
               onChange={(e) => setNewMeetingEndDate(e.target.value)}
