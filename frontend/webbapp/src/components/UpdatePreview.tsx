@@ -53,8 +53,7 @@ const UpdatePreview: React.FC<UpdatePreviewProps> = ({ updateComment }) => {
         <ul>
           {files &&
             files.map((file, index) => (
-              <li key={index}>
-                <h3>{file.fileName}</h3>
+              <li key={index} style={{ listStyle: "none" }}>
                 {getFileTypeFromFileName(file.fileName) === "image" ? (
                   <img
                     src={`data:image/${file.fileName

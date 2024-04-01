@@ -30,14 +30,12 @@ public class OutgoingMeetingDTO
         Name = name;
         Description = description;
         Date = date.ToString("yyyy-MM-ddTHH:mm:ss");
-
         Minutes = minutes;
         IsRepeating = isRepeating;
         RoomId = roomId;
         OwnerId = ownerId;
         Interval = interval;
 
-        // Formatera EndDate om det finns
         if (endDate.HasValue)
         {
             EndDate = endDate.Value.ToString("yyyy-MM-ddTHH:mm:ss");

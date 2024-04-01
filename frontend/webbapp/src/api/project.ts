@@ -1,4 +1,12 @@
-import { FileDTO, Project, ProjectUpdate, UpdateComment } from "../../types";
+import {
+  FileDTO,
+  Project,
+  ProjectNoDate,
+  ProjectUpdate,
+  ProjectUpdateNoDate,
+  UpdateComment,
+  UpdateCommentNoDate,
+} from "../../types";
 import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + `/project`;
@@ -8,7 +16,7 @@ const apiFileUrl = getApiUrl() + `/projectFile`;
 
 export const FetchCreateProject = async (
   project: Project
-): Promise<Project> => {
+): Promise<ProjectNoDate> => {
   try {
     const response = await fetch(apiUrl + "/create", {
       method: "POST",
@@ -23,14 +31,9 @@ export const FetchCreateProject = async (
       throw new Error("Något gick fel vid skapandet av project");
     }
 
-    const responseBody = (await response.json()) as Project;
+    const responseBody = (await response.json()) as ProjectNoDate;
 
-    const updatedProject = {
-      ...responseBody,
-      dateCreated: new Date(responseBody.dateCreated),
-      endDate: new Date(responseBody.endDate),
-    };
-    return updatedProject;
+    return responseBody;
   } catch (error) {
     console.error(error);
     throw error;
@@ -39,7 +42,7 @@ export const FetchCreateProject = async (
 
 export const FetchGetTeamProjects = async (
   teamId: string
-): Promise<Project[]> => {
+): Promise<ProjectNoDate[]> => {
   try {
     const response = await fetch(apiUrl + "/byteam", {
       method: "POST",
@@ -56,10 +59,7 @@ export const FetchGetTeamProjects = async (
 
     const responseBody = await response.json();
 
-    const projects = responseBody.$values.map((project: Project) => ({
-      ...project,
-      dateCreated: new Date(project.dateCreated),
-    })) as Project[];
+    const projects = responseBody.$values as ProjectNoDate[];
 
     return projects;
   } catch (error) {
@@ -71,7 +71,7 @@ export const FetchGetTeamProjects = async (
 /////////////////////////////////PROJECTUPDATE
 export const FetchCreateProjectuPDATE = async (
   projectUpdate: ProjectUpdate
-): Promise<ProjectUpdate> => {
+): Promise<ProjectUpdateNoDate> => {
   try {
     const response = await fetch(apiUpdateUrl + "/create", {
       method: "POST",
@@ -86,12 +86,7 @@ export const FetchCreateProjectuPDATE = async (
       throw new Error("Något gick fel vid skapandet av projekt uppdateringen");
     }
 
-    const responseBody = (await response.json()) as ProjectUpdate;
-
-    const updatedProjectUpdate = {
-      ...responseBody,
-      dateCreated: new Date(responseBody.dateCreated),
-    };
+    const updatedProjectUpdate = (await response.json()) as ProjectUpdateNoDate;
 
     return updatedProjectUpdate;
   } catch (error) {
@@ -102,7 +97,7 @@ export const FetchCreateProjectuPDATE = async (
 
 export const FetchGetProjectUpdates = async (
   projectId: string
-): Promise<ProjectUpdate[]> => {
+): Promise<ProjectUpdateNoDate[]> => {
   try {
     const response = await fetch(apiUpdateUrl + "/byproject", {
       method: "POST",
@@ -121,10 +116,7 @@ export const FetchGetProjectUpdates = async (
 
     const responseBody = await response.json();
 
-    const updates = responseBody.$values.map((update: ProjectUpdate) => ({
-      ...update,
-      dateCreated: new Date(update.dateCreated),
-    })) as ProjectUpdate[];
+    const updates = responseBody.$values as ProjectUpdateNoDate[];
 
     return updates;
   } catch (error) {
@@ -137,7 +129,7 @@ export const FetchGetProjectUpdates = async (
 
 export const FetchCreateUpdateComment = async (
   comment: UpdateComment
-): Promise<UpdateComment> => {
+): Promise<UpdateCommentNoDate> => {
   try {
     const response = await fetch(apiUpdateCommentUrl + "/create", {
       method: "POST",
@@ -152,12 +144,8 @@ export const FetchCreateUpdateComment = async (
       throw new Error("Något gick fel vid skapandet av kommentar");
     }
 
-    const responseBody = (await response.json()) as UpdateComment;
+    const createdComment = (await response.json()) as UpdateCommentNoDate;
 
-    const createdComment = {
-      ...responseBody,
-      dateCreated: new Date(responseBody.dateCreated),
-    };
     return createdComment;
   } catch (error) {
     console.error(error);
@@ -167,7 +155,7 @@ export const FetchCreateUpdateComment = async (
 
 export const FetchGetCommentsByUpdate = async (
   projectUpdateId: string
-): Promise<UpdateComment[]> => {
+): Promise<UpdateCommentNoDate[]> => {
   try {
     const response = await fetch(apiUpdateCommentUrl + "/byprojectupdate", {
       method: "POST",
@@ -184,11 +172,7 @@ export const FetchGetCommentsByUpdate = async (
 
     const responseBody = await response.json();
 
-    const comments = responseBody.$values.map((comment: UpdateComment) => ({
-      ...comment,
-      dateCreated: new Date(comment.dateCreated),
-    })) as UpdateComment[];
-
+    const comments = responseBody.$values as UpdateCommentNoDate[];
     return comments;
   } catch (error) {
     console.error(error);

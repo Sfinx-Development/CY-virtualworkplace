@@ -13,7 +13,7 @@ import {
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { MeetingOccasion, ProfileHubDTO } from "../../../types";
+import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -51,7 +51,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const now = new Date();
 
   const ongoingMeeting = occasions
-    ? occasions.find((occasion: MeetingOccasion) => {
+    ? occasions.find((occasion: MeetingOccasionNoDate) => {
         const startDate = new Date(occasion.date);
         const endDate = new Date(
           startDate.getTime() + occasion.minutes * 60000

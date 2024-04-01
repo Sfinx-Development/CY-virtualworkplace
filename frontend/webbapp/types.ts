@@ -61,8 +61,8 @@ export interface CreateMeetingDTO {
   isRepeating: boolean;
   roomId: string;
   ownerId: string;
-  interval: string;
-  endDate: Date;
+  interval?: string;
+  endDate?: Date;
   teamId?: string;
 }
 
@@ -104,11 +104,37 @@ export interface Meeting {
   date: Date;
   minutes: number;
   roomId: string;
-  ownerId: string /* (profileId) */;
+  ownerId: string;
   isRepeating: boolean;
   interval: number;
   endDate: Date;
   teamId?: string;
+}
+
+//från request till slice bara än så länge
+export interface MeetingNoDate {
+  id: string;
+  name: string;
+  description: string;
+  date: string;
+  minutes: number;
+  roomId: string;
+  ownerId: string;
+  isRepeating: boolean;
+  interval: number;
+  endDate: string;
+  teamId?: string;
+}
+
+export interface MeetingOccasionNoDate {
+  id: string;
+  meetingId: string;
+  profileId: string;
+  name: string;
+  description: string;
+  date: string;
+  minutes: number;
+  roomId: string;
 }
 
 export interface MeetingOccasion {
@@ -175,10 +201,25 @@ export interface Project {
   teamId: string;
 }
 
+export interface ProjectNoDate {
+  id: string;
+  title: string;
+  description: string;
+  dateCreated: string;
+  endDate: string;
+  teamId: string;
+}
+
 export interface ProjectUpdate {
   id: string;
   projectId: string;
   dateCreated: Date;
+  version: number;
+}
+export interface ProjectUpdateNoDate {
+  id: string;
+  projectId: string;
+  dateCreated: string;
   version: number;
 }
 
@@ -188,6 +229,15 @@ export interface UpdateComment {
   profileId: string;
   projectUpdateId: string;
   dateCreated: Date;
+  profileFullName: string;
+}
+
+export interface UpdateCommentNoDate {
+  id: string;
+  text: string;
+  profileId: string;
+  projectUpdateId: string;
+  dateCreated: string;
   profileFullName: string;
 }
 
