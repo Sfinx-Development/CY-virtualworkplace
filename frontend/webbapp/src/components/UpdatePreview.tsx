@@ -1,11 +1,11 @@
 import { Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { FileDTO, UpdateComment } from "../../types";
+import { FileDTO, UpdateCommentNoDate } from "../../types";
 import { GetFilesByUpdateCommentAsync } from "../slices/projectSlice";
 import { useAppDispatch } from "../slices/store";
 
 interface UpdatePreviewProps {
-  updateComment: UpdateComment;
+  updateComment: UpdateCommentNoDate;
 }
 
 const UpdatePreview: React.FC<UpdatePreviewProps> = ({ updateComment }) => {

@@ -32,8 +32,23 @@ public class UpdateCommentRepository : IUpdateCommentRepository
             var foundUpdateComment = await _cyDbContext.UpdateComments.FindAsync(id);
             if (foundUpdateComment != null)
             {
-                _cyDbContext.UpdateComments.Remove(foundUpdateComment);
-                await _cyDbContext.SaveChangesAsync();
+                var projectUpdate = await _cyDbContext.ProjectUpdates.FindAsync(
+                    foundUpdateComment.ProjectUpdateId
+                );
+                var allComments = await _cyDbContext
+                    .UpdateComments.Where(c => c.ProjectUpdateId == projectUpdate.Id)
+                    .ToListAsync();
+                if (allComments.Count() == 1)
+                {
+                    _cyDbContext.ProjectUpdates.Remove(projectUpdate);
+                    _cyDbContext.UpdateComments.Remove(foundUpdateComment);
+                    await _cyDbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    _cyDbContext.UpdateComments.Remove(foundUpdateComment);
+                    await _cyDbContext.SaveChangesAsync();
+                }
             }
         }
         catch (Exception e)
