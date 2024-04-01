@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Xml;
 using Microsoft.EntityFrameworkCore;
 
 namespace core;
@@ -38,6 +39,16 @@ public class ProjectUpdateRepository : IProjectUpdateRepository
                 .UpdateComments.Where(comment => comment.ProjectUpdateId == id)
                 .ToListAsync();
 
+            foreach (var comment in updateComments)
+            {
+                var files = await _cyDbContext
+                    .ProjectFiles.Where(c => c.UpdateCommentId == comment.Id)
+                    .ToListAsync();
+                if (files != null)
+                {
+                    _cyDbContext.ProjectFiles.RemoveRange(files);
+                }
+            }
             _cyDbContext.UpdateComments.RemoveRange(updateComments);
 
             if (projectUpdate != null)

@@ -13,6 +13,11 @@ import {
   FetchCreateProject,
   FetchCreateProjectuPDATE,
   FetchCreateUpdateComment,
+  FetchDeleteFile,
+  FetchDeleteProject,
+  FetchDeleteUpdateComment,
+  FetchEditProject,
+  FetchEditUpdateComment,
   FetchGetCommentsByUpdate,
   FetchGetFilesByUpdateComment,
   FetchGetProjectUpdates,
@@ -237,24 +242,110 @@ export const CreateCommentAsync = createAsyncThunk<
   }
 });
 
-// export const GetUpdatesByProjectAsync = async (projectId: string) => {
-//   try {
-//     const updates = await FetchGetProjectUpdates(projectId);
-//     await GetProjectUpdatesAsync(projectId);
-//     return updates;
-//   } catch (error) {
-//     console.log("no updates");
-//   }
-// };
+export const EditCommentAsync = createAsyncThunk<
+  UpdateCommentNoDate,
+  UpdateComment,
+  { rejectValue: string }
+>("project/editupdatecomment", async (updateComment, thunkAPI) => {
+  try {
+    const updatedComment = await FetchEditUpdateComment(updateComment);
+    if (updatedComment) {
+      return updatedComment;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid redigering av uppdaterings kommentar."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid redigering av projekt kommentar."
+    );
+  }
+});
 
-// export const GetCommentsByProjectAsync = async (projectUpdateId: string) => {
-//   try {
-//     const comments = await FetchGetCommentsByUpdate(projectUpdateId);
-//     return comments;
-//   } catch (error) {
-//     console.log("no comments");
-//   }
-// };
+export const DeleteCommentAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("project/deleteupdatecomment", async (updateCommentId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteUpdateComment(updateCommentId);
+    if (isDeleted) {
+      return updateCommentId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid borttagning av uppdaterings kommentar."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid borttagning av projekt kommentar."
+    );
+  }
+});
+
+export const EditProjectAsync = createAsyncThunk<
+  ProjectNoDate,
+  Project,
+  { rejectValue: string }
+>("project/editproject", async (project, thunkAPI) => {
+  try {
+    const updatedProject = await FetchEditProject(project);
+    if (updatedProject) {
+      return updatedProject;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid redigering av projekt."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid redigering av projekt."
+    );
+  }
+});
+
+export const DeleteProjectAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("project/deleteproject", async (projectId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteProject(projectId);
+    if (isDeleted) {
+      return projectId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid borttagning av projekt."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid borttagning av projekt."
+    );
+  }
+});
+
+export const DeleteFileAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("project/deletefile", async (fileId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteFile(fileId);
+    if (isDeleted) {
+      return fileId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid borttagning av fil."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid borttagning av projekt."
+    );
+  }
+});
 
 const saveActiveProjectToLocalStorage = (project: ProjectNoDate) => {
   localStorage.setItem("activeProject", JSON.stringify(project));
@@ -361,6 +452,62 @@ const projectSlice = createSlice({
         }
       })
       .addCase(GetUpdateCommentsAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
+      })
+      .addCase(DeleteProjectAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          const filteredProjects = state.projects?.filter(
+            (m) => m.id != action.payload
+          );
+          state.projects = filteredProjects;
+          state.error = null;
+        }
+      })
+      .addCase(DeleteProjectAsync.rejected, (state) => {
+        state.error = "Något gick fel när projektet skulle tas bort.";
+      })
+      .addCase(EditProjectAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          if (state.projects) {
+            const index = state.projects.findIndex(
+              (m) => m.id === action.payload.id
+            );
+            if (index !== -1) {
+              state.projects[index] = action.payload;
+            }
+          }
+          state.error = null;
+        }
+      })
+      .addCase(EditProjectAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
+      })
+      .addCase(DeleteCommentAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          const filteredProjects = state.activeComments?.filter(
+            (m) => m.id != action.payload
+          );
+          state.activeComments = filteredProjects;
+          state.error = null;
+        }
+      })
+      .addCase(DeleteCommentAsync.rejected, (state) => {
+        state.error = "Något gick fel när kommentaren skulle tas bort.";
+      })
+      .addCase(EditCommentAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          if (state.activeComments) {
+            const index = state.activeComments.findIndex(
+              (m) => m.id === action.payload.id
+            );
+            if (index !== -1) {
+              state.activeComments[index] = action.payload;
+            }
+          }
+          state.error = null;
+        }
+      })
+      .addCase(EditCommentAsync.rejected, (state) => {
         state.error = "Något gick fel.";
       });
   },
