@@ -260,13 +260,29 @@ const meetingSlice = createSlice({
       })
       .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
         if (action.payload) {
-          const filteredMeetings = state.occasions?.filter(
-            (m) => m.meetingId != action.payload
+          const filteredOccasions = state.occasions?.filter(
+            (occasion) => occasion.meetingId !== action.payload
           );
-          state.occasions = filteredMeetings;
+          state.occasions = filteredOccasions;
+      
+          const filteredPastOccasions = state.pastOccasions?.filter(
+            (pastOccasion) => pastOccasion.meetingId !== action.payload
+          );
+          state.pastOccasions = filteredPastOccasions;
+      
           state.error = null;
         }
       })
+      
+      // .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
+      //   if (action.payload) {
+      //     const filteredMeetings = state.occasions?.filter(
+      //       (m) => m.meetingId != action.payload
+      //     );
+      //     state.occasions = filteredMeetings;
+      //     state.error = null;
+      //   }
+      // })
       .addCase(DeleteMeetingAsync.rejected, (state) => {
         state.error = "Något gick fel när meddelandet skulle tas bort.";
       })
