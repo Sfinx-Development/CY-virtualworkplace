@@ -2,7 +2,6 @@ import * as signalR from "@microsoft/signalr";
 import { Message } from "../../../types";
 import { getApiUrl } from "../../api/config";
 
-// ÄNDRA HÄR BEROENDE PÅ MILJÖ
 const hubUrl = getApiUrl() + `/chathub`;
 
 class ChatConnector {

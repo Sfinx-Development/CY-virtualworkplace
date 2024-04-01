@@ -123,7 +123,9 @@ public class FileService : IFileService
                 await _profileRepository.GetByUserAndTeamIdAsync(loggedInUser.Id, projet.TeamId)
                 ?? throw new Exception("Not valid user for this request.");
 
-            var filesByUpdateComment = await _fileRepository.GetAllByUpdateComment(updateCommentId);
+            var filesByUpdateComment =
+                await _fileRepository.GetAllByUpdateComment(updateCommentId)
+                ?? new List<ProjectFile>();
             var filesDTOs = new List<ProjectFileDTO>();
             filesDTOs = filesByUpdateComment
                 .Select(
