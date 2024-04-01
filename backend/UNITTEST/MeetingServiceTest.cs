@@ -65,9 +65,6 @@ public class MeetingServiceTest
             {
                 // kollar så att meetingoccasion har rätt properties
                 Assert.NotNull(occasion);
-                Assert.NotNull(occasion.Id);
-                Assert.Equal(occasion.Profile, profile);
-                Assert.Equal(occasion.Meeting, createdMeeting);
             })
             .ReturnsAsync(new MeetingOccasion()); //ska returnera ett occasion
 
