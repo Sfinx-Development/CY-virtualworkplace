@@ -100,7 +100,6 @@ export default function CalendarPage() {
         const parsedDate = Date.parse(editedDate);
 
         if (!isNaN(parsedDate)) {
-          
           const updatedTodo: Todo = {
             ...todoToUpdate,
             title: editedTitle,
@@ -162,7 +161,6 @@ export default function CalendarPage() {
   };
 
   const handleDayClick = (day: string) => {
-   
     if (todosInTeam) {
       const todosForDay = todosInTeam.filter((todo) => {
         const todoDate = new Date(todo.date);
@@ -211,7 +209,6 @@ export default function CalendarPage() {
       teamId: activeTeam?.id,
     };
 
-    console.log("newtodo", newTodo);
     await dispatch(createTeamTodoAsync(newTodo));
 
     setDescription("");
@@ -235,7 +232,6 @@ export default function CalendarPage() {
 
       return holidays;
     } catch (error) {
-      console.log(error);
       return [];
     }
   }
@@ -482,11 +478,11 @@ export default function CalendarPage() {
                   },
                 }}
               />
-              <Button onClick={handleCreateTodo}>Add Todo</Button>
+              <Button onClick={handleCreateTodo}>Ny Todo</Button>
             </div>
 
             {fieldError && (
-              <Typography color="error">Please fill all fields</Typography>
+              <Typography color="error">Alla fält måste fyllas i</Typography>
             )}
           </div>
         </div>

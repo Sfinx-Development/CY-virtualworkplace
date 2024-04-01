@@ -22,7 +22,7 @@ public class UpdateCommentService : IUpdateCommentService
         _updateRepository = updateCommentRepository;
     }
 
-    public async Task<UpdateCommentDTO> CreateAsync(
+    public async Task<OutgoingCommentDTO> CreateAsync(
         UpdateCommentDTO updateCommentDTO,
         User loggedInUser
     )
@@ -49,12 +49,12 @@ public class UpdateCommentService : IUpdateCommentService
                 DateTime.Now
             );
             var createdUpdate = await _updateRepository.CreateAsync(newUpdate);
-            var createdUpdateDTO = new UpdateCommentDTO(
+            var createdUpdateDTO = new OutgoingCommentDTO(
                 createdUpdate.Id,
                 createdUpdate.Text,
-                createdUpdate.ProfileId,
                 createdUpdate.ProjectUpdateId,
-                createdUpdate.DateCreated
+                createdUpdate.DateCreated,
+                createdUpdate.Profile
             );
             return createdUpdateDTO;
         }
@@ -85,7 +85,7 @@ public class UpdateCommentService : IUpdateCommentService
         }
     }
 
-    public async Task<IEnumerable<UpdateCommentDTO>> GetAllByProjectUpdate(
+    public async Task<IEnumerable<OutgoingCommentDTO>> GetAllByProjectUpdate(
         string projectUpdateId,
         User loggedInUser
     )
@@ -99,17 +99,20 @@ public class UpdateCommentService : IUpdateCommentService
                 throw new Exception("You can only get results from your own team.");
             }
             var updateComments = await _updateRepository.GetAllByProjectUpdate(projectUpdate.Id);
-            var updateCommentDTOs = updateComments.Select(
-                u =>
-                    new UpdateCommentDTO(
-                        u.Id,
-                        u.Text,
-                        u.ProfileId,
-                        u.ProjectUpdateId,
-                        u.DateCreated
-                    )
-            );
-            return updateCommentDTOs ?? new List<UpdateCommentDTO>();
+            var updateCommentDTOs = updateComments
+                .Select(
+                    u =>
+                        new OutgoingCommentDTO(
+                            u.Id,
+                            u.Text,
+                            u.ProjectUpdateId,
+                            u.DateCreated,
+                            u.Profile
+                        )
+                )
+                .OrderByDescending(h => h.DateCreated)
+                .ToList();
+            return updateCommentDTOs ?? new List<OutgoingCommentDTO>();
         }
         catch (Exception e)
         {
@@ -117,18 +120,18 @@ public class UpdateCommentService : IUpdateCommentService
         }
     }
 
-    public async Task<UpdateCommentDTO> GetByIdAsync(string id)
+    public async Task<OutgoingCommentDTO> GetByIdAsync(string id)
     {
         try
         {
             //villkor?
             var updateComment = await _updateRepository.GetByIdAsync(id);
-            return new UpdateCommentDTO(
+            return new OutgoingCommentDTO(
                 updateComment.Id,
                 updateComment.Text,
-                updateComment.ProfileId,
                 updateComment.ProjectUpdateId,
-                updateComment.DateCreated
+                updateComment.DateCreated,
+                updateComment.Profile
             );
         }
         catch (Exception e)
@@ -137,7 +140,7 @@ public class UpdateCommentService : IUpdateCommentService
         }
     }
 
-    public async Task<UpdateCommentDTO> UpdateAsync(
+    public async Task<OutgoingCommentDTO> UpdateAsync(
         UpdateCommentDTO updateCommentDTO,
         User loggedInUser
     )
@@ -162,12 +165,12 @@ public class UpdateCommentService : IUpdateCommentService
             existingUpdate.Text = updateCommentDTO.Text;
 
             var createdUpdate = await _updateRepository.UpdateAsync(existingUpdate);
-            var createdUpdateDTO = new UpdateCommentDTO(
+            var createdUpdateDTO = new OutgoingCommentDTO(
                 createdUpdate.Id,
                 createdUpdate.Text,
-                createdUpdate.ProfileId,
                 createdUpdate.ProjectUpdateId,
-                createdUpdate.DateCreated
+                createdUpdate.DateCreated,
+                createdUpdate.Profile
             );
             return createdUpdateDTO;
         }

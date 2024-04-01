@@ -72,7 +72,6 @@ export const FetchGetTodo = async (
     const responseBody = await response.json();
   
     const todos = responseBody.$values as Todo[];
-    console.log("TOOODOOOOS: ", todos);
     return todos;
 
   } catch (error) {

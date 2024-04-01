@@ -1,12 +1,22 @@
-import { Project, ProjectUpdate } from "../../types";
+import {
+  FileDTO,
+  Project,
+  ProjectNoDate,
+  ProjectUpdate,
+  ProjectUpdateNoDate,
+  UpdateComment,
+  UpdateCommentNoDate,
+} from "../../types";
 import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + `/project`;
 const apiUpdateUrl = getApiUrl() + `/projectUpdate`;
+const apiUpdateCommentUrl = getApiUrl() + `/updateComment`;
+const apiFileUrl = getApiUrl() + `/projectFile`;
 
 export const FetchCreateProject = async (
   project: Project
-): Promise<Project> => {
+): Promise<ProjectNoDate> => {
   try {
     const response = await fetch(apiUrl + "/create", {
       method: "POST",
@@ -21,14 +31,9 @@ export const FetchCreateProject = async (
       throw new Error("Något gick fel vid skapandet av project");
     }
 
-    const responseBody = (await response.json()) as Project;
+    const responseBody = (await response.json()) as ProjectNoDate;
 
-    const updatedProject = {
-      ...responseBody,
-      dateCreated: new Date(responseBody.dateCreated),
-      endDate: new Date(responseBody.endDate),
-    };
-    return updatedProject;
+    return responseBody;
   } catch (error) {
     console.error(error);
     throw error;
@@ -37,7 +42,7 @@ export const FetchCreateProject = async (
 
 export const FetchGetTeamProjects = async (
   teamId: string
-): Promise<Project[]> => {
+): Promise<ProjectNoDate[]> => {
   try {
     const response = await fetch(apiUrl + "/byteam", {
       method: "POST",
@@ -54,10 +59,7 @@ export const FetchGetTeamProjects = async (
 
     const responseBody = await response.json();
 
-    const projects = responseBody.$values.map((project: Project) => ({
-      ...project,
-      dateCreated: new Date(project.dateCreated),
-    })) as Project[];
+    const projects = responseBody.$values as ProjectNoDate[];
 
     return projects;
   } catch (error) {
@@ -69,7 +71,7 @@ export const FetchGetTeamProjects = async (
 /////////////////////////////////PROJECTUPDATE
 export const FetchCreateProjectuPDATE = async (
   projectUpdate: ProjectUpdate
-): Promise<ProjectUpdate> => {
+): Promise<ProjectUpdateNoDate> => {
   try {
     const response = await fetch(apiUpdateUrl + "/create", {
       method: "POST",
@@ -84,12 +86,7 @@ export const FetchCreateProjectuPDATE = async (
       throw new Error("Något gick fel vid skapandet av projekt uppdateringen");
     }
 
-    const responseBody = (await response.json()) as ProjectUpdate;
-
-    const updatedProjectUpdate = {
-      ...responseBody,
-      dateCreated: new Date(responseBody.dateCreated),
-    };
+    const updatedProjectUpdate = (await response.json()) as ProjectUpdateNoDate;
 
     return updatedProjectUpdate;
   } catch (error) {
@@ -100,7 +97,7 @@ export const FetchCreateProjectuPDATE = async (
 
 export const FetchGetProjectUpdates = async (
   projectId: string
-): Promise<ProjectUpdate[]> => {
+): Promise<ProjectUpdateNoDate[]> => {
   try {
     const response = await fetch(apiUpdateUrl + "/byproject", {
       method: "POST",
@@ -119,12 +116,114 @@ export const FetchGetProjectUpdates = async (
 
     const responseBody = await response.json();
 
-    const updates = responseBody.$values.map((update: ProjectUpdate) => ({
-      ...update,
-      dateCreated: new Date(update.dateCreated),
-    })) as ProjectUpdate[];
+    const updates = responseBody.$values as ProjectUpdateNoDate[];
 
     return updates;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+//////////////////////////UPDATE COMMENT
+
+export const FetchCreateUpdateComment = async (
+  comment: UpdateComment
+): Promise<UpdateCommentNoDate> => {
+  try {
+    const response = await fetch(apiUpdateCommentUrl + "/create", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(comment),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid skapandet av kommentar");
+    }
+
+    const createdComment = (await response.json()) as UpdateCommentNoDate;
+
+    return createdComment;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchGetCommentsByUpdate = async (
+  projectUpdateId: string
+): Promise<UpdateCommentNoDate[]> => {
+  try {
+    const response = await fetch(apiUpdateCommentUrl + "/byprojectupdate", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(projectUpdateId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av kommentarerna");
+    }
+
+    const responseBody = await response.json();
+
+    const comments = responseBody.$values as UpdateCommentNoDate[];
+    return comments;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+///////////////////////////////////UPDATECOMMMENT FILES
+export const FetchCreateFile = async (formFile: FormData): Promise<FileDTO> => {
+  try {
+    const response = await fetch(apiFileUrl + "/create", {
+      method: "POST",
+      credentials: "include",
+      body: formFile,
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid skapandet av fil");
+    }
+
+    const responseBody = (await response.json()) as FileDTO;
+
+    return responseBody;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchGetFilesByUpdateComment = async (
+  updateCommentId: string
+): Promise<FileDTO[]> => {
+  try {
+    const response = await fetch(apiFileUrl + "/byupdatecomment", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateCommentId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid hämtning av filerna");
+    }
+
+    const responseBody = await response.json();
+
+    const files = responseBody.$values as FileDTO[];
+
+    return files;
   } catch (error) {
     console.error(error);
     throw error;

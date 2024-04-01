@@ -8,6 +8,7 @@ import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
 import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
 import CreateProject from "./pages/AfterChosenTeam/CreateProject";
+import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 import HealthCheckHub from "./pages/AfterChosenTeam/HealthCheckPage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
@@ -17,6 +18,7 @@ import { MeetingRoom } from "./pages/AfterChosenTeam/MeetingRoomPage";
 import Menu from "./pages/AfterChosenTeam/MenuPage";
 import Office from "./pages/AfterChosenTeam/OfficePage";
 import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
+import UpdateComments from "./pages/AfterChosenTeam/UpdateComments";
 import CreateAccount from "./pages/NotSignedIn/CreateAccountPage";
 import ForgotPassword from "./pages/NotSignedIn/ForgotPasswordPage";
 import IndexPage from "./pages/NotSignedIn/IndexPage";
@@ -27,7 +29,6 @@ import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
-import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
@@ -92,6 +93,7 @@ const Navigation = () => {
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="createproject" element={<CreateProject />} />
           <Route path="createupdate" element={<CreateUpdate />} />
+          <Route path="updateevents" element={<UpdateComments />} />
 
           {/* <Route
             path="connect"

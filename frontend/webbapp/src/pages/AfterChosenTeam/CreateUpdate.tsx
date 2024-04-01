@@ -1,8 +1,8 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { ProjectUpdate } from "../../../types";
+import { ProjectUpdate, UpdateComment } from "../../../types";
 import { getActiveProfile } from "../../slices/profileSlice";
 import {
   CreateProjectUpdateAsync,
@@ -10,6 +10,7 @@ import {
 } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
+import { theme1 } from "../../theme";
 
 export default function CreateUpdate() {
   const dispatch = useAppDispatch();
@@ -19,9 +20,14 @@ export default function CreateUpdate() {
   const activeProject = useAppSelector(
     (state) => state.projectSlice.activeProject
   );
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
   const [comment, setComment] = useState("");
   const [fieldError, setFieldError] = useState(false);
+
+  const [files, setFiles] = useState<FileList | undefined>(undefined);
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -29,8 +35,15 @@ export default function CreateUpdate() {
     dispatch(getActiveProject());
   }, []);
 
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event && event.target && event.target.files) {
+      const selectedFiles = event.target.files;
+      setFiles(selectedFiles);
+    }
+  };
+
   const handleCreateUpdate = async () => {
-    if (comment !== "" && activeTeam && activeProject) {
+    if (activeTeam && activeProject && activeProfile) {
       setFieldError(false);
 
       const update: ProjectUpdate = {
@@ -40,9 +53,23 @@ export default function CreateUpdate() {
         version: 0,
       };
 
-      await dispatch(CreateProjectUpdateAsync(update));
+      const updateComment: UpdateComment = {
+        id: "undefined",
+        text: comment,
+        profileId: activeProfile?.id,
+        projectUpdateId: "undefined",
+        dateCreated: new Date(),
+        profileFullName: activeProfile.fullName,
+      };
 
-      setComment("");
+      await dispatch(
+        CreateProjectUpdateAsync({
+          updateComment: updateComment,
+          projectUpdate: update,
+          files: files,
+        })
+      );
+
       navigate("/menu");
     } else {
       setFieldError(true);
@@ -64,29 +91,72 @@ export default function CreateUpdate() {
         <Typography variant={isMobile ? "h5" : "h4"}>
           Ny uppdatering på {activeProject?.title}
         </Typography>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        ></div>
         <TextField
           label="Kommentar"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           multiline
+          rows={6}
           variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
+          sx={{ width: "100%", maxWidth: "600px", marginTop: 2 }}
         />
+        <Typography>
+          Du kan välja flera filer genom att markera flera
+        </Typography>
+        <label
+          htmlFor="file-upload"
+          style={{
+            display: "inline-block",
+            cursor: "pointer",
+            backgroundColor: "lightgreen",
+            color: "white",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            fontWeight: "bold",
+            marginBottom: "10px",
+          }}
+        >
+          <Typography>Välj filer</Typography>
+        </label>
+        <input
+          id="file-upload"
+          type="file"
+          multiple
+          onChange={handleFileChange}
+          style={{ display: "none" }}
+        />
+        {files && files.length > 0 && (
+          <div style={{ marginTop: "10px", width: "100%", maxWidth: "600px" }}>
+            <Typography variant="body1">Valda filer:</Typography>
+            {Array.from(files).map((file, index) => (
+              <div key={index} style={{ marginBottom: "10px" }}>
+                <Typography>{file.name}</Typography>
+                {file.type.startsWith("image/") && (
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "300px",
+                      marginTop: "5px",
+                    }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         <Button
           variant="contained"
           onClick={handleCreateUpdate}
-          sx={{ marginTop: 2 }}
+          sx={{
+            marginTop: 2,
+            color: "white",
+            backgroundColor: theme1.palette.primary.main,
+          }}
         >
-          Spara 
+          Spara
         </Button>
       </div>
     </Container>

@@ -40,12 +40,14 @@ public class FileService : IFileService
                 filePath
             );
 
+            var created = await _fileRepository.CreateAsync(savedFile);
+
             return new ProjectFileDTO(
-                savedFile.Id,
-                savedFile.FileName,
-                savedFile.Content,
-                savedFile.UpdateCommentId,
-                savedFile.FilePath
+                created.Id,
+                created.FileName,
+                created.Content,
+                created.UpdateCommentId,
+                created.FilePath
             );
         }
         catch (Exception ex)
@@ -108,8 +110,7 @@ public class FileService : IFileService
     {
         try
         {
-            var file = await _fileRepository.GetByIdAsync(updateCommentId);
-            var updateComment = await _updateCommentRepository.GetByIdAsync(file.UpdateCommentId);
+            var updateComment = await _updateCommentRepository.GetByIdAsync(updateCommentId);
             var projet = await _projectRepository.GetByIdAsync(
                 updateComment.ProjectUpdate.ProjectId
             );
@@ -117,7 +118,9 @@ public class FileService : IFileService
                 await _profileRepository.GetByUserAndTeamIdAsync(loggedInUser.Id, projet.TeamId)
                 ?? throw new Exception("Not valid user for this request.");
 
-            var filesByUpdateComment = await _fileRepository.GetAllByUpdateComment(updateCommentId);
+            var filesByUpdateComment =
+                await _fileRepository.GetAllByUpdateComment(updateCommentId)
+                ?? new List<ProjectFile>();
             var filesDTOs = new List<ProjectFileDTO>();
             filesDTOs = filesByUpdateComment
                 .Select(

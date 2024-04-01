@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { isMobile } from "../../../globalConstants";
-import { Meeting, MeetingOccasion } from "../../../types";
+import { MeetingNoDate, MeetingOccasionNoDate } from "../../../types";
 import {
   DeleteMeetingAsync,
   EditMeetingAsync,
@@ -62,9 +62,13 @@ export default function MeetingInTeamsPage() {
   }, [activeProfile]);
 
   const currentDate = new Date();
-  const upcomingMeetings = occasions
-    ? occasions.filter((occasion: { date: string | number | Date; }) => new Date(occasion.date) >= currentDate)
-    : [];
+  const upcomingMeetings =
+    occasions && Array.isArray(occasions)
+      ? occasions.filter(
+          (occasion: MeetingOccasionNoDate) =>
+            new Date(occasion.date) >= currentDate
+        )
+      : [];
 
   const pastMeetings =
     useAppSelector((state) => state.meetingSlice.pastOccasions) || [];
@@ -73,19 +77,18 @@ export default function MeetingInTeamsPage() {
     dispatch(DeleteMeetingAsync(meetingId));
   };
   const handleEditMeeting = () => {
-    if (meetingIdToEdit && isEditMode) {
-      const meetingToUpdate = meetings?.find((m: { id: string; }) => m.id == meetingIdToEdit);
+    if (meetingIdToEdit && isEditMode && meetings) {
+      const meetingToUpdate = meetings.find((m) => m.id == meetingIdToEdit);
       if (meetingToUpdate) {
         // Använd Date.parse() för att tolka datumsträngen i lokala tidszonen
-        const parsedDate = Date.parse(editedDate);
 
-        if (!isNaN(parsedDate)) {
+        if (editedDate) {
           // Kontrollera att tolkningen är giltig
-          const updatedMeeting: Meeting = {
+          const updatedMeeting: MeetingNoDate = {
             ...meetingToUpdate,
             name: editedName,
             description: editedDescription,
-            date: new Date(parsedDate),
+            date: new Date(editedDate).toString(),
           };
           dispatch(EditMeetingAsync(updatedMeeting));
         } else {
@@ -104,7 +107,9 @@ export default function MeetingInTeamsPage() {
 
   const handleSetEditMode = (meetingId: string) => {
     if (meetings) {
-      const meetingToEdit = meetings.find((m: { id: string; }) => m.id == meetingId);
+      const meetingToEdit = meetings.find(
+        (m: { id: string }) => m.id == meetingId
+      );
       if (meetingToEdit) {
         setIsEditMode(true);
         setEditedName(meetingToEdit?.name);
@@ -126,12 +131,11 @@ export default function MeetingInTeamsPage() {
       <Typography variant={isMobile ? "h5" : "h4"}>
         {activeTeam?.name}
       </Typography>
-
       <Box>
         {upcomingMeetings.length > 0 && (
           <Box>
             <Typography variant="h5">Kommande möten</Typography>
-            {upcomingMeetings?.map((meeting: MeetingOccasion ) => (
+            {upcomingMeetings?.map((meeting: MeetingOccasionNoDate) => (
               <Card
                 key={meeting.id}
                 style={{ marginBottom: "15px", backgroundColor: officeColor }}
@@ -170,9 +174,7 @@ export default function MeetingInTeamsPage() {
                         onKeyDown={handleKeyPress}
                       />
                     ) : (
-                      <Typography variant="body2">
-                        {meeting.date.toString()}
-                      </Typography>
+                      <Typography variant="body2">{meeting.date}</Typography>
                     )}
                     {isEditMode && meetingIdToEdit == meeting.meetingId ? (
                       <TextField
@@ -210,6 +212,7 @@ export default function MeetingInTeamsPage() {
         )}
 
         {pastMeetings.length > 0 && (
+
        <Box>
        <Typography variant="h5">Passerade möten</Typography>
        {pastMeetings?.map((meeting: MeetingOccasion) => (
@@ -243,6 +246,8 @@ export default function MeetingInTeamsPage() {
        ))}
      </Box>
      
+
+
         )}
       </Box>
     </Container>

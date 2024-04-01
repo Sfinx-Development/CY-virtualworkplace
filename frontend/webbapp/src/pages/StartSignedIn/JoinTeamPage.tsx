@@ -46,7 +46,7 @@ export default function JoinTeam() {
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (event.key === "Enter") {
-      event.preventDefault(); // Prevent the default Enter key behavior
+      event.preventDefault();
       handleJoinTeam();
     }
   };
