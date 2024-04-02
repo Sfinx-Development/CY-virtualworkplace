@@ -151,7 +151,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   };
 
   return (
-    <div style={{ width: "100%", marginTop: 10 }}>
+    <div style={{ width: "100%", marginTop: isMobile ? 2 : 10 }}>
       <Dialog open={openTodoPopup} onClose={() => setOpenTodoPopup(false)}>
         <DialogTitle>Ta bort</DialogTitle>
         <DialogContent dividers>
@@ -161,12 +161,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
           <IconButton onClick={() => handleDeleteProject(project.id)}>
             <Typography>Ta bort {project.title}</Typography>
           </IconButton>
-          {/* <IconButton size="small" onClick={() => handleSetEditMode(todo.id)}>
-            <EditIcon />
-          </IconButton>
-          {isEditMode && todo.id === todoIdToEdit && (
-            <Button onClick={handleEditTodo}>Spara ändringar</Button>
-          )} */}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
@@ -188,7 +182,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
                 fontSize: isMobile ? "20" : "30",
               }}
             />
-            <Typography>UPPDATERING</Typography>
+            {isMobile ? null : <Typography>UPPDATERING</Typography>}
           </Box>
         </Button>
       </Box>
@@ -215,14 +209,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
         ))}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography>{`${progress.toFixed(2)}% AVKLARAT`}</Typography>
-        <Typography>
-          {updateDates?.length ?? 0}{" "}
-          {updateDates?.length == 1 ? "UPPDATERING" : "UPPDATERINGAR"}
-        </Typography>
-        <Typography>{`${daysSinceStart} / ${totalDays} DAGAR`}</Typography>
-      </div>
+      {isMobile ? null : (
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography>{`${progress.toFixed(2)}% AVKLARAT`}</Typography>
+          <Typography>
+            {updateDates?.length ?? 0}{" "}
+            {updateDates?.length == 1 ? "UPPDATERING" : "UPPDATERINGAR"}
+          </Typography>
+          <Typography>{`${daysSinceStart} / ${totalDays} DAGAR`}</Typography>
+        </div>
+      )}
     </div>
   );
 };

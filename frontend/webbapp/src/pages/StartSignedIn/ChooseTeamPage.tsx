@@ -100,7 +100,7 @@ export default function ChooseTeam() {
               key={team.id}
               sx={{
                 display: "flex",
-                minWidth: isMobile ? "200px" : "300px",
+                minWidth: isMobile ? "90%" : "300px",
                 backgroundColor: "#CDCDCB",
               }}
             >

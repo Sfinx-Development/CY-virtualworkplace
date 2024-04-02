@@ -322,7 +322,7 @@ export default function Menu() {
 
       <Container
         sx={{
-          marginTop: 15,
+          marginTop: isMobile ? 5 : 15,
           display: "flex",
           flexDirection: "column",
           height: is800Mobile ? "350px" : "300px",
