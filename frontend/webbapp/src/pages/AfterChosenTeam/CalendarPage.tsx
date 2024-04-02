@@ -211,6 +211,7 @@ export default function CalendarPage() {
 
     await dispatch(createTeamTodoAsync(newTodo));
 
+    SetTitle("");
     setDescription("");
     setTodoDate("");
   };
