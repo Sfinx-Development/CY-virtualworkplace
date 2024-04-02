@@ -77,17 +77,27 @@ export default function UpdateComments() {
     navigate("/menu");
   };
 
+  //KVAr: TA BORT FIL OCH KUNNA LÄGGA TILL NY UPDATECOMMENT MED FILES
   const handleDeleteFile = (fileId: string) => {
     dispatch(DeleteFileAsync(fileId));
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleUpdateComment();
+    }
+  };
+
   const handleUpdateComment = () => {
+    console.log("KÖRS");
     const comment = comments?.find((c) => c.id == commentIdToEdit);
-    if (comment) {
+    if (comment && updatedText != "") {
       const updatedComment: UpdateComment = {
         ...comment,
+        text: updatedText,
         dateCreated: new Date(comment.dateCreated),
       };
+      console.log("UPPDATERADE: ", updatedComment);
       dispatch(EditCommentAsync(updatedComment));
     }
     setCommentIdToEdit("");
@@ -148,7 +158,7 @@ export default function UpdateComments() {
                         onChange={(e) => setUpdatedText(e.target.value)}
                         variant="outlined"
                         sx={{ width: "250px", marginTop: 2 }}
-                        onKeyDown={handleUpdateComment}
+                        onKeyDown={handleKeyPress}
                       />
                     ) : (
                       <Typography variant="body2">{comment.text}</Typography>
