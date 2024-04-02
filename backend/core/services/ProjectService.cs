@@ -171,10 +171,10 @@ public class ProjectService : IProjectService
                 loggedInUser.Id,
                 project.TeamId
             );
-            if (!profile.IsOwner)
-            {
-                throw new Exception("Only team owner can delete project.");
-            }
+            // if (project.)
+            // {
+            //     throw new Exception("Only team owner can delete project.");
+            // }
             await _projectRepository.DeleteByIdAsync(id);
         }
         catch (Exception e)

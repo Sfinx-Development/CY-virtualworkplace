@@ -68,6 +68,54 @@ export const FetchGetTeamProjects = async (
   }
 };
 
+export const FetchEditProject = async (
+  project: Project
+): Promise<ProjectNoDate> => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(project),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid uppdatering av project");
+    }
+
+    const responseBody = (await response.json()) as ProjectNoDate;
+
+    return responseBody;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchDeleteProject = async (projectId: string) => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(projectId),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 /////////////////////////////////PROJECTUPDATE
 export const FetchCreateProjectuPDATE = async (
   projectUpdate: ProjectUpdate
@@ -119,6 +167,27 @@ export const FetchGetProjectUpdates = async (
     const updates = responseBody.$values as ProjectUpdateNoDate[];
 
     return updates;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchDeleteProjectUpdate = async (projectId: string) => {
+  try {
+    const response = await fetch(apiUpdateUrl, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(projectId),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+    return true;
   } catch (error) {
     console.error(error);
     throw error;
@@ -180,6 +249,53 @@ export const FetchGetCommentsByUpdate = async (
   }
 };
 
+export const FetchEditUpdateComment = async (
+  comment: UpdateComment
+): Promise<UpdateCommentNoDate> => {
+  try {
+    const response = await fetch(apiUpdateCommentUrl, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(comment),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid redigering av kommentar");
+    }
+
+    const createdComment = (await response.json()) as UpdateCommentNoDate;
+
+    return createdComment;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchDeleteUpdateComment = async (updateCommentId: string) => {
+  try {
+    const response = await fetch(apiUpdateCommentUrl, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateCommentId),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 ///////////////////////////////////UPDATECOMMMENT FILES
 export const FetchCreateFile = async (formFile: FormData): Promise<FileDTO> => {
   try {
@@ -224,6 +340,27 @@ export const FetchGetFilesByUpdateComment = async (
     const files = responseBody.$values as FileDTO[];
 
     return files;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchDeleteFile = async (fileId: string) => {
+  try {
+    const response = await fetch(apiFileUrl, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fileId),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+    return true;
   } catch (error) {
     console.error(error);
     throw error;

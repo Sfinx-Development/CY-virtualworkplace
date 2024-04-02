@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import CalendarPage from "./pages/AfterChosenTeam/CalendarPage";
 import ChatRoom from "./pages/AfterChosenTeam/ChatRoomPage";
+import CreateComment from "./pages/AfterChosenTeam/CreateComment";
 import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
 import CreateMeeting from "./pages/AfterChosenTeam/CreateMeetingPage";
 import CreateProject from "./pages/AfterChosenTeam/CreateProject";
@@ -94,6 +95,7 @@ const Navigation = () => {
           <Route path="createproject" element={<CreateProject />} />
           <Route path="createupdate" element={<CreateUpdate />} />
           <Route path="updateevents" element={<UpdateComments />} />
+          <Route path="createcomment" element={<CreateComment />} />
 
           {/* <Route
             path="connect"

@@ -1,16 +1,29 @@
-import { Container, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Container, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { FileDTO, UpdateComment } from "../../types";
-import { GetFilesByUpdateCommentAsync } from "../slices/projectSlice";
+import { FileDTO, UpdateCommentNoDate } from "../../types";
+import {
+  DeleteFileAsync,
+  GetFilesByUpdateCommentAsync,
+} from "../slices/projectSlice";
 import { useAppDispatch } from "../slices/store";
 
 interface UpdatePreviewProps {
-  updateComment: UpdateComment;
+  updateComment: UpdateCommentNoDate;
+  isMyUpdateComment: boolean;
 }
 
-const UpdatePreview: React.FC<UpdatePreviewProps> = ({ updateComment }) => {
+const UpdatePreview: React.FC<UpdatePreviewProps> = ({
+  updateComment,
+  isMyUpdateComment,
+}) => {
   const dispatch = useAppDispatch();
   const [files, setFiles] = useState<FileDTO[] | undefined>(undefined);
+
+  const handleDeleteFile = (fileId: string) => {
+    console.log("FILEID: ", fileId);
+    dispatch(DeleteFileAsync(fileId));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +44,7 @@ const UpdatePreview: React.FC<UpdatePreviewProps> = ({ updateComment }) => {
 
     fetchData();
     return () => {};
-  }, []);
+  }, [files]);
 
   const getFileTypeFromFileName = (fileName: string): string => {
     const fileExtension = fileName.split(".").pop()?.toLowerCase();
@@ -75,6 +88,11 @@ const UpdatePreview: React.FC<UpdatePreviewProps> = ({ updateComment }) => {
                 >
                   <Typography>Ladda ner</Typography>
                 </a>
+                {isMyUpdateComment ? (
+                  <IconButton onClick={() => handleDeleteFile(file.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                ) : null}
               </li>
             ))}
         </ul>
