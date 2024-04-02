@@ -133,7 +133,7 @@ export default function Menu() {
   const handleMouseLeave = () => {
     setProfileDropdown(false);
   };
-  const backgroundImageUrl = "https://i.imgur.com/qwzB7Zi.jpeg";
+  const backgroundImageUrl = "https://i.imgur.com/AFLAtC0.jpeg";
 
   const handleNavigateToCalendar = () => {
     if (activeTeam) {
