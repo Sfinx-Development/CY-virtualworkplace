@@ -15,6 +15,7 @@ import {
   FetchCreateUpdateComment,
   FetchDeleteFile,
   FetchDeleteProject,
+  FetchDeleteProjectUpdate,
   FetchDeleteUpdateComment,
   FetchEditProject,
   FetchEditUpdateComment,
@@ -371,6 +372,27 @@ export const DeleteProjectAsync = createAsyncThunk<
   }
 });
 
+export const DeleteProjectUpdateAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("project/deleteprojectupdate", async (projectUpdateId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteProjectUpdate(projectUpdateId);
+    if (isDeleted) {
+      return projectUpdateId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid borttagning av projektuppdatering."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid borttagning av projekt."
+    );
+  }
+});
+
 export const DeleteFileAsync = createAsyncThunk<
   string,
   string,
@@ -565,7 +587,7 @@ const projectSlice = createSlice({
           }
           state.error = null;
         }
-      })
+      });
   },
 });
 

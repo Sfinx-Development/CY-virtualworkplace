@@ -173,7 +173,7 @@ export const FetchGetProjectUpdates = async (
   }
 };
 
-export const FetchDeleteProjectUpdate = async (projectId: string) => {
+export const FetchDeleteProjectUpdate = async (projectUpdateId: string) => {
   try {
     const response = await fetch(apiUpdateUrl, {
       method: "DELETE",
@@ -181,7 +181,7 @@ export const FetchDeleteProjectUpdate = async (projectId: string) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(projectId),
+      body: JSON.stringify(projectUpdateId),
     });
 
     if (!response.ok) {
