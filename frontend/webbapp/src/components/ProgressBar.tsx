@@ -1,10 +1,21 @@
 import AddIcon from "@mui/icons-material/Add";
-import { Box, Button, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../globalConstants";
 import { ProjectNoDate, ProjectUpdateNoDate } from "../../types";
 import {
+  DeleteProjectAsync,
   GetProjectUpdatesAsync,
   setActiveProject,
   setActiveUpdate,
@@ -36,6 +47,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   const [daysSinceStart, setDaysSinceStart] = useState<number>(0);
   const [totalDays, setTotalDays] = useState<number>(0);
   const [fillerWidths, setFillerWidths] = useState<number[]>();
+  const [openTodoPopup, setOpenTodoPopup] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,6 +138,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
     dispatch(setActiveProject(project.id));
     navigate("/createupdate");
   };
+  const handleDeleteProject = (id: string) => {
+    dispatch(DeleteProjectAsync(id));
+  };
 
   const handleNavigateToUpdateEvents = (projectUpdateId: string) => {
     const update = updates?.find((p) => p.id == projectUpdateId);
@@ -137,8 +152,34 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
 
   return (
     <div style={{ width: "100%", marginTop: 10 }}>
+      <Dialog open={openTodoPopup} onClose={() => setOpenTodoPopup(false)}>
+        <DialogTitle>Ta bort</DialogTitle>
+        <DialogContent dividers>
+          <Typography>
+            Är du säker på att du vill radera projektet permanent?
+          </Typography>
+          <IconButton onClick={() => handleDeleteProject(project.id)}>
+            <Typography>Ta bort {project.title}</Typography>
+          </IconButton>
+          {/* <IconButton size="small" onClick={() => handleSetEditMode(todo.id)}>
+            <EditIcon />
+          </IconButton>
+          {isEditMode && todo.id === todoIdToEdit && (
+            <Button onClick={handleEditTodo}>Spara ändringar</Button>
+          )} */}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+        </DialogActions>
+      </Dialog>
       <Box display="flex" flexDirection="row" justifyContent={"space-between"}>
-        <Typography variant="h6">{project.title}</Typography>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          {" "}
+          <IconButton onClick={() => setOpenTodoPopup(true)}>
+            <DeleteIcon />
+          </IconButton>
+          <Typography variant="h6">{project.title}</Typography>
+        </div>
         <Button onClick={handleCreateUpdate}>
           <Box sx={{ display: "flex" }}>
             <AddIcon

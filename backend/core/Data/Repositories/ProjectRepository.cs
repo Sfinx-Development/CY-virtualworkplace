@@ -71,6 +71,32 @@ public class ProjectRepository : IProjectRepository
             var projectToDelete = await _cyDbContext.Projects.FindAsync(id);
             if (projectToDelete != null)
             {
+                var projectUpdates = await _cyDbContext
+                    .ProjectUpdates.Where(u => u.ProjectId == projectToDelete.Id)
+                    .ToListAsync();
+
+                foreach (var update in projectUpdates)
+                {
+                    var updateComments = await _cyDbContext
+                        .UpdateComments.Where(c => c.ProjectUpdateId == projectToDelete.Id)
+                        .ToListAsync();
+                    if (updateComments != null)
+                    {
+                        foreach (var comment in updateComments)
+                        {
+                            var files = await _cyDbContext
+                                .ProjectFiles.Where(c => c.UpdateCommentId == comment.Id)
+                                .ToListAsync();
+                            if (files != null)
+                            {
+                                _cyDbContext.ProjectFiles.RemoveRange(files);
+                            }
+                        }
+                        _cyDbContext.UpdateComments.RemoveRange(updateComments);
+                    }
+                    _cyDbContext.ProjectUpdates.RemoveRange(projectUpdates);
+                }
+
                 _cyDbContext.Projects.Remove(projectToDelete);
                 await _cyDbContext.SaveChangesAsync();
             }
