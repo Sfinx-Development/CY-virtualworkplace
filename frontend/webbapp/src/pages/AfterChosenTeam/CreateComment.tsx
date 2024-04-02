@@ -2,22 +2,28 @@ import { Button, Container, TextField, Typography } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { ProjectUpdate, UpdateComment } from "../../../types";
+import { UpdateComment } from "../../../types";
 import { getActiveProfile } from "../../slices/profileSlice";
 import {
-  CreateProjectUpdateAsync,
+  CreateUpdateAndFilesAsync,
   getActiveProject,
 } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 
-export default function CreateUpdate() {
+export default function CreateComment() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const activeProject = useAppSelector(
-    (state) => state.projectSlice.activeProject
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+
+  const activeUpdate = useAppSelector(
+    (state) => state.projectSlice.activeUpdate
   );
+  // const activeProject = useAppSelector(
+  //   (state) => state.projectSlice.activeProject
+  // );
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
@@ -28,13 +34,10 @@ export default function CreateUpdate() {
   const [files, setFiles] = useState<FileList | undefined>(undefined);
 
   useEffect(() => {
+    dispatch(getActiveTeam());
     dispatch(getActiveProfile());
     dispatch(getActiveProject());
   }, []);
-  useEffect(() => {
-    console.log("AKTIVT PROJEKT: ", activeProject);
-    console.log("AKTIVT PROFIL: ", activeProfile);
-  }, [activeProfile]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event && event.target && event.target.files) {
@@ -44,36 +47,25 @@ export default function CreateUpdate() {
   };
 
   const handleCreateUpdate = async () => {
-    console.log("AKTIVT PROJEKT: ", activeProject);
-    console.log("AKTIVT PROFIL: ", activeProfile);
-    if (activeProject && activeProfile) {
+    if (activeTeam && activeUpdate && activeProfile) {
       setFieldError(false);
-
-      const update: ProjectUpdate = {
-        id: "undefined",
-        projectId: activeProject.id,
-        dateCreated: new Date(),
-        version: 0,
-      };
-
       const updateComment: UpdateComment = {
         id: "undefined",
         text: comment,
-        profileId: activeProfile.id,
-        projectUpdateId: "undefined",
+        profileId: activeProfile?.id,
+        projectUpdateId: activeUpdate.id,
         dateCreated: new Date(),
         profileFullName: activeProfile.fullName,
       };
 
-      await dispatch(
-        CreateProjectUpdateAsync({
+      dispatch(
+        CreateUpdateAndFilesAsync({
           updateComment: updateComment,
-          projectUpdate: update,
           files: files,
         })
       );
 
-      navigate("/menu");
+      navigate("/updateevents");
     } else {
       setFieldError(true);
     }
@@ -92,7 +84,7 @@ export default function CreateUpdate() {
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
         <Typography variant={isMobile ? "h5" : "h4"}>
-          Ny uppdatering på {activeProject?.title}
+          Ny kommentar på uppdatering {activeUpdate?.id}
         </Typography>
         <TextField
           label="Kommentar"

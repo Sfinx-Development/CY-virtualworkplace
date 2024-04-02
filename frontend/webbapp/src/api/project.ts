@@ -351,7 +351,10 @@ export const FetchDeleteFile = async (fileId: string) => {
     const response = await fetch(apiFileUrl, {
       method: "DELETE",
       credentials: "include",
-      body: fileId,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(fileId),
     });
 
     if (!response.ok) {

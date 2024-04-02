@@ -158,6 +158,51 @@ export const CreateProjectUpdateAsync = createAsyncThunk<
   }
 );
 
+export const CreateUpdateAndFilesAsync = createAsyncThunk<
+  {
+    updateComment: UpdateCommentNoDate;
+    files?: FileList;
+  },
+  {
+    updateComment: UpdateComment;
+    files?: FileList;
+  },
+  { rejectValue: string }
+>(
+  "project/createupdateandfiles",
+  async ({ updateComment, files }, thunkAPI) => {
+    try {
+      const createdUpdateComment = await FetchCreateUpdateComment(
+        updateComment
+      );
+
+      if (files) {
+        Array.from(files).forEach(async (f) => {
+          const formData = new FormData();
+          formData.append("file", f);
+          formData.append("fileName", f.name);
+          formData.append("updateCommentId", createdUpdateComment.id);
+          await FetchCreateFile(formData);
+        });
+      }
+
+      if (createdUpdateComment) {
+        return {
+          updateComment: createdUpdateComment,
+        };
+      } else {
+        return thunkAPI.rejectWithValue(
+          "Ett fel inträffade vid skapande av kommentar."
+        );
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid skapande av kommentar."
+      );
+    }
+  }
+);
+
 export const GetProjectUpdatesAsync = createAsyncThunk<
   ProjectUpdateNoDate[],
   string,
@@ -509,7 +554,18 @@ const projectSlice = createSlice({
       })
       .addCase(EditCommentAsync.rejected, (state) => {
         state.error = "Något gick fel.";
-      });
+      })
+      .addCase(CreateUpdateAndFilesAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          if (state.activeComments) {
+            state.activeComments.push(action.payload.updateComment);
+          } else {
+            state.activeComments = [];
+            state.activeComments.push(action.payload.updateComment);
+          }
+          state.error = null;
+        }
+      })
   },
 });
 

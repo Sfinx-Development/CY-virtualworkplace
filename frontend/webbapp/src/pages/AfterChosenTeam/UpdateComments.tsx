@@ -1,9 +1,11 @@
+import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
   Card,
+  CardActionArea,
   CardContent,
   Container,
   Dialog,
@@ -22,7 +24,6 @@ import UpdatePreview from "../../components/UpdatePreview";
 import { getActiveProfile } from "../../slices/profileSlice";
 import {
   DeleteCommentAsync,
-  DeleteFileAsync,
   EditCommentAsync,
   GetUpdateCommentsAsync,
   getActiveUpdate,
@@ -42,6 +43,9 @@ export default function UpdateComments() {
   const [updatedText, setUpdatedText] = useState("");
   const [commentIdToEdit, setCommentIdToEdit] = useState("");
   const navigate = useNavigate();
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -74,12 +78,7 @@ export default function UpdateComments() {
 
   const handleDeleteComment = (commentId: string) => {
     dispatch(DeleteCommentAsync(commentId));
-    navigate("/menu");
-  };
-
-  //KVAr: TA BORT FIL OCH KUNNA LÄGGA TILL NY UPDATECOMMENT MED FILES
-  const handleDeleteFile = (fileId: string) => {
-    dispatch(DeleteFileAsync(fileId));
+    setOpenTodoPopup(false);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -166,7 +165,12 @@ export default function UpdateComments() {
 
                     {commentIds?.find((c) => c == comment.id) ? (
                       <div>
-                        <UpdatePreview updateComment={comment} />
+                        <UpdatePreview
+                          updateComment={comment}
+                          isMyUpdateComment={
+                            activeProfile?.id == comment.profileId
+                          }
+                        />
                         <Button
                           onClick={() => {
                             handleClose(comment.id);
@@ -189,24 +193,63 @@ export default function UpdateComments() {
                       {comment.profileFullName}
                     </Typography>
                   </div>
-                  <div>
-                    <IconButton onClick={() => setOpenTodoPopup(true)}>
-                      <DeleteIcon />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        handleSetEdit(comment);
-                      }}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </div>
+                  {comment.profileId == activeProfile?.id ? (
+                    <div>
+                      <IconButton onClick={() => setOpenTodoPopup(true)}>
+                        <DeleteIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          handleSetEdit(comment);
+                        }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </div>
+                  ) : null}
                 </CardContent>
               </Card>
             ))}
           </Box>
         )}
+        <Card
+          sx={{
+            display: "flex",
+            flex: 1,
+          }}
+        >
+          <CardActionArea
+            onClick={() => {
+              navigate("/createcomment");
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <CardContent
+                sx={{
+                  flex: "1 0 auto",
+                  flexDirection: "row",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <AddIcon
+                  sx={{
+                    textAlign: "center",
+                    fontSize: isMobile ? "10" : "22",
+                    marginRight: 0.5,
+                  }}
+                />
+                <Typography
+                  component="div"
+                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
+                >
+                  Ny kommentar
+                </Typography>
+              </CardContent>
+            </Box>
+          </CardActionArea>
+        </Card>
       </Box>
     </Container>
   );
