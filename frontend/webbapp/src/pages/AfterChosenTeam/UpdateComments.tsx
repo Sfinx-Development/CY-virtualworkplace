@@ -24,6 +24,7 @@ import UpdatePreview from "../../components/UpdatePreview";
 import { getActiveProfile } from "../../slices/profileSlice";
 import {
   DeleteCommentAsync,
+  DeleteProjectUpdateAsync,
   EditCommentAsync,
   GetUpdateCommentsAsync,
   getActiveUpdate,
@@ -37,6 +38,9 @@ export default function UpdateComments() {
   );
 
   const comments = useAppSelector((state) => state.projectSlice.activeComments);
+  const [orderedComments, setOrderedComments] = useState<
+    UpdateCommentNoDate[] | undefined
+  >(undefined);
   const dispatch = useAppDispatch();
   const [commentIds, setCommentIds] = useState<string[] | undefined>(undefined);
   const [openTodoPopup, setOpenTodoPopup] = useState(false);
@@ -59,6 +63,17 @@ export default function UpdateComments() {
     }
   }, [activeUpdate]);
 
+  useEffect(() => {
+    if (comments) {
+      const sortedComments = [...comments].sort((a, b) => {
+        return (
+          new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime()
+        );
+      });
+      setOrderedComments(sortedComments);
+    }
+  }, [comments]);
+
   const handleSetOpen = (commentId: string) => {
     if (commentIds) {
       const updatedIds = [...commentIds, commentId];
@@ -77,8 +92,16 @@ export default function UpdateComments() {
   };
 
   const handleDeleteComment = (commentId: string) => {
-    dispatch(DeleteCommentAsync(commentId));
-    setOpenTodoPopup(false);
+    if (comments && activeUpdate) {
+      if (commentId == comments[0].id) {
+        dispatch(DeleteProjectUpdateAsync(activeUpdate.id));
+        setOpenTodoPopup(false);
+        navigate("/menu");
+      } else {
+        dispatch(DeleteCommentAsync(commentId));
+        setOpenTodoPopup(false);
+      }
+    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -88,7 +111,6 @@ export default function UpdateComments() {
   };
 
   const handleUpdateComment = () => {
-    console.log("KÖRS");
     const comment = comments?.find((c) => c.id == commentIdToEdit);
     if (comment && updatedText != "") {
       const updatedComment: UpdateComment = {
@@ -96,7 +118,6 @@ export default function UpdateComments() {
         text: updatedText,
         dateCreated: new Date(comment.dateCreated),
       };
-      console.log("UPPDATERADE: ", updatedComment);
       dispatch(EditCommentAsync(updatedComment));
     }
     setCommentIdToEdit("");
@@ -111,13 +132,13 @@ export default function UpdateComments() {
   return (
     <Container>
       <Typography variant={isMobile ? "h5" : "h4"}>
-        {comments && comments[0].text}
+        {orderedComments && orderedComments[0].text}
       </Typography>
       <Box>
-        {comments && comments.length > 0 && (
+        {orderedComments && orderedComments.length > 0 && (
           <Box>
             <Typography variant="h5">Händelser</Typography>
-            {comments?.map((comment: UpdateCommentNoDate) => (
+            {orderedComments?.map((comment: UpdateCommentNoDate) => (
               <Card key={comment.id} style={{ marginBottom: "15px" }}>
                 <Dialog
                   open={openTodoPopup}
@@ -125,9 +146,18 @@ export default function UpdateComments() {
                 >
                   <DialogTitle>Ta bort</DialogTitle>
                   <DialogContent dividers>
-                    <Typography>
-                      Är du säker på att du vill radera kommentaren permanent?
-                    </Typography>
+                    {comment.id == comments?.[0].id ? (
+                      <Typography>
+                        Är du säker på att du vill radera hela uppdateringen
+                        permanent?
+                      </Typography>
+                    ) : (
+                      <Typography>
+                        {" "}
+                        Är du säker på att du vill radera kommentaren permanent?
+                      </Typography>
+                    )}
+
                     <IconButton onClick={() => handleDeleteComment(comment.id)}>
                       <Typography>Ta bort</Typography>
                     </IconButton>
