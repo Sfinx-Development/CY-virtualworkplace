@@ -145,6 +145,7 @@ export default function CreateComment() {
         <Button
           variant="contained"
           onClick={handleCreateUpdate}
+          fullWidth={isMobile}
           sx={{
             marginTop: 2,
             color: "white",
