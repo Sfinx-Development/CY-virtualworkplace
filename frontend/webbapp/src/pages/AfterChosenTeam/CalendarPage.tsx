@@ -1,32 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from "react";
-import EditIcon from "@mui/icons-material/Edit";
-import { unwrapResult } from "@reduxjs/toolkit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import React, { useEffect, useState } from "react";
 
 import {
-  Container,
   Button,
-  Typography,
-  TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Card,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { useAppSelector, useAppDispatch } from "../../slices/store";
-import { getActiveTeam, teamReducer } from "../../slices/teamSlice";
+import { isMobile } from "../../../globalConstants";
+import { Todo } from "../../../types";
+import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { getActiveTeam } from "../../slices/teamSlice";
 import {
-  createTeamTodoAsync,
-  getTodoAsync,
   DeleteTodoAsync,
   EditTodoAsync,
+  createTeamTodoAsync,
+  getTodoAsync,
 } from "../../slices/todoSlice";
-import { Todo } from "../../../types";
-import { format, addMonths, subMonths, setDate } from "date-fns";
-import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 
 interface Holiday {
   helgdag: string;
@@ -344,153 +343,54 @@ export default function CalendarPage() {
         backgroundColor: "rgb(214, 196, 203)",
       }}
     >
-      <aside
-        style={{
-          zIndex: 1,
-          marginLeft: "20px",
-          marginRight: "20px",
-          backgroundColor: "rgb(211, 145, 158)",
-          opacity: 0.8,
-          display: "flex",
-          flexDirection: "column",
-          position: "relative",
-          top: 0,
-          left: 0,
-          height: "100%",
-          width: "350px",
-        }}
-      >
-        <Typography
-          variant="h5"
+      {isMobile ? null : (
+        <aside
           style={{
-            textAlign: "center",
-            marginTop: "40px",
-            fontFamily: "Arial, sans-serif",
-            fontWeight: "bold",
-            letterSpacing: "2px",
-          }}
-        >
-          {activeTeam?.name} Kalender
-        </Typography>
-        <div className="today-aside" style={{ textAlign: "center" }}>
-          <Typography
-            variant="h6"
-            style={{ fontWeight: "bold", marginTop: "10px" }}
-          >
-            Dagens Datum
-          </Typography>
-          <Typography style={{ marginBottom: "5px" }}>
-            {currentTime.toLocaleTimeString()}
-          </Typography>
-          <Typography style={{ marginBottom: "5px" }}>
-            {currentTime.toLocaleDateString()}
-          </Typography>
-          <Typography style={{ marginBottom: "25px" }}>
-            {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
-          </Typography>
-        </div>
-        <div
-          className="todo-aside"
-          style={{
+            zIndex: 1,
+            marginLeft: "20px",
+            marginRight: "20px",
             backgroundColor: "rgb(211, 145, 158)",
+            opacity: 0.8,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
+            position: "relative",
+            top: 0,
+            left: 0,
+            height: "100%",
+            width: "350px",
           }}
         >
-          <Button
-            id="add-todo-btn"
-            variant="outlined"
+          <Typography
+            variant="h5"
             style={{
-              backgroundColor: "rgb(171, 92, 121)",
-              padding: "4px",
-              color: "rgb(255, 255, 255)",
-              border: "none",
-              borderRadius: "2px",
-              height: "50px",
-              width: "280px",
+              textAlign: "center",
+              marginTop: "40px",
+              fontFamily: "Arial, sans-serif",
+              fontWeight: "bold",
               letterSpacing: "2px",
-              fontSize: "14px",
-              fontFamily: '"Helvetica", Arial, sans-serif',
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-around",
-              position: "relative",
-              overflow: "hidden",
-              transition: "width 0.3s ease",
             }}
           >
-            Lägg till todo i kalender
-          </Button>
-          <TextField
-            label="Enter todo titel"
-            type="text"
-            value={title}
-            onChange={(e) => SetTitle(e.target.value)}
-            variant="outlined"
-            sx={{
-              backgroundColor: "white",
-              borderRadius: "4px",
-              marginTop: "10px",
-            }}
-          />
-
-          <div>
-            <input
-              type="text"
-              placeholder="Enter todo description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              style={{
-                borderRadius: "4px",
-                marginTop: "20px",
-                marginLeft: "20px",
-                height: "80px",
-                width: "240px",
-                resize: "none",
-                padding: "8px",
-                fontSize: "14px",
-              }}
-            />
-
-            <div
-              className="date-submit-div"
-              style={{
-                width: "260px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+            {activeTeam?.name} Kalender
+          </Typography>
+          <div className="today-aside" style={{ textAlign: "center" }}>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: "bold", marginTop: "10px" }}
             >
-              <TextField
-                label="Slutdatum"
-                type="datetime-local"
-                value={todoDate}
-                onChange={(e) => setTodoDate(e.target.value)}
-                variant="outlined"
-                sx={{
-                  width: "250px",
-                  marginTop: 2,
-                  "& label": {
-                    color: "transparent",
-                  },
-                  "&:focus label": {
-                    color: "initial",
-                  },
-                }}
-              />
-              <Button onClick={handleCreateTodo}>Ny Todo</Button>
-            </div>
-
-            {fieldError && (
-              <Typography color="error">Alla fält måste fyllas i</Typography>
-            )}
+              Dagens Datum
+            </Typography>
+            <Typography style={{ marginBottom: "5px" }}>
+              {currentTime.toLocaleTimeString()}
+            </Typography>
+            <Typography style={{ marginBottom: "5px" }}>
+              {currentTime.toLocaleDateString()}
+            </Typography>
+            <Typography style={{ marginBottom: "25px" }}>
+              {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
+            </Typography>
           </div>
-        </div>
-
-        <div id="todo-list-div" className="alltodos-div">
           <div
-            className="my-todos-div"
+            className="todo-aside"
             style={{
               backgroundColor: "rgb(211, 145, 158)",
               display: "flex",
@@ -498,97 +398,15 @@ export default function CalendarPage() {
               alignItems: "center",
             }}
           >
-            <Dialog
-              open={openTodoPopup}
-              onClose={() => setOpenTodoPopup(false)}
-            >
-              <DialogTitle>Dagens todo</DialogTitle>
-              <DialogContent dividers>
-                {selectedDayTodos.map((todo) => (
-                  <Card
-                    key={todo.id}
-                    style={{
-                      marginBottom: "10px",
-                      padding: "10px",
-                      backgroundColor: "lightgrey",
-                    }}
-                  >
-                    {isEditMode && todoIdToEdit === todo.id ? (
-                      <TextField
-                        value={editedTitle}
-                        onChange={(e) => setEditedTitle(e.target.value)}
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        onKeyDown={handleKeyPress}
-                      />
-                    ) : (
-                      <Typography variant="subtitle1">{todo.title}</Typography>
-                    )}
-                    {isEditMode && todo.id === todoIdToEdit ? (
-                      <TextField
-                        label="Date"
-                        type="datetime-local"
-                        value={editedDate}
-                        onChange={(e) => setEditedDate(e.target.value)}
-                        variant="outlined"
-                        sx={{ width: "250px", marginTop: 2 }}
-                        onKeyDown={handleKeyPress}
-                      />
-                    ) : (
-                      <Typography variant="body2">
-                        {todo.date.toString()}
-                      </Typography>
-                    )}
-                    {isEditMode && todoIdToEdit === todo.id ? (
-                      <TextField
-                        value={editedDescription}
-                        onChange={(e) => setEditedDescription(e.target.value)}
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        onKeyDown={handleKeyPress}
-                      />
-                    ) : (
-                      <Typography variant="subtitle1">
-                        {todo.description}
-                      </Typography>
-                    )}
-
-                    <div>
-                      <IconButton onClick={() => handleDeleteTodo(todo.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleSetEditMode(todo.id)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      {isEditMode && todo.id === todoIdToEdit && (
-                        <Button onClick={handleEditTodo}>
-                          Spara ändringar
-                        </Button>
-                      )}
-                    </div>
-                  </Card>
-                ))}
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
-              </DialogActions>
-            </Dialog>
-
             <Button
-              id="show-todos-btn"
+              id="add-todo-btn"
               variant="outlined"
               style={{
-                color: "white",
+                backgroundColor: "rgb(171, 92, 121)",
+                padding: "4px",
+                color: "rgb(255, 255, 255)",
                 border: "none",
                 borderRadius: "2px",
-                backgroundColor: "rgb(171, 92, 121)",
-
-                top: "15px",
                 height: "50px",
                 width: "280px",
                 letterSpacing: "2px",
@@ -596,113 +414,301 @@ export default function CalendarPage() {
                 fontFamily: '"Helvetica", Arial, sans-serif',
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
+                justifyContent: "space-around",
                 position: "relative",
                 overflow: "hidden",
                 transition: "width 0.3s ease",
               }}
-              onClick={handleGetTodos}
             >
-              Teamets Todos
+              Lägg till todo i kalender
             </Button>
+            <TextField
+              label="Enter todo titel"
+              type="text"
+              value={title}
+              onChange={(e) => SetTitle(e.target.value)}
+              variant="outlined"
+              sx={{
+                backgroundColor: "white",
+                borderRadius: "4px",
+                marginTop: "10px",
+              }}
+            />
 
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-              <DialogTitle>Teamets Todos</DialogTitle>
-              <DialogContent dividers>
-                {todosInTeam?.map((todo) => (
-                  <Card
-                    key={todo.id}
-                    style={{
-                      marginBottom: "10px",
-                      padding: "10px",
-                      backgroundColor: "lightgrey",
-                    }}
-                  >
-                    {isEditMode && todoIdToEdit === todo.id ? (
-                      <TextField
-                        value={editedTitle}
-                        onChange={(e) => setEditedTitle(e.target.value)}
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        onKeyDown={handleKeyPress}
-                      />
-                    ) : (
-                      <Typography variant="subtitle1">{todo.title}</Typography>
-                    )}
-                    {isEditMode && todo.id === todoIdToEdit ? (
-                      <TextField
-                        label="Date"
-                        type="datetime-local"
-                        value={editedDate}
-                        onChange={(e) => setEditedDate(e.target.value)}
-                        variant="outlined"
-                        sx={{ width: "250px", marginTop: 2 }}
-                        onKeyDown={handleKeyPress}
-                      />
-                    ) : (
-                      <Typography variant="body2">
-                        {todo.date.toString()}
-                      </Typography>
-                    )}
-                    {isEditMode && todoIdToEdit === todo.id ? (
-                      <TextField
-                        value={editedDescription}
-                        onChange={(e) => setEditedDescription(e.target.value)}
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        onKeyDown={handleKeyPress}
-                      />
-                    ) : (
-                      <Typography variant="subtitle1">
-                        {todo.description}
-                      </Typography>
-                    )}
+            <div>
+              <input
+                type="text"
+                placeholder="Enter todo description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{
+                  borderRadius: "4px",
+                  marginTop: "20px",
+                  marginLeft: "20px",
+                  height: "80px",
+                  width: "240px",
+                  resize: "none",
+                  padding: "8px",
+                  fontSize: "14px",
+                }}
+              />
 
-                    <div>
-                      <IconButton onClick={() => handleDeleteTodo(todo.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleSetEditMode(todo.id)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      {isEditMode && todo.id === todoIdToEdit && (
-                        <Button onClick={handleEditTodo}>
-                          Spara ändringar
-                        </Button>
+              <div
+                className="date-submit-div"
+                style={{
+                  width: "260px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TextField
+                  label="Slutdatum"
+                  type="datetime-local"
+                  value={todoDate}
+                  onChange={(e) => setTodoDate(e.target.value)}
+                  variant="outlined"
+                  sx={{
+                    width: "250px",
+                    marginTop: 2,
+                    "& label": {
+                      color: "transparent",
+                    },
+                    "&:focus label": {
+                      color: "initial",
+                    },
+                  }}
+                />
+                <Button onClick={handleCreateTodo}>Ny Todo</Button>
+              </div>
+
+              {fieldError && (
+                <Typography color="error">Alla fält måste fyllas i</Typography>
+              )}
+            </div>
+          </div>
+
+          <div id="todo-list-div" className="alltodos-div">
+            <div
+              className="my-todos-div"
+              style={{
+                backgroundColor: "rgb(211, 145, 158)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Dialog
+                open={openTodoPopup}
+                onClose={() => setOpenTodoPopup(false)}
+              >
+                <DialogTitle>Dagens todo</DialogTitle>
+                <DialogContent dividers>
+                  {selectedDayTodos.map((todo) => (
+                    <Card
+                      key={todo.id}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "10px",
+                        backgroundColor: "lightgrey",
+                      }}
+                    >
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.title}
+                        </Typography>
                       )}
-                    </div>
-                  </Card>
-                ))}
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={() => setOpenDialog(false)}>Stäng</Button>
-              </DialogActions>
-            </Dialog>
+                      {isEditMode && todo.id === todoIdToEdit ? (
+                        <TextField
+                          label="Date"
+                          type="datetime-local"
+                          value={editedDate}
+                          onChange={(e) => setEditedDate(e.target.value)}
+                          variant="outlined"
+                          sx={{ width: "250px", marginTop: 2 }}
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="body2">
+                          {todo.date.toString()}
+                        </Typography>
+                      )}
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedDescription}
+                          onChange={(e) => setEditedDescription(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.description}
+                        </Typography>
+                      )}
 
-            <Button id="read-todos-btn" aria-label="headphone icon">
-              <i className="fa-solid fa-headphones" id="headphone-icon"></i>
-            </Button>
+                      <div>
+                        <IconButton onClick={() => handleDeleteTodo(todo.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleSetEditMode(todo.id)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        {isEditMode && todo.id === todoIdToEdit && (
+                          <Button onClick={handleEditTodo}>
+                            Spara ändringar
+                          </Button>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+                </DialogActions>
+              </Dialog>
+
+              <Button
+                id="show-todos-btn"
+                variant="outlined"
+                style={{
+                  color: "white",
+                  border: "none",
+                  borderRadius: "2px",
+                  backgroundColor: "rgb(171, 92, 121)",
+
+                  top: "15px",
+                  height: "50px",
+                  width: "280px",
+                  letterSpacing: "2px",
+                  fontSize: "14px",
+                  fontFamily: '"Helvetica", Arial, sans-serif',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "width 0.3s ease",
+                }}
+                onClick={handleGetTodos}
+              >
+                Teamets Todos
+              </Button>
+
+              <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogTitle>Teamets Todos</DialogTitle>
+                <DialogContent dividers>
+                  {todosInTeam?.map((todo) => (
+                    <Card
+                      key={todo.id}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "10px",
+                        backgroundColor: "lightgrey",
+                      }}
+                    >
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.title}
+                        </Typography>
+                      )}
+                      {isEditMode && todo.id === todoIdToEdit ? (
+                        <TextField
+                          label="Date"
+                          type="datetime-local"
+                          value={editedDate}
+                          onChange={(e) => setEditedDate(e.target.value)}
+                          variant="outlined"
+                          sx={{ width: "250px", marginTop: 2 }}
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="body2">
+                          {todo.date.toString()}
+                        </Typography>
+                      )}
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedDescription}
+                          onChange={(e) => setEditedDescription(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.description}
+                        </Typography>
+                      )}
+
+                      <div>
+                        <IconButton onClick={() => handleDeleteTodo(todo.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleSetEditMode(todo.id)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        {isEditMode && todo.id === todoIdToEdit && (
+                          <Button onClick={handleEditTodo}>
+                            Spara ändringar
+                          </Button>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenDialog(false)}>Stäng</Button>
+                </DialogActions>
+              </Dialog>
+
+              <Button id="read-todos-btn" aria-label="headphone icon">
+                <i className="fa-solid fa-headphones" id="headphone-icon"></i>
+              </Button>
+            </div>
+            <div
+              className="todo-list"
+              style={{
+                fontFamily: '"Helvetica", Arial, sans-serif',
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                maxWidth: "350px",
+                overflowX: "auto",
+              }}
+            >
+              <ul id="todo-list" className="todo-reveal-list"></ul>
+            </div>
           </div>
-          <div
-            className="todo-list"
-            style={{
-              fontFamily: '"Helvetica", Arial, sans-serif',
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              maxWidth: "350px",
-              overflowX: "auto",
-            }}
-          >
-            <ul id="todo-list" className="todo-reveal-list"></ul>
-          </div>
-        </div>
-      </aside>
+        </aside>
+      )}
+
       <main
         style={{
           flex: 1,
