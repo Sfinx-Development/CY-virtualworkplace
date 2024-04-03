@@ -53,7 +53,12 @@ const IndexPage = () => {
             variant="contained"
             color="primary"
             size="large"
-            style={{ margin: "20px", backgroundColor: "#FF6B6B" }}
+            fullWidth
+            style={{
+              margin: "20px",
+              backgroundColor: "#FF6B6B",
+              color: "white",
+            }}
             onClick={() => navigate("/createaccount")}
           >
             Börja nu
@@ -137,6 +142,7 @@ const IndexPage = () => {
             variant="outlined"
             color="secondary"
             size="large"
+            fullWidth
             style={{ margin: "20px", borderColor: "#FF6B6B", color: "#FF6B6B" }}
             onClick={() => navigate("/signin")}
           >
