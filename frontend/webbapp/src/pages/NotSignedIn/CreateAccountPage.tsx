@@ -113,13 +113,11 @@ export default function CreateAccount() {
     }
   };
 
-
   const gradientAnimation = keyframes`
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     `;
-
 
   return (
     <div
@@ -130,7 +128,7 @@ export default function CreateAccount() {
         height: "100%",
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
-        overflowY: "scroll", 
+        overflowY: "scroll",
       }}
     >
       <div
@@ -309,7 +307,7 @@ export default function CreateAccount() {
             <Button
               variant="contained"
               onClick={handleCreateUser}
-              sx={{ margin: 1, fontSize: 20 }}
+              sx={{ margin: 1, fontSize: 20, color: "white" }}
             >
               Skapa konto
             </Button>

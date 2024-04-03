@@ -1,11 +1,14 @@
-import AddIcon from "@mui/icons-material/Add";
-import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
+import {
+  Add as AddIcon,
+  ConnectWithoutContact as ConnectWithoutContactIcon,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
   Card,
   CardActionArea,
   CardContent,
+  Grid,
   Typography,
 } from "@mui/material";
 import { useEffect } from "react";
@@ -14,14 +17,12 @@ import { isMobile } from "../../../globalConstants";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
-// import { theme1 } from "../../theme";
 
-export default function ChooseTeam() {
-  const user = useAppSelector((state) => state.userSlice.user);
+const ChooseTeam = () => {
+  //const user = useAppSelector((state) => state.userSlice.user);
   const myTeams = useAppSelector((state) => state.teamSlice.teams);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  // const primaryColor = theme1.palette.primary.main;
 
   const handleNavigateToMenu = (teamId: string) => {
     dispatch(setActiveTeam(teamId));
@@ -34,99 +35,100 @@ export default function ChooseTeam() {
   }, []);
 
   return (
-    <div
-      style={{
-        padding: isMobile ? 0 : "20px",
-        height: "100vh",
+    <Box
+      sx={{
         width: "100%",
-        background: "white",
+        minHeight: "100vh",
+        backgroundColor: "#f7f7f7",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      <div
-        style={{
+      <Box
+        sx={{
+          flexGrow: 1,
           display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-evenly",
+          flexDirection: isMobile ? "column" : "row",
+          padding: 2,
+          overflowX: "auto",
         }}
       >
-        <Button
-          variant="outlined"
-          color="primary"
-          size="large"
-          fullWidth
-          style={{
-            margin: "10px 0",
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-          onClick={() => navigate("/createteam")}
-        >
-          <AddIcon sx={{ padding: 0.5 }} />{" "}
-          <Typography sx={{ padding: 0.5 }}>Skapa team</Typography>
-        </Button>
-
-        <Button
-          variant="outlined"
-          color="primary"
-          size="large"
-          fullWidth
-          style={{
-            margin: "10px 10px",
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-          onClick={() => navigate("/jointeam")}
-        >
-          <ConnectWithoutContactIcon sx={{ padding: 0.5 }} />{" "}
-          <Typography sx={{ padding: 0.5 }}>Gå med i team</Typography>
-        </Button>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 20,
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h5"> Välkommen {user?.firstName}!</Typography>
         {Array.isArray(myTeams) &&
-          myTeams?.map((team) => (
+          myTeams.map((team) => (
             <Card
               key={team.id}
               sx={{
                 display: "flex",
-                minWidth: isMobile ? "90%" : "300px",
-                backgroundColor: "#CDCDCB",
+                flex: 1,
+                backgroundColor: "white",
+                borderRadius: 8,
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                margin: 2,
               }}
             >
               <CardActionArea
-                onClick={() => {
-                  handleNavigateToMenu(team.id);
-                }}
+                onClick={() => handleNavigateToMenu(team.id)}
+                sx={{ flexGrow: 1 }}
               >
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <CardContent sx={{ flex: "1 0 auto" }}>
-                    <Typography
-                      component="div"
-                      variant="h6"
-                      sx={{
-                        textAlign: "center",
-                        color: "black",
-                      }}
-                    >
-                      {team.name}{" "}
-                    </Typography>
-                  </CardContent>
-                </Box>
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    align="center"
+                    color="textPrimary"
+                    gutterBottom
+                  >
+                    {team.name.toUpperCase()}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    color="textSecondary"
+                  >
+                    {team.teamRole.toUpperCase()}
+                  </Typography>
+                </CardContent>
               </CardActionArea>
             </Card>
           ))}
-      </div>
-    </div>
+      </Box>
+      {/* <Typography variant="h5">
+        {" "}
+        {user?.firstName.toUpperCase()}'S TEAMS
+      </Typography> */}
+
+      <Box sx={{ flex: 0.5 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ paddingY: isMobile ? 1 : 2 }}
+              fullWidth
+              onClick={() => navigate("/createteam")}
+              startIcon={<AddIcon />}
+            >
+              Skapa team
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              sx={{ paddingY: isMobile ? 1 : 2 }}
+              color="primary"
+              size="large"
+              fullWidth
+              onClick={() => navigate("/jointeam")}
+              startIcon={<ConnectWithoutContactIcon />}
+            >
+              Gå med i team
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   );
-}
+};
+
+export default ChooseTeam;

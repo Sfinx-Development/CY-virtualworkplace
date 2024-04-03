@@ -119,12 +119,8 @@ export default function JoinTeam() {
         </div>
         <Button
           variant="contained"
-          sx={{
-            marginTop: 4,
-            marginBottom: 1,
-            paddingRight: 5,
-            paddingLeft: 5,
-          }}
+          color="primary"
+          sx={{ paddingY: 2, paddingX: 4, color: "white" }}
           onClick={handleJoinTeam}
         >
           Gå med i Team

@@ -40,21 +40,24 @@ export default function CreateTeam() {
   };
   return (
     <Container sx={{ padding: "20px" }}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        {fieldError ? (
-          <Typography>Alla fält måste vara ifyllda</Typography>
-        ) : null}
+      <div style={{ textAlign: "center" }}>
+        <Typography variant="h4" gutterBottom>
+          Skapa ett nytt team
+        </Typography>
+        <Typography variant="body1" paragraph>
+          Skapa ett nytt team för att samarbeta online och arbeta mot gemensamma
+          mål.
+        </Typography>
+        {fieldError && (
+          <Typography variant="body2" color="error">
+            Vänligen fyll i alla fält
+          </Typography>
+        )}
         <TextField
-          id="firstname"
-          label="Namn på team"
-          variant="standard"
-          sx={{ width: "250px", marginTop: 2 }}
+          id="team-name"
+          label="Teamnamn"
+          variant="outlined"
+          sx={{ width: "300px", margin: 2 }}
           onChange={(event) => {
             setTeamName(event.target.value);
           }}
@@ -63,8 +66,8 @@ export default function CreateTeam() {
           <TextField
             id="team-role"
             label="Typ/avdelning"
-            variant="standard"
-            sx={{ width: "250px", marginTop: 2 }}
+            variant="outlined"
+            sx={{ width: "300px", margin: 2 }}
             onChange={(event) => {
               setTeamRole(event.target.value);
             }}
@@ -72,27 +75,51 @@ export default function CreateTeam() {
         </Tooltip>
         <Tooltip title="Beskriv din roll eller ansvar i teamet. Exempelvis 'Projektledare', 'Utvecklare', 'Designer' etc. Detta hjälper andra att förstå din funktion inom teamet.">
           <TextField
-            id="firstname"
+            id="profile-role"
             label="Din roll i teamet"
-            variant="standard"
-            sx={{ width: "250px", marginTop: 2 }}
+            variant="outlined"
+            sx={{ width: "300px", margin: 2 }}
             onChange={(event) => {
               setProfileRole(event.target.value);
             }}
           />
         </Tooltip>
+      </div>
+      <div style={{ marginTop: "20px", textAlign: "center" }}>
         <Button
           variant="contained"
-          sx={{
-            marginTop: 4,
-            marginBottom: 1,
-            paddingRight: 5,
-            paddingLeft: 5,
-          }}
+          color="primary"
+          sx={{ paddingY: 2, paddingX: 4, color: "white" }}
           onClick={handleCreateTeam}
         >
           Skapa Team
         </Button>
+        <Typography variant="h5" sx={{ marginTop: 5 }} gutterBottom>
+          Varför skapa ett team?
+        </Typography>
+        <Typography variant="body1" paragraph>
+          CY erbjuder varje team att skapa projekt där varje medlem kan skapa
+          uppdateringar och följa processen från start till mål.
+        </Typography>
+        <Typography variant="body1" paragraph>
+          Varje team har en unik kalender där medlemmar kan hålla koll på vad
+          som ska göras.
+        </Typography>
+        <Typography variant="body1" paragraph>
+          Kom igång direkt med att kommunicera med dina kollegor eller vänner
+          via CY-chatten.
+        </Typography>
+        <Typography variant="h5" gutterBottom>
+          Hur fungerar det?
+        </Typography>
+        <Typography variant="body1" paragraph>
+          Fyll i detaljerna om ditt team och din roll, och klicka sedan på
+          "Skapa Team" för att komma igång.
+        </Typography>
+        <Typography variant="body1" paragraph>
+          När ditt team är skapat kan du bjuda in andra medlemmar och börja
+          samarbeta.
+        </Typography>
       </div>
     </Container>
   );
