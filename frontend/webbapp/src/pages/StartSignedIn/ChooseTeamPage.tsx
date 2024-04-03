@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync, setActiveTeam } from "../../slices/teamSlice";
 
 const ChooseTeam = () => {
-  const user = useAppSelector((state) => state.userSlice.user);
+  //const user = useAppSelector((state) => state.userSlice.user);
   const myTeams = useAppSelector((state) => state.teamSlice.teams);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -49,6 +49,7 @@ const ChooseTeam = () => {
         sx={{
           flexGrow: 1,
           display: "flex",
+          flexDirection: isMobile ? "column" : "row",
           padding: 2,
           overflowX: "auto",
         }}
@@ -103,7 +104,7 @@ const ChooseTeam = () => {
               variant="contained"
               color="primary"
               size="large"
-              sx={{ paddingY: isMobile ? 0 : 2 }}
+              sx={{ paddingY: isMobile ? 1 : 2 }}
               fullWidth
               onClick={() => navigate("/createteam")}
               startIcon={<AddIcon />}
@@ -114,7 +115,7 @@ const ChooseTeam = () => {
           <Grid item xs={12} sm={6}>
             <Button
               variant="contained"
-              sx={{ paddingY: isMobile ? 0 : 2 }}
+              sx={{ paddingY: isMobile ? 1 : 2 }}
               color="primary"
               size="large"
               fullWidth
