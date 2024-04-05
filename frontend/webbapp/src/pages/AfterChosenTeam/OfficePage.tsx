@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { HealthCheck, ProfileHealthCheck } from "../../../types";
+import BackGroundDesign from "../../components/BackgroundDesign";
 import { RadioGroupRating } from "../../components/StyledRating";
 import {
   CreateProfileHealthCheckAsync,
@@ -71,7 +72,6 @@ export default function Office() {
     }
   }, [healthchecks, profilehealthchecks, ratingShow]);
 
-  const backgroundImageUrl = "https://i.imgur.com/uWBWv0m.jpeg";
   const officeColor = theme1.palette.office.main;
 
   const handleRating = (healthCheckId: string, rating: number | null) => {
@@ -93,12 +93,22 @@ export default function Office() {
     <Container
       sx={{
         padding: "20px",
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: "cover",
         backgroundPosition: "center",
-        minHeight: "100vh",
+        minHeight: "100%",
       }}
     >
+      <BackGroundDesign
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: -1,
+        }}
+        color1={theme1.palette.office.main}
+        color2="white"
+      />
       <Card sx={{ padding: 2, backgroundColor: officeColor }}>
         <Typography> {activeProfile?.fullName}'s kontor</Typography>
         {activeHealthChecks && activeHealthChecks.length > 0 ? (

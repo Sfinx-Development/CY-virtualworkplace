@@ -111,7 +111,7 @@ export default function UpdateComments() {
   return (
     <Container>
       <Typography variant={isMobile ? "h5" : "h4"}>
-        {comments && comments[0].text}
+        {activeUpdate?.title ?? "Ingen titel"}
       </Typography>
       <Box>
         {comments && comments.length > 0 && (

@@ -133,7 +133,6 @@ export default function Menu() {
   const handleMouseLeave = () => {
     setProfileDropdown(false);
   };
-  const backgroundImageUrl = "https://i.imgur.com/AFLAtC0.jpeg";
 
   const handleNavigateToCalendar = () => {
     if (activeTeam) {
@@ -147,12 +146,23 @@ export default function Menu() {
     <div
       style={{
         padding: "20px",
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: "cover",
         backgroundPosition: "center",
         minHeight: "100vh",
+        backgroundColor: "#FEF3EE",
       }}
     >
+      {/* <BackGroundDesign
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: -1,
+        }}
+        color1={theme1.palette.office.main}
+        color2="white"
+      /> */}
       <Box
         sx={{
           display: "flex",
@@ -319,7 +329,6 @@ export default function Menu() {
           />
         </Box>
       </Box>
-
       <Container
         sx={{
           marginTop: isMobile ? 5 : 15,
@@ -340,7 +349,6 @@ export default function Menu() {
           </Box>
         ) : null}
       </Container>
-
       <Typography
         component="a"
         href="https://www.freepik.com/"
