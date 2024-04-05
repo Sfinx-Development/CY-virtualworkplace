@@ -212,12 +212,14 @@ export interface ProjectNoDate {
 
 export interface ProjectUpdate {
   id: string;
+  title:string;
   projectId: string;
   dateCreated: Date;
   version: number;
 }
 export interface ProjectUpdateNoDate {
   id: string;
+  title:string;
   projectId: string;
   dateCreated: string;
   version: number;
