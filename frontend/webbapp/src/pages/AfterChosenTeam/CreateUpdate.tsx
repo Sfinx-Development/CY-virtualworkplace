@@ -22,6 +22,7 @@ export default function CreateUpdate() {
     (state) => state.profileSlice.activeProfile
   );
 
+  const [title, setTitle] = useState("");
   const [comment, setComment] = useState("");
   const [fieldError, setFieldError] = useState(false);
 
@@ -40,11 +41,14 @@ export default function CreateUpdate() {
   };
 
   const handleCreateUpdate = async () => {
-    if (activeProject && activeProfile) {
+    console.log("AKTIVT PROJEKT: ", activeProject);
+    console.log("AKTIVT PROFIL: ", activeProfile);
+    if (activeProject && activeProfile && comment && title) {
       setFieldError(false);
 
       const update: ProjectUpdate = {
         id: "undefined",
+        title: title,
         projectId: activeProject.id,
         dateCreated: new Date(),
         version: 0,
@@ -88,6 +92,13 @@ export default function CreateUpdate() {
         <Typography variant={isMobile ? "h5" : "h4"}>
           Ny uppdatering på {activeProject?.title}
         </Typography>
+        <TextField
+          label="Titel"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          variant="outlined"
+          sx={{ width: "100%", maxWidth: "600px", marginTop: 2 }}
+        />
         <TextField
           label="Kommentar"
           value={comment}

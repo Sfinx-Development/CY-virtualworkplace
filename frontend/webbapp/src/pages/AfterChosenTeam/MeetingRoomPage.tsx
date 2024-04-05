@@ -14,6 +14,7 @@ import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
+import BackGroundDesign from "../../components/BackgroundDesign";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -113,7 +114,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     };
   }, [dispatch, activeProfile]);
 
-  const backgroundImageUrl = "https://i.imgur.com/EC5f1XS.jpeg";
   const meetingRoomColor = theme1.palette.room.main;
   const leaveColor = theme1.palette.leave.main;
   const navigate = useNavigate();
@@ -136,12 +136,24 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     <Container
       sx={{
         padding: "20px",
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
+        // backgroundImage: `url(${backgroundImageUrl})`,
+        // backgroundSize: "cover",
+        // backgroundPosition: "center",
+        minHeight: "100%",
       }}
     >
+      <BackGroundDesign
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: -1,
+        }}
+        color1={theme1.palette.room.main}
+        color2="white"
+      />
       <Card
         sx={{
           padding: 2,

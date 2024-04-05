@@ -18,6 +18,7 @@ import {
   Message,
   MessageOutgoing,
 } from "../../../types";
+import BackGroundDesign from "../../components/BackgroundDesign";
 import ChatMessage from "../../components/ChatMessage";
 import {
   GetConversationParticipant,
@@ -252,9 +253,21 @@ export default function ChatRoom() {
         width: "100%",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
       }}
     >
+      <BackGroundDesign
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: -1,
+        }}
+        color1={theme1.palette.chat.main}
+        color2="white"
+      />
       <audio
         ref={audioRef}
         src="/message.mp3"
@@ -265,8 +278,8 @@ export default function ChatRoom() {
         className="card-content"
         sx={{
           padding: 2,
-          backgroundColor: "transparent",
-          height: is800Mobile ? "650px" : "500px",
+          backgroundColor: "white",
+          height: is800Mobile ? "650px" : "360px",
           width: "80%",
           flexGrow: 1,
           overflow: "auto",
