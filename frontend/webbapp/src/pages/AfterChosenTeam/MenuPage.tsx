@@ -13,7 +13,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { is800Mobile, isMobile } from "../../../globalConstants";
-import BackGroundDesign from "../../components/BackgroundDesign";
 import NavCard from "../../components/NavCard";
 import ProgressBar from "../../components/ProgressBar";
 import {

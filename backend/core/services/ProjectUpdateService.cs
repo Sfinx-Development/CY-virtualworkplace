@@ -48,6 +48,7 @@ public class ProjectUpdateService : IProjectUpdateService
             ProjectUpdate projectUpdate =
                 new(
                     Utils.GenerateRandomId(),
+                    projectUpdateDTO.Title,
                     projectUpdateDTO.ProjectId,
                     projectUpdateDTO.DateCreated,
                     latestVersion + 1
@@ -55,6 +56,7 @@ public class ProjectUpdateService : IProjectUpdateService
             var createdProjectUpdate = await _projectUpdateRepository.CreateAsync(projectUpdate);
             return new OutgoingUpdateDTO(
                 createdProjectUpdate.Id,
+                createdProjectUpdate.Title,
                 createdProjectUpdate.ProjectId,
                 createdProjectUpdate.DateCreated,
                 createdProjectUpdate.Version
@@ -103,9 +105,12 @@ public class ProjectUpdateService : IProjectUpdateService
                 throw new Exception("You can only get results from your own team.");
             }
             var projectUpdates = await _projectUpdateRepository.GetAllByProject(project.Id);
-            var projectUpdateDTOs = projectUpdates.Select(
-                h => new OutgoingUpdateDTO(h.Id, h.ProjectId, h.DateCreated, h.Version)
-            ).OrderByDescending(h => h.DateCreated).ToList();
+            var projectUpdateDTOs = projectUpdates
+                .Select(
+                    h => new OutgoingUpdateDTO(h.Id, h.Title, h.ProjectId, h.DateCreated, h.Version)
+                )
+                .OrderByDescending(h => h.DateCreated)
+                .ToList();
             return projectUpdateDTOs ?? new List<OutgoingUpdateDTO>();
         }
         catch (System.Exception e)
@@ -122,6 +127,7 @@ public class ProjectUpdateService : IProjectUpdateService
             var projectUpdate = await _projectUpdateRepository.GetByIdAsync(id);
             return new OutgoingUpdateDTO(
                 projectUpdate.Id,
+                projectUpdate.Title,
                 projectUpdate.ProjectId,
                 projectUpdate.DateCreated,
                 projectUpdate.Version

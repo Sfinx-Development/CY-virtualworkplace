@@ -84,7 +84,7 @@ export default function CreateComment() {
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
         <Typography variant={isMobile ? "h5" : "h4"}>
-          Ny kommentar på uppdatering {activeUpdate?.id}
+          Ny kommentar på uppdatering {activeUpdate?.title}
         </Typography>
         <TextField
           label="Kommentar"
