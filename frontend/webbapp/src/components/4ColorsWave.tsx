@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 
-interface BackGroundDesignProps {
+interface FourBackGroundDesignProps {
   style?: React.CSSProperties;
   color1: string;
   color2: string;
+  color3: string;
+  color4: string;
 }
 
-const BackGroundDesign: React.FC<BackGroundDesignProps> = ({
+const FourBackGroundDesign: React.FC<FourBackGroundDesignProps> = ({
   style,
   color1,
   color2,
+  color3,
+  color4,
 }) => {
   const [animationTime, setAnimationTime] = useState<number>(0);
 
@@ -33,7 +37,9 @@ const BackGroundDesign: React.FC<BackGroundDesignProps> = ({
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="200%">
           <stop offset="0%" style={{ stopColor: color1, stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: color2, stopOpacity: 1 }} />
+          <stop offset="33%" style={{ stopColor: color2, stopOpacity: 1 }} />
+          <stop offset="66%" style={{ stopColor: color3, stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: color4, stopOpacity: 1 }} />
         </linearGradient>
         <filter id="waveFilter" x="0" y="0" width="200%" height="200%">
           <feOffset result="offOut" in="SourceGraphic" dx="-20" dy="20" />
@@ -102,4 +108,4 @@ const BackGroundDesign: React.FC<BackGroundDesignProps> = ({
   );
 };
 
-export default BackGroundDesign;
+export default FourBackGroundDesign;

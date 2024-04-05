@@ -19,6 +19,7 @@ import { MeetingRoom } from "./pages/AfterChosenTeam/MeetingRoomPage";
 import Menu from "./pages/AfterChosenTeam/MenuPage";
 import Office from "./pages/AfterChosenTeam/OfficePage";
 import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
+import TestWave from "./pages/AfterChosenTeam/TestWave";
 import UpdateComments from "./pages/AfterChosenTeam/UpdateComments";
 import CreateAccount from "./pages/NotSignedIn/CreateAccountPage";
 import ForgotPassword from "./pages/NotSignedIn/ForgotPasswordPage";
@@ -96,6 +97,7 @@ const Navigation = () => {
           <Route path="createupdate" element={<CreateUpdate />} />
           <Route path="updateevents" element={<UpdateComments />} />
           <Route path="createcomment" element={<CreateComment />} />
+          <Route path="test" element={<TestWave />} />
 
           {/* <Route
             path="connect"
