@@ -12,9 +12,8 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { is800Mobile, isMobile } from "../../../globalConstants";
+import { isMobile } from "../../../globalConstants";
 import NavCard from "../../components/NavCard";
-import ProgressBar from "../../components/ProgressBar";
 import {
   GetConversationParticipant,
   GetTeamConversation,
@@ -56,7 +55,7 @@ export default function Menu() {
   const [unreadMessages, setUnreadMessages] = useState<number | null>(null);
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
-  const projects = useAppSelector((state) => state.projectSlice.projects);
+
   const now = new Date();
   const navigate = useNavigate();
   const ongoingMeeting = occasions
@@ -143,134 +142,133 @@ export default function Menu() {
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         padding: "20px",
         backgroundPosition: "center",
-        minHeight: "100vh",
-        backgroundColor: "#FEF3EE",
+        minHeight: "100%",
+        position: "relative",
       }}
     >
-      {/* <BackGroundDesign
+      {/* <BackGroundDesignNoAnimation
         style={{
           position: "absolute",
           top: 0,
           left: 0,
           width: "100%",
-          height: "100%",
+          height: "100vh",
           zIndex: -1,
         }}
-        color1={theme1.palette.office.main}
-        color2="white"
+        color1={"black"}
+        color2="black"
+        waveColor={"rgba(255, 107, 107,0.4)"}
       /> */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <NavCard
-          navigationPage="/calendar"
-          onClick={handleNavigateToCalendar}
-          imageUrl="https://i.imgur.com/V05Tc5r.png"
-        />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            mt: { xs: 2, md: 0 },
-          }}
-        >
-          <Typography variant={isMobile ? "h5" : "h4"}>
-            {activeTeam?.name}
-          </Typography>
-          <Button
-            onClick={copyCodeToClipboard}
-            variant="contained"
-            sx={{ mt: 2 }}
-          >
-            Kod: {activeTeam?.code}
-          </Button>
-          {copied && !isMobile ? (
-            <Alert
-              variant="outlined"
-              severity="success"
-              sx={{ position: "absolute", marginTop: isMobile ? 20 : 15 }}
-            >
-              Du har kopierat koden!
-            </Alert>
-          ) : null}
-        </Box>
-        <Box
-          component="div"
-          sx={{
-            backgroundColor: "transparent",
-            paddingX: "50px",
-            maxHeight: 40,
-            mx: 2,
-          }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
-        </Box>
-
-        {profileDropdown && (
-          <Popper
-            open={profileDropdown}
-            anchorEl={anchorEl}
-            onMouseLeave={handleMouseLeave}
-          >
-            <Box
-              sx={{
-                border: 1,
-                p: 2,
-                bgcolor: "background.paper",
-                borderRadius: 2,
-                boxShadow: 2,
-                maxWidth: 300,
-              }}
-            >
-              {Array.isArray(profiles) &&
-                profiles.map((profile) => (
-                  <Typography
-                    key={profile.id}
-                    sx={{
-                      marginBottom: 1,
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Avatar
-                      src={profile.avatarUrl}
-                      sx={{ height: 25, width: 20, marginRight: 1 }}
-                    />
-                    {profile.fullName} - {profile.role}
-                  </Typography>
-                ))}
-            </Box>
-          </Popper>
-        )}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          justifyContent: "space-between",
-          mt: { xs: 4, md: 8 },
-        }}
-      >
+      <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
         <Box
           sx={{
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "20px",
+          }}
+        >
+          <NavCard
+            navigationPage="/calendar"
+            onClick={handleNavigateToCalendar}
+            imageUrl="https://i.imgur.com/V05Tc5r.png"
+            title="Kalender"
+          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              mt: { xs: 2, md: 0 },
+            }}
+          >
+            <Typography variant={isMobile ? "h5" : "h4"}>
+              {activeTeam?.name}
+            </Typography>
+            <Button
+              onClick={copyCodeToClipboard}
+              variant="contained"
+              sx={{ mt: 2 }}
+            >
+              Kopiera kod: {activeTeam?.code}
+            </Button>
+            {copied && !isMobile ? (
+              <Alert
+                variant="outlined"
+                severity="success"
+                sx={{ position: "absolute", marginTop: isMobile ? 20 : 15 }}
+              >
+                Du har kopierat koden!
+              </Alert>
+            ) : null}
+          </Box>
+          <Box
+            component="div"
+            sx={{
+              backgroundColor: "transparent",
+              paddingX: "50px",
+              maxHeight: 40,
+              mx: 2,
+            }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
+          </Box>
+
+          {profileDropdown && (
+            <Popper
+              open={profileDropdown}
+              anchorEl={anchorEl}
+              onMouseLeave={handleMouseLeave}
+            >
+              <Box
+                sx={{
+                  border: 1,
+                  p: 2,
+                  bgcolor: "background.paper",
+                  borderRadius: 2,
+                  boxShadow: 2,
+                  maxWidth: 300,
+                }}
+              >
+                {Array.isArray(profiles) &&
+                  profiles.map((profile) => (
+                    <Typography
+                      key={profile.id}
+                      sx={{
+                        marginBottom: 1,
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Avatar
+                        src={profile.avatarUrl}
+                        sx={{ height: 25, width: 20, marginRight: 1 }}
+                      />
+                      {profile.fullName} - {profile.role}
+                    </Typography>
+                  ))}
+              </Box>
+            </Popper>
+          )}
+        </Box>
+      </Container>
+      <Container>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            justifyContent: "space-between",
             gap: { xs: 3, md: 6 },
-            mb: { xs: 3, md: 0 },
+            marginTop: "20px",
           }}
         >
           <NavCard
@@ -294,7 +292,7 @@ export default function Menu() {
           <NavCard
             backgroundColor={chatRoomColor}
             navigationPage="/chatroom"
-            title="Chattrum"
+            title="Chatt"
             icon={
               unreadMessages != null && unreadMessages > 0 ? (
                 <MarkUnreadChatAltIcon
@@ -307,19 +305,11 @@ export default function Menu() {
               ) : null
             }
           />
-        </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            gap: { xs: 3, md: 6 },
-          }}
-        >
           <NavCard
             backgroundColor={officeColor}
             navigationPage="/office"
-            title="Mitt Kontor"
+            title="Min sida"
           />
 
           <NavCard
@@ -328,40 +318,7 @@ export default function Menu() {
             title="Lämna"
           />
         </Box>
-      </Box>
-      <Container
-        sx={{
-          marginTop: isMobile ? 5 : 15,
-          display: "flex",
-          flexDirection: "column",
-          height: is800Mobile ? "350px" : "300px",
-          flexGrow: 1,
-          overflow: "auto",
-          width: "100%",
-        }}
-        className="project-list-container"
-      >
-        {projects ? (
-          <Box>
-            {projects.map((p) => (
-              <ProgressBar project={p} key={p.id} />
-            ))}
-          </Box>
-        ) : null}
       </Container>
-      <Typography
-        component="a"
-        href="https://www.freepik.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
-          bottom: 0,
-          textDecoration: "none",
-          color: "black",
-        }}
-      >
-        Designed by Freepik
-      </Typography>
-    </div>
+    </Box>
   );
 }
