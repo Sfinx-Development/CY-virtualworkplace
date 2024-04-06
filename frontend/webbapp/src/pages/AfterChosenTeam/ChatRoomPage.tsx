@@ -279,7 +279,7 @@ export default function ChatRoom() {
         sx={{
           padding: 2,
           backgroundColor: "white",
-          height: is800Mobile ? "650px" : "360px",
+          height: is800Mobile ? "650px" : isMobile ? "500px" : "350px",
           width: "80%",
           flexGrow: 1,
           overflow: "auto",

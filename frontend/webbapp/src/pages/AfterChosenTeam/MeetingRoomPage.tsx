@@ -1,7 +1,5 @@
-import AddIcon from "@mui/icons-material/Add";
-import EventNoteIcon from "@mui/icons-material/EventNote";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
+import PieChartIcon from "@mui/icons-material/PieChart";
 import {
   Box,
   Card,
@@ -11,10 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import { memo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { isMobile } from "../../../globalConstants";
+import { is800Mobile, isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import BackGroundDesign from "../../components/BackgroundDesign";
+import NavCard from "../../components/NavCard";
+import ProgressBar from "../../components/ProgressBar";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -28,6 +27,7 @@ import {
   profileOffline,
   profileOnline,
 } from "../../slices/profileSlice";
+import { GetTeamProjectsAsync } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -50,6 +50,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
   const now = new Date();
+  const projects = useAppSelector((state) => state.projectSlice.projects);
 
   const ongoingMeeting = occasions
     ? occasions.find((occasion: MeetingOccasionNoDate) => {
@@ -71,6 +72,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       // dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
       dispatch(GetOnlineProfiles(activeTeam.id));
+      dispatch(GetTeamProjectsAsync(activeTeam.id));
     }
   }, [activeTeam]);
 
@@ -116,7 +118,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   const meetingRoomColor = theme1.palette.room.main;
   const leaveColor = theme1.palette.leave.main;
-  const navigate = useNavigate();
 
   const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
     <div
@@ -131,17 +132,18 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       <Typography>{profile.fullName}</Typography>
     </div>
   ));
-
   return (
     <Container
       sx={{
         padding: "20px",
-        // backgroundImage: `url(${backgroundImageUrl})`,
-        // backgroundSize: "cover",
-        // backgroundPosition: "center",
         minHeight: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        alignItems: "center", // Centrera innehållet horisontellt
       }}
     >
+      {/* Bakgrund */}
       <BackGroundDesign
         style={{
           position: "absolute",
@@ -154,220 +156,136 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         color1={theme1.palette.room.main}
         color2="white"
       />
+
+      {/* Mötesrumskort */}
       <Card
         sx={{
           padding: 2,
-          backgroundColor: meetingRoomColor,
-          display: "flex",
-          flexDirection: "column",
+          backgroundColor: "#f4f4f4",
+          borderRadius: "10px",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+          width: "90%",
+          margin: "0 auto",
         }}
       >
-        {" "}
-        <Typography> {activeTeam?.name}'s mötesrum</Typography>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Box>
-            {onlineProfiles && onlineProfiles.length > 0 ? (
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {onlineProfiles.map((profile: ProfileHubDTO) => (
-                  <ProfileItem key={profile.profileId} profile={profile} />
-                ))}
-              </div>
-            ) : (
-              <Typography>Inga profiler online</Typography>
-            )}
-          </Box>
-
-          <div
-            onClick={() => {
-              navigate("/healthcheck");
-            }}
-            style={{ cursor: "pointer" }}
-          >
-            <Box>
-              <MonitorHeartIcon sx={{ fontSize: 40 }} />
+        <CardContent>
+          <Typography variant="h6" sx={{ color: "#333", mb: 2 }}>
+            {activeTeam?.name}'s MÖTESRUM
+          </Typography>
+          {onlineProfiles && onlineProfiles.length > 0 ? (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              {onlineProfiles.map((profile: ProfileHubDTO) => (
+                <ProfileItem key={profile.profileId} profile={profile} />
+              ))}
             </Box>
-          </div>
-        </div>
+          ) : (
+            <Typography variant="body2" sx={{ color: "#666" }}>
+              Ingen profil online
+            </Typography>
+          )}
+        </CardContent>
       </Card>
-      {ongoingMeeting ? (
-        <Card
-          sx={{
-            display: "inline-block",
-            width: "300px",
-            margin: "10px",
-            backgroundColor: meetingRoomColor,
-          }}
-        >
+
+      {/* Pågående möte */}
+      {ongoingMeeting && (
+        <Card sx={{ my: 2 }}>
           <CardActionArea
             onClick={() => {
               dispatch(setActiveMeeting(ongoingMeeting.meetingId));
               connectToVideo();
             }}
           >
-            <CardContent sx={{ flex: "1 0 auto" }}>
-              <Typography
-                component="div"
-                variant="h6"
-                sx={{ textAlign: "center" }}
-              >
+            <CardContent>
+              <Typography variant="h6" align="center">
                 Gå med i mötet {ongoingMeeting.name}
               </Typography>
             </CardContent>
           </CardActionArea>
         </Card>
-      ) : null}
-      <div
-        style={{
+      )}
+
+      {/* Navigation */}
+      <Box
+        sx={{
           display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "flex-end",
-          flexDirection: "column",
-          marginTop: 10,
-          gap: 10,
+          justifyContent: "center", // Centrera navigationskorten
+          gap: "20px",
+          mt: 2,
         }}
       >
-        <Card
-          sx={{
-            display: "flex",
-            minWidth: isMobile ? "170px" : "200px",
-            backgroundColor: meetingRoomColor,
-          }}
-        >
-          <CardActionArea
-            onClick={() => {
-              navigate("/createmeeting");
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent
-                sx={{
-                  flex: "1 0 auto",
-                  flexDirection: "row",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <AddIcon
-                  sx={{
-                    textAlign: "center",
-                    fontSize: isMobile ? "10" : "22",
-                    marginRight: 0.5,
-                  }}
-                />
-                <Typography
-                  component="div"
-                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
-                >
-                  Skapa möte
-                </Typography>
-              </CardContent>
-            </Box>
-          </CardActionArea>
-        </Card>
+        {/* Navigationskort */}
+        <NavCard
+          backgroundColor={meetingRoomColor}
+          navigationPage="/createMeeting"
+          title="Nytt möte"
+          icon={
+            <img
+              src="https://i.imgur.com/HRZXZA9.png"
+              alt="project management icon"
+              style={{ width: 40, height: 40 }}
+            />
+          }
+        />
 
-        <Card
-          sx={{
-            display: "flex",
-            minWidth: isMobile ? "170px" : "200px",
-            backgroundColor: meetingRoomColor,
-          }}
-        >
-          <CardActionArea
-            onClick={() => {
-              navigate("/meetinginteam");
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent
-                sx={{
-                  flex: "1 0 auto",
-                  flexDirection: "row",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <EventNoteIcon
-                  sx={{
-                    textAlign: "center",
-                    fontSize: isMobile ? "10" : "22",
-                    marginRight: 0.5,
-                  }}
-                />
-                <Typography
-                  component="div"
-                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
-                >
-                  Teamets möten
-                </Typography>
-              </CardContent>
-            </Box>
-          </CardActionArea>
-        </Card>
+        <NavCard
+          backgroundColor={meetingRoomColor}
+          navigationPage="/meetinginteam"
+          title="Alla möten"
+          icon={
+            <img
+              src="https://i.imgur.com/HeztEpU.png"
+              alt="project management icon"
+              style={{ width: 40, height: 40 }}
+            />
+          }
+        />
 
-        <Card
-          sx={{
-            display: "flex",
-            minWidth: isMobile ? "170px" : "200px",
-            backgroundColor: meetingRoomColor,
-          }}
-        >
-          <CardActionArea
-            onClick={() => {
-              navigate("/createproject");
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent
-                sx={{
-                  flex: "1 0 auto",
-                  flexDirection: "row",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <AddIcon
-                  sx={{
-                    textAlign: "center",
-                    fontSize: isMobile ? "10" : "22",
-                    marginRight: 0.5,
-                  }}
-                />
-                <Typography
-                  component="div"
-                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
-                >
-                  Nytt projekt
-                </Typography>
-              </CardContent>
-            </Box>
-          </CardActionArea>
-        </Card>
+        <NavCard
+          backgroundColor={meetingRoomColor}
+          navigationPage="/createproject"
+          title="Nytt projekt"
+          icon={
+            <img
+              src="https://i.imgur.com/GvdAMWN.png"
+              alt="project management icon"
+              style={{ width: 40, height: 40 }}
+            />
+          }
+        />
+        <NavCard
+          backgroundColor={meetingRoomColor}
+          navigationPage="/healthcheck"
+          title="Statistik"
+          icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
+        />
+        <NavCard
+          backgroundColor={leaveColor}
+          navigationPage="/menu"
+          title="Lämna"
+        />
+      </Box>
 
-        <Card
-          sx={{
-            display: "flex",
-            minWidth: isMobile ? "170px" : "200px",
-            backgroundColor: leaveColor,
-          }}
-        >
-          <CardActionArea
-            onClick={() => {
-              navigate("/menu");
-            }}
-          >
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent sx={{ flex: "1 0 auto" }}>
-                <Typography
-                  component="div"
-                  sx={{ textAlign: "center", fontSize: isMobile ? "10" : "22" }}
-                >
-                  Lämna
-                </Typography>
-              </CardContent>
-            </Box>
-          </CardActionArea>
-        </Card>
-      </div>
+      {/* Projektlista */}
+      <Container
+        sx={{
+          marginTop: isMobile ? 1 : 2,
+          display: "flex",
+          flexDirection: "column",
+          height: is800Mobile ? "350px" : "300px",
+          flexGrow: 1,
+          overflow: "auto",
+          width: "100%",
+        }}
+        className="project-list-container"
+      >
+        {projects ? (
+          <Box>
+            {projects.map((p) => (
+              <ProgressBar project={p} key={p.id} />
+            ))}
+          </Box>
+        ) : null}
+      </Container>
     </Container>
   );
 };
