@@ -13,7 +13,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import BackGroundDesignNoAnimation from "../../components/BackgroundDesignNoAnimation";
 import NavCard from "../../components/NavCard";
 import {
   GetConversationParticipant,
@@ -151,7 +150,7 @@ export default function Menu() {
         position: "relative",
       }}
     >
-      <BackGroundDesignNoAnimation
+      {/* <BackGroundDesignNoAnimation
         style={{
           position: "absolute",
           top: 0,
@@ -162,7 +161,8 @@ export default function Menu() {
         }}
         color1={"black"}
         color2="black"
-      />
+        waveColor={"rgba(255, 107, 107,0.4)"}
+      /> */}
       <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
         <Box
           sx={{

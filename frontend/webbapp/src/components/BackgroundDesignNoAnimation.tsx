@@ -4,11 +4,12 @@ interface BackGroundDesignNoAnimationProps {
   style?: React.CSSProperties;
   color1: string;
   color2: string;
+  waveColor: string; // New prop for specifying the color of the waves
 }
 
 const BackGroundDesignNoAnimation: React.FC<
   BackGroundDesignNoAnimationProps
-> = ({ style, color1, color2 }) => {
+> = ({ style, color1, color2, waveColor }) => {
   return (
     <svg
       width="100%"
@@ -20,11 +21,11 @@ const BackGroundDesignNoAnimation: React.FC<
     >
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="200%">
-          <stop offset="0%" style={{ stopColor: color1, stopOpacity: 1 }} />
+          <stop offset="0%" style={{ stopColor: color1, stopOpacity: 0.5 }} />
           <stop offset="100%" style={{ stopColor: color2, stopOpacity: 1 }} />
         </linearGradient>
         <filter id="waveFilter" x="0" y="0" width="200%" height="200%">
-          <feOffset result="offOut" in="SourceGraphic" dx="-20" dy="20" />
+          <feOffset result="offOut" in="SourceGraphic" dx="-0" dy="20" />
           <feBlend in="SourceGraphic" in2="offOut" mode="normal" />
         </filter>
       </defs>
@@ -85,7 +86,9 @@ const BackGroundDesignNoAnimation: React.FC<
                   L 990, 100
                   L 990, 100
                   L -10, 100 Z`}
-          fill="url(#grad)"
+          fill="none" // Changed to "none" to make the waves transparent
+          stroke={waveColor} // Added stroke to specify the color of the waves
+          strokeWidth="4" // Adjust the thickness of the wave lines as needed
         />
       </g>
     </svg>

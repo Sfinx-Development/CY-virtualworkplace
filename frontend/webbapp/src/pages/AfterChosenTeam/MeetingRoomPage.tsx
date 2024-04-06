@@ -1,6 +1,5 @@
-import EventNoteIcon from "@mui/icons-material/EventNote";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
+import PieChartIcon from "@mui/icons-material/PieChart";
 import {
   Box,
   Card,
@@ -33,7 +32,6 @@ import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 import Connector from "./OnlineConnection";
-import PieChartIcon from "@mui/icons-material/PieChart";
 
 interface ConnectFormProps {
   connectToVideo: () => void;
@@ -160,18 +158,29 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       />
 
       {/* Mötesrumskort */}
-      <Card sx={{ padding: 2, backgroundColor: "white", width: "90%" }}>
+      <Card
+        sx={{
+          padding: 2,
+          backgroundColor: "#f4f4f4",
+          borderRadius: "10px",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+          width: "90%",
+          margin: "0 auto",
+        }}
+      >
         <CardContent>
-          <Typography variant="h6">{activeTeam?.name}'s mötesrum</Typography>
+          <Typography variant="h6" sx={{ color: "#333", mb: 2 }}>
+            {activeTeam?.name}'s MÖTESRUM
+          </Typography>
           {onlineProfiles && onlineProfiles.length > 0 ? (
-            <Box sx={{ display: "flex", flexDirection: "column", mt: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
               {onlineProfiles.map((profile: ProfileHubDTO) => (
                 <ProfileItem key={profile.profileId} profile={profile} />
               ))}
             </Box>
           ) : (
-            <Typography variant="body2" mt={2}>
-              Inga profiler online
+            <Typography variant="body2" sx={{ color: "#666" }}>
+              Ingen profil online
             </Typography>
           )}
         </CardContent>
