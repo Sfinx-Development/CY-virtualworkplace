@@ -136,11 +136,11 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     <Container
       sx={{
         padding: "20px",
-        minHeight: "100%",
+        minHeight: isMobile ? "100vh" : "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        alignItems: "center", // Centrera innehållet horisontellt
+        zIndex: -1,
       }}
     >
       {/* Bakgrund */}
@@ -149,8 +149,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           position: "absolute",
           top: 0,
           left: 0,
-          width: "100%",
-          height: "100%",
+          height: isMobile ? "100vh" : "100%",
           zIndex: -1,
         }}
         color1={theme1.palette.room.main}
@@ -208,6 +207,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       <Box
         sx={{
           display: "flex",
+          flexDirection: isMobile ? "column" : "row",
           justifyContent: "center", // Centrera navigationskorten
           gap: "20px",
           mt: 2,
@@ -222,7 +222,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             <img
               src="https://i.imgur.com/HRZXZA9.png"
               alt="project management icon"
-              style={{ width: 40, height: 40 }}
+              style={{ width: isMobile ? 30 : 40, height: isMobile ? 30 : 40 }}
             />
           }
         />
@@ -271,7 +271,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           marginTop: isMobile ? 1 : 2,
           display: "flex",
           flexDirection: "column",
-          height: is800Mobile ? "350px" : "300px",
+          maxHeight: is800Mobile ? "350px" : "300px",
           flexGrow: 1,
           overflow: "auto",
           width: "100%",

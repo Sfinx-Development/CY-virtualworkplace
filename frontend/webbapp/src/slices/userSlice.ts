@@ -64,6 +64,9 @@ export const logInUserAsync = createAsyncThunk<
     }
   } catch (error) {
     console.error(error);
+    return thunkAPI.rejectWithValue(
+      "Inloggningen misslyckades. Felaktiga uppgifter."
+    );
   }
 });
 

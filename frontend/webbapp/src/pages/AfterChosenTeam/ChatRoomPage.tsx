@@ -1,7 +1,7 @@
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
-import AddReactionIcon from "@mui/icons-material/AddReaction";
 import {
   Avatar,
   Button,
@@ -176,6 +176,7 @@ export default function ChatRoom() {
             dispatch(liveUpdateMessageSent(createdMessage));
             setContent("");
             scrollToBottom();
+            setShowEmojiPicker(false);
           }
         })
         .catch((error) => {
@@ -189,6 +190,7 @@ export default function ChatRoom() {
     if (event.key === "Enter") {
       handleEditMessage();
       setIsEditMode(false);
+      setShowEmojiPicker(false);
     }
   };
 
@@ -241,7 +243,7 @@ export default function ChatRoom() {
     <div
       style={{
         padding: isMobile ? 2 : "20px",
-        height: "100%",
+        height: isMobile ? "100vh" : "100%",
         display: "flex",
         width: "100%",
         flexDirection: "column",
@@ -271,8 +273,8 @@ export default function ChatRoom() {
         className="card-content"
         sx={{
           padding: 2,
-          backgroundColor: "white",
-          height: "70vh",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          height: "60vh",
           width: "90%",
           flexGrow: 1,
           overflow: "auto",
