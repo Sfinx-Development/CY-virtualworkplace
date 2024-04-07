@@ -1,3 +1,4 @@
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
@@ -8,11 +9,11 @@ import {
   IconButton,
   TextField,
   Typography,
-  styled,
 } from "@mui/material";
 import { format } from "date-fns";
+import EmojiPicker from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
-import { is800Mobile, isMobile } from "../../../globalConstants";
+import { isMobile } from "../../../globalConstants";
 import {
   ConversationParticipant,
   Message,
@@ -42,20 +43,6 @@ import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 import ChatConnector from "./ChatConnection";
-
-const StyledTextField = styled(TextField)({
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "lightgray",
-    },
-    "&:hover fieldset": {
-      borderColor: "lightgray",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "lightgray",
-    },
-  },
-});
 
 export default function ChatRoom() {
   const dispatch = useAppDispatch();
@@ -88,11 +75,17 @@ export default function ChatRoom() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [messageIdToEdit, setMessageIdToEdit] = useState("");
   const [editedContent, setEditedContent] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const addEmoji = (emoji: any) => {
+    console.log(emoji);
+    setContent(content + emoji.emoji);
   };
 
   useEffect(() => {
@@ -183,6 +176,7 @@ export default function ChatRoom() {
             dispatch(liveUpdateMessageSent(createdMessage));
             setContent("");
             scrollToBottom();
+            setShowEmojiPicker(false);
           }
         })
         .catch((error) => {
@@ -196,6 +190,7 @@ export default function ChatRoom() {
     if (event.key === "Enter") {
       handleEditMessage();
       setIsEditMode(false);
+      setShowEmojiPicker(false);
     }
   };
 
@@ -248,7 +243,7 @@ export default function ChatRoom() {
     <div
       style={{
         padding: isMobile ? 2 : "20px",
-        minHeight: "100%",
+        height: isMobile ? "100vh" : "100%",
         display: "flex",
         width: "100%",
         flexDirection: "column",
@@ -278,9 +273,9 @@ export default function ChatRoom() {
         className="card-content"
         sx={{
           padding: 2,
-          backgroundColor: "white",
-          height: is800Mobile ? "650px" : isMobile ? "500px" : "350px",
-          width: "80%",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          height: "60vh",
+          width: "90%",
           flexGrow: 1,
           overflow: "auto",
         }}
@@ -317,7 +312,7 @@ export default function ChatRoom() {
                     <Typography
                       sx={{
                         fontWeight: 600,
-                        fontSize: isMobile ? 10 : 13,
+                        fontSize: 13,
                         color: "#666666",
                       }}
                     >
@@ -326,7 +321,7 @@ export default function ChatRoom() {
                     <Typography
                       sx={{
                         marginLeft: 1,
-                        fontSize: isMobile ? 10 : 13,
+                        fontSize: 13,
                         color: "#666666",
                       }}
                     >
@@ -377,11 +372,13 @@ export default function ChatRoom() {
         style={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "flex-start",
           marginTop: "10px",
-          width: "80%",
+          width: "90%",
+          position: "relative",
         }}
       >
-        <StyledTextField
+        <TextField
           fullWidth
           variant="outlined"
           value={content}
@@ -394,20 +391,75 @@ export default function ChatRoom() {
               borderColor: chatColor,
               backgroundColor: "white",
             },
+            "& .MuiInputLabel-outlined": {
+              color: "#666666",
+            },
+            "&.Mui-focused": {
+              color: "#666666",
+            },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "lightgray",
+              },
+              "&.Mui-focused": {
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "lightgray",
+                },
+              },
+              "&:hover fieldset": {
+                borderColor: "lightgray",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "lightgray",
+              },
+            },
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSendMessage();
           }}
         />
+        {showEmojiPicker && (
+          <EmojiPicker
+            onEmojiClick={addEmoji}
+            style={{
+              position: "absolute",
+              bottom: "100%",
+              right: 0,
+              zIndex: 10,
+            }}
+          />
+        )}
+        <Button
+          variant="contained"
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          sx={{
+            backgroundColor: content.trim() !== "" ? chatColor : "lightgray",
+            marginLeft: isMobile ? 1 : 2,
+            paddingX: isMobile ? 0 : 2,
+            paddingY: isMobile ? 2 : 1.5,
+            "&:hover": {
+              backgroundColor: "grey",
+            },
+          }}
+        >
+          <AddReactionIcon
+            sx={{ color: "white", fontSize: isMobile ? 12 : 20 }}
+          />
+        </Button>
         <Button
           variant="contained"
           onClick={handleSendMessage}
           sx={{
-            backgroundColor: content.trim() != "" ? chatColor : "lightgray",
-            marginLeft: 2,
+            backgroundColor: content.trim() !== "" ? chatColor : "lightgray",
+            marginLeft: isMobile ? 1 : 2,
+            paddingX: isMobile ? 0 : 2,
+            paddingY: isMobile ? 2 : 1.5,
+            "&:hover": {
+              backgroundColor: "grey",
+            },
           }}
         >
-          <SendIcon sx={{ color: "white" }} />
+          <SendIcon sx={{ color: "white", fontSize: isMobile ? 12 : 20 }} />
         </Button>
       </div>
     </div>

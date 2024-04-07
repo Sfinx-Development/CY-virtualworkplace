@@ -36,7 +36,7 @@ export default function EnterHouse() {
         autoPlay
         style={{ height: "100%", width: "100%", objectFit: "cover" }}
       >
-        <source src="https://i.imgur.com/s4D0XN7.mp4" type="video/mp4" />
+        <source src="https://i.imgur.com/hnhgiju.mp4" type="video/mp4" />
         Din webbläsare accepterar inte videotypen.
       </video>
     </div>

@@ -192,7 +192,7 @@ export default function MeetingInTeamsPage() {
                     )}
                   </div>
                   <div>
-                  <IconButton
+                    <IconButton
                       size="small"
                       onClick={() => handleSetEditMode(meeting.meetingId)}
                     >
@@ -203,7 +203,6 @@ export default function MeetingInTeamsPage() {
                     >
                       <DeleteIcon />
                     </IconButton>
-               
                   </div>
                 </CardContent>
               </Card>
@@ -212,42 +211,38 @@ export default function MeetingInTeamsPage() {
         )}
 
         {pastMeetings.length > 0 && (
-
-       <Box>
-       <Typography variant="h5">Passerade möten</Typography>
-       {pastMeetings?.map((meeting: MeetingOccasion) => (
-         <Card
-           key={meeting.id}
-           style={{ marginBottom: "15px", backgroundColor: chatRoomColor }}
-         >
-           <CardContent
-             sx={{
-               display: "flex",
-               flexDirection: "row",
-               alignItems: "center",
-               justifyContent: "space-between",
-             }}
-           >
-             <div>
-               <Typography variant="subtitle1">{meeting.name}</Typography>
-               <Typography variant="body2">
-                 {meeting.date.toString()}
-               </Typography>
-             </div>
-             <div>
-               <IconButton
-                 onClick={() => handleDeleteMeeting(meeting.meetingId)}
-               >
-                 <DeleteIcon />
-               </IconButton>
-             </div>
-           </CardContent>
-         </Card>
-       ))}
-     </Box>
-     
-
-
+          <Box>
+            <Typography variant="h5">Passerade möten</Typography>
+            {pastMeetings?.map((meeting: MeetingOccasionNoDate) => (
+              <Card
+                key={meeting.id}
+                style={{ marginBottom: "15px", backgroundColor: chatRoomColor }}
+              >
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div>
+                    <Typography variant="subtitle1">{meeting.name}</Typography>
+                    <Typography variant="body2">
+                      {meeting.date.toString()}
+                    </Typography>
+                  </div>
+                  <div>
+                    <IconButton
+                      onClick={() => handleDeleteMeeting(meeting.meetingId)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
         )}
       </Box>
     </Container>

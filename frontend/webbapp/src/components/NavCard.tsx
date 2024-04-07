@@ -26,7 +26,7 @@ export default function NavCard(props: NavCardProps) {
     <Card
       sx={{
         display: "flex",
-        minWidth: isMobile ? "120px" : "200px",
+        minWidth: isMobile ? "300px" : "200px",
         backgroundColor: props.backgroundColor,
       }}
     >
@@ -45,7 +45,15 @@ export default function NavCard(props: NavCardProps) {
         )}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           {props.icon || props.title ? (
-            <CardContent sx={{ flex: "1 0 auto" }}>
+            <CardContent
+              sx={{
+                flex: "1 0 auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: isMobile ? "row" : "column",
+              }}
+            >
               <Typography
                 component="div"
                 sx={{
@@ -56,7 +64,13 @@ export default function NavCard(props: NavCardProps) {
                 {props.title}
               </Typography>
               {props.icon ? (
-                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginLeft: isMobile ? 1 : 0,
+                  }}
+                >
                   {props.icon}
                 </Box>
               ) : null}
