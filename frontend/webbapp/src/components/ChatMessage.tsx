@@ -30,13 +30,17 @@ export default function ChatMessage(props: ChatMessageProps) {
         display: "flex",
         flexDirection: "column",
         backgroundColor:
-          props.message.profileId == activeProfile?.id ? "#F9F3FF" : "white",
+          props.message.profileId == activeProfile?.id ? "#f4f4f4" : "white",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between" }}></div>
       <Typography
         variant="body1"
-        sx={{ marginLeft: isMobile ? 5 : 25, fontSize: isMobile ? 13 : 16 }}
+        sx={{
+          marginLeft: isMobile ? 15 : 25,
+          fontSize: isMobile ? 13 : 16,
+          pb: 2,
+        }}
       >
         {props.isEditMode && props.messageIdToEdit == props.message.id ? (
           <TextField
@@ -46,6 +50,25 @@ export default function ChatMessage(props: ChatMessageProps) {
             fullWidth
             variant="outlined"
             onKeyDown={props.handleKeyPress}
+            sx={{
+              "& .MuiInputLabel-outlined": {
+                color: "#666666",
+              },
+              "&.Mui-focused": {
+                color: "#666666",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "lightgray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "lightgray",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "lightgray",
+                },
+              },
+            }}
           />
         ) : (
           props.message.content
