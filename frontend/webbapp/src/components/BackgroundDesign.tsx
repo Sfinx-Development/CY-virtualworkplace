@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { isMobile } from "../../globalConstants";
 
 interface BackGroundDesignProps {
   style?: React.CSSProperties;
@@ -24,14 +25,14 @@ const BackGroundDesign: React.FC<BackGroundDesignProps> = ({
   return (
     <svg
       width="100%"
-      height="100%"
-      viewBox="0 0 100 100"
+      height={isMobile ? "100vh" : "100%"}
+      viewBox="0 0 100 100" // Uppdaterad viewBox för att täcka hela skärmen
       preserveAspectRatio="none"
       xmlns="http://www.w3.org/2000/svg"
       style={style}
     >
       <defs>
-        <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="200%">
+        <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" style={{ stopColor: color1, stopOpacity: 1 }} />
           <stop offset="100%" style={{ stopColor: color2, stopOpacity: 1 }} />
         </linearGradient>

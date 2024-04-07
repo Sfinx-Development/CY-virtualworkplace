@@ -39,7 +39,6 @@ export const logOutUserAsync = createAsyncThunk("user/logOutUser", async () => {
     return isLoggedOut;
   } catch (error) {
     console.error(error);
-    throw new Error("Ett fel uppstod vid utloggningen.");
   }
 });
 
@@ -65,7 +64,9 @@ export const logInUserAsync = createAsyncThunk<
     }
   } catch (error) {
     console.error(error);
-    throw new Error("Ett fel uppstod vid inloggningen.");
+    return thunkAPI.rejectWithValue(
+      "Inloggningen misslyckades. Felaktiga uppgifter."
+    );
   }
 });
 
@@ -125,16 +126,16 @@ const userSlice = createSlice({
         state.user = undefined;
         state.logInError = "Användarnamn eller lösenord är felaktigt.";
       })
-      // .addCase(logOutUserAsync.fulfilled, (state, action) => {
-      //   if (action.payload) {
-      //     state.user = undefined;
-      //     state.error = null;
-      //   }
-      // })
-      // .addCase(logOutUserAsync.rejected, (state) => {
-      //   state.user = undefined; //den får vara undefined antar jag ändå eller?
-      //   state.error = "Något gick fel vid utloggningen.";
-      // })
+      .addCase(logOutUserAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user = undefined;
+          state.error = null;
+        }
+      })
+      .addCase(logOutUserAsync.rejected, (state) => {
+        state.user = undefined; //den får vara undefined antar jag ändå eller?
+        state.error = "Något gick fel vid utloggningen.";
+      })
       .addCase(getUserAsync.fulfilled, (state, action) => {
         if (action.payload) {
           state.user = action.payload;
