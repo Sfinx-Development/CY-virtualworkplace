@@ -23,7 +23,7 @@ public class TeamRepository : ITeamRepository
         }
         catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
 
