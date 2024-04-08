@@ -8,6 +8,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  CardMedia,
   Grid,
   Typography,
 } from "@mui/material";
@@ -103,6 +104,22 @@ const ChooseTeam = () => {
                 onClick={() => handleNavigateToMenu(team.id)}
                 sx={{ flexGrow: 1 }}
               >
+                {team.imageUrl ? (
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={team.imageUrl}
+                    alt={team.name}
+                  />
+                ) : (
+                  <CardMedia
+                    component="img"
+                    height="120"
+                    image={"https://i.imgur.com/Z29mJ8s.png"}
+                    alt={team.name}
+                  />
+                )}
+
                 <CardContent>
                   <Typography
                     variant="h6"

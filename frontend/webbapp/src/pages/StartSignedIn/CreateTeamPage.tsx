@@ -1,12 +1,15 @@
 import {
   Button,
   Container,
+  ImageList,
+  ImageListItem,
   TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import images, { ImageUrl } from "../../../images";
 import { CreateTeamDTO } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
 import { createTeamAsync } from "../../slices/teamSlice";
@@ -17,19 +20,22 @@ export default function CreateTeam() {
   const [teamRole, setTeamRole] = useState("");
   const [profileRole, setProfileRole] = useState("");
   const [fieldError, setFieldError] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
   const navigate = useNavigate();
 
   const handleCreateTeam = async () => {
     if (
       teamName.trim() !== "" &&
       teamRole.trim() !== "" &&
-      profileRole.trim() !== ""
+      profileRole.trim() !== "" &&
+      imageUrl.trim() !== ""
     ) {
       setFieldError(false);
       const team: CreateTeamDTO = {
         teamName: teamName,
         teamRole: teamRole,
         profileRole: profileRole,
+        imageUrl: imageUrl,
       };
       await dispatch(createTeamAsync(team)).then(() => {
         navigate("/chooseteam");
@@ -84,6 +90,25 @@ export default function CreateTeam() {
             }}
           />
         </Tooltip>
+        <ImageList sx={{ width: "100%" }} cols={6} rowHeight={164}>
+          {images.map((item: ImageUrl) => (
+            <ImageListItem key={item.url}>
+              <img
+                src={item.url}
+                alt={item.title}
+                loading="lazy"
+                style={{
+                  height: 160,
+                  maxWidth: 180,
+                  opacity: imageUrl == item.url ? "0.5" : "1",
+                  cursor: "pointer",
+                  border: imageUrl === item.url ? "2px solid grey" : "none",
+                }}
+                onClick={() => setImageUrl(item.url)}
+              />
+            </ImageListItem>
+          ))}
+        </ImageList>
       </div>
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <Button
