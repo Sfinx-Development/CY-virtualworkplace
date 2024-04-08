@@ -8,6 +8,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  CardMedia,
   Grid,
   Typography,
 } from "@mui/material";
@@ -45,59 +46,7 @@ const ChooseTeam = () => {
         justifyContent: "space-between",
       }}
     >
-      <Box
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          padding: 2,
-          overflowX: "auto",
-        }}
-      >
-        {Array.isArray(myTeams) &&
-          myTeams.map((team) => (
-            <Card
-              key={team.id}
-              sx={{
-                display: "flex",
-                flex: 1,
-                backgroundColor: "white",
-                borderRadius: 8,
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                margin: 2,
-              }}
-            >
-              <CardActionArea
-                onClick={() => handleNavigateToMenu(team.id)}
-                sx={{ flexGrow: 1 }}
-              >
-                <CardContent>
-                  <Typography
-                    variant="h6"
-                    align="center"
-                    color="textPrimary"
-                    gutterBottom
-                  >
-                    {team.name.toUpperCase()}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    align="center"
-                    color="textSecondary"
-                  >
-                    {team.teamRole.toUpperCase()}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
-      </Box>
-      {/* <Typography variant="h5">
-        {" "}
-        {user?.firstName.toUpperCase()}'S TEAMS
-      </Typography> */}
-
-      <Box sx={{ flex: 0.5 }}>
+      <Box sx={{ marginTop: 2 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Button
@@ -127,6 +76,75 @@ const ChooseTeam = () => {
           </Grid>
         </Grid>
       </Box>
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          padding: 2,
+          flexWrap: "wrap",
+          overflowX: "auto",
+        }}
+      >
+        {Array.isArray(myTeams) &&
+          myTeams.map((team) => (
+            <Card
+              key={team.id}
+              sx={{
+                display: "flex",
+                flex: 1,
+                backgroundColor: "white",
+                borderRadius: 8,
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                margin: 2,
+                minWidth: "250px",
+              }}
+            >
+              <CardActionArea
+                onClick={() => handleNavigateToMenu(team.id)}
+                sx={{ flexGrow: 1 }}
+              >
+                {team.imageUrl ? (
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={team.imageUrl}
+                    alt={team.name}
+                  />
+                ) : (
+                  <CardMedia
+                    component="img"
+                    height="120"
+                    image={"https://i.imgur.com/Z29mJ8s.png"}
+                    alt={team.name}
+                  />
+                )}
+
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    align="center"
+                    color="textPrimary"
+                    gutterBottom
+                  >
+                    {team.name.toUpperCase()}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    color="textSecondary"
+                  >
+                    {team.teamRole.toUpperCase()}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          ))}
+      </Box>
+      {/* <Typography variant="h5">
+        {" "}
+        {user?.firstName.toUpperCase()}'S TEAMS
+      </Typography> */}
     </Box>
   );
 };
