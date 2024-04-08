@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Button,
+  Card,
   Container,
   Popper,
   Typography,
@@ -173,12 +174,14 @@ export default function Menu() {
             gap: "20px",
           }}
         >
-          <NavCard
-            navigationPage="/calendar"
-            onClick={handleNavigateToCalendar}
-            imageUrl="https://i.imgur.com/V05Tc5r.png"
-            title="Kalender"
-          />
+          <div>
+            <NavCard
+              navigationPage="/calendar"
+              onClick={handleNavigateToCalendar}
+              imageUrl="https://i.imgur.com/V05Tc5r.png"
+              title="Kalender"
+            />
+          </div>
           <Box
             sx={{
               display: "flex",
@@ -228,11 +231,9 @@ export default function Menu() {
               anchorEl={anchorEl}
               onMouseLeave={handleMouseLeave}
             >
-              <Box
+              <Card
                 sx={{
-                  border: 1,
                   p: 2,
-                  bgcolor: "background.paper",
                   borderRadius: 2,
                   boxShadow: 2,
                   maxWidth: 300,
@@ -256,7 +257,7 @@ export default function Menu() {
                       {profile.fullName} - {profile.role}
                     </Typography>
                   ))}
-              </Box>
+              </Card>
             </Popper>
           )}
         </Box>

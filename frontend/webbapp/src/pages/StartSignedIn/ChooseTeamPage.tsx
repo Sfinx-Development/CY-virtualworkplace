@@ -45,12 +45,43 @@ const ChooseTeam = () => {
         justifyContent: "space-between",
       }}
     >
+      <Box sx={{ marginTop: 2 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{ paddingY: isMobile ? 1 : 2 }}
+              fullWidth
+              onClick={() => navigate("/createteam")}
+              startIcon={<AddIcon />}
+            >
+              Skapa team
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Button
+              variant="contained"
+              sx={{ paddingY: isMobile ? 1 : 2 }}
+              color="primary"
+              size="large"
+              fullWidth
+              onClick={() => navigate("/jointeam")}
+              startIcon={<ConnectWithoutContactIcon />}
+            >
+              Gå med i team
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
       <Box
         sx={{
           flexGrow: 1,
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
           padding: 2,
+          flexWrap: "wrap",
           overflowX: "auto",
         }}
       >
@@ -65,6 +96,7 @@ const ChooseTeam = () => {
                 borderRadius: 8,
                 boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
                 margin: 2,
+                minWidth: "250px",
               }}
             >
               <CardActionArea
@@ -96,37 +128,6 @@ const ChooseTeam = () => {
         {" "}
         {user?.firstName.toUpperCase()}'S TEAMS
       </Typography> */}
-
-      <Box sx={{ flex: 0.5 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{ paddingY: isMobile ? 1 : 2 }}
-              fullWidth
-              onClick={() => navigate("/createteam")}
-              startIcon={<AddIcon />}
-            >
-              Skapa team
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Button
-              variant="contained"
-              sx={{ paddingY: isMobile ? 1 : 2 }}
-              color="primary"
-              size="large"
-              fullWidth
-              onClick={() => navigate("/jointeam")}
-              startIcon={<ConnectWithoutContactIcon />}
-            >
-              Gå med i team
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
     </Box>
   );
 };
