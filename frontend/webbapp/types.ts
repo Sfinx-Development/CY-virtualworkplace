@@ -45,12 +45,14 @@ export interface Team {
   code: string;
   createdAt: Date;
   teamRole: string;
+  imageUrl: string;
 }
 
 export interface CreateTeamDTO {
   teamName: string;
   teamRole: string;
   profileRole: string;
+  imageUrl: string;
 }
 
 export interface CreateMeetingDTO {
@@ -212,14 +214,14 @@ export interface ProjectNoDate {
 
 export interface ProjectUpdate {
   id: string;
-  title:string;
+  title: string;
   projectId: string;
   dateCreated: Date;
   version: number;
 }
 export interface ProjectUpdateNoDate {
   id: string;
-  title:string;
+  title: string;
   projectId: string;
   dateCreated: string;
   version: number;
