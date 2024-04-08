@@ -139,11 +139,11 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         minHeight: isMobile ? "100vh" : "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        alignItems: "center",
+        justifyContent: "center",
         zIndex: -1,
       }}
     >
-      {/* Bakgrund */}
       <BackGroundDesign
         style={{
           position: "absolute",
@@ -156,7 +156,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         color2="white"
       />
 
-      {/* Mötesrumskort */}
       <Card
         sx={{
           padding: 2,
@@ -185,7 +184,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         </CardContent>
       </Card>
 
-      {/* Pågående möte */}
       {ongoingMeeting && (
         <Card sx={{ my: 2 }}>
           <CardActionArea
@@ -208,12 +206,12 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         sx={{
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
-          justifyContent: "center", // Centrera navigationskorten
+          justifyContent: "center",
           gap: "20px",
+          width: "90%",
           mt: 2,
         }}
       >
-        {/* Navigationskort */}
         <NavCard
           backgroundColor={meetingRoomColor}
           navigationPage="/createMeeting"
@@ -265,7 +263,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         />
       </Box>
 
-      {/* Projektlista */}
       <Container
         sx={{
           marginTop: isMobile ? 1 : 2,
