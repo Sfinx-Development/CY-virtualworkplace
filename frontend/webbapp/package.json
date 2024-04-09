@@ -24,6 +24,7 @@
     "@types/react-router-dom": "^5.3.3",
     "agora-rtc-react": "^2.1.0",
     "axios": "^1.6.5",
+    "bcryptjs": "^2.4.3",
     "date-fns": "^3.3.1",
     "emoji-mart": "^5.5.2",
     "emoji-picker-react": "^4.9.2",
@@ -40,6 +41,7 @@
     "universal-cookie": "^7.0.2"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/google-libphonenumber": "^7.4.30",
     "@types/jwt-decode": "^3.1.0",
     "@types/react": "^18.2.43",

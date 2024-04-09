@@ -95,7 +95,8 @@ builder.Services.AddScoped<IConversationParticipantService, ConversationParticip
 builder.Services.AddScoped<IConversationService, ConversationService>();
 
 builder.Services.AddScoped<JwtService>();
-builder.Services.AddScoped<AuthService>();
+
+// builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ILoginService, LogInService>();
 builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository>();
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();

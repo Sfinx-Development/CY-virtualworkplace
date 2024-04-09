@@ -4,8 +4,8 @@ namespace Interfaces;
 
 public interface IUserService
 {
-    Task<User> Create(UserCreateDTO userCreateDto);
-    Task<User> Edit(User user);
-    Task<User> GetById(string id);
+    Task<UserDTO> Create(UserCreateDTO userCreateDto);
+    Task<UserDTO> Edit(User user);
+    Task<UserDTO> GetById(string id);
     Task<bool> DeleteById(string id);
 }

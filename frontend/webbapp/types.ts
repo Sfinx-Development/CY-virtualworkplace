@@ -8,8 +8,7 @@ export interface Todo {
 
 // DateTime date,
 
-export interface User {
-  id: string;
+export interface UserCreate {
   firstName: string;
   lastName: string;
   email: string;
@@ -19,9 +18,19 @@ export interface User {
   age: number;
   avatarUrl: string;
 }
-//jwtn endast i cookie ju
 
-//denna inte finnas sen
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  gender: string;
+  age: number;
+  avatarUrl: string;
+  dateCreated: Date;
+}
+
 export interface LogIn {
   email: string;
   password: string;

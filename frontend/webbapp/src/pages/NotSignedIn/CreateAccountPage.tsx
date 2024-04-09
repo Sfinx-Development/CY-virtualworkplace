@@ -10,11 +10,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import bcrypt from "bcryptjs";
 import { PhoneNumberUtil } from "google-libphonenumber";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { avatars } from "../../../avatars";
 import { isMobile } from "../../../globalConstants";
+import { UserCreate } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
 import { createUserAsync } from "../../slices/userSlice";
 
@@ -34,6 +36,8 @@ export default function CreateAccount() {
   const [passwordLengthError, setPasswordLengthError] = useState(false);
   const [ageError, setAgeError] = useState(false);
   const [fieldsError, setFieldsError] = useState(false);
+  const [createError, setCreateError] = useState(false);
+  const [createAccountError, setCreateAccountError] = useState("");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -61,7 +65,7 @@ export default function CreateAccount() {
     setPhoneError(false);
     setAgeError(false);
     setFieldsError(false);
-
+    setCreateError(false);
     if (
       firstname &&
       lastname &&
@@ -80,19 +84,28 @@ export default function CreateAccount() {
         isPhoneNumber(phoneNumber) &&
         age >= 16
       ) {
-        const newUser = {
-          id: "",
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword = bcrypt.hashSync(password, salt);
+        const newUser: UserCreate = {
           firstName: firstname,
           lastName: lastname,
           email: email,
           phoneNumber: phoneNumber,
           gender: gender,
           age: age,
-          password: password,
+          password: hashedPassword,
           avatarUrl: selectedAvatar,
         };
-        await dispatch(createUserAsync(newUser));
-        navigate("/signin");
+        const resultAction = await dispatch(createUserAsync(newUser));
+        const result = resultAction.payload;
+
+        if (typeof result === "string") {
+          setCreateError(true);
+          setCreateAccountError(result);
+          console.log("ERROR ÄR: ", result);
+        } else {
+          navigate("/signin");
+        }
       } else {
         if (password !== confirmedPassword) {
           setPasswordError(true);
@@ -112,6 +125,20 @@ export default function CreateAccount() {
       setFieldsError(true);
     }
   };
+
+  useEffect(() => {
+    setCreateError(false);
+  }, [
+    firstname,
+    lastname,
+    email,
+    password,
+    confirmedPassword,
+    phoneNumber,
+    gender,
+    age,
+    selectedAvatar,
+  ]);
 
   const gradientAnimation = keyframes`
       0% { background-position: 0% 50%; }
@@ -186,6 +213,11 @@ export default function CreateAccount() {
           {fieldsError && (
             <Grid item xs={12}>
               <Typography color="error">Alla fält måste fyllas i</Typography>
+            </Grid>
+          )}
+          {createError && (
+            <Grid item xs={12}>
+              <Typography color="error">{createAccountError}</Typography>
             </Grid>
           )}
           <Grid item xs={12} sm={6}>

@@ -1,12 +1,5 @@
-using System.Net;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Web;
-using api;
 using core;
 using Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -31,10 +24,6 @@ namespace Controllers
         {
             try
             {
-                _logger.LogInformation("LOGGA IN---------");
-                _logger.LogInformation(
-                    $"E-post: {logInDTONoJwt.Email}, Lösenord: {logInDTONoJwt.Password}"
-                );
                 string jwt = await _logInService.LogIn(logInDTONoJwt.Email, logInDTONoJwt.Password);
 
                 var cookieOptions = new CookieOptions
@@ -49,7 +38,7 @@ namespace Controllers
                 };
 
                 Response.Cookies.Append("jwttoken", jwt, cookieOptions);
-
+                Console.WriteLine("GICK BRA : " + jwt);
                 return Ok();
             }
             catch (Exception e)

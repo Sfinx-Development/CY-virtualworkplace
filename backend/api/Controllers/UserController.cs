@@ -32,7 +32,7 @@ namespace Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<User>> GetUserDTO()
+        public async Task<ActionResult<UserDTO>> GetUserDTO()
         {
             try
             {
@@ -52,12 +52,23 @@ namespace Controllers
                     return BadRequest("JWT token is missing.");
                 }
                 var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+                var userDTO = new UserDTO(
+                    loggedInUser.Id,
+                    loggedInUser.FirstName,
+                    loggedInUser.LastName,
+                    loggedInUser.Email,
+                    loggedInUser.PhoneNumber,
+                    loggedInUser.Gender,
+                    loggedInUser.Age,
+                    loggedInUser.AvatarUrl,
+                    loggedInUser.DateCreated
+                );
 
                 if (loggedInUser == null)
                 {
                     return BadRequest("Failed to get user.");
                 }
-                return Ok(loggedInUser);
+                return Ok(userDTO);
             }
             catch (Exception e)
             {
@@ -67,11 +78,11 @@ namespace Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetById(string id)
+        public async Task<ActionResult<UserDTO>> GetById(string id)
         {
             try
             {
-                User foundUser = await _userService.GetById(id);
+                UserDTO foundUser = await _userService.GetById(id);
                 return foundUser;
             }
             catch (Exception e)
@@ -81,11 +92,10 @@ namespace Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<ActionResult<User>> Post(UserCreateDTO userCreateDto)
+        public async Task<ActionResult<UserDTO>> Post(UserCreateDTO userCreateDto)
         {
             try
             {
-                //KOLLA SÅ INTE SAMMA EMAIL SKAPAS TVÅ GÅNGER
                 var userCreated = await _userService.Create(userCreateDto);
 
                 if (userCreated == null)
@@ -104,7 +114,7 @@ namespace Controllers
         //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
         [AllowAnonymous]
         [HttpPut]
-        public async Task<ActionResult<User>> UpdateUser(User user)
+        public async Task<ActionResult<UserDTO>> UpdateUser(User user)
         {
             try
             {
@@ -121,7 +131,7 @@ namespace Controllers
                     return BadRequest("JWT token is missing.");
                 }
 
-                User updatedUser = await _userService.Edit(user);
+                UserDTO updatedUser = await _userService.Edit(user);
                 return Ok(updatedUser);
             }
             catch (Exception e)
@@ -134,7 +144,7 @@ namespace Controllers
         [Authorize]
         //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
         [AllowAnonymous]
-        public async Task<ActionResult<User>> DeleteUser(string id)
+        public async Task<ActionResult> DeleteUser(string id)
         {
             try
             {
