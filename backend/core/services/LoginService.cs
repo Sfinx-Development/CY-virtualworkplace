@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BCrypt.Net;
 using Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -30,9 +31,16 @@ namespace core
         {
             try
             {
-                User foundUser = await _logInRepository.GetByLogIn(email, password);
-                Console.WriteLine("FOUNDUSER: " + foundUser.FirstName);
+                User foundUser = await _logInRepository.GetByLogIn(email);
+
                 if (foundUser == null)
+                {
+                    return null;
+                }
+
+                bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(password, foundUser.Password);
+
+                if (!isPasswordCorrect)
                 {
                     return null;
                 }
@@ -41,9 +49,9 @@ namespace core
 
                 return jwtToken;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
-                return null;
+                throw new Exception(e.Message);
             }
         }
 

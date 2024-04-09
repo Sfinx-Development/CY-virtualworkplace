@@ -17,11 +17,10 @@ namespace core
             _logger = logger;
         }
 
-        public async Task<User> Create(UserCreateDTO userCreateDto)
+        public async Task<UserDTO> Create(UserCreateDTO userCreateDto)
         {
             try
             {
-                _logger.LogInformation("Inne i create på userservice");
                 bool isMailRegistered = await _userRepository.UserEmailIsRegistered(
                     userCreateDto.Email
                 );
@@ -44,17 +43,28 @@ namespace core
                 user.AvatarUrl = userCreateDto.AvatarUrl;
 
                 User createdUser = await _userRepository.CreateAsync(user);
+                var userDTO = new UserDTO(
+                    createdUser.Id,
+                    createdUser.FirstName,
+                    createdUser.LastName,
+                    createdUser.Email,
+                    createdUser.PhoneNumber,
+                    createdUser.Gender,
+                    createdUser.Age,
+                    createdUser.AvatarUrl,
+                    createdUser.DateCreated
+                );
 
-                return createdUser;
+                return userDTO;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "An error");
+                _logger.LogError(e, "Error create account");
                 throw new Exception(e.Message);
             }
         }
 
-        public async Task<User> Edit(User user)
+        public async Task<UserDTO> Edit(User user)
         {
             try
             {
@@ -69,7 +79,19 @@ namespace core
                 userToUpdate.Email = user.Email;
 
                 User editedUser = await _userRepository.UpdateAsync(userToUpdate);
-                return editedUser;
+
+                var userDTO = new UserDTO(
+                    editedUser.Id,
+                    editedUser.FirstName,
+                    editedUser.LastName,
+                    editedUser.Email,
+                    editedUser.PhoneNumber,
+                    editedUser.Gender,
+                    editedUser.Age,
+                    editedUser.AvatarUrl,
+                    editedUser.DateCreated
+                );
+                return userDTO;
             }
             catch (Exception)
             {
@@ -77,13 +99,25 @@ namespace core
             }
         }
 
-        public async Task<User> GetById(string id)
+        public async Task<UserDTO> GetById(string id)
         {
             try
             {
                 User userFound = await _userRepository.GetByIdAsync(id);
 
-                return userFound;
+                var userDTO = new UserDTO(
+                    userFound.Id,
+                    userFound.FirstName,
+                    userFound.LastName,
+                    userFound.Email,
+                    userFound.PhoneNumber,
+                    userFound.Gender,
+                    userFound.Age,
+                    userFound.AvatarUrl,
+                    userFound.DateCreated
+                );
+
+                return userDTO;
             }
             catch (Exception)
             {
