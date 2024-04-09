@@ -11,11 +11,11 @@ public class LogInRepository
         _cyDbContext = cyDbContext;
     }
 
-    public async Task<User> GetByLogIn(string email, string password)
+    public async Task<User> GetByLogIn(string email)
     {
         try
         {
-            User user = await _cyDbContext.Users.FirstAsync(u => u.Email == email && u.Password == password);
+            User user = await _cyDbContext.Users.FirstAsync(u => u.Email == email);
             if (user != null)
             {
                 return user;
@@ -30,7 +30,4 @@ public class LogInRepository
             return null;
         }
     }
-
-
-
 }
