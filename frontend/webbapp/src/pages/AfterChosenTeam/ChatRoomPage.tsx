@@ -25,7 +25,7 @@ import {
   GetConversationParticipant,
   GetTeamConversation,
   UpdateLastActive,
-} from "../../slices/conversationSlice";
+} from "../../slices/messageSlice";
 import {
   CreateMessageAsync,
   DeleteMessageAsync,
@@ -64,11 +64,11 @@ export default function ChatRoom() {
   );
 
   const teamConversation = useAppSelector(
-    (state) => state.conversationSlice.teamConversation
+    (state) => state.messageSlice.teamConversation
   );
 
   const activeParticipant = useAppSelector(
-    (state) => state.conversationSlice.activeConversationParticipant
+    (state) => state.messageSlice.activeConversationParticipant
   );
 
   const [content, setContent] = useState("");

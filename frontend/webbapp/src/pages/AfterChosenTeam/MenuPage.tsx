@@ -18,7 +18,7 @@ import NavCard from "../../components/NavCard";
 import {
   GetConversationParticipant,
   GetTeamConversation,
-} from "../../slices/conversationSlice";
+} from "../../slices/messageSlice";
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import { GetTeamConversationMessages } from "../../slices/messageSlice";
 import {
@@ -42,11 +42,11 @@ export default function Menu() {
 
   const dispatch = useAppDispatch();
   const activeParticipant = useAppSelector(
-    (state) => state.conversationSlice.activeConversationParticipant
+    (state) => state.messageSlice.activeConversationParticipant
   );
   const messages = useAppSelector((state) => state.messageSlice.messages);
   const teamConversation = useAppSelector(
-    (state) => state.conversationSlice.teamConversation
+    (state) => state.messageSlice.teamConversation
   );
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const activeProfile = useAppSelector(
