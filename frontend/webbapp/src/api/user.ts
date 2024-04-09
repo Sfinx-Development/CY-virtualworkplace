@@ -1,4 +1,4 @@
-import { User } from "../../types";
+import { User, UserCreate } from "../../types";
 import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + "/user";
@@ -26,7 +26,7 @@ export const FetchGetUseer = async (): Promise<User> => {
   }
 };
 
-export const FetchCreateUseer = async (newUser: User): Promise<User> => {
+export const FetchCreateUseer = async (newUser: UserCreate): Promise<User> => {
   try {
     const response = await fetch(apiUrl + "/create", {
       method: "POST",
@@ -41,7 +41,7 @@ export const FetchCreateUseer = async (newUser: User): Promise<User> => {
     }
 
     const data = await response.json();
-
+    console.log("SKAÅAD: ", data);
     return data as User;
   } catch (error) {
     console.error(error);
