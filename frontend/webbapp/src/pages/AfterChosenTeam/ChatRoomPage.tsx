@@ -241,7 +241,7 @@ export default function ChatRoom() {
     <div
       style={{
         padding: isMobile ? 2 : "20px",
-        height: isMobile ? "100vh" : "100%",
+        height: isMobile ? "auto" : "100%",
         display: "flex",
         width: "100%",
         flexDirection: "column",
@@ -415,6 +415,7 @@ export default function ChatRoom() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSendMessage();
           }}
+       
         />
         {showEmojiPicker && (
           <EmojiPicker
