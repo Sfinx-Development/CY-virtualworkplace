@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { User } from "../../types";
+import { User, UserCreate } from "../../types";
 import { FetchLogOut, FetchSignIn } from "../api/logIn";
 import { FetchCreateUseer, FetchGetUseer } from "../api/user";
 
@@ -7,17 +7,19 @@ export interface UserState {
   user: User | undefined;
   error: string | null;
   logInError: string | null;
+  createAccountError: string | null;
 }
 
 export const initialState: UserState = {
   user: undefined,
   error: null,
   logInError: null,
+  createAccountError: null,
 };
 
 export const createUserAsync = createAsyncThunk<
   User,
-  User,
+  UserCreate,
   { rejectValue: string }
 >("user/addUser", async (user, thunkAPI) => {
   try {
@@ -25,10 +27,12 @@ export const createUserAsync = createAsyncThunk<
     if (createdUser) {
       return createdUser;
     } else {
-      return thunkAPI.rejectWithValue("failed to add user");
+      return thunkAPI.rejectWithValue("Något gick fel");
     }
   } catch (error) {
-    return thunkAPI.rejectWithValue("Något gick fel.");
+    return thunkAPI.rejectWithValue(
+      "Det verkar som att denna email redan finns registrerad."
+    );
   }
 });
 
@@ -113,7 +117,11 @@ export const getUserAsync = createAsyncThunk<User>("user/getUser", async () => {
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    clearCreateAccountError: (state) => {
+      state.createAccountError = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(logInUserAsync.fulfilled, (state, action) => {
@@ -133,7 +141,7 @@ const userSlice = createSlice({
         }
       })
       .addCase(logOutUserAsync.rejected, (state) => {
-        state.user = undefined; //den får vara undefined antar jag ändå eller?
+        state.user = undefined;
         state.error = "Något gick fel vid utloggningen.";
       })
       .addCase(getUserAsync.fulfilled, (state, action) => {
@@ -148,14 +156,15 @@ const userSlice = createSlice({
       })
       .addCase(createUserAsync.fulfilled, (state, action) => {
         if (action.payload) {
-          state.error = null;
+          state.createAccountError = null;
         }
       })
-      .addCase(createUserAsync.rejected, (state) => {
-        state.user = undefined;
-        state.error = "Något gick fel med skapandet av konto.";
+      .addCase(createUserAsync.rejected, (state, action) => {
+        state.createAccountError =
+          action.payload ?? "Ett oväntat fel inträffade.";
       });
   },
 });
 
+export const { clearCreateAccountError } = userSlice.actions;
 export const userReducer = userSlice.reducer;

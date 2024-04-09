@@ -22,15 +22,13 @@ import {
 import BackGroundDesign from "../../components/BackgroundDesign";
 import ChatMessage from "../../components/ChatMessage";
 import {
-  GetConversationParticipant,
-  GetTeamConversation,
-  UpdateLastActive,
-} from "../../slices/conversationSlice";
-import {
   CreateMessageAsync,
   DeleteMessageAsync,
   EditMessageAsync,
+  GetConversationParticipant,
+  GetTeamConversation,
   GetTeamConversationMessages,
+  UpdateLastActive,
   liveUpdateMessageDeleted,
   liveUpdateMessageEdited,
   liveUpdateMessageSent,
@@ -64,11 +62,11 @@ export default function ChatRoom() {
   );
 
   const teamConversation = useAppSelector(
-    (state) => state.conversationSlice.teamConversation
+    (state) => state.messageSlice.teamConversation
   );
 
   const activeParticipant = useAppSelector(
-    (state) => state.conversationSlice.activeConversationParticipant
+    (state) => state.messageSlice.activeConversationParticipant
   );
 
   const [content, setContent] = useState("");

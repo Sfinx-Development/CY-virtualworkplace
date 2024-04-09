@@ -1,7 +1,17 @@
 import * as signalR from "@microsoft/signalr";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Message, MessageOutgoing } from "../../types";
-import { FetchGetTeamMessages } from "../api/conversation";
+import {
+  Conversation,
+  ConversationParticipant,
+  Message,
+  MessageOutgoing,
+} from "../../types";
+import {
+  FetchGetConversationParticipant,
+  FetchGetTeamConversation,
+  FetchGetTeamMessages,
+} from "../api/conversation";
+import { FetchUpdateLastActive } from "../api/conversationParticipant";
 import {
   FetchCreateMessage,
   FetchDeleteMessage,
@@ -12,12 +22,92 @@ import ChatConnector from "../pages/AfterChosenTeam/ChatConnection";
 export interface MessageState {
   messages: Message[];
   error: string | null;
+  teamConversation: Conversation | undefined;
+  activeConversation: Conversation | undefined;
+  activeConversationParticipant: ConversationParticipant | undefined;
 }
 
 export const initialState: MessageState = {
   messages: [],
+  teamConversation: undefined,
+  activeConversation: undefined,
+  activeConversationParticipant: undefined,
   error: null,
 };
+
+export const GetTeamConversation = createAsyncThunk<
+  Conversation,
+  string,
+  { rejectValue: string }
+>("conversation/getTeamConversation", async (teamId, thunkAPI) => {
+  try {
+    const conversation = await FetchGetTeamConversation(teamId);
+    if (conversation) {
+      return conversation;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av konversation."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtning av konversation."
+    );
+  }
+});
+
+export const GetConversationParticipant = createAsyncThunk<
+  ConversationParticipant,
+  { profileId: string; conversationId: string },
+  { rejectValue: string }
+>(
+  "conversation/getConversationParticipant",
+  async ({ profileId, conversationId }, thunkAPI) => {
+    try {
+      const participant = await FetchGetConversationParticipant(
+        conversationId,
+        profileId
+      );
+      if (participant) {
+        return participant;
+      } else {
+        return thunkAPI.rejectWithValue(
+          "Ett fel inträffade vid hämtning av deltagare."
+        );
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av konversation."
+      );
+    }
+  }
+);
+
+//egen slice?
+export const UpdateLastActive = createAsyncThunk<
+  ConversationParticipant,
+  ConversationParticipant,
+  { rejectValue: string }
+>(
+  "conversation/updateLastActive",
+  async (conversationParticipant, thunkAPI) => {
+    try {
+      const participant = await FetchUpdateLastActive(conversationParticipant);
+      if (participant) {
+        console.log("Deltagare uppdaterad:", participant);
+        return participant;
+      } else {
+        return thunkAPI.rejectWithValue(
+          "Ett fel inträffade vid uppdatering av deltagare."
+        );
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid uppdatering av deltagare."
+      );
+    }
+  }
+);
 
 export const GetTeamConversationMessages = createAsyncThunk<
   Message[],
@@ -264,14 +354,13 @@ const messageSlice = createSlice({
         state.error = "Något gick fel när meddelandet skulle tas bort.";
       })
       .addCase(messageSent.fulfilled, (state, action) => {
-        if (action.payload) {
-          // Lägg till det nya meddelandet i meddelandelistan
-          state.messages.push(action.payload);
+        if (action.payload && state.teamConversation) {
+          if (action.payload.conversationId == state.teamConversation.id)
+            state.messages.push(action.payload);
         }
       })
       .addCase(messageEdited.fulfilled, (state, action) => {
         if (action.payload) {
-          // Hitta och uppdatera det redigerade meddelandet i meddelandelistan
           const editedMessageIndex = state.messages.findIndex(
             (m) => m.id === action.payload.id
           );
@@ -287,6 +376,37 @@ const messageSlice = createSlice({
             (m) => m.id !== action.payload
           );
         }
+      })
+      .addCase(GetTeamConversation.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.teamConversation = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetTeamConversation.rejected, (state) => {
+        state.teamConversation = undefined;
+        state.error = "Något gick fel med hämtandet av konversation.";
+      })
+      .addCase(GetConversationParticipant.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeConversationParticipant = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetConversationParticipant.rejected, (state) => {
+        state.activeConversationParticipant = undefined;
+        state.error = "Något gick fel med hämtandet av deltagare.";
+      })
+      .addCase(UpdateLastActive.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeConversationParticipant = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(UpdateLastActive.rejected, (state) => {
+        state.activeConversationParticipant = undefined;
+        state.error =
+          "Något gick fel med uppdatering av deltagarens senast aktiva tid.";
       });
   },
 });
