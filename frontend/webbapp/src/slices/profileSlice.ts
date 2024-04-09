@@ -255,8 +255,10 @@ const profileSlice = createSlice({
         state.error = "Något gick fel med hämtandet av aktiv profil.";
       })
       .addCase(profileOnline.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.onlineProfiles = [...state.onlineProfiles, action.payload];
+        if (action.payload && state.activeProfile) {
+          if (action.payload.teamId == state.activeProfile.teamId) {
+            state.onlineProfiles = [...state.onlineProfiles, action.payload];
+          }
         }
       })
       .addCase(profileOffline.fulfilled, (state, action) => {
