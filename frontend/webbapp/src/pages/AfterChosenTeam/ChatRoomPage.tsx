@@ -22,15 +22,13 @@ import {
 import BackGroundDesign from "../../components/BackgroundDesign";
 import ChatMessage from "../../components/ChatMessage";
 import {
-  GetConversationParticipant,
-  GetTeamConversation,
-  UpdateLastActive,
-} from "../../slices/messageSlice";
-import {
   CreateMessageAsync,
   DeleteMessageAsync,
   EditMessageAsync,
+  GetConversationParticipant,
+  GetTeamConversation,
   GetTeamConversationMessages,
+  UpdateLastActive,
   liveUpdateMessageDeleted,
   liveUpdateMessageEdited,
   liveUpdateMessageSent,

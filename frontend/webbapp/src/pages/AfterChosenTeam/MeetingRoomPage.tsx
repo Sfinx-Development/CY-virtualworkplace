@@ -8,7 +8,7 @@ import {
   Container,
   Typography,
 } from "@mui/material";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { is800Mobile, isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import BackGroundDesign from "../../components/BackgroundDesign";
@@ -39,6 +39,7 @@ interface ConnectFormProps {
 
 export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const dispatch = useAppDispatch();
+  const [connection, setConnection] = useState<Connector>();
 
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const activeProfile = useAppSelector(
@@ -63,16 +64,12 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     : null;
 
   useEffect(() => {
-    dispatch(getActiveTeam());
-    dispatch(getActiveProfile());
-  }, []);
-
-  useEffect(() => {
     if (activeTeam) {
-      // dispatch(GetMyProfileAsync(activeTeam?.id));
       dispatch(GetTeamProfiles(activeTeam?.id));
-      dispatch(GetOnlineProfiles(activeTeam.id));
       dispatch(GetTeamProjectsAsync(activeTeam.id));
+    }
+    if (activeTeam && onlineProfiles == undefined) {
+      dispatch(GetOnlineProfiles(activeTeam?.id));
     }
   }, [activeTeam]);
 
@@ -80,27 +77,22 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     if (activeProfile) {
       dispatch(GetMyMeetingsAsync(activeProfile.id));
     }
-  }, []);
+  }, [activeProfile]);
 
   useEffect(() => {
-    const connection = Connector.getInstance();
+    dispatch(getActiveTeam());
+    dispatch(getActiveProfile());
 
-    connection.events = {
+    const onlineConnection = Connector.getInstance();
+    setConnection(onlineConnection);
+
+    onlineConnection.events = {
       profileOnline: (profile: ProfileHubDTO) => {
         dispatch(profileOnline(profile));
       },
       profileOffline: (profileId: string) => {
         dispatch(profileOffline(profileId));
       },
-    };
-
-    return () => {
-      if (connection) {
-        Connector.getInstance().events = {
-          profileOnline: () => {},
-          profileOffline: () => {},
-        };
-      }
     };
   }, []);
 
@@ -114,7 +106,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         dispatch(leaveMeetingRoomAsync(activeProfile.id));
       }
     };
-  }, [dispatch, activeProfile]);
+  }, [connection]);
 
   const meetingRoomColor = theme1.palette.room.main;
   const leaveColor = theme1.palette.leave.main;
