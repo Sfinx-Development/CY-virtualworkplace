@@ -128,12 +128,9 @@ export default function MeetingInTeamsPage() {
       {error ? (
         <Typography>Endast skapare av mötet kan radera</Typography>
       ) : null}
-      <Typography variant={isMobile ? "h5" : "h4"}>
-        {activeTeam?.name}
-      </Typography>
       <Box>
-        {upcomingMeetings.length > 0 && (
-          <Box>
+        {upcomingMeetings && upcomingMeetings.length > 0 ? (
+          <>
             <Typography variant="h5">Kommande möten</Typography>
             {upcomingMeetings?.map((meeting: MeetingOccasionNoDate) => (
               <Card
@@ -207,10 +204,12 @@ export default function MeetingInTeamsPage() {
                 </CardContent>
               </Card>
             ))}
-          </Box>
+          </>
+        ) : (
+          <Typography>Inga kommande möten</Typography>
         )}
 
-        {pastMeetings.length > 0 && (
+        {pastMeetings && pastMeetings.length > 0 && (
           <Box>
             <Typography variant="h5">Passerade möten</Typography>
             {pastMeetings?.map((meeting: MeetingOccasionNoDate) => (

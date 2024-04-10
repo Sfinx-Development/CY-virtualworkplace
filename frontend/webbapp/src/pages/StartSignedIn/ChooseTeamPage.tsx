@@ -93,11 +93,12 @@ const ChooseTeam = () => {
               sx={{
                 display: "flex",
                 flex: 1,
-                backgroundColor: "white",
-                borderRadius: 8,
-                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-                margin: 2,
+                maxHeight: "250px",
                 minWidth: "250px",
+                maxWidth: "300px",
+                borderRadius: 8,
+                margin: 2,
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
               }}
             >
               <CardActionArea
@@ -107,7 +108,7 @@ const ChooseTeam = () => {
                 {team.imageUrl ? (
                   <CardMedia
                     component="img"
-                    height="140"
+                    height="150px"
                     image={team.imageUrl}
                     alt={team.name}
                   />

@@ -9,11 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import { memo, useEffect, useState } from "react";
-import { is800Mobile, isMobile } from "../../../globalConstants";
+import { Outlet } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import BackGroundDesign from "../../components/BackgroundDesign";
 import NavCard from "../../components/NavCard";
-import ProgressBar from "../../components/ProgressBar";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -51,7 +51,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
   const now = new Date();
-  const projects = useAppSelector((state) => state.projectSlice.projects);
 
   const ongoingMeeting = occasions
     ? occasions.find((occasion: MeetingOccasionNoDate) => {
@@ -109,7 +108,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   }, [connection]);
 
   const meetingRoomColor = theme1.palette.room.main;
-  const leaveColor = theme1.palette.leave.main;
 
   const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
     <div
@@ -148,34 +146,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         color2="white"
       />
 
-      <Card
-        sx={{
-          padding: 2,
-          backgroundColor: "#f4f4f4",
-          borderRadius: "10px",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-          width: "90%",
-          margin: "0 auto",
-        }}
-      >
-        <CardContent>
-          <Typography variant="h6" sx={{ color: "#333", mb: 2 }}>
-            {activeTeam?.name}'s MÖTESRUM
-          </Typography>
-          {onlineProfiles && onlineProfiles.length > 0 ? (
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              {onlineProfiles.map((profile: ProfileHubDTO) => (
-                <ProfileItem key={profile.profileId} profile={profile} />
-              ))}
-            </Box>
-          ) : (
-            <Typography variant="body2" sx={{ color: "#666" }}>
-              Ingen profil online
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
-
       {ongoingMeeting && (
         <Card sx={{ my: 2 }}>
           <CardActionArea
@@ -192,7 +162,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           </CardActionArea>
         </Card>
       )}
-
       {/* Navigation */}
       <Box
         sx={{
@@ -206,7 +175,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       >
         <NavCard
           backgroundColor={meetingRoomColor}
-          navigationPage="/createMeeting"
+          navigationPage="createMeeting"
           title="Nytt möte"
           icon={
             <img
@@ -219,7 +188,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
         <NavCard
           backgroundColor={meetingRoomColor}
-          navigationPage="/meetinginteam"
+          navigationPage="meetinginteam"
           title="Alla möten"
           icon={
             <img
@@ -232,7 +201,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
         <NavCard
           backgroundColor={meetingRoomColor}
-          navigationPage="/createproject"
+          navigationPage="createproject"
           title="Nytt projekt"
           icon={
             <img
@@ -242,39 +211,63 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             />
           }
         />
+
         <NavCard
           backgroundColor={meetingRoomColor}
-          navigationPage="/healthcheck"
+          navigationPage=""
+          title="Alla projekt"
+          icon={
+            <img
+              src="https://i.imgur.com/HeztEpU.png"
+              alt="project management icon"
+              style={{ width: 40, height: 40 }}
+            />
+          }
+        />
+        <NavCard
+          backgroundColor={meetingRoomColor}
+          navigationPage="healthcheck"
           title="Statistik"
           icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
         />
-        <NavCard
-          backgroundColor={leaveColor}
-          navigationPage="/menu"
-          title="Lämna"
-        />
       </Box>
-
-      <Container
-        sx={{
-          marginTop: isMobile ? 1 : 2,
-          display: "flex",
-          flexDirection: "column",
-          maxHeight: is800Mobile ? "350px" : "300px",
-          flexGrow: 1,
-          overflow: "auto",
-          width: "100%",
-        }}
-        className="project-list-container"
-      >
-        {projects ? (
-          <Box>
-            {projects.map((p) => (
-              <ProgressBar project={p} key={p.id} />
-            ))}
-          </Box>
-        ) : null}
-      </Container>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <div style={{ marginRight: 60 }}>
+          <Outlet />
+        </div>
+        {isMobile ? null : (
+          <Card
+            sx={{
+              padding: 2,
+              backgroundColor: "rgba(250,250,250,0.8)",
+              borderRadius: "10px",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+              maxWidth: "15%",
+              margin: "0 auto",
+              marginTop: 2,
+              right: 20,
+              position: "absolute",
+            }}
+          >
+            <CardContent>
+              <Typography sx={{ color: "black", mb: 2 }}>
+                {activeTeam?.name.toUpperCase()}'S MÖTESRUM
+              </Typography>
+              {onlineProfiles && onlineProfiles.length > 0 ? (
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {onlineProfiles.map((profile: ProfileHubDTO) => (
+                    <ProfileItem key={profile.profileId} profile={profile} />
+                  ))}
+                </Box>
+              ) : (
+                <Typography variant="body2" sx={{ color: "black" }}>
+                  Ingen profil online
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </Container>
   );
 };

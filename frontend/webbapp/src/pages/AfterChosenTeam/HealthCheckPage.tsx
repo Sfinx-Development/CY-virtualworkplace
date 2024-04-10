@@ -94,7 +94,7 @@ export default function HealthCheckPage() {
   };
 
   return (
-    <Container sx={{ padding: "20px" }}>
+    <Container sx={{ paddingX: "20px", paddingY: 1 }}>
       <div
         style={{
           display: "flex",
@@ -112,10 +112,8 @@ export default function HealthCheckPage() {
           <Box
             sx={{
               flex: 1,
-              marginTop: isMobile ? 2 : 10,
               display: "flex",
               justifyContent: "center",
-              marginRight: isMobile ? 0 : 10,
             }}
           >
             {chartData.data.length > 0 ? (
@@ -127,7 +125,7 @@ export default function HealthCheckPage() {
                     alignItems={"center"}
                     padding={isMobile ? 0 : 2}
                   >
-                    <Typography variant={isMobile ? "h6" : "h5"}>
+                    <Typography>
                       {new Date(
                         currentHealthCheck.startTime
                       ).toLocaleDateString("sv-SE")}{" "}
@@ -136,15 +134,13 @@ export default function HealthCheckPage() {
                         "sv-SE"
                       )}
                     </Typography>
-                    <Typography variant={isMobile ? "h6" : "h5"}>
-                      {currentHealthCheck.question}
-                    </Typography>
+                    <Typography>{currentHealthCheck.question}</Typography>
                   </Box>
                 ) : null}
                 <PieChart
                   series={[{ type: "pie", data: chartData.data }]}
-                  width={isMobile ? 350 : 600}
-                  height={isMobile ? 300 : 400}
+                  width={isMobile ? 300 : 550}
+                  height={isMobile ? 250 : 350}
                   sx={{
                     [`& .${pieArcLabelClasses.root}`]: {
                       fill: "white",
@@ -154,11 +150,11 @@ export default function HealthCheckPage() {
                 />
               </Container>
             ) : (
-              <Container sx={{ marginTop: isMobile ? 0 : 10 }}>
+              <Container sx={{ paddingY: 4 }}>
                 <Skeleton
                   variant="circular"
-                  width={isMobile ? 300 : 400}
-                  height={isMobile ? 300 : 400}
+                  width={isMobile ? 250 : 350}
+                  height={isMobile ? 250 : 350}
                 />
               </Container>
             )}

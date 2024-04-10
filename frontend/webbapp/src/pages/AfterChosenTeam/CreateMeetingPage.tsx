@@ -99,67 +99,93 @@ export default function CreateMeetingPage() {
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           alignItems: "center",
+          height: "100%",
         }}
       >
         {fieldError && (
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
-        <Typography variant="h4">Nytt Möte</Typography>
-        <TextField
-          label="Mötesnamn"
-          value={newMeetingName}
-          onChange={(e) => setNewMeetingName(e.target.value)}
-          variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
-        <TextField
-          label="Beskrivning"
-          value={newMeetingDescription}
-          onChange={(e) => setNewMeetingDescription(e.target.value)}
-          variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
-
-        <TextField
-          label="Datum"
-          type="datetime-local"
-          value={newMeetingDate}
-          onChange={(e) => setNewMeetingDate(e.target.value)}
-          variant="outlined"
-          sx={{
-            width: "250px",
-            marginTop: 2,
-            "& label": {
-              color: "transparent",
-            },
-            "&:focus label": {
-              color: "initial",
-            },
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
           }}
-        />
-        <TextField
-          label="Minuter"
-          type="number"
-          value={newMeetingMinutes}
-          onChange={(e) => setNewMeetingMinutes(parseInt(e.target.value, 10))}
-          variant="outlined"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
+        >
+          {/* <Typography variant="h6">Skapa ett nytt möte</Typography> */}
+          <TextField
+            label="Mötesnamn"
+            value={newMeetingName}
+            onChange={(e) => setNewMeetingName(e.target.value)}
+            variant="outlined"
+            sx={{ width: "250px", marginTop: 2 }}
+          />
+          <TextField
+            label="Beskrivning"
+            value={newMeetingDescription}
+            onChange={(e) => setNewMeetingDescription(e.target.value)}
+            variant="outlined"
+            sx={{ width: "250px", marginTop: 2 }}
+          />
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={newMeetingIsRepeating}
-              onChange={() => setNewMeetingIsRepeating(!newMeetingIsRepeating)}
-            />
-          }
-          label="Upprepas"
-          sx={{ width: "250px", marginTop: 2 }}
-        />
+          <TextField
+            label="Datum"
+            type="datetime-local"
+            value={newMeetingDate}
+            onChange={(e) => setNewMeetingDate(e.target.value)}
+            variant="outlined"
+            sx={{
+              width: "250px",
+              marginTop: 2,
+              "& label": {
+                color: "transparent",
+              },
+              "&:focus label": {
+                color: "initial",
+              },
+            }}
+          />
+          <TextField
+            label="Minuter"
+            type="number"
+            value={newMeetingMinutes}
+            onChange={(e) => setNewMeetingMinutes(parseInt(e.target.value, 10))}
+            variant="outlined"
+            sx={{ width: "250px", marginTop: 2 }}
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={newMeetingIsRepeating}
+                onChange={() =>
+                  setNewMeetingIsRepeating(!newMeetingIsRepeating)
+                }
+              />
+            }
+            label="Upprepas"
+            sx={{ width: "250px", marginTop: 1 }}
+          />
+          {!newMeetingIsRepeating ? (
+            <Button
+              variant="contained"
+              onClick={handleCreateMeeting}
+              sx={{ marginTop: 1 }}
+            >
+              Skapa möte
+            </Button>
+          ) : null}
+        </div>
         {newMeetingIsRepeating && (
-          <>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
             <TextField
               label="Intervall"
               type="number"
@@ -176,27 +202,27 @@ export default function CreateMeetingPage() {
               value={newMeetingEndDate}
               onChange={(e) => setNewMeetingEndDate(e.target.value)}
               variant="outlined"
-              sx={{ width: "250px", marginTop: 2 }}
+              sx={{
+                width: "250px",
+                marginTop: 2,
+                "& label": {
+                  color: "transparent",
+                },
+                "&:focus label": {
+                  color: "initial",
+                },
+              }}
             />
-          </>
+            <Button
+              variant="contained"
+              onClick={handleCreateMeeting}
+              sx={{ marginTop: 2 }}
+            >
+              Skapa möte
+            </Button>
+          </div>
         )}
-        <TextField
-          type="hidden"
-          value={newMeetingRoomId}
-          onChange={(e) => setNewMeetingRoomId(e.target.value)} // Använd 'e' här
-        />
-        <TextField
-          type="hidden"
-          value={activeProfile?.id || ""}
-          onChange={(e) => setOwner(e.target.value)} // Använd 'e' här
-        />
-        <Button
-          variant="contained"
-          onClick={handleCreateMeeting}
-          sx={{ marginTop: 2 }}
-        >
-          Skapa möte
-        </Button>
+
         {/* {meetings && (
           <div>
             <Typography variant="h6">Latest Meeting:</Typography>
