@@ -241,7 +241,7 @@ export default function ChatRoom() {
     <div
       style={{
         padding: isMobile ? 2 : "20px",
-        height: isMobile ? "auto" : "100%",
+        height: isMobile ? "50vh" : "100%",
         display: "flex",
         width: "100%",
         flexDirection: "column",
