@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import images, { ImageUrl } from "../../../images";
 import { CreateTeamDTO } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
@@ -90,7 +91,11 @@ export default function CreateTeam() {
             }}
           />
         </Tooltip>
-        <ImageList sx={{ width: "100%" }} cols={6} rowHeight={164}>
+        <ImageList
+          sx={{ width: "100%" }}
+          cols={isMobile ? 3 : 6}
+          rowHeight={164}
+        >
           {images.map((item: ImageUrl) => (
             <ImageListItem key={item.url}>
               <img

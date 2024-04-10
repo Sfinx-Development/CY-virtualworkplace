@@ -32,10 +32,6 @@ export default function CreateUpdate() {
     dispatch(getActiveProfile());
     dispatch(getActiveProject());
   }, []);
-  useEffect(() => {
-    console.log("AKTIVT PROJEKT: ", activeProject);
-    console.log("AKTIVT PROFIL: ", activeProfile);
-  }, [activeProfile]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event && event.target && event.target.files) {

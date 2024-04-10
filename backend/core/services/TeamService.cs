@@ -37,6 +37,7 @@ public class TeamService : ITeamService
                 Code = Utils.GenerateRandomId(6, "upper"),
                 Name = incomingCreateTeamDTO.TeamName,
                 TeamRole = incomingCreateTeamDTO.TeamRole,
+                ImageUrl = incomingCreateTeamDTO.ImageUrl,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -87,6 +88,7 @@ public class TeamService : ITeamService
         {
             var foundTeam = await _teamRepository.GetByIdAsync(team.Id) ?? throw new Exception();
             foundTeam.TeamRole = team.TeamRole;
+            foundTeam.ImageUrl = team.ImageUrl;
             var updatedTeam = await _teamRepository.UpdateAsync(foundTeam);
             return updatedTeam;
         }
