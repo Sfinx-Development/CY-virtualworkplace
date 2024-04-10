@@ -13,7 +13,7 @@ import { Outlet } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import BackGroundDesign from "../../components/BackgroundDesign";
-import NavCard from "../../components/NavCard";
+import FlexNavcard from "../../components/FlexNavcard";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -125,13 +125,13 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   return (
     <Container
       sx={{
-        padding: "20px",
-        minHeight: isMobile ? "100vh" : "100%",
+        minHeight: isMobile ? "100%" : "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
         zIndex: -1,
+        padding: 2,
+        margin: 0,
       }}
     >
       <BackGroundDesign
@@ -166,14 +166,14 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: isMobile ? "column" : "row",
+          flexDirection: "row",
           justifyContent: "center",
-          gap: "20px",
-          width: "90%",
-          mt: 2,
+          gap: isMobile ? 1 : 4,
+          width: "100%",
+          mt: isMobile ? 0 : 2,
         }}
       >
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
           navigationPage="createMeeting"
           title="Nytt möte"
@@ -186,7 +186,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           }
         />
 
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
           navigationPage="meetinginteam"
           title="Alla möten"
@@ -199,7 +199,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           }
         />
 
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
           navigationPage="createproject"
           title="Nytt projekt"
@@ -212,7 +212,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           }
         />
 
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
           navigationPage=""
           title="Alla projekt"
@@ -224,15 +224,25 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             />
           }
         />
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
           navigationPage="healthcheck"
           title="Statistik"
           icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
         />
       </Box>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div style={{ marginRight: 60 }}>
+      <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
+        <div
+          style={{
+            marginRight: isMobile ? 0 : 60,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: isMobile ? "100%" : "90%",
+            flex: 1,
+          }}
+        >
           <Outlet />
         </div>
         {isMobile ? null : (

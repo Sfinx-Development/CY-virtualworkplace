@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { isMobile } from "../../../globalConstants";
 import { MeetingNoDate, MeetingOccasionNoDate } from "../../../types";
 import {
   DeleteMeetingAsync,
@@ -124,11 +123,11 @@ export default function MeetingInTeamsPage() {
   };
 
   return (
-    <Container>
+    <Container sx={{ width: "100%" }}>
       {error ? (
         <Typography>Endast skapare av mötet kan radera</Typography>
       ) : null}
-      <Box>
+      <Box sx={{ width: "90%" }}>
         {upcomingMeetings && upcomingMeetings.length > 0 ? (
           <>
             <Typography variant="h5">Kommande möten</Typography>

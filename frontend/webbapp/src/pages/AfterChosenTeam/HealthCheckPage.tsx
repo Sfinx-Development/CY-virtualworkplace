@@ -100,6 +100,7 @@ export default function HealthCheckPage() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          width: "100%",
         }}
       >
         <Container
@@ -107,6 +108,7 @@ export default function HealthCheckPage() {
             display: "flex",
             flexDirection: isMobile ? "column" : "row",
             alignItems: isMobile ? "center" : "flex-start",
+            width: "90%",
           }}
         >
           <Box

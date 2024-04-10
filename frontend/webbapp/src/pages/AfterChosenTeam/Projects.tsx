@@ -25,16 +25,20 @@ export default function Projects() {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "flex-start",
+      }}
+    >
       <Container
         sx={{
           marginTop: isMobile ? 1 : 2,
-          display: "flex",
-          flexDirection: "column",
           maxHeight: is800Mobile ? "350px" : "300px",
-          flexGrow: 1,
+          width: "90%",
           overflow: "auto",
-          width: "100%",
+          marginLeft: 0,
         }}
         className="project-list-container"
       >

@@ -1,7 +1,6 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isMobile } from "../../../globalConstants";
 import { Project } from "../../../types";
 import { getActiveProfile } from "../../slices/profileSlice";
 import { CreateProjectAsync } from "../../slices/projectSlice";
@@ -44,7 +43,7 @@ export default function CreateProject() {
       setEndDate("");
       setTitle("");
       setDescription("");
-      navigate("/menu");
+      navigate("/meetingroom");
     } else {
       setFieldError(true);
     }
@@ -122,8 +121,7 @@ export default function CreateProject() {
         <Button
           variant="contained"
           onClick={handleCreateProject}
-          fullWidth
-          sx={{ marginTop: 2 }}
+          sx={{ marginTop: 2, width: "250px" }}
         >
           Skapa
         </Button>

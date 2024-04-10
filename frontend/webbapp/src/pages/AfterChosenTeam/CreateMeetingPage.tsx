@@ -28,7 +28,6 @@ export default function CreateMeetingPage() {
   const [newMeetingDate, setNewMeetingDate] = useState("");
   const [newMeetingMinutes, setNewMeetingMinutes] = useState(0);
   const [newMeetingIsRepeating, setNewMeetingIsRepeating] = useState(false);
-  const [newMeetingRoomId, setNewMeetingRoomId] = useState("");
   const [, setOwner] = useState("");
   const [newMeetingInterval, setNewMeetingInterval] = useState(0);
   const [newMeetingEndDate, setNewMeetingEndDate] = useState("");
@@ -88,14 +87,16 @@ export default function CreateMeetingPage() {
       setNewMeetingInterval(0);
       setNewMeetingEndDate("");
       setOwner(""); // Återställ owner-fältet
-      navigate("/meetinginteam");
+      navigate("/meetingroom/meetinginteam");
     } else {
       setFieldError(true);
     }
   };
 
   return (
-    <Container sx={{ padding: "20px" }}>
+    <Container
+      sx={{ padding: "20px", display: "flex", justifyContent: "center" }}
+    >
       <div
         style={{
           display: "flex",
@@ -171,7 +172,7 @@ export default function CreateMeetingPage() {
             <Button
               variant="contained"
               onClick={handleCreateMeeting}
-              sx={{ marginTop: 1 }}
+              sx={{ marginTop: 1, width: "250px" }}
             >
               Skapa möte
             </Button>
@@ -216,7 +217,7 @@ export default function CreateMeetingPage() {
             <Button
               variant="contained"
               onClick={handleCreateMeeting}
-              sx={{ marginTop: 2 }}
+              sx={{ marginTop: 2, width: "250px" }}
             >
               Skapa möte
             </Button>
