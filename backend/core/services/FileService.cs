@@ -29,13 +29,13 @@ public class FileService : IFileService
     public async Task<ProjectFileDTO> CreateAsync(ProjectFileDTO fileDTO)
     {
         string uniqueFileName = $"{DateTime.Now.Ticks}_{Guid.NewGuid()}_{fileDTO.FileName}";
-
         string filesDirectory = _configuration["FileSettings:FilesDirectory"];
         string filePath = Path.Combine(filesDirectory, uniqueFileName);
 
         try
         {
-            await File.WriteAllBytesAsync(filePath, fileDTO.Content);
+            //provar utan att spara den på servern:
+            // await File.WriteAllBytesAsync(filePath, fileDTO.Content);
 
             var savedFile = new ProjectFile(
                 Utils.GenerateRandomId(),
