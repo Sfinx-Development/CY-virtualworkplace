@@ -81,6 +81,7 @@ export default function ChatRoom() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addEmoji = (emoji: any) => {
     console.log(emoji);
     setContent(content + emoji.emoji);
