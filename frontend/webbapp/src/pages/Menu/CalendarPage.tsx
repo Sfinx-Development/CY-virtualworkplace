@@ -2,8 +2,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
-import { theme1 } from "../../theme";
-
 import {
   Button,
   Card,
