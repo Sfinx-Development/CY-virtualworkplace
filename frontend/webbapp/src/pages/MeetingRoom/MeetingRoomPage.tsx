@@ -125,13 +125,15 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   return (
     <Container
       sx={{
-        minHeight: isMobile ? "100%" : "100%",
+        height: isMobile ? "100%" : "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         zIndex: -1,
         padding: 2,
         margin: 0,
+        backgroundColor: "pink",
+        width: "100%",
       }}
     >
       <BackGroundDesign

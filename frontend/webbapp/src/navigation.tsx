@@ -90,7 +90,7 @@ const Navigation = () => {
             <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
           </Route>
           <Route path="office" element={<Office />}>
-            <Route path="notifications" element={<Notifications />} />
+            <Route path="" element={<Notifications />} />
             <Route path="information" element={<ProfileInformation />} />
           </Route>
           <Route path="createhealthcheck" element={<CreateHealthCheck />} />

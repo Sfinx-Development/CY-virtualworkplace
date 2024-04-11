@@ -182,6 +182,7 @@ export const DeleterofileAsync = createAsyncThunk<
   { rejectValue: string }
 >("profile/deleteProfile", async (profile, thunkAPI) => {
   try {
+    console.log("PROFILEN: ", profile);
     const isDeleted = await FetchDeleteProfile(profile.id);
     if (isDeleted) {
       return profile;

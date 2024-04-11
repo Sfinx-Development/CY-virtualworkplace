@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Card,
+  Container,
   List,
   ListItem,
   ListItemText,
@@ -78,52 +80,54 @@ export default function Notifications() {
   }, [healthchecks, profilehealthchecks, ratingShow]);
 
   return (
-    <div>
-      {activeHealthChecks && activeHealthChecks.length > 0 ? (
-        <Box mt={0.5}>
-          {activeHealthChecks.length > 1 ? (
-            <Typography>
-              Du har fått {activeHealthChecks.length} frågor
-            </Typography>
-          ) : (
-            <Typography>Du har fått 1 fråga</Typography>
-          )}
-          <List>
-            {activeHealthChecks &&
-              activeHealthChecks.map((check) => (
-                <ListItem key={check.id}>
-                  <ListItemText
-                    primary={check.question}
-                    secondary={`${new Date(
-                      check.startTime
-                    ).toLocaleString()} - ${new Date(
-                      check.endTime
-                    ).toLocaleString()}`}
-                  />
-
-                  {ratingShow && healthCheckId == check.id ? (
-                    <RadioGroupRating
-                      onChange={(value) => handleRating(check.id, value)}
+    <Container sx={{ display: "flex", height: "100%", gap: 4, padding: 4 }}>
+      <Card sx={{ flex: 1, padding: 2 }}>
+        {activeHealthChecks && activeHealthChecks.length > 0 ? (
+          <Box mt={0.5}>
+            {activeHealthChecks.length > 1 ? (
+              <Typography>
+                Du har fått {activeHealthChecks.length} frågor
+              </Typography>
+            ) : (
+              <Typography>Du har fått 1 fråga</Typography>
+            )}
+            <List>
+              {activeHealthChecks &&
+                activeHealthChecks.map((check) => (
+                  <ListItem key={check.id}>
+                    <ListItemText
+                      primary={check.question}
+                      secondary={`${new Date(
+                        check.startTime
+                      ).toLocaleString()} - ${new Date(
+                        check.endTime
+                      ).toLocaleString()}`}
                     />
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        setRatingShow(true);
-                        setHealthcheckId(check.id);
-                      }}
-                    >
-                      Svara
-                    </Button>
-                  )}
-                </ListItem>
-              ))}
-          </List>
-        </Box>
-      ) : (
-        <Typography>Ingen oläst notis</Typography>
-      )}
-    </div>
+
+                    {ratingShow && healthCheckId == check.id ? (
+                      <RadioGroupRating
+                        onChange={(value) => handleRating(check.id, value)}
+                      />
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
+                          setRatingShow(true);
+                          setHealthcheckId(check.id);
+                        }}
+                      >
+                        Svara
+                      </Button>
+                    )}
+                  </ListItem>
+                ))}
+            </List>
+          </Box>
+        ) : (
+          <Typography>Ingen oläst notis</Typography>
+        )}
+      </Card>
+    </Container>
   );
 }
