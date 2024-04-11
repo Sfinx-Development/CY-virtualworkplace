@@ -2,6 +2,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
+import { theme1 } from "../../theme";
 
 import {
   Button,
@@ -201,7 +202,7 @@ export default function CalendarPage() {
     const parsedStartDate = new Date(todoDate);
 
     const newTodo: Todo = {
-      id: "", // Assign id when received from backend
+      id: "",
       description: description,
       title: title,
       date: parsedStartDate,
@@ -420,10 +421,10 @@ export default function CalendarPage() {
                 transition: "width 0.3s ease",
               }}
             >
-              Lägg till todo i kalender
+              Lägg till uppgifter eller påminnelser här nedan
             </Button>
             <TextField
-              label="Enter todo titel"
+              label="Titel"
               type="text"
               value={title}
               onChange={(e) => SetTitle(e.target.value)}
@@ -438,7 +439,7 @@ export default function CalendarPage() {
             <div>
               <input
                 type="text"
-                placeholder="Enter todo description"
+                placeholder="Beskrivning"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 style={{
@@ -479,7 +480,27 @@ export default function CalendarPage() {
                     },
                   }}
                 />
-                <Button onClick={handleCreateTodo}>Ny Todo</Button>
+                <Button
+                  onClick={handleCreateTodo}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "10px 30px",
+                    backgroundColor: theme1.palette.success.main,
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    textAlign: "center",
+                    textDecoration: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    marginLeft: "30px",
+                    marginTop: "15px",
+                    transition: "background-color 0.3s",
+                  }}
+                >
+                  Skapa
+                </Button>
               </div>
 
               {fieldError && (
@@ -502,7 +523,7 @@ export default function CalendarPage() {
                 open={openTodoPopup}
                 onClose={() => setOpenTodoPopup(false)}
               >
-                <DialogTitle>Dagens todo</DialogTitle>
+                <DialogTitle>Dagens Uppgifter/Påminnelser</DialogTitle>
                 <DialogContent dividers>
                   {selectedDayTodos.map((todo) => (
                     <Card
@@ -605,11 +626,11 @@ export default function CalendarPage() {
                 }}
                 onClick={handleGetTodos}
               >
-                Teamets Todos
+                Se alla uppgifter
               </Button>
 
               <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>Teamets Todos</DialogTitle>
+                <DialogTitle>Uppgifter/Påminnelser</DialogTitle>
                 <DialogContent dividers>
                   {todosInTeam?.map((todo) => (
                     <Card
