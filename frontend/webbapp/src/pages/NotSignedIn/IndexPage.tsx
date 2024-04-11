@@ -94,24 +94,26 @@ const IndexPage = () => {
           >
             <div>
               <Typography variant="h6" gutterBottom>
-                Effektivt samarbete
+                 Effektivt samarbete
               </Typography>
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
+               
               >
-                Arbeta smidigt tillsammans oavsett var ni är.
+               Arbeta smidigt tillsammans oavsett var ni är.
               </Typography>
             </div>
             <div>
               <Typography variant="h6" gutterBottom>
-                Säker och pålitlig
+               Säker och pålitlig
               </Typography>
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
+                style={{ marginLeft: '5px' }}
               >
-                Din data är säker och skyddad hos oss.
+                 Din data är säker och skyddad hos oss.
               </Typography>
             </div>
             <div>
@@ -121,6 +123,7 @@ const IndexPage = () => {
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
+                style={{ marginLeft: '5px' }}
               >
                 Intuitivt gränssnitt för alla användare.
               </Typography>
