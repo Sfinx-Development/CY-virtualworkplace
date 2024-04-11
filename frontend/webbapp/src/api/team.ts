@@ -81,3 +81,27 @@ export const FetchJoinTeam = async ({
     throw error;
   }
 };
+
+export const FetchUpdateTeam = async (team: Team): Promise<Team> => {
+  try {
+    const response = await fetch(apiUrl + "/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(team),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid att uppdatera team.");
+    }
+
+    const data = await response.json();
+
+    return data as Team;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

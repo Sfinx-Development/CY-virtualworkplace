@@ -55,6 +55,8 @@ export interface Team {
   createdAt: Date;
   teamRole: string;
   imageUrl: string;
+  isOpenToJoin: boolean;
+  allCanCreateMeetings: boolean;
 }
 
 export interface CreateTeamDTO {

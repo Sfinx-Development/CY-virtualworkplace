@@ -38,7 +38,9 @@ public class TeamService : ITeamService
                 Name = incomingCreateTeamDTO.TeamName,
                 TeamRole = incomingCreateTeamDTO.TeamRole,
                 ImageUrl = incomingCreateTeamDTO.ImageUrl,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                IsOpenForJoining = true,
+                AllCanCreateMeetings = true
             };
 
         Team createdTeam = await _teamRepository.CreateAsync(team);
@@ -89,6 +91,8 @@ public class TeamService : ITeamService
             var foundTeam = await _teamRepository.GetByIdAsync(team.Id) ?? throw new Exception();
             foundTeam.TeamRole = team.TeamRole;
             foundTeam.ImageUrl = team.ImageUrl;
+            foundTeam.IsOpenForJoining = team.IsOpenForJoining;
+            foundTeam.AllCanCreateMeetings = team.AllCanCreateMeetings;
             var updatedTeam = await _teamRepository.UpdateAsync(foundTeam);
             return updatedTeam;
         }

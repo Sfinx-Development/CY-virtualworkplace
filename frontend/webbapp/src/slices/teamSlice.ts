@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateTeamDTO, Team } from "../../types";
-import { FetchCreateTeam, FetchGetMyTeams, FetchJoinTeam } from "../api/team";
+import {
+  FetchCreateTeam,
+  FetchGetMyTeams,
+  FetchJoinTeam,
+  FetchUpdateTeam,
+} from "../api/team";
 
 export interface TeamState {
   teams: Team[] | undefined;
@@ -50,6 +55,23 @@ export const createJoinAsync = createAsyncThunk<
       return joinedTeam;
     } else {
       return thunkAPI.rejectWithValue("failed to join team");
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Något gick fel.");
+  }
+});
+
+export const updateAsync = createAsyncThunk<
+  Team,
+  Team,
+  { rejectValue: string }
+>("team/update", async (team, thunkAPI) => {
+  try {
+    const updatedTeam = await FetchUpdateTeam(team);
+    if (updatedTeam) {
+      return updatedTeam;
+    } else {
+      return thunkAPI.rejectWithValue("failed to update team");
     }
   } catch (error) {
     return thunkAPI.rejectWithValue("Något gick fel.");
@@ -114,6 +136,17 @@ const teamSlice = createSlice({
       })
       .addCase(createJoinAsync.rejected, (state) => {
         state.error = "Något gick fel med att gå med i team.";
+      })
+      .addCase(updateAsync.fulfilled, (state, action) => {
+        if (action.payload && state.teams) {
+          const index = state.teams.findIndex((t) => t.id == action.payload.id);
+          if (index) {
+            state.teams[index] = action.payload;
+          }
+        }
+      })
+      .addCase(updateAsync.rejected, (state) => {
+        state.error = "Något gick fel med att uppdatera team.";
       })
       .addCase(GetMyTeamsAsync.fulfilled, (state, action) => {
         if (action.payload) {

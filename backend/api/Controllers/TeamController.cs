@@ -33,7 +33,7 @@ namespace Controllers
             _teamService = teamService;
             _profileService = profileService;
             _conversationService = conversationService;
-            _meetingOccasionService =meetingOccasionService;
+            _meetingOccasionService = meetingOccasionService;
         }
 
         [Authorize]
@@ -61,7 +61,7 @@ namespace Controllers
                     loggedInUser
                 );
 
-                return teamCreated;
+                return Ok(teamCreated);
                 // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
             }
             catch (Exception e)
@@ -109,7 +109,10 @@ namespace Controllers
                         createdProfile,
                         foundTeam.Id
                     );
-                     await _meetingOccasionService.AddOccasionsToNewProfiles(createdProfile.Id, foundTeam.Id);
+                    await _meetingOccasionService.AddOccasionsToNewProfiles(
+                        createdProfile.Id,
+                        foundTeam.Id
+                    );
                     // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
                     return Ok(createdProfile.Team);
                 }
@@ -195,16 +198,13 @@ namespace Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPost("update")]
         [Authorize]
-        public async Task<ActionResult<Team>> Update(Team team)
+        public async Task<ActionResult<Team>> Update([FromBody] Team team)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
 
                 if (string.IsNullOrWhiteSpace(jwt))
                 {

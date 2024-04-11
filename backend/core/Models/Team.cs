@@ -8,6 +8,8 @@ public class Team
     public DateTime CreatedAt { get; set; }
     public string TeamRole { get; set; }
     public string ImageUrl { get; set; }
+    public bool IsOpenForJoining { get; set; }
+    public bool AllCanCreateMeetings { get; set; }
     public List<Profile> Profiles = new();
 
     public Team() { }
