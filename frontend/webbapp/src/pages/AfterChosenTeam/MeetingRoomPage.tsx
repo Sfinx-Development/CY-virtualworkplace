@@ -9,11 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import { memo, useEffect, useState } from "react";
-import { is800Mobile, isMobile } from "../../../globalConstants";
+import { Outlet } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import BackGroundDesign from "../../components/BackgroundDesign";
-import NavCard from "../../components/NavCard";
-import ProgressBar from "../../components/ProgressBar";
+import FlexNavcard from "../../components/FlexNavcard";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -51,7 +51,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
   const now = new Date();
-  const projects = useAppSelector((state) => state.projectSlice.projects);
 
   const ongoingMeeting = occasions
     ? occasions.find((occasion: MeetingOccasionNoDate) => {
@@ -109,7 +108,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   }, [connection]);
 
   const meetingRoomColor = theme1.palette.room.main;
-  const leaveColor = theme1.palette.leave.main;
 
   const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
     <div
@@ -127,13 +125,13 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   return (
     <Container
       sx={{
-        padding: "20px",
-        minHeight: isMobile ? "100vh" : "100%",
+        minHeight: isMobile ? "100%" : "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
         zIndex: -1,
+        padding: 2,
+        margin: 0,
       }}
     >
       <BackGroundDesign
@@ -147,34 +145,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         color1={theme1.palette.room.main}
         color2="white"
       />
-
-      <Card
-        sx={{
-          padding: 2,
-          backgroundColor: "#f4f4f4",
-          borderRadius: "10px",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-          width: "90%",
-          margin: "0 auto",
-        }}
-      >
-        <CardContent>
-          <Typography variant="h6" sx={{ color: "#333", mb: 2 }}>
-            {activeTeam?.name}'s MÖTESRUM
-          </Typography>
-          {onlineProfiles && onlineProfiles.length > 0 ? (
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              {onlineProfiles.map((profile: ProfileHubDTO) => (
-                <ProfileItem key={profile.profileId} profile={profile} />
-              ))}
-            </Box>
-          ) : (
-            <Typography variant="body2" sx={{ color: "#666" }}>
-              Ingen profil online
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
 
       {ongoingMeeting && (
         <Card sx={{ my: 2 }}>
@@ -192,21 +162,20 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           </CardActionArea>
         </Card>
       )}
-
       {/* Navigation */}
       <Box
         sx={{
           display: "flex",
-          flexDirection: isMobile ? "column" : "row",
+          flexDirection: "row",
           justifyContent: "center",
-          gap: "20px",
-          width: "90%",
-          mt: 2,
+          gap: isMobile ? 1 : 4,
+          width: "100%",
+          mt: isMobile ? 0 : 2,
         }}
       >
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
-          navigationPage="/createMeeting"
+          navigationPage="createMeeting"
           title="Nytt möte"
           icon={
             <img
@@ -217,9 +186,9 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           }
         />
 
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
-          navigationPage="/meetinginteam"
+          navigationPage="meetinginteam"
           title="Alla möten"
           icon={
             <img
@@ -230,9 +199,9 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           }
         />
 
-        <NavCard
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
-          navigationPage="/createproject"
+          navigationPage="createproject"
           title="Nytt projekt"
           icon={
             <img
@@ -242,39 +211,73 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             />
           }
         />
-        <NavCard
+
+        <FlexNavcard
           backgroundColor={meetingRoomColor}
-          navigationPage="/healthcheck"
+          navigationPage=""
+          title="Alla projekt"
+          icon={
+            <img
+              src="https://i.imgur.com/HeztEpU.png"
+              alt="project management icon"
+              style={{ width: 40, height: 40 }}
+            />
+          }
+        />
+        <FlexNavcard
+          backgroundColor={meetingRoomColor}
+          navigationPage="healthcheck"
           title="Statistik"
           icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
         />
-        <NavCard
-          backgroundColor={leaveColor}
-          navigationPage="/menu"
-          title="Lämna"
-        />
       </Box>
-
-      <Container
-        sx={{
-          marginTop: isMobile ? 1 : 2,
-          display: "flex",
-          flexDirection: "column",
-          maxHeight: is800Mobile ? "350px" : "300px",
-          flexGrow: 1,
-          overflow: "auto",
-          width: "100%",
-        }}
-        className="project-list-container"
-      >
-        {projects ? (
-          <Box>
-            {projects.map((p) => (
-              <ProgressBar project={p} key={p.id} />
-            ))}
-          </Box>
-        ) : null}
-      </Container>
+      <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
+        <div
+          style={{
+            marginRight: isMobile ? 0 : 60,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: isMobile ? "100%" : "90%",
+            flex: 1,
+          }}
+        >
+          <Outlet />
+        </div>
+        {isMobile ? null : (
+          <Card
+            sx={{
+              padding: 2,
+              backgroundColor: "rgba(250,250,250,0.8)",
+              borderRadius: "10px",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+              maxWidth: "15%",
+              margin: "0 auto",
+              marginTop: 2,
+              right: 20,
+              position: "absolute",
+            }}
+          >
+            <CardContent>
+              <Typography sx={{ color: "black", mb: 2 }}>
+                {activeTeam?.name.toUpperCase()}'S MÖTESRUM
+              </Typography>
+              {onlineProfiles && onlineProfiles.length > 0 ? (
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  {onlineProfiles.map((profile: ProfileHubDTO) => (
+                    <ProfileItem key={profile.profileId} profile={profile} />
+                  ))}
+                </Box>
+              ) : (
+                <Typography variant="body2" sx={{ color: "black" }}>
+                  Ingen profil online
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </Container>
   );
 };

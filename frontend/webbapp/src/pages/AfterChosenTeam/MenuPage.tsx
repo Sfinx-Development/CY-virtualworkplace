@@ -15,12 +15,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import NavCard from "../../components/NavCard";
+import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import {
   GetConversationParticipant,
   GetTeamConversation,
+  GetTeamConversationMessages,
 } from "../../slices/messageSlice";
-import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
-import { GetTeamConversationMessages } from "../../slices/messageSlice";
 import {
   GetOnlineProfiles,
   GetTeamProfiles,
@@ -38,7 +38,7 @@ export default function Menu() {
   const officeColor = theme1.palette.office.main;
   const meetingRoomColor = theme1.palette.room.main;
   const chatRoomColor = theme1.palette.chat.main;
-  const leaveColor = theme1.palette.leave.main;
+  // const leaveColor = theme1.palette.leave.main för att lämna/gå ur team?;
 
   const dispatch = useAppDispatch();
   const activeParticipant = useAppSelector(
@@ -311,12 +311,6 @@ export default function Menu() {
             backgroundColor={officeColor}
             navigationPage="/office"
             title="Min sida"
-          />
-
-          <NavCard
-            backgroundColor={leaveColor}
-            navigationPage="/chooseteam"
-            title="Lämna"
           />
         </Box>
       </Container>

@@ -7,6 +7,7 @@ public class Team
     public string Code { get; set; }
     public DateTime CreatedAt { get; set; }
     public string TeamRole { get; set; }
+    public string ImageUrl { get; set; }
     public List<Profile> Profiles = new();
 
     public Team() { }

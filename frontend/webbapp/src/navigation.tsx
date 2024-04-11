@@ -19,6 +19,7 @@ import { MeetingRoom } from "./pages/AfterChosenTeam/MeetingRoomPage";
 import Menu from "./pages/AfterChosenTeam/MenuPage";
 import Office from "./pages/AfterChosenTeam/OfficePage";
 import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
+import Projects from "./pages/AfterChosenTeam/Projects";
 import TestWave from "./pages/AfterChosenTeam/TestWave";
 import UpdateComments from "./pages/AfterChosenTeam/UpdateComments";
 import CreateAccount from "./pages/NotSignedIn/CreateAccountPage";
@@ -79,30 +80,27 @@ const Navigation = () => {
           <Route
             path="meetingroom"
             element={<MeetingRoom connectToVideo={handleConnect} />}
-          />
+          >
+            <Route index element={<Projects />} />
+            <Route path="healthcheck" element={<HealthCheckHub />} />
+            <Route path="createmeeting" element={<CreateMeeting />} />
+            <Route path="createproject" element={<CreateProject />} />
+            <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
+          </Route>
           <Route path="office" element={<Office />} />
-          <Route path="healthcheck" element={<HealthCheckHub />} />
           <Route path="createhealthcheck" element={<CreateHealthCheck />} />
           <Route path="chatroom" element={<ChatRoom />} />
-          <Route path="createmeeting" element={<CreateMeeting />} />
           <Route path="invitetomeeting" element={<InviteToMeeting />} />
           <Route path="/" element={<IndexPage />} />
           <Route path="signin" element={<SignIn />} />
           <Route path="createaccount" element={<CreateAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
-          <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
           <Route path="joinmeeting" element={<OngoingMeeting />} />
           <Route path="calendar" element={<CalendarPage />} />
-          <Route path="createproject" element={<CreateProject />} />
           <Route path="createupdate" element={<CreateUpdate />} />
           <Route path="updateevents" element={<UpdateComments />} />
           <Route path="createcomment" element={<CreateComment />} />
           <Route path="test" element={<TestWave />} />
-
-          {/* <Route
-            path="connect"
-            element={<ConnectForm connectToVideo={handleConnect} />}
-          /> */}
           <Route
             path="/livemeeting"
             element={

@@ -80,7 +80,7 @@ namespace Controllers
 
                 await _updateService.DeleteByIdAsync(id, loggedInUser);
 
-                return Ok("Successfully deleted HealthCheck.");
+                return Ok();
             }
             catch (Exception e)
             {
