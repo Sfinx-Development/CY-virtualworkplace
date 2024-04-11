@@ -40,7 +40,7 @@ import { GetTeamProfiles, getActiveProfile } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import ChatConnector from "./ChatConnection";
+import ChatConnector from "../AfterChosenTeam/ChatConnection";
 
 export default function ChatRoom() {
   const dispatch = useAppDispatch();
@@ -415,7 +415,6 @@ export default function ChatRoom() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSendMessage();
           }}
-       
         />
         {showEmojiPicker && (
           <EmojiPicker

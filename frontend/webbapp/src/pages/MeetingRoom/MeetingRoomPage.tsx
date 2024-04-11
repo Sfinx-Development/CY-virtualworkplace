@@ -31,7 +31,7 @@ import { GetTeamProjectsAsync } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import Connector from "./OnlineConnection";
+import Connector from "../AfterChosenTeam/OnlineConnection";
 
 interface ConnectFormProps {
   connectToVideo: () => void;
