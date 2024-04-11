@@ -27,6 +27,7 @@ import {
   createTeamTodoAsync,
   getTodoAsync,
 } from "../../slices/todoSlice";
+import { theme1 } from "../../theme";
 
 interface Holiday {
   helgdag: string;

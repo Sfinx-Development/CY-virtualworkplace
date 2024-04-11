@@ -9,25 +9,27 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { HealthCheck, ProfileHealthCheck } from "../../../types";
-import BackGroundDesign from "../../components/BackgroundDesign";
-import { RadioGroupRating } from "../../components/StyledRating";
+import { HealthCheck, ProfileHealthCheck } from "../../../../types";
+import { RadioGroupRating } from "../../../components/StyledRating";
 import {
   CreateProfileHealthCheckAsync,
   GetProfileHealthChecksByProfileAsync,
   GetTeamHealthChecksAsync,
-} from "../../slices/healthcheck";
-import { GetMyProfileAsync } from "../../slices/profileSlice";
-import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { getActiveTeam } from "../../slices/teamSlice";
-import { theme1 } from "../../theme";
+} from "../../../slices/healthcheck";
+import { getActiveProfile } from "../../../slices/profileSlice";
+import { useAppDispatch, useAppSelector } from "../../../slices/store";
+import { getActiveTeam } from "../../../slices/teamSlice";
 
-export default function Office() {
+export default function Notifications() {
   const dispatch = useAppDispatch();
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+
+  useEffect(() => {
+    dispatch(getActiveTeam());
+    dispatch(getActiveProfile());
+  }, []);
   const healthchecks = useAppSelector(
     (state) => state.healthcheckSlice.healthchecks
   );
@@ -38,15 +40,20 @@ export default function Office() {
   const [ratingShow, setRatingShow] = useState(false);
   const [healthCheckId, setHealthcheckId] = useState("");
 
-  useEffect(() => {
-    dispatch(getActiveTeam());
-  }, []);
-
-  useEffect(() => {
-    if (activeTeam) {
-      dispatch(GetMyProfileAsync(activeTeam?.id));
+  const handleRating = (healthCheckId: string, rating: number | null) => {
+    if (activeProfile && rating !== null) {
+      const profileHealthcheck: ProfileHealthCheck = {
+        id: "undefined",
+        date: new Date(),
+        rating: rating,
+        isAnonymous: true,
+        profileId: activeProfile?.id,
+        healthCheckId: healthCheckId,
+      };
+      dispatch(CreateProfileHealthCheckAsync(profileHealthcheck));
     }
-  }, [activeTeam]);
+    setRatingShow(false);
+  };
 
   useEffect(() => {
     if (activeProfile) {
@@ -72,45 +79,9 @@ export default function Office() {
     }
   }, [healthchecks, profilehealthchecks, ratingShow]);
 
-  const officeColor = theme1.palette.office.main;
-
-  const handleRating = (healthCheckId: string, rating: number | null) => {
-    if (activeProfile && rating !== null) {
-      const profileHealthcheck: ProfileHealthCheck = {
-        id: "undefined",
-        date: new Date(),
-        rating: rating,
-        isAnonymous: true,
-        profileId: activeProfile?.id,
-        healthCheckId: healthCheckId,
-      };
-      dispatch(CreateProfileHealthCheckAsync(profileHealthcheck));
-    }
-    setRatingShow(false);
-  };
-
   return (
-    <Container
-      sx={{
-        padding: "20px",
-        backgroundPosition: "center",
-        minHeight: "100%",
-      }}
-    >
-      <BackGroundDesign
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: -1,
-        }}
-        color1={theme1.palette.office.main}
-        color2="white"
-      />
-      <Card sx={{ padding: 2, backgroundColor: officeColor }}>
-        <Typography> {activeProfile?.fullName}'s kontor</Typography>
+    <Container sx={{ display: "flex", height: "100%", gap: 4, padding: 4 }}>
+      <Card sx={{ flex: 1, padding: 2 }}>
         {activeHealthChecks && activeHealthChecks.length > 0 ? (
           <Box mt={0.5}>
             {activeHealthChecks.length > 1 ? (
@@ -153,7 +124,9 @@ export default function Office() {
                 ))}
             </List>
           </Box>
-        ) : null}
+        ) : (
+          <Typography>Ingen oläst notis</Typography>
+        )}
       </Card>
     </Container>
   );

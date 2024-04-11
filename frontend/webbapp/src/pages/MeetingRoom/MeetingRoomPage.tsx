@@ -31,7 +31,7 @@ import { GetTeamProjectsAsync } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import Connector from "./OnlineConnection";
+import Connector from "../AfterChosenTeam/OnlineConnection";
 
 interface ConnectFormProps {
   connectToVideo: () => void;
@@ -125,13 +125,14 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   return (
     <Container
       sx={{
-        minHeight: isMobile ? "100%" : "100%",
+        height: isMobile ? "100%" : "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         zIndex: -1,
         padding: 2,
         margin: 0,
+        width: "100%",
       }}
     >
       <BackGroundDesign
