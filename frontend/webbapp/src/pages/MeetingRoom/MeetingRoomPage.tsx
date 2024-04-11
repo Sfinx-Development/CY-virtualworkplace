@@ -132,7 +132,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         zIndex: -1,
         padding: 2,
         margin: 0,
-        backgroundColor: "pink",
         width: "100%",
       }}
     >

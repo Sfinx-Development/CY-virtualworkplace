@@ -1,18 +1,18 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import BackGroundDesign from "../../../components/BackgroundDesign";
 import FlexNavcard from "../../../components/FlexNavcard";
 import { getActiveProfile } from "../../../slices/profileSlice";
-import { useAppDispatch, useAppSelector } from "../../../slices/store";
+import { useAppDispatch } from "../../../slices/store";
 import { getActiveTeam } from "../../../slices/teamSlice";
 import { theme1 } from "../../../theme";
 
 export default function Office() {
   const dispatch = useAppDispatch();
-  const activeProfile = useAppSelector(
-    (state) => state.profileSlice.activeProfile
-  );
+  // const activeProfile = useAppSelector(
+  //   (state) => state.profileSlice.activeProfile
+  // );
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -46,10 +46,10 @@ export default function Office() {
         color1={theme1.palette.office.main}
         color2="white"
       />
-      <Typography variant="h6" sx={{ padding: 2 }}>
+      {/* <Typography variant="h6" sx={{ padding: 2 }}>
         {" "}
         {activeProfile?.fullName.toUpperCase()}'S SIDA
-      </Typography>
+      </Typography> */}
       <Box
         sx={{
           display: "flex",
