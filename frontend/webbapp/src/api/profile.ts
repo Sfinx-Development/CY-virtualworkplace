@@ -102,3 +102,25 @@ export const FetchUpdateProfile = async (
     throw error;
   }
 };
+
+export const FetchDeleteProfile = async (profileId: string) => {
+  try {
+    const response = await fetch(`${apiUrl}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileId),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

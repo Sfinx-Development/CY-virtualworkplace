@@ -1,26 +1,40 @@
-import { Card, Container, Typography } from "@mui/material";
+import { Button, Card, Container, Typography } from "@mui/material";
 import { useEffect } from "react";
-import { getActiveProfile } from "../../../slices/profileSlice";
+import { useNavigate } from "react-router-dom";
+import {
+  DeleterofileAsync,
+  getActiveProfile,
+} from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
-import { getActiveTeam } from "../../../slices/teamSlice";
+import { GetMyTeamsAsync, getActiveTeam } from "../../../slices/teamSlice";
 
 export default function ProfileInformation() {
   const dispatch = useAppDispatch();
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
   }, []);
+
+  const handleLeaveTeam = async () => {
+    if (activeProfile) {
+      await dispatch(DeleterofileAsync(activeProfile));
+      await dispatch(GetMyTeamsAsync());
+      navigate("/chooseteam");
+    }
+  };
+
   return (
     <Container>
       <Card>
         <Typography>Namn: {activeProfile?.fullName}</Typography>
         <Typography>Roll: {activeProfile?.role}</Typography>
         <Typography>Ägare: {activeProfile?.isOwner ? "Ja" : "Nej"}</Typography>
-        Här ska man kunna lämna teamet också
+        <Button onClick={handleLeaveTeam}>Lämna {activeTeam?.name}</Button>
       </Card>
     </Container>
   );

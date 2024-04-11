@@ -188,15 +188,12 @@ namespace Controllers
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
+
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
                 }
-
                 var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)

@@ -2,6 +2,7 @@ import * as signalR from "@microsoft/signalr";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Profile, ProfileHubDTO } from "../../types";
 import {
+  FetchDeleteProfile,
   FetchGetTeamProfiles,
   FetchMyProfile,
   FetchOnlineProfiles,
@@ -23,7 +24,7 @@ const loadProfilesFromLocalStorage = (): Profile[] | undefined => {
   const storedProfiles = localStorage.getItem("profiles");
   return storedProfiles ? JSON.parse(storedProfiles) : undefined;
 };
-const saveActiveProfileToLocalStorage = (profile: Profile) => {
+const saveActiveProfileToLocalStorage = (profile: Profile | undefined) => {
   localStorage.setItem("activeProfile", JSON.stringify(profile));
 };
 const loadActiveProfileFromLocalStorage = (): Profile | undefined => {
@@ -174,6 +175,28 @@ export const UpdateProfileAsync = createAsyncThunk<
   }
 });
 
+//för att lämna ett team
+export const DeleterofileAsync = createAsyncThunk<
+  Profile,
+  Profile,
+  { rejectValue: string }
+>("profile/deleteProfile", async (profile, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteProfile(profile.id);
+    if (isDeleted) {
+      return profile;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid radering av profil."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid radering av profil."
+    );
+  }
+});
+
 export const profileOnline = createAsyncThunk(
   "profile/profileOnline",
   (profile: ProfileHubDTO) => {
@@ -200,6 +223,8 @@ const profileSlice = createSlice({
       if (activeProfile) {
         state.activeProfile = activeProfile;
         saveActiveProfileToLocalStorage(activeProfile);
+      } else {
+        saveActiveProfileToLocalStorage(undefined);
       }
     },
     getActiveProfile: (state) => {
@@ -253,6 +278,15 @@ const profileSlice = createSlice({
       .addCase(UpdateProfileAsync.rejected, (state) => {
         state.activeProfile = undefined;
         state.error = "Något gick fel med hämtandet av aktiv profil.";
+      })
+      .addCase(DeleterofileAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.activeProfile = undefined;
+          state.error = null;
+        }
+      })
+      .addCase(DeleterofileAsync.rejected, (state) => {
+        state.error = "Något gick fel med radering av profil.";
       })
       .addCase(profileOnline.fulfilled, (state, action) => {
         if (action.payload && state.activeProfile) {
