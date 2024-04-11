@@ -152,10 +152,9 @@ export default function CreateAccount() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100%",
+        height: "89vh",
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
-        overflowY: "scroll",
       }}
     >
       <div
@@ -175,9 +174,9 @@ export default function CreateAccount() {
       >
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12} textAlign="center">
-            <Typography variant="h5" sx={{ color: "#FFF" }}>
+            {/* <Typography variant="h5" sx={{ color: "#FFF" }}>
               Skapa ett konto
-            </Typography>
+            </Typography> */}
           </Grid>
           {passwordError && (
             <Grid item xs={12}>
@@ -317,7 +316,7 @@ export default function CreateAccount() {
               style={{
                 display: "flex",
                 gap: isMobile ? 2 : 10,
-                marginBottom: 20,
+                marginBottom: 10,
                 flexWrap: "wrap",
               }}
             >
