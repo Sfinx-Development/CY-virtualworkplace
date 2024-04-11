@@ -40,7 +40,7 @@ import { GetTeamProfiles, getActiveProfile } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
-import ChatConnector from "./ChatConnection";
+import ChatConnector from "../AfterChosenTeam/ChatConnection";
 
 export default function ChatRoom() {
   const dispatch = useAppDispatch();
@@ -81,6 +81,7 @@ export default function ChatRoom() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addEmoji = (emoji: any) => {
     console.log(emoji);
     setContent(content + emoji.emoji);
@@ -241,7 +242,7 @@ export default function ChatRoom() {
     <div
       style={{
         padding: isMobile ? 2 : "20px",
-        height: isMobile ? "auto" : "100%",
+        height: isMobile ? "50vh" : "100%",
         display: "flex",
         width: "100%",
         flexDirection: "column",
@@ -415,7 +416,6 @@ export default function ChatRoom() {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSendMessage();
           }}
-       
         />
         {showEmojiPicker && (
           <EmojiPicker

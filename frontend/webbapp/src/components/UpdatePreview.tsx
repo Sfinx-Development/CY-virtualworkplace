@@ -1,6 +1,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Container, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { isMobile } from "../../globalConstants";
 import { FileDTO, UpdateCommentNoDate } from "../../types";
 import {
   DeleteFileAsync,
@@ -74,6 +75,10 @@ const UpdatePreview: React.FC<UpdatePreviewProps> = ({
                       .pop()
                       ?.toLowerCase()};base64,${file.content}`}
                     alt={file.fileName}
+                    style={{
+                      maxHeight: isMobile ? 100 : 200,
+                      maxWidth: isMobile ? 100 : 200,
+                    }}
                   />
                 ) : (
                   <p>Filtyp: {file.fileName.split(".").pop()?.toLowerCase()}</p>

@@ -1,7 +1,6 @@
 import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { isMobile } from "../../../globalConstants";
 import { Project } from "../../../types";
 import { getActiveProfile } from "../../slices/profileSlice";
 import { CreateProjectAsync } from "../../slices/projectSlice";
@@ -44,7 +43,7 @@ export default function CreateProject() {
       setEndDate("");
       setTitle("");
       setDescription("");
-      navigate("/menu");
+      navigate("/meetingroom");
     } else {
       setFieldError(true);
     }
@@ -62,18 +61,18 @@ export default function CreateProject() {
         {fieldError && (
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
-        <Typography variant={isMobile ? "h5" : "h4"}>
+        {/* <Typography variant={isMobile ? "h5" : "h4"}>
           Skapa ett nytt projekt
-        </Typography>
-        <div
+        </Typography> */}
+        {/* <div
           style={{
             display: "flex",
             alignItems: "center",
             flexDirection: "column",
             justifyContent: "center",
           }}
-        >
-          <Typography
+        > */}
+        {/* <Typography
             sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
           >
             Skapa ett projekt där alla i teamet kan följa processen
@@ -82,8 +81,8 @@ export default function CreateProject() {
             sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
           >
             Fyll på med uppdateringar under tidens gång
-          </Typography>
-        </div>
+          </Typography> */}
+        {/* </div> */}
         <TextField
           label="Namn på projekt"
           value={title}
@@ -122,7 +121,7 @@ export default function CreateProject() {
         <Button
           variant="contained"
           onClick={handleCreateProject}
-          sx={{ marginTop: 2 }}
+          sx={{ marginTop: 2, width: "250px" }}
         >
           Skapa
         </Button>

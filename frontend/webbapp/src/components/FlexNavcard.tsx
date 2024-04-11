@@ -51,7 +51,8 @@ export default function FlexNavcard(props: NavCardProps) {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                flexDirection: isMobile ? "row" : "column",
+                flexDirection: "column",
+                padding: 1,
               }}
             >
               <Typography
