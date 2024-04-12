@@ -1,5 +1,6 @@
 namespace core;
 
+using core.Migrations;
 using Interfaces;
 
 public class TeamService : ITeamService
@@ -9,13 +10,15 @@ public class TeamService : ITeamService
     private readonly IMeetingRoomService _meetingRoomService;
     private readonly IConversationService _conversationService;
     private readonly IProfileService _profileService;
+    private readonly IMeetingOccasionService _meetingOccasionService;
 
     public TeamService(
         IProfileRepository profileRepository,
         ITeamRepository teamRepository,
         IMeetingRoomService meetingRoomService,
         IConversationService conversationService,
-        IProfileService profileService
+        IProfileService profileService,
+        IMeetingOccasionService meetingOccasionService
     )
     {
         _profileRepository = profileRepository;
@@ -23,6 +26,7 @@ public class TeamService : ITeamService
         _meetingRoomService = meetingRoomService;
         _conversationService = conversationService;
         _profileService = profileService;
+        _meetingOccasionService = meetingOccasionService;
     }
 
     public async Task<Team> CreateAsync(
@@ -103,6 +107,42 @@ public class TeamService : ITeamService
         catch (Exception)
         {
             throw new Exception();
+        }
+    }
+
+    public async Task<object> JoinTeam(JoinRequestDTO joinRequestDTO, User loggedInUser)
+    {
+        var teamToJoin = await _teamRepository.GetByCodeAsync(joinRequestDTO.Code);
+        if (teamToJoin.IsOpenForJoining)
+        {
+            var createdProfile = await _profileService.CreateProfile(
+                loggedInUser,
+                false,
+                joinRequestDTO.Role,
+                teamToJoin
+            );
+
+            await _conversationService.AddParticipantToTeamConversation(
+                createdProfile,
+                teamToJoin.Id
+            );
+            await _meetingOccasionService.AddOccasionsToNewProfiles(
+                createdProfile.Id,
+                teamToJoin.Id
+            );
+            return createdProfile;
+        }
+        else
+        {
+            var request = new TeamRequest(
+                Utils.GenerateRandomId(),
+                loggedInUser.Id,
+                teamToJoin.Id,
+                false,
+                false
+            );
+            var createdRequest = await _teamRepository.CreateRequest(request);
+            return createdRequest;
         }
     }
 

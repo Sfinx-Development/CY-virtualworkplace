@@ -72,10 +72,9 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Join")]
-        public async Task<ActionResult<Team>> Post([FromBody] JoinRequestDTO request)
+        public async Task<ActionResult<object>> Post([FromBody] JoinRequestDTO request)
         {
             //ATT GÖRA: kolla villkor så man inte kan gå med flera gånger i samma team
-
             try
             {
                 var jwt = Request.Cookies["jwttoken"];
@@ -98,23 +97,15 @@ namespace Controllers
                 }
                 else
                 {
-                    var createdProfile = await _profileService.CreateProfile(
-                        loggedInUser,
-                        false,
-                        request.Role,
-                        foundTeam
-                    );
-
-                    await _conversationService.AddParticipantToTeamConversation(
-                        createdProfile,
-                        foundTeam.Id
-                    );
-                    await _meetingOccasionService.AddOccasionsToNewProfiles(
-                        createdProfile.Id,
-                        foundTeam.Id
-                    );
-                    // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
-                    return Ok(createdProfile.Team);
+                    var returnObject = await _teamService.JoinTeam(request, loggedInUser);
+                    if (returnObject is Profile profile)
+                    {
+                        return Ok(profile.Team);
+                    }
+                    else
+                    {
+                        return Ok(returnObject);
+                    }
                 }
             }
             catch (Exception e)

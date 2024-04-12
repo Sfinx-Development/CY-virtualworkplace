@@ -53,7 +53,6 @@ export default function CreateAccount() {
       const isValid = phoneUtil.isValidNumber(phoneNumberProto);
       return isValid;
     } catch (e) {
-      console.error("NumberParseException was thrown:", e);
       return false;
     }
   };
@@ -102,7 +101,6 @@ export default function CreateAccount() {
         if (typeof result === "string") {
           setCreateError(true);
           setCreateAccountError(result);
-          console.log("ERROR ÄR: ", result);
         } else {
           navigate("/signin");
         }

@@ -10,5 +10,6 @@ namespace Interfaces
         Task<Team> UpdateAsync(Team team);
         Task DeleteByIdAsync(string id);
         Task<Team> GetByIdAsync(string teamId);
+        Task<TeamRequest> CreateRequest(TeamRequest teamRequest);
     }
 }

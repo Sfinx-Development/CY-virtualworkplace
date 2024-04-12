@@ -123,4 +123,18 @@ public class TeamRepository : ITeamRepository
             throw new Exception(e.Message);
         }
     }
+
+    public async Task<TeamRequest> CreateRequest(TeamRequest request)
+    {
+        try
+        {
+            await _cyDbContext.TeamRequests.AddAsync(request);
+            await _cyDbContext.SaveChangesAsync();
+            return request;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

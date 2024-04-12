@@ -9,4 +9,5 @@ public interface ITeamService
     Task<Team> UpdateTeam(Team team, User loggedInUser);
     Task<bool> CanDeleteTeam(string ownerId, string teamId);
     Task<List<Team>> GetTeamsByUserId(string userId);
+    Task<object> JoinTeam(JoinRequestDTO joinRequestDTO, User loggedInUser);
 }
