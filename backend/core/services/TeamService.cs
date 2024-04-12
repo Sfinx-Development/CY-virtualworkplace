@@ -11,6 +11,7 @@ public class TeamService : ITeamService
     private readonly IConversationService _conversationService;
     private readonly IProfileService _profileService;
     private readonly IMeetingOccasionService _meetingOccasionService;
+    private readonly IUserRepository _userRepository;
 
     public TeamService(
         IProfileRepository profileRepository,
@@ -18,7 +19,8 @@ public class TeamService : ITeamService
         IMeetingRoomService meetingRoomService,
         IConversationService conversationService,
         IProfileService profileService,
-        IMeetingOccasionService meetingOccasionService
+        IMeetingOccasionService meetingOccasionService,
+        IUserRepository userRepository
     )
     {
         _profileRepository = profileRepository;
@@ -27,6 +29,7 @@ public class TeamService : ITeamService
         _conversationService = conversationService;
         _profileService = profileService;
         _meetingOccasionService = meetingOccasionService;
+        _userRepository = userRepository;
     }
 
     public async Task<Team> CreateAsync(
@@ -239,9 +242,9 @@ public class TeamService : ITeamService
             if (updatedRequest.CanJoin && updatedRequest.IsConfirmed)
             {
                 var team = await _teamRepository.GetByIdAsync(request.TeamId);
-
+                var user = await _userRepository.GetByIdAsync(request.UserId);
                 var createdProfile = await _profileService.CreateProfile(
-                    loggedInUser,
+                    user,
                     false,
                     updatedRequest.Role,
                     team

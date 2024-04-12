@@ -29,7 +29,9 @@ import {
 const ChooseTeam = () => {
   //const user = useAppSelector((state) => state.userSlice.user);
   const myTeams = useAppSelector((state) => state.teamSlice.teams);
-  const myRequests = useAppSelector((state) => state.teamSlice.myRequests);
+  const myRequests = useAppSelector(
+    (state) => state.teamSlice.myRequests
+  )?.filter((r) => !r.isConfirmed);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

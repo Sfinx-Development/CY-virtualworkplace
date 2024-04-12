@@ -9,7 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { HealthCheck, ProfileHealthCheck } from "../../../../types";
+import {
+  HealthCheck,
+  ProfileHealthCheck,
+  TeamRequest,
+} from "../../../../types";
 import { RadioGroupRating } from "../../../components/StyledRating";
 import {
   CreateProfileHealthCheckAsync,
@@ -21,6 +25,7 @@ import { useAppDispatch, useAppSelector } from "../../../slices/store";
 import {
   GetAllTeamRequestsAsync,
   getActiveTeam,
+  updateTeamRequestAsync,
 } from "../../../slices/teamSlice";
 
 export default function Notifications() {
@@ -59,6 +64,24 @@ export default function Notifications() {
       dispatch(CreateProfileHealthCheckAsync(profileHealthcheck));
     }
     setRatingShow(false);
+  };
+
+  const approveRequest = (request: TeamRequest) => {
+    const updatedRequest: TeamRequest = {
+      ...request,
+      isConfirmed: true,
+      canJoin: true,
+    };
+    dispatch(updateTeamRequestAsync(updatedRequest));
+  };
+
+  const disApproveRequest = (request: TeamRequest) => {
+    const updatedRequest: TeamRequest = {
+      ...request,
+      isConfirmed: true,
+      canJoin: false,
+    };
+    dispatch(updateTeamRequestAsync(updatedRequest));
   };
 
   useEffect(() => {
@@ -136,10 +159,11 @@ export default function Notifications() {
                 ))}
             </List>
           </Box>
-        ) : (
-          <Typography>Ingen oläst notis</Typography>
-        )}
-        {teamRequests && teamRequests.length > 0 ? (
+        ) : null}
+        {teamRequests &&
+        activeProfile &&
+        activeProfile.isOwner &&
+        teamRequests.length > 0 ? (
           <Box mt={0.5}>
             {teamRequests.length > 1 ? (
               <Typography>
@@ -155,13 +179,25 @@ export default function Notifications() {
                     <ListItemText
                       primary={request.userFullName + " vill gå med i teamet"}
                     />
+                    <Button
+                      onClick={() => {
+                        approveRequest(request);
+                      }}
+                    >
+                      Godkänn
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        disApproveRequest(request);
+                      }}
+                    >
+                      Neka
+                    </Button>
                   </ListItem>
                 ))}
             </List>
           </Box>
-        ) : (
-          <Typography>Ingen oläst notis</Typography>
-        )}
+        ) : null}
       </Card>
     </Container>
   );

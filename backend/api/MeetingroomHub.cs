@@ -21,7 +21,7 @@ public class MeetingRoomHub : Hub
         if (profileToUpdate != null)
         {
             var profileToUpdateDTO = new ProfileUpdateDTO { Id = profileId, IsOnline = true };
-            var onlineProfile = await _profileRepository.UpdateAsync(profileToUpdateDTO);
+            var onlineProfile = await _profileRepository.UpdateOnlineAsync(profileToUpdateDTO);
             var profileHubDTO = new ProfileHboDTO(
                 onlineProfile.Id,
                 onlineProfile.FullName,
@@ -39,7 +39,7 @@ public class MeetingRoomHub : Hub
         Console.WriteLine("-------------------LEAVING");
         //spara en ProfileHubDTO och sätt isonline false och skicka iväg den hela istället?
         var profileToUpdateDTO = new ProfileUpdateDTO { Id = profileId, IsOnline = false };
-        var onlineProfile = await _profileRepository.UpdateAsync(profileToUpdateDTO);
+        var onlineProfile = await _profileRepository.UpdateOnlineAsync(profileToUpdateDTO);
         //behövs returnera den eller?
         await Clients.All.SendAsync("profileOffline", profileId);
     }

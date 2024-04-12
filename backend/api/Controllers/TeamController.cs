@@ -120,7 +120,6 @@ namespace Controllers
         {
             try
             {
-                Console.WriteLine(deleteTeamDTO.TeamId + "PROFIL ID KOMMER HÄR");
                 var jwt = HttpContext
                     .Request.Headers["Authorization"]
                     .ToString()
