@@ -55,7 +55,7 @@ export interface Team {
   createdAt: Date;
   teamRole: string;
   imageUrl: string;
-  isOpenToJoin: boolean;
+  isOpenForJoining: boolean;
   allCanCreateMeetings: boolean;
 }
 

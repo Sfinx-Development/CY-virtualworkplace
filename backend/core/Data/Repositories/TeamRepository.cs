@@ -86,13 +86,8 @@ public class TeamRepository : ITeamRepository
     {
         try
         {
-            var teamToUpdate = await _cyDbContext.Teams.FirstAsync(t => t.Id == team.Id);
-
-            if (teamToUpdate == null)
-            {
-                throw new Exception();
-            }
-
+            var teamToUpdate =
+                await _cyDbContext.Teams.FirstAsync(t => t.Id == team.Id) ?? throw new Exception();
             teamToUpdate.Name = team.Name ?? teamToUpdate.Name;
             teamToUpdate.Code = team.Code ?? teamToUpdate.Code;
             teamToUpdate.TeamRole = team.TeamRole ?? teamToUpdate.TeamRole;

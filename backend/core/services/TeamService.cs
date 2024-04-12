@@ -84,11 +84,15 @@ public class TeamService : ITeamService
         }
     }
 
-    public async Task<Team> UpdateTeam(Team team)
+    public async Task<Team> UpdateTeam(Team team, User loggedInUser)
     {
         try
         {
             var foundTeam = await _teamRepository.GetByIdAsync(team.Id) ?? throw new Exception();
+            if (!loggedInUser.Profiles.Any(profile => profile.TeamId == foundTeam.Id))
+            {
+                throw new Exception("Only members om team can update.");
+            }
             foundTeam.TeamRole = team.TeamRole;
             foundTeam.ImageUrl = team.ImageUrl;
             foundTeam.IsOpenForJoining = team.IsOpenForJoining;

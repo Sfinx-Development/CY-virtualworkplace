@@ -1,36 +1,27 @@
 import {
-  Avatar,
   Button,
   Card,
   Container,
-  FormControl,
   FormControlLabel,
   FormGroup,
-  InputLabel,
-  MenuItem,
-  Select,
   Switch,
-  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { isMobile } from "../../../globalConstants";
-import { Profile, Team } from "../../../types";
+import { Team } from "../../../types";
 import { GetTeamProfiles, getActiveProfile } from "../../slices/profileSlice";
-import { GetTeamProjectsAsync } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam, updateAsync } from "../../slices/teamSlice";
 
 export default function SettingsPage() {
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const profiles = useAppSelector((state) => state.profileSlice.profiles);
+  // const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const dispatch = useAppDispatch();
-  const [newOwner, setNewOwner] = useState<Profile>();
-  const [isOpenToJoin, setIsOpenToJoin] = useState<boolean>(
-    activeTeam.isOpenToJoin
-  );
-  const [allCanCreateMeetings, setAllCanCreateMeetings] = useState<boolean>(
-    activeTeam.allCanCreateMeetings
-  );
+
+  // const [newOwner, setNewOwner] = useState<Profile>();
+  const [isOpenToJoin, setIsOpenToJoin] = useState<boolean>(false);
+  const [allCanCreateMeetings, setAllCanCreateMeetings] =
+    useState<boolean>(false);
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -40,19 +31,20 @@ export default function SettingsPage() {
   useEffect(() => {
     if (activeTeam) {
       dispatch(GetTeamProfiles(activeTeam?.id));
-      dispatch(GetTeamProjectsAsync(activeTeam.id));
+      setIsOpenToJoin(activeTeam.isOpenForJoining);
+      setAllCanCreateMeetings(activeTeam.allCanCreateMeetings);
     }
   }, [activeTeam]);
 
-  const handleChange = (event) => {
-    setNewOwner(event.target.value);
-  };
+  // const handleChange = (event) => {
+  //   setNewOwner(event.target.value);
+  // };
 
   const handleUpdateTeam = () => {
     if (activeTeam) {
       const updatedTeam: Team = {
         ...activeTeam,
-        isOpenToJoin: isOpenToJoin,
+        isOpenForJoining: isOpenToJoin,
         allCanCreateMeetings: allCanCreateMeetings,
       };
       dispatch(updateAsync(updatedTeam));
@@ -75,6 +67,7 @@ export default function SettingsPage() {
           alignItems: "center",
           height: "100%",
           width: "100%",
+          gap: 2,
         }}
       >
         <Card sx={{ width: isMobile ? "100%" : "80%", padding: 1 }}>
@@ -105,7 +98,7 @@ export default function SettingsPage() {
             />
           </FormGroup>
         </Card>
-        <Card sx={{ width: isMobile ? "100%" : "80%", padding: 1 }}>
+        {/* <Card sx={{ width: isMobile ? "100%" : "80%", padding: 1 }}>
           <Typography variant="h6">Ägare i teamet</Typography>
           {Array.isArray(profiles) &&
             profiles
@@ -152,7 +145,7 @@ export default function SettingsPage() {
                   ))}
             </Select>
           </FormControl>
-        </Card>
+        </Card> */}
         <Button
           variant="contained"
           onClick={handleUpdateTeam}

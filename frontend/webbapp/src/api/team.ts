@@ -84,6 +84,7 @@ export const FetchJoinTeam = async ({
 
 export const FetchUpdateTeam = async (team: Team): Promise<Team> => {
   try {
+    console.log("TEAMET: ", team);
     const response = await fetch(apiUrl + "/update", {
       method: "POST",
       headers: {

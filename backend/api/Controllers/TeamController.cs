@@ -204,28 +204,21 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
+                var jwtCookie = Request.Cookies["jwttoken"];
 
-                if (string.IsNullOrWhiteSpace(jwt))
+                if (string.IsNullOrWhiteSpace(jwtCookie))
                 {
                     return BadRequest("JWT token is missing.");
                 }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
 
                 if (loggedInUser == null)
                 {
                     return BadRequest("JWT token is missing.");
                 }
 
-                if (loggedInUser.Profiles.Any(p => p.Team.Id == team.Id))
-                {
-                    Team updatedTeam = await _teamService.UpdateTeam(team);
-                    return Ok(updatedTeam);
-                }
-                else
-                {
-                    return BadRequest("Profile not found.");
-                }
+                Team updatedTeam = await _teamService.UpdateTeam(team, loggedInUser);
+                return Ok(updatedTeam);
             }
             catch (Exception e)
             {
