@@ -140,7 +140,9 @@ public class TeamService : ITeamService
                 teamToJoin.Id,
                 teamToJoin.Name,
                 false,
-                false
+                false,
+                joinRequestDTO.Role,
+                loggedInUser.FirstName + " " + loggedInUser.LastName
             );
             var createdRequest = await _teamRepository.CreateRequest(request);
             return createdRequest;
@@ -200,6 +202,58 @@ public class TeamService : ITeamService
                 throw new Exception();
             }
             await _teamRepository.DeleteRequest(request.Id);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<List<TeamRequest>> GetUnconfirmedTeamRequestsByTeamId(
+        string teamId,
+        User loggedInUser
+    )
+    {
+        try
+        {
+            var team = await _teamRepository.GetByIdAsync(teamId);
+            var profile = team.Profiles.Find(p => p.UserId == loggedInUser.Id);
+            if (profile == null || !profile.IsOwner)
+            {
+                throw new Exception("Only team owners can get requests.");
+            }
+            return await _teamRepository.GetUnconfirmedRequestByTeamIdAsync(teamId);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<TeamRequest> UpdateTeamRequest(TeamRequest request, User loggedInUser)
+    {
+        try
+        {
+            //om owner?
+            var updatedRequest = await _teamRepository.UpdateTeamRequestAsync(request);
+            if (updatedRequest.CanJoin && updatedRequest.IsConfirmed)
+            {
+                var team = await _teamRepository.GetByIdAsync(request.TeamId);
+
+                var createdProfile = await _profileService.CreateProfile(
+                    loggedInUser,
+                    false,
+                    updatedRequest.Role,
+                    team
+                );
+
+                await _conversationService.AddParticipantToTeamConversation(
+                    createdProfile,
+                    team.Id
+                );
+                await _meetingOccasionService.AddOccasionsToNewProfiles(createdProfile.Id, team.Id);
+            }
+            return updatedRequest;
         }
         catch (Exception e)
         {

@@ -29,7 +29,7 @@ import {
 const ChooseTeam = () => {
   //const user = useAppSelector((state) => state.userSlice.user);
   const myTeams = useAppSelector((state) => state.teamSlice.teams);
-  const teamRequests = useAppSelector((state) => state.teamSlice.teamRequests);
+  const myRequests = useAppSelector((state) => state.teamSlice.myRequests);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -151,8 +151,8 @@ const ChooseTeam = () => {
                 </Container>
               </Grid>
             ))}
-          {Array.isArray(teamRequests) &&
-            teamRequests.map((request) => (
+          {Array.isArray(myRequests) &&
+            myRequests.map((request) => (
               <Grid key={request.id} item xs={12} sm={6} md={3}>
                 <Container maxWidth="xs">
                   <Box

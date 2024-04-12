@@ -65,6 +65,8 @@ export interface TeamRequest {
   teamName: string;
   canJoin: boolean;
   isConfirmed: boolean;
+  role: string;
+  userFullName: string;
 }
 
 export interface CreateTeamDTO {

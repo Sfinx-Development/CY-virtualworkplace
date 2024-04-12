@@ -18,18 +18,24 @@ import {
 } from "../../../slices/healthcheck";
 import { getActiveProfile } from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
-import { getActiveTeam } from "../../../slices/teamSlice";
+import {
+  GetAllTeamRequestsAsync,
+  getActiveTeam,
+} from "../../../slices/teamSlice";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const teamRequests = useAppSelector((state) => state.teamSlice.teamRequests);
 
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
   }, []);
+
   const healthchecks = useAppSelector(
     (state) => state.healthcheckSlice.healthchecks
   );
@@ -61,6 +67,12 @@ export default function Notifications() {
       dispatch(GetProfileHealthChecksByProfileAsync(activeProfile.id));
     }
   }, [activeProfile]);
+
+  useEffect(() => {
+    if (activeTeam) {
+      dispatch(GetAllTeamRequestsAsync(activeTeam.id));
+    }
+  }, [activeTeam]);
 
   useEffect(() => {
     if (healthchecks && profilehealthchecks) {
@@ -120,6 +132,29 @@ export default function Notifications() {
                         Svara
                       </Button>
                     )}
+                  </ListItem>
+                ))}
+            </List>
+          </Box>
+        ) : (
+          <Typography>Ingen oläst notis</Typography>
+        )}
+        {teamRequests && teamRequests.length > 0 ? (
+          <Box mt={0.5}>
+            {teamRequests.length > 1 ? (
+              <Typography>
+                Det finns {teamRequests.length} förfrågningar
+              </Typography>
+            ) : (
+              <Typography>Det finns 1 förfrågan</Typography>
+            )}
+            <List>
+              {teamRequests &&
+                teamRequests.map((request) => (
+                  <ListItem key={request.id}>
+                    <ListItemText
+                      primary={request.userFullName + " vill gå med i teamet"}
+                    />
                   </ListItem>
                 ))}
             </List>

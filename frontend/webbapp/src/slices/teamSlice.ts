@@ -5,13 +5,16 @@ import {
   FetchDeleteRequest,
   FetchGetMyTeamRequests,
   FetchGetMyTeams,
+  FetchGetRequestsByTeamId,
   FetchJoinTeam,
   FetchUpdateTeam,
+  FetchUpdateTeamRequest,
 } from "../api/team";
 
 export interface TeamState {
   teams: Team[] | undefined;
   activeTeam: Team | undefined;
+  myRequests: TeamRequest[] | undefined;
   teamRequests: TeamRequest[] | undefined;
   error: string | null;
 }
@@ -27,6 +30,7 @@ const loadTeamFromLocalStorage = (): Team | undefined => {
 export const initialState: TeamState = {
   teams: undefined,
   activeTeam: undefined,
+  myRequests: undefined,
   teamRequests: undefined,
   error: null,
 };
@@ -82,6 +86,23 @@ export const updateAsync = createAsyncThunk<
   }
 });
 
+export const updateTeamRequestAsync = createAsyncThunk<
+  TeamRequest,
+  TeamRequest,
+  { rejectValue: string }
+>("team/updateteamrequest", async (teamRequest, thunkAPI) => {
+  try {
+    const updatedTeamRequest = await FetchUpdateTeamRequest(teamRequest);
+    if (updatedTeamRequest) {
+      return updatedTeamRequest;
+    } else {
+      return thunkAPI.rejectWithValue("failed to update request");
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Något gick fel.");
+  }
+});
+
 export const GetMyTeamsAsync = createAsyncThunk<
   Team[],
   void,
@@ -108,6 +129,27 @@ export const GetMyTeamRequestsAsync = createAsyncThunk<
 >("team/getmyteamrequests", async (_, thunkAPI) => {
   try {
     const myTeamRequests = await FetchGetMyTeamRequests();
+    if (myTeamRequests) {
+      return myTeamRequests;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av förfrågningar."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtning av förfrågningar."
+    );
+  }
+});
+
+export const GetAllTeamRequestsAsync = createAsyncThunk<
+  TeamRequest[],
+  string,
+  { rejectValue: string }
+>("team/getallteamrequests", async (teamId, thunkAPI) => {
+  try {
+    const myTeamRequests = await FetchGetRequestsByTeamId(teamId);
     if (myTeamRequests) {
       return myTeamRequests;
     } else {
@@ -182,7 +224,7 @@ const teamSlice = createSlice({
             "type" in action.payload &&
             action.payload.type === "TeamRequest"
           ) {
-            state.teamRequests?.push(action.payload as TeamRequest);
+            state.myRequests?.push(action.payload as TeamRequest);
           }
           state.error = null;
         }
@@ -201,6 +243,19 @@ const teamSlice = createSlice({
       .addCase(updateAsync.rejected, (state) => {
         state.error = "Något gick fel med att uppdatera team.";
       })
+      .addCase(updateTeamRequestAsync.fulfilled, (state, action) => {
+        if (action.payload && state.teamRequests) {
+          const index = state.teamRequests.findIndex(
+            (t) => t.id == action.payload.id
+          );
+          if (index) {
+            state.teamRequests[index] = action.payload;
+          }
+        }
+      })
+      .addCase(updateTeamRequestAsync.rejected, (state) => {
+        state.error = "Något gick fel med att uppdatera team förfrågan.";
+      })
       .addCase(GetMyTeamsAsync.fulfilled, (state, action) => {
         if (action.payload) {
           state.teams = action.payload;
@@ -213,17 +268,27 @@ const teamSlice = createSlice({
       })
       .addCase(GetMyTeamRequestsAsync.fulfilled, (state, action) => {
         if (action.payload) {
-          state.teamRequests = action.payload;
+          state.myRequests = action.payload;
           state.error = null;
         }
       })
       .addCase(GetMyTeamRequestsAsync.rejected, (state) => {
+        state.myRequests = undefined;
+        state.error = "Något gick fel med hämtandet av förfrågningar.";
+      })
+      .addCase(GetAllTeamRequestsAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.teamRequests = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetAllTeamRequestsAsync.rejected, (state) => {
         state.teamRequests = undefined;
         state.error = "Något gick fel med hämtandet av förfrågningar.";
       })
       .addCase(DeleteTeamRequest.fulfilled, (state, action) => {
-        if (action.payload && state.teamRequests) {
-          state.teamRequests = state.teamRequests.filter(
+        if (action.payload && state.myRequests) {
+          state.myRequests = state.myRequests.filter(
             (r) => r.id !== action.payload
           );
         }

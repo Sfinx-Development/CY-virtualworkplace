@@ -216,6 +216,67 @@ namespace Controllers
             }
         }
 
+        [HttpPost("teamrequestsbyteam")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> GetMyTeamRequests(
+            [FromBody] string teamId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var teamRequests = await _teamService.GetUnconfirmedTeamRequestsByTeamId(
+                    teamId,
+                    loggedInUser
+                );
+                return Ok(teamRequests);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("teamrequestupdate")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> UpdateTeamRequest(
+            [FromBody] TeamRequest teamRequest
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var teamRequests = await _teamService.UpdateTeamRequest(teamRequest, loggedInUser);
+                return Ok(teamRequests);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         [HttpPost("deleteteamrequest")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<TeamRequest>>> DeleteTeamRequest(

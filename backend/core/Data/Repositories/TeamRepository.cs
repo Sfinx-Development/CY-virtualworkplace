@@ -69,7 +69,7 @@ public class TeamRepository : ITeamRepository
             var teamRequests = await _cyDbContext
                 .TeamRequests.Where(t => t.UserId == userId)
                 .ToListAsync();
-            return teamRequests;
+            return teamRequests ?? new List<TeamRequest>();
         }
         catch (Exception e)
         {
@@ -189,6 +189,43 @@ public class TeamRepository : ITeamRepository
         catch (Exception e)
         {
             throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<List<TeamRequest>> GetUnconfirmedRequestByTeamIdAsync(string teamId)
+    {
+        try
+        {
+            var unconfirmedRequests =
+                await _cyDbContext
+                    .TeamRequests.Where(t => t.TeamId == teamId && t.IsConfirmed == false)
+                    .ToListAsync() ?? new List<TeamRequest>();
+
+            return unconfirmedRequests;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<TeamRequest> UpdateTeamRequestAsync(TeamRequest request)
+    {
+        try
+        {
+            var requestToUpdate =
+                await _cyDbContext.TeamRequests.FirstAsync(t => t.Id == request.Id)
+                ?? throw new Exception();
+            requestToUpdate.IsConfirmed = request.IsConfirmed;
+            requestToUpdate.CanJoin = request.CanJoin;
+            _cyDbContext.TeamRequests.Update(requestToUpdate);
+
+            await _cyDbContext.SaveChangesAsync();
+            return requestToUpdate;
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
         }
     }
 }
