@@ -30,7 +30,7 @@ namespace Controllers
             _logger = logger;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
         public async Task<ActionResult<UserDTO>> GetUserDTO()
         {
@@ -77,13 +77,13 @@ namespace Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:string}")]
         public async Task<ActionResult<UserDTO>> GetById(string id)
         {
             try
             {
                 UserDTO foundUser = await _userService.GetById(id);
-                return foundUser;
+                return Ok(foundUser);
             }
             catch (Exception e)
             {
@@ -91,8 +91,8 @@ namespace Controllers
             }
         }
 
-        [HttpPost("Create")]
-        public async Task<ActionResult<UserDTO>> Post(UserCreateDTO userCreateDto)
+        [HttpPost]
+        public async Task<ActionResult<UserDTO>> Post([FromBody] UserCreateDTO userCreateDto)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace Controllers
                 {
                     return BadRequest("Failed to create user.");
                 }
-                return Ok(userCreated);
+                return CreatedAtAction(nameof(GetById), new { id = userCreated.Id }, userCreated);
             }
             catch (Exception e)
             {
@@ -111,8 +111,6 @@ namespace Controllers
         }
 
         [Authorize]
-        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
-        [AllowAnonymous]
         [HttpPut]
         public async Task<ActionResult<UserDTO>> UpdateUser(User user)
         {
@@ -141,8 +139,6 @@ namespace Controllers
         }
 
         [HttpDelete]
-        [Authorize]
-        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
         [AllowAnonymous]
         public async Task<ActionResult> DeleteUser(string id)
         {
