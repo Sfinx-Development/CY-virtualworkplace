@@ -28,7 +28,7 @@ export const FetchGetMyTeams = async (): Promise<Team[]> => {
 
 export const FetchGetMyTeamRequests = async (): Promise<TeamRequest[]> => {
   try {
-    const response = await fetch(apiUrl + "teamrequests", {
+    const response = await fetch(apiUrl + "/teamrequests", {
       method: "GET",
       credentials: "include",
       headers: {
@@ -130,6 +130,28 @@ export const FetchUpdateTeam = async (team: Team): Promise<Team> => {
     const data = await response.json();
 
     return data as Team;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchDeleteRequest = async (requestId: string) => {
+  try {
+    const response = await fetch(apiUrl + "/deleteteamrequest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(requestId),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid att readera förfrågan.");
+    }
+
+    return true;
   } catch (error) {
     console.error(error);
     throw error;

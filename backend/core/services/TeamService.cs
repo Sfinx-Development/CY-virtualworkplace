@@ -138,6 +138,7 @@ public class TeamService : ITeamService
                 Utils.GenerateRandomId(),
                 loggedInUser.Id,
                 teamToJoin.Id,
+                teamToJoin.Name,
                 false,
                 false
             );
@@ -151,6 +152,18 @@ public class TeamService : ITeamService
         try
         {
             return await _teamRepository.GetByUserIdAsync(userId);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<List<TeamRequest>> GetTeamRequestsByUserId(string userId)
+    {
+        try
+        {
+            return await _teamRepository.GetRequestsByUserIdAsync(userId);
         }
         catch (Exception e)
         {
@@ -175,5 +188,22 @@ public class TeamService : ITeamService
         }
 
         return owner.Team.Id == teamId;
+    }
+
+    public async Task DeleteRequest(string requestId, User loggedInUser)
+    {
+        try
+        {
+            var request = await _teamRepository.GetRequestByIdAsync(requestId);
+            if (loggedInUser.Id != request.UserId)
+            {
+                throw new Exception();
+            }
+            await _teamRepository.DeleteRequest(request.Id);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }

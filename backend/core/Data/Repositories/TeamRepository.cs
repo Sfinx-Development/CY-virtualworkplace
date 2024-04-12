@@ -62,6 +62,21 @@ public class TeamRepository : ITeamRepository
         }
     }
 
+    public async Task<List<TeamRequest>> GetRequestsByUserIdAsync(string userId)
+    {
+        try
+        {
+            var teamRequests = await _cyDbContext
+                .TeamRequests.Where(t => t.UserId == userId)
+                .ToListAsync();
+            return teamRequests;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     public async Task<Team> GetByIdAsync(string teamId)
     {
         try
@@ -131,6 +146,45 @@ public class TeamRepository : ITeamRepository
             await _cyDbContext.TeamRequests.AddAsync(request);
             await _cyDbContext.SaveChangesAsync();
             return request;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task DeleteRequest(string id)
+    {
+        try
+        {
+            var requestToDelete = await _cyDbContext.TeamRequests.FindAsync(id);
+            if (requestToDelete != null)
+            {
+                _cyDbContext.TeamRequests.Remove(requestToDelete);
+                await _cyDbContext.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<TeamRequest> GetRequestByIdAsync(string requestId)
+    {
+        try
+        {
+            TeamRequest request = await _cyDbContext.TeamRequests.FirstAsync(
+                t => t.Id == requestId
+            );
+            if (request != null)
+            {
+                return request;
+            }
+            else
+            {
+                throw new Exception("No request found.");
+            }
         }
         catch (Exception e)
         {

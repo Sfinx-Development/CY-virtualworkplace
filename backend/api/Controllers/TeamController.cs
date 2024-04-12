@@ -189,6 +189,62 @@ namespace Controllers
             }
         }
 
+        [HttpGet("teamrequests")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> GetMyTeamRequests()
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var teamRequests = await _teamService.GetTeamRequestsByUserId(loggedInUser.Id);
+                return Ok(teamRequests);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("deleteteamrequest")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> DeleteTeamRequest(
+            [FromBody] string requestId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                await _teamService.DeleteRequest(requestId, loggedInUser);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         [HttpPost("update")]
         [Authorize]
         public async Task<ActionResult<Team>> Update([FromBody] Team team)
