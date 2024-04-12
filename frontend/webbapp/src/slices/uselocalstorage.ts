@@ -3,11 +3,7 @@ import { useEffect, useState } from "react";
 function getItemWithFallback<T>(key: string, fallback: T): T {
   const item = localStorage.getItem(key);
   if (item) {
-    try {
-      return JSON.parse(item) as T;
-    } catch (error) {
-      console.log(error);
-    }
+    return JSON.parse(item) as T;
   }
   return fallback;
 }

@@ -158,7 +158,6 @@ const healthcheckSlice = createSlice({
       })
       .addCase(GetTeamHealthChecksAsync.fulfilled, (state, action) => {
         if (action.payload) {
-          console.log("HÄMTAT: ", action.payload);
           state.healthchecks = action.payload;
           state.error = null;
         }

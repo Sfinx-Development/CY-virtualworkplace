@@ -83,7 +83,6 @@ export default function ChatRoom() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addEmoji = (emoji: any) => {
-    console.log(emoji);
     setContent(content + emoji.emoji);
   };
 

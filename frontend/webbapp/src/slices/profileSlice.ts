@@ -56,7 +56,6 @@ export const enterMeetingRoomAsync = createAsyncThunk(
           "ProfileEnterMeetingRoom",
           profileId
         );
-        console.log("Profil gick in i mötesrummet");
       } else {
         console.error("SignalR connection is not in the 'Connected' state.");
       }
@@ -117,7 +116,6 @@ export const GetOnlineProfiles = createAsyncThunk<
   try {
     const onlineProfiles = await FetchOnlineProfiles(teamId);
     if (onlineProfiles) {
-      console.log("ONLINEEEEEEEEEEEEEEEE:: ", onlineProfiles);
       return onlineProfiles;
     } else {
       return thunkAPI.rejectWithValue(
@@ -182,7 +180,6 @@ export const DeleterofileAsync = createAsyncThunk<
   { rejectValue: string }
 >("profile/deleteProfile", async (profile, thunkAPI) => {
   try {
-    console.log("PROFILEN: ", profile);
     const isDeleted = await FetchDeleteProfile(profile.id);
     if (isDeleted) {
       return profile;

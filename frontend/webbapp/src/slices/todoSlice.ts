@@ -66,7 +66,6 @@ export const getTodoAsync = createAsyncThunk<
   { rejectValue: string }
 >("todo/getTodo", async (teamId, thunkAPI) => {
   try {
-    console.log("TEAMID :", teamId);
     const todos = await FetchGetTodo(teamId);
     return todos;
   } catch (error) {
@@ -114,7 +113,6 @@ const todoSlice = createSlice({
     getActiveTodo: (state) => {
       const activeTodoId = loadTodoFromLocalStorage();
       if (activeTodoId) {
-        console.log("ACTIVE TEAM: ", activeTodoId);
         state.activeTodo = activeTodoId;
       }
     },

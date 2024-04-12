@@ -119,7 +119,6 @@ export const EditMeetingAsync = createAsyncThunk<
   { rejectValue: string }
 >("meeting/editmeeting", async (meeting, thunkAPI) => {
   try {
-    console.log("MEETING: ", meeting);
     const editedMeeting = await FetchEditMeeting(meeting);
     if (editedMeeting) {
       return editedMeeting;
