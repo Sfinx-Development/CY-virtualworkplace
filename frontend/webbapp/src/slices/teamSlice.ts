@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { CreateTeamDTO, Team } from "../../types";
+import { CreateTeamDTO, Team, TeamRequest } from "../../types";
 import {
   FetchCreateTeam,
+  FetchGetMyTeamRequests,
   FetchGetMyTeams,
   FetchJoinTeam,
   FetchUpdateTeam,
@@ -10,6 +11,7 @@ import {
 export interface TeamState {
   teams: Team[] | undefined;
   activeTeam: Team | undefined;
+  teamRequests: TeamRequest[] | undefined;
   error: string | null;
 }
 
@@ -24,6 +26,7 @@ const loadTeamFromLocalStorage = (): Team | undefined => {
 export const initialState: TeamState = {
   teams: undefined,
   activeTeam: undefined,
+  teamRequests: undefined,
   error: null,
 };
 
@@ -45,7 +48,7 @@ export const createTeamAsync = createAsyncThunk<
 });
 
 export const createJoinAsync = createAsyncThunk<
-  Team,
+  Team | TeamRequest,
   { code: string; role: string },
   { rejectValue: string }
 >("team/joinTeam", async ({ code, role }, thunkAPI) => {
@@ -97,6 +100,27 @@ export const GetMyTeamsAsync = createAsyncThunk<
   }
 });
 
+export const GetMyTeamRequestsAsync = createAsyncThunk<
+  TeamRequest[],
+  void,
+  { rejectValue: string }
+>("team/getmyteamrequests", async (_, thunkAPI) => {
+  try {
+    const myTeamRequests = await FetchGetMyTeamRequests();
+    if (myTeamRequests) {
+      return myTeamRequests;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av förfrågningar."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtning av förfrågningar."
+    );
+  }
+});
+
 const teamSlice = createSlice({
   name: "team",
   initialState,
@@ -130,7 +154,14 @@ const teamSlice = createSlice({
       })
       .addCase(createJoinAsync.fulfilled, (state, action) => {
         if (action.payload) {
-          state.teams?.push(action.payload);
+          if ("type" in action.payload && action.payload.type === "Team") {
+            state.teams?.push(action.payload as Team);
+          } else if (
+            "type" in action.payload &&
+            action.payload.type === "TeamRequest"
+          ) {
+            state.teamRequests?.push(action.payload as TeamRequest);
+          }
           state.error = null;
         }
       })
@@ -157,6 +188,16 @@ const teamSlice = createSlice({
       .addCase(GetMyTeamsAsync.rejected, (state) => {
         state.teams = undefined;
         state.error = "Något gick fel med hämtandet av team.";
+      })
+      .addCase(GetMyTeamRequestsAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.teamRequests = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetMyTeamRequestsAsync.rejected, (state) => {
+        state.teamRequests = undefined;
+        state.error = "Något gick fel med hämtandet av förfrågningar.";
       });
   },
 });

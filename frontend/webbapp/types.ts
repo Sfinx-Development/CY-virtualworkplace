@@ -58,6 +58,14 @@ export interface Team {
   isOpenForJoining: boolean;
   allCanCreateMeetings: boolean;
 }
+export interface TeamRequest {
+  id: string;
+  userId: string;
+  teamId: string;
+  teamName: string;
+  canJoin: boolean;
+  isConfirmed: boolean;
+}
 
 export interface CreateTeamDTO {
   teamName: string;
