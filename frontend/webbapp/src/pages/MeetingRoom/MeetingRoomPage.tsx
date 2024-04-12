@@ -231,6 +231,18 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           title="Statistik"
           icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
         />
+        <FlexNavcard
+          backgroundColor={meetingRoomColor}
+          navigationPage="settings"
+          title="Inställningar"
+          icon={
+            <img
+              src="      https://i.imgur.com/6YGqDBk.png"
+              alt="project management icon"
+              style={{ width: 40, height: 40 }}
+            />
+          }
+        />
       </Box>
       <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
         <div

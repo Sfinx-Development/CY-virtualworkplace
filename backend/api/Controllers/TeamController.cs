@@ -33,7 +33,7 @@ namespace Controllers
             _teamService = teamService;
             _profileService = profileService;
             _conversationService = conversationService;
-            _meetingOccasionService =meetingOccasionService;
+            _meetingOccasionService = meetingOccasionService;
         }
 
         [Authorize]
@@ -61,7 +61,7 @@ namespace Controllers
                     loggedInUser
                 );
 
-                return teamCreated;
+                return Ok(teamCreated);
                 // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
             }
             catch (Exception e)
@@ -72,10 +72,9 @@ namespace Controllers
 
         [Authorize]
         [HttpPost("Join")]
-        public async Task<ActionResult<Team>> Post([FromBody] JoinRequestDTO request)
+        public async Task<ActionResult<object>> Post([FromBody] JoinRequestDTO request)
         {
             //ATT GÖRA: kolla villkor så man inte kan gå med flera gånger i samma team
-
             try
             {
                 var jwt = Request.Cookies["jwttoken"];
@@ -98,20 +97,15 @@ namespace Controllers
                 }
                 else
                 {
-                    var createdProfile = await _profileService.CreateProfile(
-                        loggedInUser,
-                        false,
-                        request.Role,
-                        foundTeam
-                    );
-
-                    await _conversationService.AddParticipantToTeamConversation(
-                        createdProfile,
-                        foundTeam.Id
-                    );
-                     await _meetingOccasionService.AddOccasionsToNewProfiles(createdProfile.Id, foundTeam.Id);
-                    // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
-                    return Ok(createdProfile.Team);
+                    var returnObject = await _teamService.JoinTeam(request, loggedInUser);
+                    if (returnObject is Profile profile)
+                    {
+                        return Ok(profile.Team);
+                    }
+                    else
+                    {
+                        return Ok(returnObject);
+                    }
                 }
             }
             catch (Exception e)
@@ -126,7 +120,6 @@ namespace Controllers
         {
             try
             {
-                Console.WriteLine(deleteTeamDTO.TeamId + "PROFIL ID KOMMER HÄR");
                 var jwt = HttpContext
                     .Request.Headers["Authorization"]
                     .ToString()
@@ -195,37 +188,144 @@ namespace Controllers
             }
         }
 
-        [HttpPut]
+        [HttpGet("teamrequests")]
         [Authorize]
-        public async Task<ActionResult<Team>> Update(Team team)
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> GetMyTeamRequests()
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwtCookie = Request.Cookies["jwttoken"];
 
-                if (string.IsNullOrWhiteSpace(jwt))
+                if (string.IsNullOrWhiteSpace(jwtCookie))
                 {
                     return BadRequest("JWT token is missing.");
                 }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var teamRequests = await _teamService.GetTeamRequestsByUserId(loggedInUser.Id);
+                return Ok(teamRequests);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("teamrequestsbyteam")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> GetMyTeamRequests(
+            [FromBody] string teamId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var teamRequests = await _teamService.GetUnconfirmedTeamRequestsByTeamId(
+                    teamId,
+                    loggedInUser
+                );
+                return Ok(teamRequests);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("teamrequestupdate")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> UpdateTeamRequest(
+            [FromBody] TeamRequest teamRequest
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var teamRequests = await _teamService.UpdateTeamRequest(teamRequest, loggedInUser);
+                return Ok(teamRequests);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("deleteteamrequest")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<TeamRequest>>> DeleteTeamRequest(
+            [FromBody] string requestId
+        )
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+                if (loggedInUser == null)
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                await _teamService.DeleteRequest(requestId, loggedInUser);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost("update")]
+        [Authorize]
+        public async Task<ActionResult<Team>> Update([FromBody] Team team)
+        {
+            try
+            {
+                var jwtCookie = Request.Cookies["jwttoken"];
+
+                if (string.IsNullOrWhiteSpace(jwtCookie))
+                {
+                    return BadRequest("JWT token is missing.");
+                }
+                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
 
                 if (loggedInUser == null)
                 {
                     return BadRequest("JWT token is missing.");
                 }
 
-                if (loggedInUser.Profiles.Any(p => p.Team.Id == team.Id))
-                {
-                    Team updatedTeam = await _teamService.UpdateTeam(team);
-                    return Ok(updatedTeam);
-                }
-                else
-                {
-                    return BadRequest("Profile not found.");
-                }
+                Team updatedTeam = await _teamService.UpdateTeam(team, loggedInUser);
+                return Ok(updatedTeam);
             }
             catch (Exception e)
             {
