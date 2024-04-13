@@ -180,8 +180,9 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       {/* Navigation */}
       <Box
         sx={{
-          display: "grid",
-          // gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "center",
           gap: isMobile ? 1 : 4,
           width: "100%",
           mt: isMobile ? 0 : 2,
@@ -276,7 +277,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           <Outlet />
         </div>
         <IconButton
-          sx={{ position: "absolute", top: 10, right: 100 }}
+          sx={{ position: "absolute",  top: isMobile ? 30 : 10,  right: 100 }}
           onClick={toggleOnlineList}
         >
           <Typography variant="body2">Medlemmar online</Typography>
