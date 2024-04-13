@@ -2,7 +2,6 @@ import {
   CreateMeetingDTO,
   MeetingNoDate,
   MeetingOccasionNoDate,
-  MeetingRoom,
 } from "../../types";
 import { getApiUrl } from "./config";
 
@@ -13,13 +12,12 @@ export const FetchGetMyOccasions = async (
   profileId: string
 ): Promise<MeetingOccasionNoDate[]> => {
   try {
-    const response = await fetch(meetingOccasionapiUrl + "/meetingoccasion", {
+    const response = await fetch(`${meetingOccasionapiUrl}/${profileId}`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(profileId),
     });
     const responseBody = await response.json();
     const data = responseBody.$values as MeetingOccasionNoDate[];
@@ -37,13 +35,12 @@ export const FetchGetMyMeetings = async (
   profileId: string
 ): Promise<MeetingNoDate[]> => {
   try {
-    const response = await fetch(meetingapiUrl + "/allmeetings", {
+    const response = await fetch(`${meetingapiUrl}/${profileId}`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(profileId),
     });
     const responseBody = await response.json();
 
@@ -62,17 +59,14 @@ export const FetchGetMyPastMeetings = async (
   profileId: string
 ): Promise<MeetingOccasionNoDate[]> => {
   try {
-    const response = await fetch(
-      meetingOccasionapiUrl + "/pastmeetingoccasion",
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(profileId),
-      }
-    );
+    const response = await fetch(`${meetingOccasionapiUrl}/past/${profileId}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(profileId),
+    });
     const responseBody = await response.json();
     const data = responseBody.$values as MeetingOccasionNoDate[];
     if (!response.ok) {
@@ -90,7 +84,7 @@ export const FetchCreateMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<MeetingNoDate> => {
   try {
-    const response = await fetch(meetingapiUrl + "/create", {
+    const response = await fetch(meetingapiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -116,7 +110,7 @@ export const FetchCreateTeamMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<MeetingNoDate> => {
   try {
-    const response = await fetch(meetingapiUrl + "/createteammeeting", {
+    const response = await fetch(meetingapiUrl + "/team", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -137,37 +131,11 @@ export const FetchCreateTeamMeeting = async (
   }
 };
 
-export const FetchGetMeetingRoomByTeam = async (
-  teamId: string
-): Promise<MeetingRoom> => {
-  try {
-    const response = await fetch(meetingapiUrl + "/meetingroom", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(teamId),
-    });
-    const responseBody = await response.json();
-
-    if (!response.ok) {
-      throw new Error("Något gick fel vid hämtning av meetings");
-    }
-    //VAFÖR BEHÖVA GÖRA SÅHÄR??
-    const data = responseBody as MeetingRoom;
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
 export const FetchDeleteMeeting = async (
   meetingId: string
 ): Promise<boolean> => {
   try {
-    const response = await fetch(`${meetingapiUrl}`, {
+    const response = await fetch(`${meetingapiUrl}/${meetingId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
@@ -196,7 +164,6 @@ export const FetchEditMeeting = async (
       date: new Date(meeting.date),
       endDate: meeting.endDate ? new Date(meeting.endDate) : null,
     };
-    console.log("MÖTE MED DATUM : ", meetingWithDate);
     const response = await fetch(meetingapiUrl, {
       method: "PUT",
       credentials: "include",
@@ -210,18 +177,6 @@ export const FetchEditMeeting = async (
       throw new Error("Något gick fel vid redigering av mötet");
     }
     const responseBody = (await response.json()) as MeetingNoDate;
-    // const createdMeeting = {
-    //   ...responseBody,
-    //   date: new Date(responseBody.date),
-    //   endDate: new Date(responseBody.endDate),
-    // };
-    // const meetingNoDate: MeetingNoDate = {
-    //   ...responseBody,
-    //   date: responseBody.date.toLocaleDateString(),
-    //   endDate: responseBody.endDate
-    //     ? responseBody.endDate.toLocaleDateString()
-    //     : "",
-    // };
 
     return responseBody;
   } catch (error) {
