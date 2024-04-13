@@ -30,7 +30,7 @@ export const FetchGetRequestsByTeamId = async (
   teamId: string
 ): Promise<TeamRequest[]> => {
   try {
-    const response = await fetch(apiUrl + "/teamid", {
+    const response = await fetch(`${apiUrl}/teamid${teamId}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -106,7 +106,7 @@ export const FetchUpdateTeamRequest = async (
 
 export const FetchDeleteRequest = async (requestId: string) => {
   try {
-    const response = await fetch(apiUrl + "/id", {
+    const response = await fetch(`${apiUrl}/${requestId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

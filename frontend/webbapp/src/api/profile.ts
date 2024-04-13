@@ -7,13 +7,12 @@ export const FetchGetTeamProfiles = async (
   teamId: string
 ): Promise<Profile[]> => {
   try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
+    const response = await fetch(`${apiUrl}/${teamId}`, {
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(teamId),
     });
     const responseBody = await response.json();
 
@@ -33,13 +32,12 @@ export const FetchOnlineProfiles = async (
   teamId: string
 ): Promise<ProfileHubDTO[]> => {
   try {
-    const response = await fetch(apiUrl + "/online", {
+    const response = await fetch(`${apiUrl}/online/${teamId}`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(teamId),
     });
     const responseBody = await response.json();
 
@@ -57,13 +55,12 @@ export const FetchOnlineProfiles = async (
 
 export const FetchMyProfile = async (teamId: string): Promise<Profile> => {
   try {
-    const response = await fetch(apiUrl + "/byauth", {
+    const response = await fetch(`${apiUrl}/byauth/${teamId}`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(teamId),
     });
     const responseBody = await response.json();
 
@@ -105,13 +102,12 @@ export const FetchUpdateProfile = async (
 
 export const FetchDeleteProfile = async (profileId: string) => {
   try {
-    const response = await fetch(`${apiUrl}`, {
+    const response = await fetch(`${apiUrl}/${profileId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(profileId),
     });
 
     if (!response.ok) {
