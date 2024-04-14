@@ -12,7 +12,7 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
@@ -123,19 +123,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     setAnchorEl(null);
   };
 
-  const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
-    <div
-      key={profile.profileId}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginBottom: "5px",
-      }}
-    >
-      <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
-      <Typography>{profile.fullName}</Typography>
-    </div>
-  ));
   return (
     <Container
       sx={{
