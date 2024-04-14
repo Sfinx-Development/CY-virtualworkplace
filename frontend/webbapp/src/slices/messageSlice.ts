@@ -361,7 +361,6 @@ const messageSlice = createSlice({
       })
       .addCase(messageDeleted.fulfilled, (state, action) => {
         if (action.payload) {
-          // Filtrera bort det raderade meddelandet från meddelandelistan
           state.messages = state.messages.filter(
             (m) => m.id !== action.payload
           );

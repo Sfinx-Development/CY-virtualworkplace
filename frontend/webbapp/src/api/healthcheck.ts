@@ -30,6 +30,26 @@ export const FetchCreateHealthCheck = async (
   }
 };
 
+export const FetchDeleteHealthCheck = async (healthcheckId: string) => {
+  try {
+    const response = await fetch(`${apiUrl}/${healthcheckId}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const FetchGetTeamHealthChecks = async (
   profileId: string
 ): Promise<HealthCheck[]> => {
