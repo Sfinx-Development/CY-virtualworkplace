@@ -4,8 +4,6 @@ using Interfaces;
 
 public class TeamRequestService : ITeamRequestService
 {
-    private readonly IProfileRepository _profileRepository;
-    private readonly IMeetingRoomService _meetingRoomService;
     private readonly IConversationService _conversationService;
     private readonly IProfileService _profileService;
     private readonly IMeetingOccasionService _meetingOccasionService;
@@ -14,8 +12,6 @@ public class TeamRequestService : ITeamRequestService
     private readonly ITeamRepository _teamRepository;
 
     public TeamRequestService(
-        IProfileRepository profileRepository,
-        IMeetingRoomService meetingRoomService,
         IConversationService conversationService,
         IProfileService profileService,
         IMeetingOccasionService meetingOccasionService,
@@ -24,8 +20,6 @@ public class TeamRequestService : ITeamRequestService
         ITeamRepository teamRepository
     )
     {
-        _profileRepository = profileRepository;
-        _meetingRoomService = meetingRoomService;
         _conversationService = conversationService;
         _profileService = profileService;
         _meetingOccasionService = meetingOccasionService;

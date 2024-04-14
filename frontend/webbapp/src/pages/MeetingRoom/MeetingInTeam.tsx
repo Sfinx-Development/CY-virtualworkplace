@@ -18,13 +18,13 @@ import {
   GetMyOccasionsAsync,
   GetMyPastMeetingsAsync,
 } from "../../slices/meetingSlice";
-import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
+import { getActiveProfile } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 
 export default function MeetingInTeamsPage() {
-  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  // const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
   const meetings = useAppSelector((state) => state.meetingSlice.meetings);
   const error = useAppSelector((state) => state.meetingSlice.error);
@@ -43,22 +43,24 @@ export default function MeetingInTeamsPage() {
 
   useEffect(() => {
     dispatch(getActiveTeam());
+    dispatch(getActiveProfile());
   }, []);
 
-  useEffect(() => {
-    if (activeTeam) {
-      dispatch(GetMyProfileAsync(activeTeam?.id));
-      dispatch(GetTeamProfiles(activeTeam?.id));
-    }
-  }, [dispatch, activeTeam]);
+  // useEffect(() => {
+  //   if (activeTeam) {
+  //     dispatch(GetMyProfileAsync(activeTeam?.id));
+  //     dispatch(GetTeamProfiles(activeTeam?.id));
+  //   }
+  // }, [dispatch, activeTeam]);
 
   useEffect(() => {
     if (activeProfile) {
       dispatch(GetMyMeetingsAsync(activeProfile.id));
       dispatch(GetMyOccasionsAsync(activeProfile.id));
       dispatch(GetMyPastMeetingsAsync(activeProfile.id));
+      console.log("ANROASSSSS");
     }
-  }, [activeProfile]);
+  }, []);
 
   const currentDate = new Date();
   const upcomingMeetings =

@@ -35,7 +35,6 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
             MeetingOccasion occasion = await _cyDbContext
                 .MeetingOccasions.Include(o => o.Profile)
                 .Include(o => o.Meeting)
-                .ThenInclude(m => m.Room)
                 .Where(o => o.Id == id)
                 .FirstAsync();
             return occasion;
@@ -50,47 +49,32 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
     {
         try
         {
-            List<MeetingOccasion> occasions = await _cyDbContext
-                .MeetingOccasions.Include(o => o.Meeting)
-                .ThenInclude(m => m.Room)
-                .Where(m => m.Profile.Id == profileId)
-                .ToListAsync();
-            if (occasions != null)
-            {
-                return occasions;
-            }
-            else
-            {
-                throw new Exception();
-            }
+            List<MeetingOccasion> occasions =
+                await _cyDbContext
+                    .MeetingOccasions.Where(m => m.Profile.Id == profileId)
+                    .Include(m => m.Meeting)
+                    .ToListAsync() ?? new List<MeetingOccasion>();
+            return occasions;
         }
         catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
-    
-     public async Task<List<Meeting>> GetMeetingsByTeamId(string teamId)
-    {
 
-           
+    public async Task<List<Meeting>> GetMeetingsByTeamId(string teamId)
+    {
         try
         {
-            var meetings = await _cyDbContext.Meetings
-            .Where(m => m.TeamId == teamId)
-            .ToListAsync();
-            
+            var meetings = await _cyDbContext.Meetings.Where(m => m.TeamId == teamId).ToListAsync();
+
             return meetings;
-          
-        
         }
         catch (Exception e)
         {
             throw new Exception();
         }
     }
-
-  
 
     // public async Task<Meeting> UpdateAsync(Meeting meeting)
     // {
@@ -127,7 +111,6 @@ public class MeetingOccasionRepository : IMeetingOccasionRepository
         {
             List<MeetingOccasion> occasions = await _cyDbContext
                 .MeetingOccasions.Include(m => m.Meeting)
-                .ThenInclude(m => m.Room)
                 .Where(mo => mo.Meeting.Id == id)
                 .ToListAsync();
             return occasions;

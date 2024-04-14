@@ -33,7 +33,7 @@ export const FetchOnlineProfiles = async (
 ): Promise<ProfileHubDTO[]> => {
   try {
     const response = await fetch(`${apiUrl}/online/${teamId}`, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export const FetchOnlineProfiles = async (
 export const FetchMyProfile = async (teamId: string): Promise<Profile> => {
   try {
     const response = await fetch(`${apiUrl}/byauth/${teamId}`, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",

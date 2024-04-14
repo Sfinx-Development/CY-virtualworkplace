@@ -25,7 +25,7 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<OutgoingProjectDTO>> Post([FromBody] ProjectDTO projectDTO)
         {
             try
@@ -64,8 +64,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
@@ -123,10 +123,9 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byteam")]
+        [HttpGet("teamid/{teamid}")]
         [Authorize]
-        //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<List<OutgoingProjectDTO>>> Get([FromBody] string teamId)
+        public async Task<ActionResult<List<OutgoingProjectDTO>>> Get(string teamId)
         {
             try
             {
@@ -153,10 +152,10 @@ namespace Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
         //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<OutgoingProjectDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<OutgoingProjectDTO>> GetById(string id)
         {
             try
             {

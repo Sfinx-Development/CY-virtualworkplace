@@ -7,21 +7,18 @@ public class ProfileService : IProfileService
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IOfficeService _officeService;
     private readonly IConversationService _conversationService;
 
     public ProfileService(
         IProfileRepository profileRepository,
         IUserRepository userRepository,
         ITeamRepository teamRepository,
-        IOfficeService officeService,
         IConversationService conversationService
     )
     {
         _profileRepository = profileRepository;
         _userRepository = userRepository;
         _teamRepository = teamRepository;
-        _officeService = officeService;
         _conversationService = conversationService;
     }
 
@@ -61,7 +58,6 @@ public class ProfileService : IProfileService
             };
 
         Profile createdProfile = await _profileRepository.CreateAsync(newProfile);
-        Office office = await _officeService.CreateOffice(createdProfile);
 
         return createdProfile;
     }

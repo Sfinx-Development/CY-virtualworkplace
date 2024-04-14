@@ -13,7 +13,7 @@ export const FetchGetMyOccasions = async (
 ): Promise<MeetingOccasionNoDate[]> => {
   try {
     const response = await fetch(`${meetingOccasionapiUrl}/${profileId}`, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ export const FetchGetMyMeetings = async (
 ): Promise<MeetingNoDate[]> => {
   try {
     const response = await fetch(`${meetingapiUrl}/${profileId}`, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -60,12 +60,11 @@ export const FetchGetMyPastMeetings = async (
 ): Promise<MeetingOccasionNoDate[]> => {
   try {
     const response = await fetch(`${meetingOccasionapiUrl}/past/${profileId}`, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(profileId),
     });
     const responseBody = await response.json();
     const data = responseBody.$values as MeetingOccasionNoDate[];
@@ -110,7 +109,7 @@ export const FetchCreateTeamMeeting = async (
   newMeeting: CreateMeetingDTO
 ): Promise<MeetingNoDate> => {
   try {
-    const response = await fetch(meetingapiUrl + "/team", {
+    const response = await fetch(`${meetingapiUrl}/team`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

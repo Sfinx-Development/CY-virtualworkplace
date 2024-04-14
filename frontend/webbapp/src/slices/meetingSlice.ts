@@ -4,14 +4,12 @@ import {
   MeetingNoDate,
   MeetingOccasion,
   MeetingOccasionNoDate,
-  MeetingRoom,
 } from "../../types";
 import {
   FetchCreateMeeting,
   FetchCreateTeamMeeting,
   FetchDeleteMeeting,
   FetchEditMeeting,
-  FetchGetMeetingRoomByTeam,
   FetchGetMyMeetings,
   FetchGetMyOccasions,
   FetchGetMyPastMeetings,
@@ -23,7 +21,6 @@ export interface MeetingState {
   occasions: MeetingOccasionNoDate[] | undefined;
   teamMeetings: MeetingNoDate[] | undefined;
   pastOccasions: MeetingOccasionNoDate[] | undefined;
-  meetingroom: MeetingRoom | undefined;
   deletemeeting: MeetingOccasion | undefined;
   error: string | null;
 }
@@ -34,7 +31,6 @@ export const initialState: MeetingState = {
   occasions: undefined,
   teamMeetings: undefined,
   pastOccasions: undefined,
-  meetingroom: undefined,
   deletemeeting: undefined,
   error: null,
 };
@@ -151,25 +147,6 @@ export const GetMyPastMeetingsAsync = createAsyncThunk<
   }
 });
 
-export const Getmyactiveroom = createAsyncThunk<
-  MeetingRoom,
-  string,
-  { rejectValue: string }
->("meetingroom/getmyactiveroom", async (teamId, thunkAPI) => {
-  try {
-    const myActiveRoom = await FetchGetMeetingRoomByTeam(teamId);
-    if (myActiveRoom) {
-      return myActiveRoom;
-    } else {
-      return thunkAPI.rejectWithValue(
-        "Ett fel inträffade vid hämtning av lag."
-      );
-    }
-  } catch (error) {
-    return thunkAPI.rejectWithValue("Ett fel inträffade vid hämtning av team.");
-  }
-});
-
 export const DeleteMeetingAsync = createAsyncThunk<
   string,
   string,
@@ -249,32 +226,22 @@ const meetingSlice = createSlice({
         state.pastOccasions = undefined;
         state.error = "Något gick fel med hämtandet av möte.";
       })
-      .addCase(Getmyactiveroom.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.meetingroom = action.payload; // Uppdatera meetingroom i state
-          state.error = null;
-        }
-      })
-      .addCase(Getmyactiveroom.rejected, (state) => {
-        state.meetingroom = undefined;
-        state.error = "Något gick fel med hämtandet av mötesrum.";
-      })
       .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
         if (action.payload) {
           const filteredOccasions = state.occasions?.filter(
             (occasion) => occasion.meetingId !== action.payload
           );
           state.occasions = filteredOccasions;
-      
+
           const filteredPastOccasions = state.pastOccasions?.filter(
             (pastOccasion) => pastOccasion.meetingId !== action.payload
           );
           state.pastOccasions = filteredPastOccasions;
-      
+
           state.error = null;
         }
       })
-      
+
       // .addCase(DeleteMeetingAsync.fulfilled, (state, action) => {
       //   if (action.payload) {
       //     const filteredMeetings = state.occasions?.filter(

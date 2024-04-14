@@ -45,7 +45,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("teamId:string")]
+        [HttpGet("{teamid}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<TeamRequest>>> GetMyTeamRequests(string teamId)
         {
@@ -75,7 +75,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("id:string")]
+        [HttpGet("id")]
         [Authorize]
         public async Task<ActionResult<TeamRequest>> GetById(string id)
         {
@@ -134,7 +134,7 @@ namespace Controllers
             }
         }
 
-        [HttpDelete("{id:string}")]
+        [HttpDelete("{id}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<TeamRequest>>> DeleteTeamRequest(string id)
         {

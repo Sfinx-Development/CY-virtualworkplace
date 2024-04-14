@@ -103,7 +103,7 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id:string}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Post(string id)
         {
             try
@@ -174,7 +174,7 @@ namespace Controllers
             }
         }
 
-        [HttpPost("update")]
+        [HttpPut]
         [Authorize]
         public async Task<ActionResult<Team>> Update([FromBody] Team team)
         {
@@ -203,71 +203,3 @@ namespace Controllers
         }
     }
 }
-
-
-
-
-
-
-
-
-//     [HttpPut]
-//     [Authorize]
-//     public async Task<ActionResult<User>> UpdateUser(User user)
-//     {
-//         try
-//         {
-//             var jwt = HttpContext
-//                 .Request.Headers["Authorization"]
-//                 .ToString()
-//                 .Replace("Bearer ", string.Empty);
-
-//             if (string.IsNullOrWhiteSpace(jwt))
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-//             var loggedInUser = _jwtService.GetByJWT(jwt);
-
-//             if (loggedInUser == null)
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-
-//             User updatedUser = await _userService.Edit(user);
-//             return Ok(updatedUser);
-//         }
-//         catch (Exception e)
-//         {
-//             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-//         }
-//     }
-
-//     [HttpDelete]
-//     [Authorize]
-//     public async Task<ActionResult<User>> DeleteUser(string id)
-//     {
-//         try
-//         {
-//             var jwt = HttpContext
-//                 .Request.Headers["Authorization"]
-//                 .ToString()
-//                 .Replace("Bearer ", string.Empty);
-
-//             if (string.IsNullOrWhiteSpace(jwt))
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-//             var loggedInUser = _jwtService.GetByJWT(jwt);
-
-//             if (loggedInUser == null)
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-//             await _userService.DeleteById(id);
-//             return NoContent();
-//         }
-//         catch (Exception e)
-//         {
-//             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-//         }
-//     }

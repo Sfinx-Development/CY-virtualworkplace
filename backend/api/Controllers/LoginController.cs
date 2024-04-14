@@ -38,7 +38,6 @@ namespace Controllers
                 };
 
                 Response.Cookies.Append("jwttoken", jwt, cookieOptions);
-                Console.WriteLine("GICK BRA : " + jwt);
                 return Ok();
             }
             catch (Exception e)

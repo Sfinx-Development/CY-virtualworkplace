@@ -77,7 +77,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("{id:string}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetById(string id)
         {
             try

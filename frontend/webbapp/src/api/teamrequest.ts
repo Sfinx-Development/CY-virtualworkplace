@@ -30,13 +30,12 @@ export const FetchGetRequestsByTeamId = async (
   teamId: string
 ): Promise<TeamRequest[]> => {
   try {
-    const response = await fetch(`${apiUrl}/teamid${teamId}`, {
+    const response = await fetch(`${apiUrl}/${teamId}`, {
       method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(teamId),
     });
     const responseBody = await response.json();
 
@@ -82,7 +81,7 @@ export const FetchUpdateTeamRequest = async (
   teamRequest: TeamRequest
 ): Promise<TeamRequest> => {
   try {
-    const response = await fetch(apiUrl + "/teamrequestupdate", {
+    const response = await fetch(apiUrl, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

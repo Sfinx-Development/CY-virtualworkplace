@@ -58,7 +58,7 @@ namespace Controllers
         }
 
         //    hämta alla by teamet på profilid samt som gäller för nutiden
-        [HttpGet("teamid:string")]
+        [HttpGet("byteam/{teamid}")]
         [Authorize]
         public async Task<ActionResult<List<TodoDTO>>> Get(string teamId)
         {
@@ -93,7 +93,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("id:string")]
+        [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<Todo>> GetById(string id)
         {
@@ -123,7 +123,7 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id:string}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
             try
@@ -143,7 +143,7 @@ namespace Controllers
 
                 await _todoService.DeleteById(id, loggedInUser);
 
-                return Ok("Successfully deleted Todo.");
+                return NoContent();
             }
             catch (Exception e)
             {

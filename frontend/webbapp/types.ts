@@ -82,25 +82,10 @@ export interface CreateMeetingDTO {
   date: Date;
   minutes: string;
   isRepeating: boolean;
-  roomId: string;
   ownerId: string;
   interval?: string;
   endDate?: Date;
   teamId?: string;
-}
-
-export interface Room {
-  id: string;
-  roomLayout: string;
-  cyId: string;
-}
-
-export interface MeetingRoom extends Room {
-  teamId: string;
-}
-
-export interface Office extends Room {
-  profileId: string;
 }
 
 export interface HealthCheck {
@@ -126,7 +111,6 @@ export interface Meeting {
   description: string;
   date: Date;
   minutes: number;
-  roomId: string;
   ownerId: string;
   isRepeating: boolean;
   interval: number;
@@ -141,7 +125,6 @@ export interface MeetingNoDate {
   description: string;
   date: string;
   minutes: number;
-  roomId: string;
   ownerId: string;
   isRepeating: boolean;
   interval: number;
@@ -157,7 +140,6 @@ export interface MeetingOccasionNoDate {
   description: string;
   date: string;
   minutes: number;
-  roomId: string;
 }
 
 export interface MeetingOccasion {
@@ -168,7 +150,6 @@ export interface MeetingOccasion {
   description: string;
   date: Date;
   minutes: number;
-  roomId: string;
 }
 
 export interface Message {

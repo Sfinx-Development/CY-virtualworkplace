@@ -20,7 +20,7 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<ProjectFileDTO>> Post()
         {
             try
@@ -86,8 +86,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
@@ -144,9 +144,9 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byupdatecomment")]
+        [HttpGet("byupdatecommentid/{updatecommentid}")]
         [Authorize]
-        public async Task<ActionResult<List<ProjectFileDTO>>> Get([FromBody] string updateCommentId)
+        public async Task<ActionResult<List<ProjectFileDTO>>> Get(string updateCommentId)
         {
             try
             {
@@ -173,9 +173,9 @@ namespace Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<ProjectFileDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<ProjectFileDTO>> GetById(string id)
         {
             try
             {

@@ -44,7 +44,7 @@ export const FetchGetTeamProjects = async (
   teamId: string
 ): Promise<ProjectNoDate[]> => {
   try {
-    const response = await fetch(`${apiUrl}/teamid${teamId}`, {
+    const response = await fetch(`${apiUrl}/teamid/${teamId}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -145,7 +145,7 @@ export const FetchGetProjectUpdates = async (
   projectId: string
 ): Promise<ProjectUpdateNoDate[]> => {
   try {
-    const response = await fetch(`${apiUpdateUrl}/${projectId}`, {
+    const response = await fetch(`${apiUpdateUrl}/byproject/${projectId}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -223,9 +223,9 @@ export const FetchGetCommentsByUpdate = async (
 ): Promise<UpdateCommentNoDate[]> => {
   try {
     const response = await fetch(
-      `${apiUpdateCommentUrl}/projectupdateid${projectUpdateId}`,
+      `${apiUpdateCommentUrl}/byprojectupdate/${projectUpdateId}`,
       {
-        method: "POST",
+        method: "GET",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -320,7 +320,7 @@ export const FetchGetFilesByUpdateComment = async (
 ): Promise<FileDTO[]> => {
   try {
     const response = await fetch(
-      `${apiFileUrl}/updatecommentid${updateCommentId}`,
+      `${apiFileUrl}/byupdatecommentid/${updateCommentId}`,
       {
         method: "GET",
         credentials: "include",

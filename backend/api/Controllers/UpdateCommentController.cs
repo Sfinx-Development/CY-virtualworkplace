@@ -69,7 +69,7 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id:string}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(string id)
         {
             try
@@ -130,7 +130,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("{projectupdateid:string}")]
+        [HttpGet("byprojectupdate/{projectupdateid}")]
         [Authorize]
         public async Task<ActionResult<List<UpdateCommentDTO>>> Get(string projectUpdateId)
         {
@@ -162,7 +162,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("{id:string}")]
+        [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<UpdateCommentDTO>> GetById(string id)
         {

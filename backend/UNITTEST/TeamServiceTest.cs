@@ -14,14 +14,12 @@ public class TeamServiceTests
         var teamRepositoryMock = new Mock<ITeamRepository>();
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var userServiceMock = new Mock<IUserService>();
-        var meetingRoomServiceMock = new Mock<IMeetingRoomService>();
         var conversationServiceMock = new Mock<IConversationService>();
         var profileServiceMock = new Mock<IProfileService>();
 
         var teamService = new TeamService(
             profileRepositoryMock.Object,
             teamRepositoryMock.Object,
-            meetingRoomServiceMock.Object,
             conversationServiceMock.Object,
             profileServiceMock.Object
         );
@@ -111,9 +109,8 @@ public class TeamServiceTests
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var userServiceMock = new Mock<IUserService>();
         var officeServiceMock = new Mock<IOfficeService>();
-        var meetingRoomServiceMock = new Mock<IMeetingRoomService>();
-          var conversationServiceMock = new Mock<IConversationService>();
-          var profileServiceMock = new Mock<IProfileService>();
+        var conversationServiceMock = new Mock<IConversationService>();
+        var profileServiceMock = new Mock<IProfileService>();
 
         var profileService = new ProfileService(
             profileRepositoryMock.Object,
@@ -125,7 +122,6 @@ public class TeamServiceTests
         var teamService = new TeamService(
             profileRepositoryMock.Object,
             teamRepositoryMock.Object,
-            meetingRoomServiceMock.Object,
             conversationServiceMock.Object,
             profileServiceMock.Object
         );

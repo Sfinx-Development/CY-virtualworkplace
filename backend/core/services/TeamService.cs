@@ -7,7 +7,6 @@ public class TeamService : ITeamService
 {
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
-    private readonly IMeetingRoomService _meetingRoomService;
     private readonly IConversationService _conversationService;
     private readonly IProfileService _profileService;
     private readonly IMeetingOccasionService _meetingOccasionService;
@@ -16,7 +15,6 @@ public class TeamService : ITeamService
     public TeamService(
         IProfileRepository profileRepository,
         ITeamRepository teamRepository,
-        IMeetingRoomService meetingRoomService,
         IConversationService conversationService,
         IProfileService profileService,
         IMeetingOccasionService meetingOccasionService,
@@ -25,7 +23,6 @@ public class TeamService : ITeamService
     {
         _profileRepository = profileRepository;
         _teamRepository = teamRepository;
-        _meetingRoomService = meetingRoomService;
         _conversationService = conversationService;
         _profileService = profileService;
         _meetingOccasionService = meetingOccasionService;
@@ -51,9 +48,6 @@ public class TeamService : ITeamService
             };
 
         Team createdTeam = await _teamRepository.CreateAsync(team);
-
-        //mötesrum skapas också som hör till teamet
-        await _meetingRoomService.CreateMeetingRoom(createdTeam);
 
         Profile createdProfile = await _profileService.CreateProfile(
             loggedInUser,
