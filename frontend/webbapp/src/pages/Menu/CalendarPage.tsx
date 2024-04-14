@@ -56,6 +56,9 @@ export default function CalendarPage() {
   const [editedDescription, setEditedDescription] = useState("");
   const [editedDate, setEditedDate] = useState("");
 
+  const [isMobile, setIsMobile] = useState(false);
+  const [isAsideVisible, setIsAsideVisible] = useState(false);
+
   const dispatch = useAppDispatch();
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
 
@@ -66,6 +69,33 @@ export default function CalendarPage() {
   );
 
   const todosInTeam = useAppSelector((state) => state.todoSlice.todos);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const isMobileDevice = mediaQuery.matches;
+  
+    // Funktion som körs när medieförfrågan ändras
+    const handleMediaQueryChange = (e) => {
+      setIsMobile(e.matches);
+    };
+  
+    // Lägger till en lyssnare för medieförfrågan
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+  
+    // Uppdaterar state med initialt värde för mobilenhet
+    setIsMobile(isMobileDevice);
+  
+    // Återställer lyssnaren när komponenten avmonteras
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, []);
+
+
+  const toggleAsideVisibility = () => {
+    setIsAsideVisible(!isAsideVisible);
+  };
+
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -339,27 +369,203 @@ export default function CalendarPage() {
         height: "100vh",
         width: "100%",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: isMobile ? "column" : "row",
         backgroundColor: "rgb(214, 196, 203)",
       }}
     >
-      {isMobile ? null : (
-        <aside
-          style={{
-            zIndex: 1,
-            marginLeft: "20px",
-            marginRight: "20px",
-            backgroundColor: "rgb(211, 145, 158)",
-            opacity: 0.8,
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            top: 0,
-            left: 0,
-            height: "100%",
-            width: "350px",
-          }}
-        >
+      {isMobile ? (
+        
+    <div>
+       
+      <Button onClick={toggleAsideVisibility}>Lägg till uppgift/påminnelse</Button>
+      {isAsideVisible && (
+        <aside style={{         
+           zIndex: 1,
+          backgroundColor: "rgb(211, 145, 158)",
+          opacity: 0.8,
+          justifyContent: "center",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          top: 0,
+          left: 0,
+          height: "100%",
+          width: "100%",}}>
+
+<div
+            className="todo-aside"
+            style={{
+              backgroundColor: "rgb(211, 145, 158)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              id="add-todo-btn"
+              variant="outlined"
+              style={{
+                backgroundColor: "rgb(171, 92, 121)",
+                padding: "4px",
+                color: "rgb(255, 255, 255)",
+                border: "none",
+                borderRadius: "2px",
+                height: "50px",
+                width: "280px",
+                letterSpacing: "2px",
+                fontSize: "14px",
+                fontFamily: '"Helvetica", Arial, sans-serif',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-around",
+                position: "relative",
+                overflow: "hidden",
+                transition: "width 0.3s ease",
+              }}
+            >
+              Lägg till uppgifter eller påminnelser här nedan
+            </Button>
+            <TextField
+              label="Titel"
+              type="text"
+              value={title}
+              onChange={(e) => SetTitle(e.target.value)}
+              variant="outlined"
+              sx={{
+                backgroundColor: "white",
+                borderRadius: "4px",
+                marginTop: "10px",
+              }}
+            />
+
+            <div>
+              <input
+                type="text"
+                placeholder="Beskrivning"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{
+                  borderRadius: "4px",
+                  marginTop: "20px",
+                  marginLeft: "20px",
+                  height: "80px",
+                  width: "240px",
+                  resize: "none",
+                  padding: "8px",
+                  fontSize: "14px",
+                }}
+              />
+
+              <div
+                className="date-submit-div"
+                style={{
+                  width: "260px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TextField
+                  label="Slutdatum"
+                  type="datetime-local"
+                  value={todoDate}
+                  onChange={(e) => setTodoDate(e.target.value)}
+                  variant="outlined"
+                  sx={{
+                    width: "250px",
+                    marginTop: 2,
+                    "& label": {
+                      color: "transparent",
+                    },
+                    "&:focus label": {
+                      color: "initial",
+                    },
+                  }}
+                />
+                <Button
+                  onClick={handleCreateTodo}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "10px 30px",
+                    backgroundColor: theme1.palette.success.main,
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    textAlign: "center",
+                    textDecoration: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    marginLeft: "30px",
+                    marginTop: "15px",
+                    transition: "background-color 0.3s",
+                  }}
+                >
+                  Skapa
+                </Button>
+              </div>
+
+              {fieldError && (
+                <Typography color="error">Alla fält måste fyllas i</Typography>
+              )}
+            </div>
+          </div>
+
+   
+
+        </aside>
+        
+      )}
+            <Typography
+            variant="h5"
+            style={{
+              textAlign: "center",
+              display: isAsideVisible ? "none" : "flex",
+              marginTop: "40px",
+              fontFamily: "Arial, sans-serif",
+              fontWeight: "bold",
+              letterSpacing: "2px",
+            }}
+          >
+            {activeTeam?.name} Kalender
+          </Typography>
+
+          <div className="today-aside" style={{ textAlign: "center" }}>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: "bold", marginTop: "10px" }}
+            >
+              Dagens Datum
+            </Typography>
+            <Typography style={{ marginBottom: "5px" }}>
+              {currentTime.toLocaleTimeString()}
+            </Typography>
+            <Typography style={{ marginBottom: "5px" }}>
+              {currentTime.toLocaleDateString()}
+            </Typography>
+            <Typography style={{ marginBottom: "25px" }}>
+              {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
+            </Typography>
+          </div>
+    </div>
+  ) : (
+    <aside
+      style={{
+    
+        zIndex: 1,
+        marginLeft: "20px",
+        marginRight: "20px",
+        backgroundColor: "rgb(211, 145, 158)",
+        opacity: 0.8,
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        top: 0,
+        left: 0,
+        height: "100%",
+        width: "350px",
+      }}
+    >
           <Typography
             variant="h5"
             style={{
@@ -733,7 +939,7 @@ export default function CalendarPage() {
         style={{
           flex: 1,
           overflowY: "auto",
-          display: "flex",
+          display: isAsideVisible ? "none" : "flex",
           flexDirection: "column",
           alignItems: "center",
         }}
