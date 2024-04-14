@@ -522,6 +522,7 @@ export default function CalendarPage() {
               textAlign: "center",
               display: isAsideVisible ? "none" : "flex",
               marginTop: "40px",
+              justifyContent: "center",
               fontFamily: "Arial, sans-serif",
               fontWeight: "bold",
               letterSpacing: "2px",
@@ -995,133 +996,124 @@ export default function CalendarPage() {
             </span>
           </div>
         </header>
-        <table id="calendar-table">
-          <thead>
-            <tr>
-              {weekDays.map((day, index) => (
-                <th
-                  key={index}
+        <table id="calendar-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+  <thead>
+    <tr>
+      {weekDays.map((day, index) => (
+        <th
+          key={index}
+          style={{
+            color: index === 6 ? "rgb(182, 36, 36)" : "inherit",
+            padding: "5px",
+            fontSize: "12px",
+          }}
+        >
+          {day}
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody id="calendar-body-id">
+    {generateCalendarRows(holidays).map((row, rowIndex) => (
+      <tr key={rowIndex}>
+        {row.map((day, dayIndex) => {
+          const holidayName = holidays.find(
+            (holiday) =>
+              parseInt(holiday.datum.split("-")[2]) === parseInt(day)
+          )?.helgdag;
+
+          const isSunday = dayIndex === 6;
+          const isTodayCell = isToday(year, month, parseInt(day));
+
+          const todoCount = todosInTeam?.filter((todo) => {
+            const todoDate = new Date(todo.date);
+            const todoDay = todoDate.getDate();
+            const todoMonth = todoDate.getMonth();
+            const todoYear = todoDate.getFullYear();
+            return (
+              todoDay === parseInt(day) &&
+              todoMonth === month &&
+              todoYear === year
+            );
+          }).length;
+
+          return (
+            <td
+              key={dayIndex}
+              onClick={() => handleDayClick(day)}
+              style={{
+                border: "1px solid black",
+                padding: "2.8vw 2.8vw",
+                cursor: "pointer",
+                position: "relative",
+                color: isSunday ? "red" : holidayName ? "red" : "black",
+                whiteSpace: "nowrap",
+                backgroundColor: isTodayCell ? "grey" : "rgb(214, 196, 203)",
+                transition: "background-color 0.3s",
+                fontSize: "12px",
+              }}
+              onMouseEnter={(e) => {
+                if (!isTodayCell) {
+                  e.currentTarget.style.backgroundColor = "white";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isTodayCell) {
+                  e.currentTarget.style.backgroundColor =
+                    "rgb(214, 196, 203)";
+                }
+              }}
+            >
+              {day}
+              {holidayName && (
+                <div
                   style={{
-                    color: index === 6 ? "rgb(182, 36, 36)" : "inherit",
+                    fontSize: "9px",
+                    whiteSpace: "nowrap",
+                    backgroundColor: "white",
+                    overflowWrap: "break-word",
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    textAlign: "center",
+                    color: "rgb(215, 142, 142)",
+                    opacity: 0.6,
+                    padding: "2px",
                   }}
                 >
-                  {day}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody id="calendar-body-id">
-            {generateCalendarRows(holidays).map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((day, dayIndex) => {
-                  const holidayName = holidays.find(
-                    (holiday) =>
-                      parseInt(holiday.datum.split("-")[2]) === parseInt(day)
-                  )?.helgdag;
+                  {holidayName}
+                </div>
+              )}
+              {todoCount > 0 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    color: "black",
+                    borderRadius: "50%",
+                    width: "20px",
+                    height: "20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {todoCount}
+                </div>
+              )}
+            </td>
+          );
+        })}
+      </tr>
+    ))}
+  </tbody>
+</table>
 
-                  const isSunday = dayIndex === 6;
-                  const isTodayCell = isToday(year, month, parseInt(day));
-
-                  const sundayCellStyle = {
-                    color: isSunday ? "rgb(182, 36, 36)" : "black",
-                  };
-
-                  const cellHoverStyle = {
-                    backgroundColor: "rgb(214, 196, 203)",
-                  };
-
-                  const todoCount = todosInTeam?.filter((todo) => {
-                    const todoDate = new Date(todo.date);
-                    const todoDay = todoDate.getDate();
-                    const todoMonth = todoDate.getMonth();
-                    const todoYear = todoDate.getFullYear();
-                    return (
-                      todoDay === parseInt(day) &&
-                      todoMonth === month &&
-                      todoYear === year
-                    );
-                  }).length;
-
-                  return (
-                    <td
-                      key={dayIndex}
-                      onClick={() => handleDayClick(day)}
-                      style={{
-                        border: "1px solid black",
-                        padding: "2.8vw 2.8vw",
-                        gridColumn: "span",
-                        cursor: "pointer",
-                        position: "relative",
-                        color: isSunday ? "red" : holidayName ? "red" : "black",
-                        whiteSpace: "nowrap",
-                        backgroundColor: isTodayCell
-                          ? "grey"
-                          : "rgb(214, 196, 203)",
-                        transition: "background-color 0.3s",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isTodayCell) {
-                          e.currentTarget.style.backgroundColor = "white";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isTodayCell) {
-                          e.currentTarget.style.backgroundColor =
-                            "rgb(214, 196, 203)";
-                        }
-                      }}
-                    >
-                      {day}
-                      {holidayName && (
-                        <div
-                          style={{
-                            fontSize: "9px",
-
-                            whiteSpace: "nowrap",
-                            backgroundColor: "white",
-                            overflowWrap: "break-word",
-                            position: "absolute",
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            textAlign: "center",
-                            color: "rgb(215, 142, 142)",
-                            opacity: 0.6,
-                            padding: "2px",
-                          }}
-                        >
-                          {holidayName}
-                        </div>
-                      )}
-                      {todoCount > 0 && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            right: 0,
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            color: "black",
-                            borderRadius: "50%",
-                            width: "20px",
-                            height: "20px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-
-                            fontStyle: "italic",
-                          }}
-                        >
-                          {todoCount}
-                        </div>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </main>
     </Container>
   );
