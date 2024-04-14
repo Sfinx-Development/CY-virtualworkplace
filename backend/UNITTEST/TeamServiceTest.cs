@@ -16,12 +16,15 @@ public class TeamServiceTests
         var userServiceMock = new Mock<IUserService>();
         var conversationServiceMock = new Mock<IConversationService>();
         var profileServiceMock = new Mock<IProfileService>();
+        var meetingOccasionServiceMock = new Mock<IMeetingOccasionService>();
 
         var teamService = new TeamService(
             profileRepositoryMock.Object,
             teamRepositoryMock.Object,
             conversationServiceMock.Object,
-            profileServiceMock.Object
+            profileServiceMock.Object,
+            meetingOccasionServiceMock.Object,
+            userRepositoryMock.Object
         );
 
         var user = new User
@@ -60,14 +63,12 @@ public class TeamServiceTests
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var userRepositoryMock = new Mock<IUserRepository>();
         var teamRepositoryMock = new Mock<ITeamRepository>();
-        var officeServiceMock = new Mock<IOfficeService>();
         var conversationServiceMock = new Mock<IConversationService>();
 
         var profileService = new ProfileService(
             profileRepositoryMock.Object,
             userRepositoryMock.Object,
             teamRepositoryMock.Object,
-            officeServiceMock.Object,
             conversationServiceMock.Object
         );
 
@@ -108,22 +109,23 @@ public class TeamServiceTests
         var teamRepositoryMock = new Mock<ITeamRepository>();
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var userServiceMock = new Mock<IUserService>();
-        var officeServiceMock = new Mock<IOfficeService>();
         var conversationServiceMock = new Mock<IConversationService>();
         var profileServiceMock = new Mock<IProfileService>();
+        var meetingOccasionServiceMock = new Mock<IMeetingOccasionService>();
 
         var profileService = new ProfileService(
             profileRepositoryMock.Object,
             userRepositoryMock.Object,
             teamRepositoryMock.Object,
-            officeServiceMock.Object,
             conversationServiceMock.Object
         );
         var teamService = new TeamService(
             profileRepositoryMock.Object,
             teamRepositoryMock.Object,
             conversationServiceMock.Object,
-            profileServiceMock.Object
+            profileServiceMock.Object,
+            meetingOccasionServiceMock.Object,
+            userRepositoryMock.Object
         );
 
         var user = new User
