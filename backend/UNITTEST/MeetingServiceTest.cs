@@ -20,13 +20,11 @@ public class MeetingServiceTest
         // ARRANGE
         var meetingRepositoryMock = new Mock<IMeetingRepository>();
         var profileRepositoryMock = new Mock<IProfileRepository>();
-        var roomServiceMock = new Mock<IRoomService>();
         var meetingOccasionRepositoryMock = new Mock<IMeetingOccasionRepository>();
 
         var meetingService = new MeetingService(
             meetingRepositoryMock.Object,
             profileRepositoryMock.Object,
-            roomServiceMock.Object,
             meetingOccasionRepositoryMock.Object
         );
 
@@ -37,17 +35,12 @@ public class MeetingServiceTest
             Date = DateTime.Now,
             Minutes = 10,
             IsRepeating = false,
-            RoomId = "Office123",
             OwnerId = "Profile123",
             Interval = 0,
             EndDate = DateTime.Now
         };
 
         var profile = new Profile { Id = "Profile123" };
-
-        roomServiceMock
-            .Setup(x => x.GetRoomById(It.IsAny<string>()))
-            .ReturnsAsync(new Room { Id = "Office123" });
 
         profileRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>())).ReturnsAsync(profile);
 

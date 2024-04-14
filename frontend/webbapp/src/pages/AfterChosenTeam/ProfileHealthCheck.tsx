@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { HealthCheck } from "../../../types";
 import { CreateHealthCheckAsync } from "../../slices/healthcheck";
-import { Getmyactiveroom } from "../../slices/meetingSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -27,8 +26,6 @@ export default function ProfileHealthCheck() {
   useEffect(() => {
     if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
-
-      dispatch(Getmyactiveroom(activeTeam.id));
     }
   }, [activeTeam]);
 

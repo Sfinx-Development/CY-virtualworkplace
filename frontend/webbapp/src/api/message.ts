@@ -7,13 +7,12 @@ export const FetchDeleteMessage = async (
   messageId: string
 ): Promise<boolean> => {
   try {
-    const response = await fetch(messageApiUrl, {
+    const response = await fetch(`${messageApiUrl}/${messageId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(messageId),
     });
 
     if (!response.ok) {
@@ -31,7 +30,7 @@ export const FetchCreateMessage = async (
   message: MessageOutgoing
 ): Promise<Message> => {
   try {
-    const response = await fetch(messageApiUrl + "/send", {
+    const response = await fetch(messageApiUrl, {
       method: "POST",
       credentials: "include",
       headers: {

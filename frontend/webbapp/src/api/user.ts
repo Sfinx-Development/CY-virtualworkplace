@@ -6,7 +6,7 @@ const apiUrl = getApiUrl() + "/user";
 export const FetchGetUseer = async (): Promise<User> => {
   try {
     const response = await fetch(apiUrl, {
-      method: "POST",
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -14,7 +14,7 @@ export const FetchGetUseer = async (): Promise<User> => {
     });
 
     if (!response.ok) {
-      throw new Error("Något gick fel vid hämtning av user");
+      throw new Error("Något gick fel vid hämtning av användare");
     }
 
     const data = await response.json();
@@ -28,7 +28,7 @@ export const FetchGetUseer = async (): Promise<User> => {
 
 export const FetchCreateUseer = async (newUser: UserCreate): Promise<User> => {
   try {
-    const response = await fetch(apiUrl + "/create", {
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +41,6 @@ export const FetchCreateUseer = async (newUser: UserCreate): Promise<User> => {
     }
 
     const data = await response.json();
-    console.log("SKAÅAD: ", data);
     return data as User;
   } catch (error) {
     console.error(error);

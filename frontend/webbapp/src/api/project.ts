@@ -18,7 +18,7 @@ export const FetchCreateProject = async (
   project: Project
 ): Promise<ProjectNoDate> => {
   try {
-    const response = await fetch(apiUrl + "/create", {
+    const response = await fetch(apiUrl, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -44,13 +44,12 @@ export const FetchGetTeamProjects = async (
   teamId: string
 ): Promise<ProjectNoDate[]> => {
   try {
-    const response = await fetch(apiUrl + "/byteam", {
-      method: "POST",
+    const response = await fetch(`${apiUrl}/teamid/${teamId}`, {
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(teamId),
     });
 
     if (!response.ok) {
@@ -96,13 +95,12 @@ export const FetchEditProject = async (
 
 export const FetchDeleteProject = async (projectId: string) => {
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`${apiUrl}/${projectId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(projectId),
     });
 
     if (!response.ok) {
@@ -121,7 +119,7 @@ export const FetchCreateProjectuPDATE = async (
   projectUpdate: ProjectUpdate
 ): Promise<ProjectUpdateNoDate> => {
   try {
-    const response = await fetch(apiUpdateUrl + "/create", {
+    const response = await fetch(apiUpdateUrl, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -147,13 +145,12 @@ export const FetchGetProjectUpdates = async (
   projectId: string
 ): Promise<ProjectUpdateNoDate[]> => {
   try {
-    const response = await fetch(apiUpdateUrl + "/byproject", {
-      method: "POST",
+    const response = await fetch(`${apiUpdateUrl}/byproject/${projectId}`, {
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(projectId),
     });
 
     if (!response.ok) {
@@ -175,13 +172,12 @@ export const FetchGetProjectUpdates = async (
 
 export const FetchDeleteProjectUpdate = async (projectUpdateId: string) => {
   try {
-    const response = await fetch(apiUpdateUrl, {
+    const response = await fetch(`${apiUpdateUrl}/${projectUpdateId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(projectUpdateId),
     });
 
     if (!response.ok) {
@@ -200,7 +196,7 @@ export const FetchCreateUpdateComment = async (
   comment: UpdateComment
 ): Promise<UpdateCommentNoDate> => {
   try {
-    const response = await fetch(apiUpdateCommentUrl + "/create", {
+    const response = await fetch(apiUpdateCommentUrl, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -226,14 +222,16 @@ export const FetchGetCommentsByUpdate = async (
   projectUpdateId: string
 ): Promise<UpdateCommentNoDate[]> => {
   try {
-    const response = await fetch(apiUpdateCommentUrl + "/byprojectupdate", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(projectUpdateId),
-    });
+    const response = await fetch(
+      `${apiUpdateCommentUrl}/byprojectupdate/${projectUpdateId}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av kommentarerna");
@@ -277,13 +275,12 @@ export const FetchEditUpdateComment = async (
 
 export const FetchDeleteUpdateComment = async (updateCommentId: string) => {
   try {
-    const response = await fetch(apiUpdateCommentUrl, {
+    const response = await fetch(`${apiUpdateCommentUrl}/${updateCommentId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(updateCommentId),
     });
 
     if (!response.ok) {
@@ -299,7 +296,7 @@ export const FetchDeleteUpdateComment = async (updateCommentId: string) => {
 ///////////////////////////////////UPDATECOMMMENT FILES
 export const FetchCreateFile = async (formFile: FormData): Promise<FileDTO> => {
   try {
-    const response = await fetch(apiFileUrl + "/create", {
+    const response = await fetch(apiFileUrl, {
       method: "POST",
       credentials: "include",
       body: formFile,
@@ -322,14 +319,16 @@ export const FetchGetFilesByUpdateComment = async (
   updateCommentId: string
 ): Promise<FileDTO[]> => {
   try {
-    const response = await fetch(apiFileUrl + "/byupdatecomment", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updateCommentId),
-    });
+    const response = await fetch(
+      `${apiFileUrl}/byupdatecommentid/${updateCommentId}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av filerna");
@@ -348,13 +347,12 @@ export const FetchGetFilesByUpdateComment = async (
 
 export const FetchDeleteFile = async (fileId: string) => {
   try {
-    const response = await fetch(apiFileUrl, {
+    const response = await fetch(`${apiFileUrl}/${fileId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(fileId),
     });
 
     if (!response.ok) {

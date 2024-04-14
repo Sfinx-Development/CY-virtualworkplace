@@ -1,12 +1,5 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
-using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -28,9 +21,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("meetingoccasion")]
-        //när vi hämtar alla ens KOMMANDE mötestillfällen så uppdateras mötet till senaste tiden om återkommande
-        public async Task<ActionResult<List<OutgoingOcassionDTO>>> Get([FromBody] string profileId)
+        [HttpGet("{profileid}")]
+        public async Task<ActionResult<List<OutgoingOcassionDTO>>> Get(string profileId)
         {
             try
             {
@@ -67,11 +59,9 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("pastmeetingoccasion")]
+        [HttpGet("past/{profileid}")]
         //när vi hämtar alla ens KOMMANDE mötestillfällen så uppdateras mötet till senaste tiden om återkommande
-        public async Task<ActionResult<List<OutgoingOcassionDTO>>> GetPast(
-            [FromBody] string profileId
-        )
+        public async Task<ActionResult<List<OutgoingOcassionDTO>>> GetPast(string profileId)
         {
             try
             {
@@ -107,8 +97,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {

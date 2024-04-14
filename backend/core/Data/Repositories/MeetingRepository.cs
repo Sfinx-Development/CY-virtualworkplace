@@ -32,10 +32,7 @@ public class MeetingRepository : IMeetingRepository
     {
         try
         {
-            Meeting meeting = await _cyDbContext
-                .Meetings.Include(m => m.Room)
-                .Where(m => m.Id == id)
-                .FirstAsync();
+            Meeting meeting = await _cyDbContext.Meetings.Where(m => m.Id == id).FirstAsync();
 
             if (meeting != null)
             {

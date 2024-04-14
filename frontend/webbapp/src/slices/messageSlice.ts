@@ -212,7 +212,7 @@ export const liveUpdateMessageSent = createAsyncThunk(
         );
       }
     } catch (error) {
-      console.error("Error sending enter meeting room request:", error);
+      console.error("Error: ", error);
     }
   }
 );
@@ -237,7 +237,7 @@ export const liveUpdateMessageEdited = createAsyncThunk(
         );
       }
     } catch (error) {
-      console.error("Error sending enter meeting room request:", error);
+      console.error("Error: ", error);
     }
   }
 );
@@ -262,7 +262,7 @@ export const liveUpdateMessageDeleted = createAsyncThunk(
         );
       }
     } catch (error) {
-      console.error("Error sending enter meeting room request:", error);
+      console.error("Error: ", error);
     }
   }
 );

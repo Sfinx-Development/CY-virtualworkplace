@@ -16,23 +16,17 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly IMessageService _messageService;
-        private readonly IConversationService _conversationService;
 
-        public MessageController(
-            JwtService jwtService,
-            IMessageService messageService,
-            IConversationService conversationService
-        )
+        public MessageController(JwtService jwtService, IMessageService messageService)
         {
             _jwtService = jwtService;
             _messageService = messageService;
-            _conversationService = conversationService;
         }
 
         [Authorize]
-        [HttpPost("Send")]
+        [HttpPost]
         public async Task<ActionResult<OutgoingMessageDTO>> CreateMessage(
-            IncomingMessageDTO incomingMessageDTO
+            [FromBody] IncomingMessageDTO incomingMessageDTO
         )
         {
             try
@@ -126,8 +120,8 @@ namespace Controllers
         // }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> DeleteMessage([FromBody] string messageId)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMessage(string id)
         {
             try
             {
@@ -145,11 +139,11 @@ namespace Controllers
                     return BadRequest("Failed to get user.");
                 }
 
-                await _messageService.DeleteAsync(messageId, loggedInUser);
+                await _messageService.DeleteAsync(id, loggedInUser);
                 // var chatHub = new ChatHub(_chatHubContext);
                 // await chatHub.MessageDeleted(messageId);
 
-                return Ok();
+                return NoContent();
             }
             catch (Exception e)
             {

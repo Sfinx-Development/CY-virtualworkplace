@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,25 +11,18 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly IConversationService _conversationService;
-        private readonly IProfileService _profileService;
-
-        private readonly IUserService _userService;
 
         public ConversationController(
             JwtService jwtService,
-            IConversationService conversationService,
-            IProfileService profileService,
-            IUserService userService
+            IConversationService conversationService
         )
         {
             _jwtService = jwtService;
             _conversationService = conversationService;
-            _profileService = profileService;
-            _userService = userService;
         }
 
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<Conversation>> CreateConversation([FromBody] string teamId)
         {
             try
@@ -111,9 +98,9 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("teamconversation")]
+        [HttpGet("{teamid}")]
         public async Task<ActionResult<OutgoingConversationDTO>> GetConversationInTeam(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
@@ -152,9 +139,9 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("teammessages")]
+        [HttpGet("teammessages/{teamid}")]
         public async Task<ActionResult<List<OutgoingMessageDTO>>> GetMessagesInTeamConversation(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
@@ -236,8 +223,6 @@ namespace Controllers
                     LastActive = participant.LastActive
                 };
 
-                Console.WriteLine("SKICKAS IVÄG: ", participantDTO);
-
                 return Ok(participantDTO);
             }
             catch (Exception e)
@@ -245,83 +230,5 @@ namespace Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
-
-        // [Authorize]
-        // [HttpPost("AddProfileToConversation")]
-        // public async Task<ActionResult<ConversationParticipant>> AddProfileToConversation([FromBody] string conversationParticipantId, string profileId)
-        // {
-        //     try
-        //     {
-        //         var jwt = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
-
-        //         if (string.IsNullOrWhiteSpace(jwt))
-        //         {
-        //             return BadRequest("JWT token is missing.");
-        //         }
-
-        //         var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-        //         if (loggedInUser == null)
-        //         {
-        //             return BadRequest("Failed to get user.");
-        //         }
-
-
-        //         var addedProfile = await _conversationService.AddProfileToConversationAsync(conversationParticipantId, profileId);
-
-        //         if (addedProfile == null)
-        //         {
-        //             return BadRequest("Failed to add profile to conversation.");
-        //         }
-
-        //         return Ok(addedProfile);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-        //     }
-        // }
-
-
-
-
-
-
-
-        //     [Authorize]
-        //     [HttpDelete]
-        //     public async Task<ActionResult> DeleteConversation([FromBody] DeleteConversationDTO deleteConversationDTO)
-        //     {
-        //         try
-        //         {
-        //             var jwt = HttpContext
-        //                 .Request.Headers["Authorization"]
-        //                 .ToString()
-        //                 .Replace("Bearer ", string.Empty);
-
-        //             if (string.IsNullOrWhiteSpace(jwt))
-        //             {
-        //                 return BadRequest("JWT token is missing.");
-        //             }
-
-        //             var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-        //             if (loggedInUser == null)
-        //             {
-        //                 return BadRequest("Failed to get user.");
-        //             }
-
-
-        //             var conversationId = deleteConversationDTO.ConversationId;
-
-        //             await _conversationService.DeleteByIdAsync(conversationId);
-
-        //             return Ok("Successfully deleted conversation.");
-        //         }
-        //         catch (Exception e)
-        //         {
-        //             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-        //         }
-        //     }
     }
 }

@@ -9,8 +9,6 @@ public class CyDbContext : DbContext
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<Meeting> Meetings { get; set; }
     public DbSet<Team> Teams { get; set; }
-    public DbSet<Office> Offices { get; set; }
-    public DbSet<MeetingRoom> MeetingRooms { get; set; }
     public DbSet<MeetingOccasion> MeetingOccasions { get; set; }
     public DbSet<HealthCheck> HealthChecks { get; set; }
     public DbSet<ProfileHealthCheck> ProfileHealthChecks { get; set; }
@@ -56,34 +54,20 @@ public class CyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Office>().HasOne(o => o.Profile);
-
-        modelBuilder.Entity<MeetingRoom>().HasOne(mr => mr.Team);
-
         modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Meeting);
-
-        //with many healthchecks?
         modelBuilder.Entity<HealthCheck>().HasOne(h => h.Team);
         modelBuilder.Entity<ProfileHealthCheck>().HasOne(ph => ph.Profile);
         modelBuilder.Entity<ProfileHealthCheck>().HasOne(ph => ph.HealthCheck);
-
         modelBuilder.Entity<Todo>().HasOne(t => t.Team);
-
         modelBuilder.Entity<Profile>().HasOne(p => p.User).WithMany(u => u.Profiles);
         modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);
-
-        modelBuilder.Entity<Meeting>().HasOne(m => m.Room);
         modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Profile);
-
         modelBuilder
             .Entity<ConversationParticipant>()
             .HasOne(cp => cp.Profile)
             .WithMany(p => p.ConversationParticipants);
-
         modelBuilder.Entity<ConversationParticipant>().HasOne(cp => cp.Conversation);
-
         modelBuilder.Entity<Conversation>().HasMany(c => c.Messages);
-
         modelBuilder.Entity<ProjectUpdate>().HasOne(p => p.Project);
         modelBuilder.Entity<UpdateComment>().HasOne(p => p.ProjectUpdate);
         modelBuilder.Entity<Project>().HasOne(p => p.Team);

@@ -1,12 +1,6 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -18,26 +12,20 @@ namespace Controllers
         private readonly JwtService _jwtService;
         private readonly ITeamService _teamService;
         private readonly IProfileService _profileService;
-        private readonly IConversationService _conversationService;
-        private readonly IMeetingOccasionService _meetingOccasionService;
 
         public TeamController(
             JwtService jwtService,
             ITeamService teamService,
-            IProfileService profileService,
-            IConversationService conversationService,
-            IMeetingOccasionService meetingOccasionService
+            IProfileService profileService
         )
         {
             _jwtService = jwtService;
             _teamService = teamService;
             _profileService = profileService;
-            _conversationService = conversationService;
-            _meetingOccasionService = meetingOccasionService;
         }
 
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<Team>> Post(
             [FromBody] IncomingCreateTeamDTO incomingCreateTeamDTO
         )
@@ -62,7 +50,7 @@ namespace Controllers
                 );
 
                 return Ok(teamCreated);
-                // return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
+                //return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
             }
             catch (Exception e)
             {
@@ -115,42 +103,40 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Post([FromBody] DeleteTeamDTO deleteTeamDTO)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Post(string id)
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                var jwt = Request.Cookies["jwttoken"];
+
                 if (string.IsNullOrWhiteSpace(jwt))
                 {
                     return BadRequest("JWT token is missing.");
                 }
-
                 var loggedInUser = await _jwtService.GetByJWT(jwt);
 
                 if (loggedInUser == null)
                 {
                     return BadRequest("Failed to get user.");
                 }
+                // FLYTTA LOGIKEN IN I SERVICE KLASSEN :) :
 
-                var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
+                // var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
 
-                if (userProfiles == null || userProfiles.Count < 1)
-                {
-                    return BadRequest("User profile not found.");
-                }
+                // if (userProfiles == null || userProfiles.Count < 1)
+                // {
+                //     return BadRequest("User profile not found.");
+                // }
 
-                var profileToDelete = userProfiles.Find(p => p.Id == deleteTeamDTO.ProfileId);
+                // var profileToDelete = userProfiles.Find(p => p.Id == deleteTeamDTO.ProfileId);
 
-                if (profileToDelete == null)
-                {
-                    return BadRequest("User profile not found.");
-                }
+                // if (profileToDelete == null)
+                // {
+                //     return BadRequest("User profile not found.");
+                // }
 
-                await _profileService.DeleteTeamAndProfiles(deleteTeamDTO);
+                // await _profileService.DeleteTeamAndProfiles(deleteTeamDTO);
 
                 return Ok("Successfully left the team.");
             }
@@ -188,124 +174,7 @@ namespace Controllers
             }
         }
 
-        [HttpGet("teamrequests")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<TeamRequest>>> GetMyTeamRequests()
-        {
-            try
-            {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var teamRequests = await _teamService.GetTeamRequestsByUserId(loggedInUser.Id);
-                return Ok(teamRequests);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        [HttpPost("teamrequestsbyteam")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<TeamRequest>>> GetMyTeamRequests(
-            [FromBody] string teamId
-        )
-        {
-            try
-            {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var teamRequests = await _teamService.GetUnconfirmedTeamRequestsByTeamId(
-                    teamId,
-                    loggedInUser
-                );
-                return Ok(teamRequests);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        [HttpPost("teamrequestupdate")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<TeamRequest>>> UpdateTeamRequest(
-            [FromBody] TeamRequest teamRequest
-        )
-        {
-            try
-            {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var teamRequests = await _teamService.UpdateTeamRequest(teamRequest, loggedInUser);
-                return Ok(teamRequests);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        [HttpPost("deleteteamrequest")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<TeamRequest>>> DeleteTeamRequest(
-            [FromBody] string requestId
-        )
-        {
-            try
-            {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                await _teamService.DeleteRequest(requestId, loggedInUser);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        [HttpPost("update")]
+        [HttpPut]
         [Authorize]
         public async Task<ActionResult<Team>> Update([FromBody] Team team)
         {
@@ -334,71 +203,3 @@ namespace Controllers
         }
     }
 }
-
-
-
-
-
-
-
-
-//     [HttpPut]
-//     [Authorize]
-//     public async Task<ActionResult<User>> UpdateUser(User user)
-//     {
-//         try
-//         {
-//             var jwt = HttpContext
-//                 .Request.Headers["Authorization"]
-//                 .ToString()
-//                 .Replace("Bearer ", string.Empty);
-
-//             if (string.IsNullOrWhiteSpace(jwt))
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-//             var loggedInUser = _jwtService.GetByJWT(jwt);
-
-//             if (loggedInUser == null)
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-
-//             User updatedUser = await _userService.Edit(user);
-//             return Ok(updatedUser);
-//         }
-//         catch (Exception e)
-//         {
-//             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-//         }
-//     }
-
-//     [HttpDelete]
-//     [Authorize]
-//     public async Task<ActionResult<User>> DeleteUser(string id)
-//     {
-//         try
-//         {
-//             var jwt = HttpContext
-//                 .Request.Headers["Authorization"]
-//                 .ToString()
-//                 .Replace("Bearer ", string.Empty);
-
-//             if (string.IsNullOrWhiteSpace(jwt))
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-//             var loggedInUser = _jwtService.GetByJWT(jwt);
-
-//             if (loggedInUser == null)
-//             {
-//                 return BadRequest("JWT token is missing.");
-//             }
-//             await _userService.DeleteById(id);
-//             return NoContent();
-//         }
-//         catch (Exception e)
-//         {
-//             return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-//         }
-//     }

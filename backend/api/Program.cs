@@ -68,8 +68,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository>();
 builder.Services.AddScoped<IMeetingRepository, MeetingRepository>();
-builder.Services.AddScoped<IMeetingRoomRepository, MeetingRoomRepository>();
-builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
@@ -83,12 +81,11 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectUpdateRepository, ProjectUpdateRepository>();
 builder.Services.AddScoped<IUpdateCommentRepository, UpdateCommentRepository>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<ITeamRequestRepository, TeamRequestRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<IMeetingRoomService, MeetingRoomServie>();
-builder.Services.AddScoped<IOfficeService, OfficeService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IConversationParticipantService, ConversationParticipantService>();
 
@@ -100,7 +97,6 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ILoginService, LogInService>();
 builder.Services.AddScoped<IMeetingOccasionRepository, MeetingOccasionRepository>();
 builder.Services.AddScoped<IMeetingOccasionService, MeetingOccasionService>();
-builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IMeetingService, MeetingService>();
 builder.Services.AddScoped<IHealthCheckService, HealthCheckService>();
 builder.Services.AddScoped<IProfileHealthCheckService, ProfileHealthCheckService>();
@@ -109,6 +105,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectUpdateService, ProjectUpdateService>();
 builder.Services.AddScoped<IUpdateCommentService, UpdateCommentService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<ITeamRequestService, TeamRequestService>();
 
 var serviceProvider = builder.Services.BuildServiceProvider();
 var projectRepository = serviceProvider.GetRequiredService<IProjectRepository>();

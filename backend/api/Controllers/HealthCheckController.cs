@@ -25,7 +25,7 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<HealthCheck>> Post([FromBody] HealthCheckDTO healthCheck)
         {
             try
@@ -51,7 +51,7 @@ namespace Controllers
                 {
                     return BadRequest("Failed to create healthcheck.");
                 }
-                return healthCheckCreated;
+                return Ok(healthCheckCreated);
             }
             catch (Exception e)
             {
@@ -60,8 +60,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Controllers
 
                 await _healthCheckService.DeleteById(id, loggedInUser);
 
-                return Ok("Successfully deleted HealthCheck.");
+                return NoContent();
             }
             catch (Exception e)
             {
@@ -120,9 +120,9 @@ namespace Controllers
         }
 
         //hämta alla by teamet på profilid samt som gäller för nutiden
-        [HttpPost("byteam")]
+        [HttpGet("{profileid}")]
         [Authorize]
-        public async Task<ActionResult<List<HealthCheckDTO>>> Get([FromBody] string profileId)
+        public async Task<ActionResult<List<HealthCheckDTO>>> Get(string profileId)
         {
             try
             {

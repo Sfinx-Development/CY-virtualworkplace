@@ -2,14 +2,16 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateTeamDTO, Team, TeamRequest } from "../../types";
 import {
   FetchCreateTeam,
-  FetchDeleteRequest,
-  FetchGetMyTeamRequests,
   FetchGetMyTeams,
-  FetchGetRequestsByTeamId,
   FetchJoinTeam,
   FetchUpdateTeam,
-  FetchUpdateTeamRequest,
 } from "../api/team";
+import {
+  FetchDeleteRequest,
+  FetchGetMyTeamRequests,
+  FetchGetRequestsByTeamId,
+  FetchUpdateTeamRequest,
+} from "../api/teamrequest";
 
 export interface TeamState {
   teams: Team[] | undefined;

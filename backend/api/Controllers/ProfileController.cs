@@ -1,12 +1,6 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -24,10 +18,10 @@ namespace Controllers
             _profileService = profileService;
         }
 
-        [HttpPost]
+        [HttpGet("{teamid}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ProfileOutgoingDTO>>> GetProfilesByTeamId(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
@@ -74,10 +68,10 @@ namespace Controllers
             }
         }
 
-        [HttpPost("online")]
+        [HttpGet("online/{teamid}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Profile>>> GetOnlineProfilesByTeamId(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
@@ -104,10 +98,10 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byauth")]
+        [HttpGet("byauth/{teamid}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ProfileOutgoingDTO>>> GetProfileByAuthAndTeam(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
@@ -149,7 +143,9 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<Profile>> UpdateProfile(ProfileUpdateDTO profileUpdateDTO)
+        public async Task<ActionResult<Profile>> UpdateProfile(
+            [FromBody] ProfileUpdateDTO profileUpdateDTO
+        )
         {
             try
             {
@@ -183,8 +179,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string profileId)
+        [HttpDelete("{profileid}")]
+        public async Task<ActionResult> Delete(string profileId)
         {
             try
             {

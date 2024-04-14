@@ -9,17 +9,13 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateMeetingDTO } from "../../../types";
-import {
-  Getmyactiveroom,
-  createTeamMeetingAsync,
-} from "../../slices/meetingSlice";
+import { createTeamMeetingAsync } from "../../slices/meetingSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 
 export default function CreateMeetingPage() {
   const dispatch = useAppDispatch();
-  const meetingroom = useAppSelector((state) => state.meetingSlice.meetingroom);
   const error = useAppSelector((state) => state.meetingSlice.error);
   const navigate = useNavigate();
 
@@ -44,8 +40,6 @@ export default function CreateMeetingPage() {
   useEffect(() => {
     if (activeTeam) {
       dispatch(GetMyProfileAsync(activeTeam?.id));
-
-      dispatch(Getmyactiveroom(activeTeam.id));
     }
   }, [activeTeam]);
 
@@ -55,14 +49,16 @@ export default function CreateMeetingPage() {
       newMeetingDescription !== "" &&
       newMeetingDate !== "" &&
       activeProfile &&
-      meetingroom &&
       activeTeam
     ) {
       setFieldError(false);
 
       const intervalAsString = newMeetingInterval.toString();
       const parsedDate = new Date(newMeetingDate);
-      const parsedEndDate = new Date(newMeetingEndDate);
+      let parsedEndDate;
+      if (newMeetingEndDate) {
+        parsedEndDate = new Date(newMeetingEndDate);
+      }
 
       const meetingDto: CreateMeetingDTO = {
         name: newMeetingName,
@@ -70,7 +66,6 @@ export default function CreateMeetingPage() {
         date: parsedDate,
         minutes: newMeetingMinutes.toString(),
         isRepeating: newMeetingIsRepeating,
-        roomId: meetingroom.id,
         ownerId: activeProfile.id,
         interval: intervalAsString,
         endDate: parsedEndDate,
@@ -105,16 +100,15 @@ export default function CreateMeetingPage() {
           height: "100%",
         }}
       >
-        {fieldError && (
-          <Typography color="error">Alla fält måste vara ifyllda</Typography>
-        )}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
           }}
         >
-          {/* <Typography variant="h6">Skapa ett nytt möte</Typography> */}
+          {fieldError && (
+            <Typography color="error">Alla fält måste vara ifyllda</Typography>
+          )}
           <TextField
             label="Mötesnamn"
             value={newMeetingName}

@@ -1,12 +1,5 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
-using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -28,7 +21,7 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<ProfileHealthCheckDTO>> Post(
             [FromBody] ProfileHealthCheckDTO profileHealthCheck
         )
@@ -65,8 +58,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
@@ -124,11 +117,9 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byhealthcheck")]
+        [HttpGet("byid/{healthcheckid}")]
         [Authorize]
-        public async Task<ActionResult<List<ProfileHealthCheckDTO>>> Get(
-            [FromBody] string profileId
-        )
+        public async Task<ActionResult<List<ProfileHealthCheckDTO>>> Get(string healthCheckId)
         {
             try
             {
@@ -146,7 +137,7 @@ namespace Controllers
                 }
 
                 var profileHealthChecks = await _profileHealthCheckService.GetAllByHealthCheck(
-                    profileId,
+                    healthCheckId,
                     loggedInUser
                 );
 
@@ -158,11 +149,9 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byprofile")]
+        [HttpGet("byprofile/{profileid}")]
         [Authorize]
-        public async Task<ActionResult<List<ProfileHealthCheckDTO>>> GetByProfile(
-            [FromBody] string profileId
-        )
+        public async Task<ActionResult<List<ProfileHealthCheckDTO>>> GetByProfile(string profileId)
         {
             try
             {

@@ -1,9 +1,3 @@
-// [Authorize]
-// [HttpPost("teamconversation")]
-// public async Task<ActionResult<Conversation>> AddProfileToConversation(
-//     [FromBody] string teamId
-// )
-
 import {
   Conversation,
   ConversationParticipant,
@@ -18,14 +12,16 @@ export const FetchGetTeamMessages = async (
   teamId: string
 ): Promise<Message[]> => {
   try {
-    const response = await fetch(conversationApiUrl + "/teammessages", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(teamId),
-    });
+    const response = await fetch(
+      `${conversationApiUrl}/teammessages/${teamId}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtning av team conversation");
@@ -45,13 +41,12 @@ export const FetchGetTeamConversation = async (
   teamId: string
 ): Promise<Conversation> => {
   try {
-    const response = await fetch(conversationApiUrl + "/teamconversation", {
-      method: "POST",
+    const response = await fetch(`${conversationApiUrl}/${teamId}`, {
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(teamId),
     });
 
     if (!response.ok) {
@@ -107,9 +102,3 @@ export const FetchGetConversationParticipant = async (
     throw error;
   }
 };
-
-// [Authorize]
-// [HttpPost("conversationparticipant")]
-// public async Task<ActionResult<ConversationParticipant>> GetConversationParticipant(
-//     [FromBody]  string conversationId,string profileId
-// )
