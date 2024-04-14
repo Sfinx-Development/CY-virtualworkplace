@@ -21,6 +21,14 @@ export default function ChatMessage(props: ChatMessageProps) {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
+
+  function formatMessageContent(content: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return content.replace(urlRegex, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
+  }
+
   return (
     <Card
       key={props.message.id}
@@ -71,7 +79,11 @@ export default function ChatMessage(props: ChatMessageProps) {
             }}
           />
         ) : (
-          props.message.content
+          <div
+            dangerouslySetInnerHTML={{
+              __html: formatMessageContent(props.message.content),
+            }}
+          />
         )}
       </Typography>
     </Card>
