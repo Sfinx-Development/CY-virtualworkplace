@@ -1,3 +1,4 @@
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import {
@@ -11,7 +12,6 @@ import {
   MenuItem,
   Typography,
 } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { memo, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
@@ -277,7 +277,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           <Outlet />
         </div>
         <IconButton
-          sx={{ position: "absolute",  top: isMobile ? 30 : 10,  right: 100 }}
+          sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 100 }}
           onClick={toggleOnlineList}
         >
           <Typography variant="body2">Medlemmar online</Typography>
@@ -288,12 +288,18 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          {onlineProfiles.map((profile: ProfileHubDTO) => (
-            <MenuItem key={profile.profileId} onClick={handleClose}>
-              <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
-              <Typography>{profile.fullName}</Typography>
+          {onlineProfiles && onlineProfiles.length > 0 ? (
+            onlineProfiles.map((profile: ProfileHubDTO) => (
+              <MenuItem key={profile.profileId} onClick={handleClose}>
+                <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
+                <Typography>{profile.fullName}</Typography>
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem onClick={handleClose}>
+              <Typography>Ingen profil online</Typography>
             </MenuItem>
-          ))}
+          )}
         </Menu>
       </div>
     </Container>
