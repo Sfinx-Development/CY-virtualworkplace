@@ -3,6 +3,7 @@ import { HealthCheck, ProfileHealthCheck } from "../../types";
 import {
   FetchCreateHealthCheck,
   FetchCreateProfileHealthCheck,
+  FetchDeleteHealthCheck,
   FetchGetProfileHealthChecks,
   FetchGetProfileHealthChecksByProfile,
   FetchGetTeamHealthChecks,
@@ -41,6 +42,27 @@ export const CreateHealthCheckAsync = createAsyncThunk<
   } catch (error) {
     return thunkAPI.rejectWithValue(
       "Ett fel inträffade vid skapande av healthcheck."
+    );
+  }
+});
+
+export const DeleteHealthCheckAsync = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("healthcheck/deletehealthcheck", async (healthcheckId, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteHealthCheck(healthcheckId);
+    if (isDeleted) {
+      return healthcheckId;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid borttagning av healthcheck."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid borttagning av healthcheck."
     );
   }
 });
@@ -196,6 +218,17 @@ const healthcheckSlice = createSlice({
         }
       })
       .addCase(CreateProfileHealthCheckAsync.rejected, (state) => {
+        state.error = "Något gick fel.";
+      })
+      .addCase(DeleteHealthCheckAsync.fulfilled, (state, action) => {
+        if (action.payload && state.healthchecks) {
+          state.healthchecks = state.healthchecks.filter(
+            (h) => h.id !== action.payload
+          );
+          state.error = null;
+        }
+      })
+      .addCase(DeleteHealthCheckAsync.rejected, (state) => {
         state.error = "Något gick fel.";
       });
   },

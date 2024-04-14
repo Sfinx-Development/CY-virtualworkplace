@@ -1,5 +1,16 @@
 import AddIcon from "@mui/icons-material/Add";
-import { Box, Button, Container, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
 import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import { useEffect, useState } from "react";
@@ -7,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { HealthCheck } from "../../../types";
 import {
+  DeleteHealthCheckAsync,
   GetProfileHealthChecksAsync,
   GetTeamHealthChecksAsync,
 } from "../../slices/healthcheck";
@@ -30,6 +42,15 @@ type RatingsCount = {
 export default function HealthCheckPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [openTodoPopup, setOpenTodoPopup] = useState(false);
+  const [idToDelete, setIdToDelete] = useState("");
+
+  const handleDeleteHealthCheck = () => {
+    if (idToDelete) {
+      dispatch(DeleteHealthCheckAsync(idToDelete));
+      setOpenTodoPopup(false);
+    }
+  };
 
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
@@ -88,6 +109,11 @@ export default function HealthCheckPage() {
     return "";
   };
 
+  const handleSetPopopOpen = (id: string) => {
+    setIdToDelete(id);
+    setOpenTodoPopup(true);
+  };
+
   const loadStatistic = async (check: HealthCheck) => {
     setCurrentHealthCheck(check);
     await dispatch(GetProfileHealthChecksAsync(check.id));
@@ -118,6 +144,26 @@ export default function HealthCheckPage() {
               justifyContent: "center",
             }}
           >
+            {" "}
+            <Dialog
+              open={openTodoPopup}
+              onClose={() => setOpenTodoPopup(false)}
+            >
+              <DialogTitle>Ta bort</DialogTitle>
+              <DialogContent dividers>
+                <Typography>
+                  Är du säker på att du vill radera frågan och dess svar
+                  permanent?
+                </Typography>
+
+                <IconButton onClick={() => handleDeleteHealthCheck()}>
+                  <Typography>Ta bort</Typography>
+                </IconButton>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+              </DialogActions>
+            </Dialog>
             {chartData.data.length > 0 ? (
               <Container>
                 {currentHealthCheck != null ? (
@@ -184,9 +230,14 @@ export default function HealthCheckPage() {
                     marginTop: 2,
                     backgroundColor: "lightgrey",
                     minWidth: isMobile ? "100%" : 200,
+                    display: "flex",
+                    justifyContent: "space-between",
                   }}
                 >
                   {check.question}
+                  <IconButton onClick={() => handleSetPopopOpen(check.id)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </Button>
               ))}
           </Box>
