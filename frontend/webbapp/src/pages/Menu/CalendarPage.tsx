@@ -1161,7 +1161,7 @@ export default function CalendarPage() {
       <main
         style={{
           flex: 1,
-          overflowY: "auto",
+          // overflowY: "auto",
           display: isAsideVisible ? "none" : "flex",
           flexDirection: "column",
           alignItems: "center",
