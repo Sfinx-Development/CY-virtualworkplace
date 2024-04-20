@@ -16,40 +16,41 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly IMessageService _messageService;
-        private readonly IConversationService _conversationService;
 
-        public MessageController(
-            JwtService jwtService,
-            IMessageService messageService,
-            IConversationService conversationService
-        )
+        public MessageController(JwtService jwtService, IMessageService messageService)
         {
             _jwtService = jwtService;
             _messageService = messageService;
-            _conversationService = conversationService;
+        }
+
+        private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
         }
 
         [Authorize]
-        [HttpPost("Send")]
+        [HttpPost]
         public async Task<ActionResult<OutgoingMessageDTO>> CreateMessage(
-            IncomingMessageDTO incomingMessageDTO
+            [FromBody] IncomingMessageDTO incomingMessageDTO
         )
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 var createdMessage = await _messageService.CreateMessageInConversation(
                     incomingMessageDTO,
@@ -126,30 +127,18 @@ namespace Controllers
         // }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> DeleteMessage([FromBody] string messageId)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMessage(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
+              var loggedInUser = await GetLoggedInUserAsync();
 
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
-                await _messageService.DeleteAsync(messageId, loggedInUser);
+                await _messageService.DeleteAsync(id, loggedInUser);
                 // var chatHub = new ChatHub(_chatHubContext);
                 // await chatHub.MessageDeleted(messageId);
 
-                return Ok();
+                return NoContent();
             }
             catch (Exception e)
             {
@@ -165,19 +154,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+               var loggedInUser = await GetLoggedInUserAsync();
 
                 var editedMessage = await _messageService.EditAsync(
                     incomingMessageDTO,

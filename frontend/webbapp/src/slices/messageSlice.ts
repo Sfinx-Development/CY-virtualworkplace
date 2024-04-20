@@ -94,7 +94,6 @@ export const UpdateLastActive = createAsyncThunk<
     try {
       const participant = await FetchUpdateLastActive(conversationParticipant);
       if (participant) {
-        console.log("Deltagare uppdaterad:", participant);
         return participant;
       } else {
         return thunkAPI.rejectWithValue(
@@ -117,7 +116,6 @@ export const GetTeamConversationMessages = createAsyncThunk<
   try {
     const messages = await FetchGetTeamMessages(teamId);
     if (messages) {
-      console.log("meddelanden hämtade:", messages);
       return messages;
     } else {
       return thunkAPI.rejectWithValue(
@@ -139,7 +137,6 @@ export const CreateMessageAsync = createAsyncThunk<
   try {
     const createdMessage = await FetchCreateMessage(message);
     if (createdMessage) {
-      console.log("meddelandet skapat:", createdMessage);
       return createdMessage;
     } else {
       return thunkAPI.rejectWithValue(
@@ -209,14 +206,13 @@ export const liveUpdateMessageSent = createAsyncThunk(
         connection.getConnectionState() === signalR.HubConnectionState.Connected
       ) {
         await connection.invokeHubMethod<Message>("MessageSent", message);
-        console.log("Meddelande skickat");
       } else {
         console.error(
           "SignalR chatconnection is not in the 'Connected' state."
         );
       }
     } catch (error) {
-      console.error("Error sending enter meeting room request:", error);
+      console.error("Error: ", error);
     }
   }
 );
@@ -235,14 +231,13 @@ export const liveUpdateMessageEdited = createAsyncThunk(
         connection.getConnectionState() === signalR.HubConnectionState.Connected
       ) {
         await connection.invokeHubMethod<Message>("MessageEdited", message);
-        console.log("Meddelande redigerat");
       } else {
         console.error(
           "SignalR chatconnection is not in the 'Connected' state."
         );
       }
     } catch (error) {
-      console.error("Error sending enter meeting room request:", error);
+      console.error("Error: ", error);
     }
   }
 );
@@ -261,14 +256,13 @@ export const liveUpdateMessageDeleted = createAsyncThunk(
         connection.getConnectionState() === signalR.HubConnectionState.Connected
       ) {
         await connection.invokeHubMethod<string>("MessageDeleted", messageId);
-        console.log("Meddelande redigerat");
       } else {
         console.error(
           "SignalR chatconnection is not in the 'Connected' state."
         );
       }
     } catch (error) {
-      console.error("Error sending enter meeting room request:", error);
+      console.error("Error: ", error);
     }
   }
 );
@@ -304,9 +298,7 @@ const messageSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(GetTeamConversationMessages.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
-          console.log(action.payload);
           state.messages = action.payload;
           state.error = null;
         }
@@ -316,7 +308,6 @@ const messageSlice = createSlice({
         state.error = "Något gick fel med hämtandet av konversation.";
       })
       .addCase(CreateMessageAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           // state.messages.push(action.payload);
           state.error = null;
@@ -341,7 +332,6 @@ const messageSlice = createSlice({
         state.error = "Något gick fel med redigering av meddelandet.";
       })
       .addCase(DeleteMessageAsync.fulfilled, (state, action) => {
-        console.log("Fulfilled action payload:", action.payload);
         if (action.payload) {
           // const filteredMessages = state.messages.filter(
           //   (m) => m.id != action.payload
@@ -371,7 +361,6 @@ const messageSlice = createSlice({
       })
       .addCase(messageDeleted.fulfilled, (state, action) => {
         if (action.payload) {
-          // Filtrera bort det raderade meddelandet från meddelandelistan
           state.messages = state.messages.filter(
             (m) => m.id !== action.payload
           );

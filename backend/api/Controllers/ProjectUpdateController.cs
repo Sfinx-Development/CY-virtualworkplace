@@ -17,25 +17,34 @@ namespace Controllers
             _updateService = updateService;
         }
 
+          private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<OutgoingUpdateDTO>> Post(
             [FromBody] ProjectUpdateDTO projectUpdateDTO
         )
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+               var loggedInUser = await GetLoggedInUserAsync();
 
                 var updateCreated = await _updateService.CreateAsync(
                     projectUpdateDTO,
@@ -60,27 +69,16 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                 var loggedInUser = await GetLoggedInUserAsync();
 
                 await _updateService.DeleteByIdAsync(id, loggedInUser);
 
-                return Ok();
+                return NoContent();
             }
             catch (Exception e)
             {
@@ -121,24 +119,14 @@ namespace Controllers
         //     }
         // }
 
-        [HttpPost("byproject")]
+        [HttpGet("byproject/{projectid}")]
         [Authorize]
-        public async Task<ActionResult<List<OutgoingUpdateDTO>>> Get([FromBody] string projectId)
+        public async Task<ActionResult<List<OutgoingUpdateDTO>>> Get(string projectId)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                 var loggedInUser = await GetLoggedInUserAsync();
 
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
 
                 var updates = await _updateService.GetAllByProject(projectId, loggedInUser);
 
@@ -150,24 +138,14 @@ namespace Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<OutgoingUpdateDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<OutgoingUpdateDTO>> GetById(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                  var loggedInUser = await GetLoggedInUserAsync();
 
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
                 //någon mer check så rätt person hämtar rätt project? denna ska inte användas förutom från detta projectet
 
                 var projectUpdate = await _updateService.GetByIdAsync(id);

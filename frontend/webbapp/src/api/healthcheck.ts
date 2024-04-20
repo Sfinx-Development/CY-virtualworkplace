@@ -8,7 +8,7 @@ export const FetchCreateHealthCheck = async (
   healthcheck: HealthCheck
 ): Promise<HealthCheck> => {
   try {
-    const response = await fetch(apiUrl + "/create", {
+    const response = await fetch(apiUrl, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -30,17 +30,36 @@ export const FetchCreateHealthCheck = async (
   }
 };
 
-export const FetchGetTeamHealthChecks = async (
-  profileId: string
-): Promise<HealthCheck[]> => {
+export const FetchDeleteHealthCheck = async (healthcheckId: string) => {
   try {
-    const response = await fetch(apiUrl + "/byteam", {
-      method: "POST",
+    const response = await fetch(`${apiUrl}/${healthcheckId}`, {
+      method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(profileId),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchGetTeamHealthChecks = async (
+  profileId: string
+): Promise<HealthCheck[]> => {
+  try {
+    const response = await fetch(`${apiUrl}/${profileId}`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
@@ -61,7 +80,7 @@ export const FetchCreateProfileHealthCheck = async (
   profileHealthcheck: ProfileHealthCheck
 ): Promise<ProfileHealthCheck> => {
   try {
-    const response = await fetch(profileHealthCheckUrl + "/create", {
+    const response = await fetch(profileHealthCheckUrl, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -87,14 +106,16 @@ export const FetchGetProfileHealthChecks = async (
   healthCheckId: string
 ): Promise<ProfileHealthCheck[]> => {
   try {
-    const response = await fetch(profileHealthCheckUrl + "/byhealthcheck", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(healthCheckId),
-    });
+    const response = await fetch(
+      `${profileHealthCheckUrl}/byid/${healthCheckId}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtandet av profile health checks");
@@ -113,14 +134,16 @@ export const FetchGetProfileHealthChecksByProfile = async (
   profileId: string
 ): Promise<ProfileHealthCheck[]> => {
   try {
-    const response = await fetch(profileHealthCheckUrl + "/byprofile", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(profileId),
-    });
+    const response = await fetch(
+      `${profileHealthCheckUrl}/byprofile/${profileId}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Något gick fel vid hämtandet av profile health checks");

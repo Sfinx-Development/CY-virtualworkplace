@@ -56,6 +56,9 @@ export default function CalendarPage() {
   const [editedDescription, setEditedDescription] = useState("");
   const [editedDate, setEditedDate] = useState("");
 
+  const [isMobile, setIsMobile] = useState(false);
+  const [isAsideVisible, setIsAsideVisible] = useState(false);
+
   const dispatch = useAppDispatch();
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
 
@@ -66,6 +69,33 @@ export default function CalendarPage() {
   );
 
   const todosInTeam = useAppSelector((state) => state.todoSlice.todos);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const isMobileDevice = mediaQuery.matches;
+  
+    // Funktion som körs när medieförfrågan ändras
+    const handleMediaQueryChange = (e) => {
+      setIsMobile(e.matches);
+    };
+  
+    // Lägger till en lyssnare för medieförfrågan
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+  
+    // Uppdaterar state med initialt värde för mobilenhet
+    setIsMobile(isMobileDevice);
+  
+    // Återställer lyssnaren när komponenten avmonteras
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, []);
+
+
+  const toggleAsideVisibility = () => {
+    setIsAsideVisible(!isAsideVisible);
+  };
+
 
   useEffect(() => {
     dispatch(getActiveTeam());
@@ -339,27 +369,425 @@ export default function CalendarPage() {
         height: "100vh",
         width: "100%",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: isMobile ? "column" : "row",
         backgroundColor: "rgb(214, 196, 203)",
       }}
     >
-      {isMobile ? null : (
-        <aside
-          style={{
-            zIndex: 1,
-            marginLeft: "20px",
-            marginRight: "20px",
-            backgroundColor: "rgb(211, 145, 158)",
-            opacity: 0.8,
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            top: 0,
-            left: 0,
-            height: "100%",
-            width: "350px",
-          }}
-        >
+      {isMobile ? (
+        
+    <div>
+       
+      <Button onClick={toggleAsideVisibility}>Lägg till uppgift/påminnelse</Button>
+      {isAsideVisible && (
+        <aside style={{         
+           zIndex: 1,
+          backgroundColor: "rgb(211, 145, 158)",
+          opacity: 0.8,
+          justifyContent: "center",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          top: 0,
+          left: 0,
+          height: "100%",
+          width: "100%",}}>
+
+<div
+            className="todo-aside"
+            style={{
+              backgroundColor: "rgb(211, 145, 158)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              id="add-todo-btn"
+              variant="outlined"
+              style={{
+                backgroundColor: "rgb(171, 92, 121)",
+                padding: "4px",
+                color: "rgb(255, 255, 255)",
+                border: "none",
+                borderRadius: "2px",
+                height: "50px",
+                width: "280px",
+                letterSpacing: "2px",
+                fontSize: "14px",
+                fontFamily: '"Helvetica", Arial, sans-serif',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-around",
+                position: "relative",
+                overflow: "hidden",
+                transition: "width 0.3s ease",
+              }}
+            >
+              Lägg till uppgifter eller påminnelser här nedan
+            </Button>
+            <TextField
+              label="Titel"
+              type="text"
+              value={title}
+              onChange={(e) => SetTitle(e.target.value)}
+              variant="outlined"
+              sx={{
+                backgroundColor: "white",
+                borderRadius: "4px",
+                marginTop: "10px",
+              }}
+            />
+
+            <div>
+              <input
+                type="text"
+                placeholder="Beskrivning"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{
+                  borderRadius: "4px",
+                  marginTop: "20px",
+                  marginLeft: "20px",
+                  height: "80px",
+                  width: "240px",
+                  resize: "none",
+                  padding: "8px",
+                  fontSize: "14px",
+                }}
+              />
+
+              <div
+                className="date-submit-div"
+                style={{
+                  width: "260px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TextField
+                  label="Slutdatum"
+                  type="datetime-local"
+                  value={todoDate}
+                  onChange={(e) => setTodoDate(e.target.value)}
+                  variant="outlined"
+                  sx={{
+                    width: "250px",
+                    marginTop: 2,
+                    "& label": {
+                      color: "transparent",
+                    },
+                    "&:focus label": {
+                      color: "initial",
+                    },
+                  }}
+                />
+                <Button
+                  onClick={handleCreateTodo}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "10px 30px",
+                    backgroundColor: theme1.palette.success.main,
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    textAlign: "center",
+                    textDecoration: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    marginLeft: "30px",
+                    marginTop: "15px",
+                    transition: "background-color 0.3s",
+                  }}
+                >
+                  Skapa
+                </Button>
+              </div>
+
+              {fieldError && (
+                <Typography color="error">Alla fält måste fyllas i</Typography>
+              )}
+            </div>
+          </div>
+
+
+          <div id="todo-list-div" className="alltodos-div">
+            <div
+              className="my-todos-div"
+              style={{
+                backgroundColor: "rgb(211, 145, 158)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Dialog
+                open={openTodoPopup}
+                onClose={() => setOpenTodoPopup(false)}
+              >
+                <DialogTitle>Dagens Uppgifter/Påminnelser</DialogTitle>
+                <DialogContent dividers>
+                  {selectedDayTodos.map((todo) => (
+                    <Card
+                      key={todo.id}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "10px",
+                        backgroundColor: "lightgrey",
+                      }}
+                    >
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.title}
+                        </Typography>
+                      )}
+                      {isEditMode && todo.id === todoIdToEdit ? (
+                        <TextField
+                          label="Date"
+                          type="datetime-local"
+                          value={editedDate}
+                          onChange={(e) => setEditedDate(e.target.value)}
+                          variant="outlined"
+                          sx={{ width: "250px", marginTop: 2 }}
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="body2">
+                          {todo.date.toString()}
+                        </Typography>
+                      )}
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedDescription}
+                          onChange={(e) => setEditedDescription(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.description}
+                        </Typography>
+                      )}
+
+                      <div>
+                        <IconButton onClick={() => handleDeleteTodo(todo.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleSetEditMode(todo.id)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        {isEditMode && todo.id === todoIdToEdit && (
+                          <Button onClick={handleEditTodo}>
+                            Spara ändringar
+                          </Button>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+                </DialogActions>
+              </Dialog>
+
+              <Button
+                id="show-todos-btn"
+                variant="outlined"
+                style={{
+                  color: "white",
+                  border: "none",
+                  borderRadius: "2px",
+                  backgroundColor: "rgb(171, 92, 121)",
+
+                  top: "15px",
+                  height: "50px",
+                  width: "280px",
+                  letterSpacing: "2px",
+                  fontSize: "14px",
+                  fontFamily: '"Helvetica", Arial, sans-serif',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "width 0.3s ease",
+                }}
+                onClick={handleGetTodos}
+              >
+                Se alla uppgifter
+              </Button>
+
+              <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogTitle>Uppgifter/Påminnelser</DialogTitle>
+                <DialogContent dividers>
+                  {todosInTeam?.map((todo) => (
+                    <Card
+                      key={todo.id}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "10px",
+                        backgroundColor: "lightgrey",
+                      }}
+                    >
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedTitle}
+                          onChange={(e) => setEditedTitle(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.title}
+                        </Typography>
+                      )}
+                      {isEditMode && todo.id === todoIdToEdit ? (
+                        <TextField
+                          label="Date"
+                          type="datetime-local"
+                          value={editedDate}
+                          onChange={(e) => setEditedDate(e.target.value)}
+                          variant="outlined"
+                          sx={{ width: "250px", marginTop: 2 }}
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="body2">
+                          {todo.date.toString()}
+                        </Typography>
+                      )}
+                      {isEditMode && todoIdToEdit === todo.id ? (
+                        <TextField
+                          value={editedDescription}
+                          onChange={(e) => setEditedDescription(e.target.value)}
+                          type="text"
+                          fullWidth
+                          variant="outlined"
+                          onKeyDown={handleKeyPress}
+                        />
+                      ) : (
+                        <Typography variant="subtitle1">
+                          {todo.description}
+                        </Typography>
+                      )}
+
+                      <div>
+                        <IconButton onClick={() => handleDeleteTodo(todo.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleSetEditMode(todo.id)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        {isEditMode && todo.id === todoIdToEdit && (
+                          <Button onClick={handleEditTodo}>
+                            Spara ändringar
+                          </Button>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setOpenDialog(false)}>Stäng</Button>
+                </DialogActions>
+              </Dialog>
+
+              <Button id="read-todos-btn" aria-label="headphone icon">
+                <i className="fa-solid fa-headphones" id="headphone-icon"></i>
+              </Button>
+            </div>
+            
+            <div
+              className="todo-list"
+              style={{
+                fontFamily: '"Helvetica", Arial, sans-serif',
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                maxWidth: "350px",
+                overflowX: "auto",
+              }}
+            >
+              <ul id="todo-list" className="todo-reveal-list"></ul>
+            </div>
+          </div>
+
+   
+
+        </aside>
+        
+      )}
+            <Typography
+            variant="h5"
+            style={{
+              textAlign: "center",
+              display: isAsideVisible ? "none" : "flex",
+              marginTop: "40px",
+              justifyContent: "center",
+              fontFamily: "Arial, sans-serif",
+              fontWeight: "bold",
+              letterSpacing: "2px",
+            }}
+          >
+            {activeTeam?.name} Kalender
+          </Typography>
+
+          <div className="today-aside" style={{ textAlign: "center" }}>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: "bold", marginTop: "10px" }}
+            >
+              Dagens Datum
+            </Typography>
+            <Typography style={{ marginBottom: "5px" }}>
+              {currentTime.toLocaleTimeString()}
+            </Typography>
+            <Typography style={{ marginBottom: "5px" }}>
+              {currentTime.toLocaleDateString()}
+            </Typography>
+            <Typography style={{ marginBottom: "25px" }}>
+              {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
+            </Typography>
+          </div>
+    </div>
+  ) : (
+    <aside
+      style={{
+    
+        zIndex: 1,
+        marginLeft: "20px",
+        marginRight: "20px",
+        backgroundColor: "rgb(211, 145, 158)",
+        opacity: 0.8,
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        top: 0,
+        left: 0,
+        height: "100%",
+        width: "350px",
+      }}
+    >
           <Typography
             variant="h5"
             style={{
@@ -712,6 +1140,7 @@ export default function CalendarPage() {
                 <i className="fa-solid fa-headphones" id="headphone-icon"></i>
               </Button>
             </div>
+
             <div
               className="todo-list"
               style={{
@@ -732,8 +1161,8 @@ export default function CalendarPage() {
       <main
         style={{
           flex: 1,
-          overflowY: "auto",
-          display: "flex",
+          // overflowY: "auto",
+          display: isAsideVisible ? "none" : "flex",
           flexDirection: "column",
           alignItems: "center",
         }}
@@ -789,133 +1218,124 @@ export default function CalendarPage() {
             </span>
           </div>
         </header>
-        <table id="calendar-table">
-          <thead>
-            <tr>
-              {weekDays.map((day, index) => (
-                <th
-                  key={index}
+        <table id="calendar-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+  <thead>
+    <tr>
+      {weekDays.map((day, index) => (
+        <th
+          key={index}
+          style={{
+            color: index === 6 ? "rgb(182, 36, 36)" : "inherit",
+            padding: "5px",
+            fontSize: "12px",
+          }}
+        >
+          {day}
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody id="calendar-body-id">
+    {generateCalendarRows(holidays).map((row, rowIndex) => (
+      <tr key={rowIndex}>
+        {row.map((day, dayIndex) => {
+          const holidayName = holidays.find(
+            (holiday) =>
+              parseInt(holiday.datum.split("-")[2]) === parseInt(day)
+          )?.helgdag;
+
+          const isSunday = dayIndex === 6;
+          const isTodayCell = isToday(year, month, parseInt(day));
+
+          const todoCount = todosInTeam?.filter((todo) => {
+            const todoDate = new Date(todo.date);
+            const todoDay = todoDate.getDate();
+            const todoMonth = todoDate.getMonth();
+            const todoYear = todoDate.getFullYear();
+            return (
+              todoDay === parseInt(day) &&
+              todoMonth === month &&
+              todoYear === year
+            );
+          }).length;
+
+          return (
+            <td
+              key={dayIndex}
+              onClick={() => handleDayClick(day)}
+              style={{
+                border: "1px solid black",
+                padding: "2.8vw 2.8vw",
+                cursor: "pointer",
+                position: "relative",
+                color: isSunday ? "red" : holidayName ? "red" : "black",
+                whiteSpace: "nowrap",
+                backgroundColor: isTodayCell ? "grey" : "rgb(214, 196, 203)",
+                transition: "background-color 0.3s",
+                fontSize: "12px",
+              }}
+              onMouseEnter={(e) => {
+                if (!isTodayCell) {
+                  e.currentTarget.style.backgroundColor = "white";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isTodayCell) {
+                  e.currentTarget.style.backgroundColor =
+                    "rgb(214, 196, 203)";
+                }
+              }}
+            >
+              {day}
+              {holidayName && (
+                <div
                   style={{
-                    color: index === 6 ? "rgb(182, 36, 36)" : "inherit",
+                    fontSize: "9px",
+                    whiteSpace: "nowrap",
+                    backgroundColor: "white",
+                    overflowWrap: "break-word",
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    textAlign: "center",
+                    color: "rgb(215, 142, 142)",
+                    opacity: 0.6,
+                    padding: "2px",
                   }}
                 >
-                  {day}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody id="calendar-body-id">
-            {generateCalendarRows(holidays).map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((day, dayIndex) => {
-                  const holidayName = holidays.find(
-                    (holiday) =>
-                      parseInt(holiday.datum.split("-")[2]) === parseInt(day)
-                  )?.helgdag;
+                  {holidayName}
+                </div>
+              )}
+              {todoCount > 0 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    color: "black",
+                    borderRadius: "50%",
+                    width: "20px",
+                    height: "20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {todoCount}
+                </div>
+              )}
+            </td>
+          );
+        })}
+      </tr>
+    ))}
+  </tbody>
+</table>
 
-                  const isSunday = dayIndex === 6;
-                  const isTodayCell = isToday(year, month, parseInt(day));
-
-                  const sundayCellStyle = {
-                    color: isSunday ? "rgb(182, 36, 36)" : "black",
-                  };
-
-                  const cellHoverStyle = {
-                    backgroundColor: "rgb(214, 196, 203)",
-                  };
-
-                  const todoCount = todosInTeam?.filter((todo) => {
-                    const todoDate = new Date(todo.date);
-                    const todoDay = todoDate.getDate();
-                    const todoMonth = todoDate.getMonth();
-                    const todoYear = todoDate.getFullYear();
-                    return (
-                      todoDay === parseInt(day) &&
-                      todoMonth === month &&
-                      todoYear === year
-                    );
-                  }).length;
-
-                  return (
-                    <td
-                      key={dayIndex}
-                      onClick={() => handleDayClick(day)}
-                      style={{
-                        border: "1px solid black",
-                        padding: "2.8vw 2.8vw",
-                        gridColumn: "span",
-                        cursor: "pointer",
-                        position: "relative",
-                        color: isSunday ? "red" : holidayName ? "red" : "black",
-                        whiteSpace: "nowrap",
-                        backgroundColor: isTodayCell
-                          ? "grey"
-                          : "rgb(214, 196, 203)",
-                        transition: "background-color 0.3s",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isTodayCell) {
-                          e.currentTarget.style.backgroundColor = "white";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isTodayCell) {
-                          e.currentTarget.style.backgroundColor =
-                            "rgb(214, 196, 203)";
-                        }
-                      }}
-                    >
-                      {day}
-                      {holidayName && (
-                        <div
-                          style={{
-                            fontSize: "9px",
-
-                            whiteSpace: "nowrap",
-                            backgroundColor: "white",
-                            overflowWrap: "break-word",
-                            position: "absolute",
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            textAlign: "center",
-                            color: "rgb(215, 142, 142)",
-                            opacity: 0.6,
-                            padding: "2px",
-                          }}
-                        >
-                          {holidayName}
-                        </div>
-                      )}
-                      {todoCount > 0 && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            right: 0,
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            color: "black",
-                            borderRadius: "50%",
-                            width: "20px",
-                            height: "20px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-
-                            fontStyle: "italic",
-                          }}
-                        >
-                          {todoCount}
-                        </div>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </main>
     </Container>
   );

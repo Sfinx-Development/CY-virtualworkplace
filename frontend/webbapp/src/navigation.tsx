@@ -16,6 +16,7 @@ import CreateMeeting from "./pages/MeetingRoom/CreateMeetingPage";
 import CreateProject from "./pages/MeetingRoom/CreateProject";
 import HealthCheckHub from "./pages/MeetingRoom/HealthCheckPage";
 import MeetingInTeamsPage from "./pages/MeetingRoom/MeetingInTeam";
+import SettingsPage from "./pages/MeetingRoom/SettingsPage";
 import { MeetingRoom } from "./pages/MeetingRoom/MeetingRoomPage";
 import Projects from "./pages/MeetingRoom/Projects";
 import CalendarPage from "./pages/Menu/CalendarPage";
@@ -88,6 +89,7 @@ const Navigation = () => {
             <Route path="createmeeting" element={<CreateMeeting />} />
             <Route path="createproject" element={<CreateProject />} />
             <Route path="meetinginteam" element={<MeetingInTeamsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
           <Route path="office" element={<Office />}>
             <Route path="" element={<Notifications />} />

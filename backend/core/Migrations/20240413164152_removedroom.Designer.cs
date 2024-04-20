@@ -11,8 +11,8 @@ using core;
 namespace core.Migrations
 {
     [DbContext(typeof(CyDbContext))]
-    [Migration("20240328163032_profilefilestable2")]
-    partial class profilefilestable2
+    [Migration("20240413164152_removedroom")]
+    partial class removedroom
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,16 +129,10 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("RoomId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("TeamId")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoomId");
 
                     b.ToTable("Meetings");
                 });
@@ -149,9 +143,11 @@ namespace core.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("MeetingId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProfileId")
+                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -323,7 +319,7 @@ namespace core.Migrations
 
                     b.HasIndex("UpdateCommentId");
 
-                    b.ToTable("ProjectFiles");
+                   
                 });
 
             modelBuilder.Entity("core.ProjectUpdate", b =>
@@ -338,6 +334,10 @@ namespace core.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<int>("Version")
                         .HasColumnType("int");
 
@@ -348,32 +348,13 @@ namespace core.Migrations
                     b.ToTable("ProjectUpdates");
                 });
 
-            modelBuilder.Entity("core.Room", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("RoomLayout")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Room");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Room");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("core.Team", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("AllCanCreateMeetings")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -381,6 +362,13 @@ namespace core.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsOpenForJoining")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -393,6 +381,42 @@ namespace core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Teams");
+                });
+
+            modelBuilder.Entity("core.TeamRequest", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("CanJoin")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TeamId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TeamName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserFullName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeamRequests");
                 });
 
             modelBuilder.Entity("core.Todo", b =>
@@ -430,7 +454,7 @@ namespace core.Migrations
 
                     b.Property<string>("ProfileId")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("ProjectUpdateId")
                         .IsRequired()
@@ -441,6 +465,8 @@ namespace core.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
 
                     b.HasIndex("ProjectUpdateId");
 
@@ -491,32 +517,6 @@ namespace core.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("core.MeetingRoom", b =>
-                {
-                    b.HasBaseType("core.Room");
-
-                    b.Property<string>("TeamId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasIndex("TeamId");
-
-                    b.HasDiscriminator().HasValue("MeetingRoom");
-                });
-
-            modelBuilder.Entity("core.Office", b =>
-                {
-                    b.HasBaseType("core.Room");
-
-                    b.Property<string>("ProfileId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasIndex("ProfileId");
-
-                    b.HasDiscriminator().HasValue("Office");
-                });
-
             modelBuilder.Entity("core.ConversationParticipant", b =>
                 {
                     b.HasOne("core.Conversation", "Conversation")
@@ -547,26 +547,19 @@ namespace core.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("core.Meeting", b =>
-                {
-                    b.HasOne("core.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-                });
-
             modelBuilder.Entity("core.MeetingOccasion", b =>
                 {
                     b.HasOne("core.Meeting", "Meeting")
                         .WithMany()
-                        .HasForeignKey("MeetingId");
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("core.Profile", "Profile")
                         .WithMany()
-                        .HasForeignKey("ProfileId");
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Meeting");
 
@@ -672,35 +665,21 @@ namespace core.Migrations
 
             modelBuilder.Entity("core.UpdateComment", b =>
                 {
-                    b.HasOne("core.ProjectUpdate", "ProjectUpdate")
-                        .WithMany()
-                        .HasForeignKey("ProjectUpdateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProjectUpdate");
-                });
-
-            modelBuilder.Entity("core.MeetingRoom", b =>
-                {
-                    b.HasOne("core.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Team");
-                });
-
-            modelBuilder.Entity("core.Office", b =>
-                {
                     b.HasOne("core.Profile", "Profile")
                         .WithMany()
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("core.ProjectUpdate", "ProjectUpdate")
+                        .WithMany()
+                        .HasForeignKey("ProjectUpdateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Profile");
+
+                    b.Navigation("ProjectUpdate");
                 });
 
             modelBuilder.Entity("core.Conversation", b =>

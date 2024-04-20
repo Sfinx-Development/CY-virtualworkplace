@@ -28,7 +28,7 @@ export default function CreateAccount() {
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("");
-  const [age, setAge] = useState(0);
+  const [age, setAge] = useState<number | undefined>();
   const [selectedAvatar, setSelectedAvatar] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -53,7 +53,6 @@ export default function CreateAccount() {
       const isValid = phoneUtil.isValidNumber(phoneNumberProto);
       return isValid;
     } catch (e) {
-      console.error("NumberParseException was thrown:", e);
       return false;
     }
   };
@@ -102,7 +101,6 @@ export default function CreateAccount() {
         if (typeof result === "string") {
           setCreateError(true);
           setCreateAccountError(result);
-          console.log("ERROR ÄR: ", result);
         } else {
           navigate("/signin");
         }
@@ -224,6 +222,7 @@ export default function CreateAccount() {
               label="Förnamn"
               variant="outlined"
               type="fname"
+              autoComplete="given-name"
               value={firstname}
               onChange={(event) => setFirstname(event.target.value)}
               fullWidth
@@ -233,6 +232,7 @@ export default function CreateAccount() {
             <TextField
               label="Efternamn"
               variant="outlined"
+              autoComplete="family-name"
               type="lname"
               value={lastname}
               onChange={(event) => setLastname(event.target.value)}
@@ -244,6 +244,7 @@ export default function CreateAccount() {
               label="Email"
               variant="outlined"
               value={email}
+              autoComplete="email"
               type="email"
               onChange={(event) => setEmail(event.target.value)}
               fullWidth
@@ -253,6 +254,7 @@ export default function CreateAccount() {
             <TextField
               label="Telefonnummer"
               variant="outlined"
+              autoComplete="tel"
               value={phoneNumber}
               type="tel"
               onChange={(event) => setPhoneNumber(event.target.value)}
@@ -264,6 +266,7 @@ export default function CreateAccount() {
               label="Lösenord"
               variant="outlined"
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               fullWidth
@@ -274,6 +277,7 @@ export default function CreateAccount() {
               label="Bekräfta lösenord"
               variant="outlined"
               type="password"
+              autoComplete="new-password"
               value={confirmedPassword}
               onChange={(event) => setConfirmedPassword(event.target.value)}
               fullWidth
@@ -302,7 +306,9 @@ export default function CreateAccount() {
               variant="outlined"
               type="number"
               value={age}
-              onChange={(event) => setAge(Number(event.target.value))}
+              onChange={(event) =>
+                setAge(Number(event.target.value) ?? undefined)
+              }
               fullWidth
             />
           </Grid>

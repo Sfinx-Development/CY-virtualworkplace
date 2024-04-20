@@ -9,7 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { HealthCheck, ProfileHealthCheck } from "../../../../types";
+import {
+  HealthCheck,
+  ProfileHealthCheck,
+  TeamRequest,
+} from "../../../../types";
 import { RadioGroupRating } from "../../../components/StyledRating";
 import {
   CreateProfileHealthCheckAsync,
@@ -18,18 +22,25 @@ import {
 } from "../../../slices/healthcheck";
 import { getActiveProfile } from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
-import { getActiveTeam } from "../../../slices/teamSlice";
+import {
+  GetAllTeamRequestsAsync,
+  getActiveTeam,
+  updateTeamRequestAsync,
+} from "../../../slices/teamSlice";
 
 export default function Notifications() {
   const dispatch = useAppDispatch();
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const teamRequests = useAppSelector((state) => state.teamSlice.teamRequests);
 
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
   }, []);
+
   const healthchecks = useAppSelector(
     (state) => state.healthcheckSlice.healthchecks
   );
@@ -55,12 +66,36 @@ export default function Notifications() {
     setRatingShow(false);
   };
 
+  const approveRequest = (request: TeamRequest) => {
+    const updatedRequest: TeamRequest = {
+      ...request,
+      isConfirmed: true,
+      canJoin: true,
+    };
+    dispatch(updateTeamRequestAsync(updatedRequest));
+  };
+
+  const disApproveRequest = (request: TeamRequest) => {
+    const updatedRequest: TeamRequest = {
+      ...request,
+      isConfirmed: true,
+      canJoin: false,
+    };
+    dispatch(updateTeamRequestAsync(updatedRequest));
+  };
+
   useEffect(() => {
     if (activeProfile) {
       dispatch(GetTeamHealthChecksAsync(activeProfile.id));
       dispatch(GetProfileHealthChecksByProfileAsync(activeProfile.id));
     }
   }, [activeProfile]);
+
+  useEffect(() => {
+    if (activeTeam) {
+      dispatch(GetAllTeamRequestsAsync(activeTeam.id));
+    }
+  }, [activeTeam]);
 
   useEffect(() => {
     if (healthchecks && profilehealthchecks) {
@@ -124,9 +159,45 @@ export default function Notifications() {
                 ))}
             </List>
           </Box>
-        ) : (
-          <Typography>Ingen oläst notis</Typography>
-        )}
+        ) : null}
+        {teamRequests &&
+        activeProfile &&
+        activeProfile.isOwner &&
+        teamRequests.length > 0 ? (
+          <Box mt={0.5}>
+            {teamRequests.length > 1 ? (
+              <Typography>
+                Det finns {teamRequests.length} förfrågningar
+              </Typography>
+            ) : (
+              <Typography>Det finns 1 förfrågan</Typography>
+            )}
+            <List>
+              {teamRequests &&
+                teamRequests.map((request) => (
+                  <ListItem key={request.id}>
+                    <ListItemText
+                      primary={request.userFullName + " vill gå med i teamet"}
+                    />
+                    <Button
+                      onClick={() => {
+                        approveRequest(request);
+                      }}
+                    >
+                      Godkänn
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        disApproveRequest(request);
+                      }}
+                    >
+                      Neka
+                    </Button>
+                  </ListItem>
+                ))}
+            </List>
+          </Box>
+        ) : null}
       </Card>
     </Container>
   );

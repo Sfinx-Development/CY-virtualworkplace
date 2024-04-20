@@ -11,142 +11,96 @@ namespace Controllers
     {
         private readonly JwtService _jwtService;
         private readonly IMeetingService _meetingService;
-        private readonly IMeetingRoomService _meetingRoomService;
 
-        public MeetingController(
-            JwtService jwtService,
-            IMeetingService meetingService,
-            IMeetingRoomService meetingRoomService
-        )
+        public MeetingController(JwtService jwtService, IMeetingService meetingService)
         {
             _jwtService = jwtService;
             _meetingService = meetingService;
-            _meetingRoomService = meetingRoomService;
         }
 
-        [Authorize]
-        [HttpPost("Create")]
-        public async Task<ActionResult<OutgoingMeetingDTO>> Post(
-            [FromBody] CreateMeetingDTO incomingMeetingDTO
-        )
+        //detta ska vara sen när man kan skapa möten utan att hela teamet bjuds in automatiskt:
+
+        // [Authorize]
+        // [HttpPost]
+        // public async Task<ActionResult<OutgoingMeetingDTO>> Post(
+        //     [FromBody] CreateMeetingDTO incomingMeetingDTO
+        // )
+        // {
+        //     try
+        //     {
+        //         var jwt = Request.Cookies["jwttoken"];
+        //         if (string.IsNullOrWhiteSpace(jwt))
+        //         {
+        //             return BadRequest("JWT token is missing.");
+        //         }
+        //         var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+        //         if (loggedInUser == null)
+        //         {
+        //             return BadRequest("Failed to get user.");
+        //         }
+
+        //         //I CREATE MEETING ISERVICE SKA OCCASION OCKSÅ SKAPAS FÖR ÄGAREN AV MÖTET DIREKT
+        //         if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
+        //         {
+        //             var meetingCreated = await _meetingService.CreateAsync(incomingMeetingDTO);
+
+        //             if (meetingCreated == null)
+        //             {
+        //                 return BadRequest("Failed to create meeting.");
+        //             }
+        //             return meetingCreated;
+        //         }
+        //         else
+        //         {
+        //             throw new Exception("The owner of meeting is not in line with the JWT bearer.");
+        //         }
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+        //     }
+        // }
+        private async Task<User> GetLoggedInUserAsync()
         {
-            try
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
-                //I CREATE MEETING ISERVICE SKA OCCASION OCKSÅ SKAPAS FÖR ÄGAREN AV MÖTET DIREKT
-                if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
-                {
-                    var meetingCreated = await _meetingService.CreateAsync(incomingMeetingDTO);
-
-                    if (meetingCreated == null)
-                    {
-                        return BadRequest("Failed to create team.");
-                    }
-                    return meetingCreated;
-                }
-                else
-                {
-                    throw new Exception("The owner of meeting is not in line with the JWT bearer.");
-                }
+                throw new Exception("JWT token is missing.");
             }
-            catch (Exception e)
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+                throw new Exception("Failed to get user.");
             }
+
+            return loggedInUser;
         }
 
         [Authorize]
-        [HttpPost("CreateTeamMeeting")]
+        [HttpPost("team")]
         public async Task<ActionResult<OutgoingMeetingDTO>> PostTeamMeeting(
             [FromBody] CreateMeetingDTO incomingMeetingDTO
         )
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
+                var loggedInUser = await GetLoggedInUserAsync();
+
+                var meetingCreated = await _meetingService.CreateTeamMeetingAsync(
+                    incomingMeetingDTO,
+                    loggedInUser
+                );
+
+                if (meetingCreated == null)
                 {
-                    return BadRequest("JWT token is missing.");
+                    return BadRequest("Failed to create team.");
                 }
 
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
-                // Kontrollera överlappande möten
-                // var overlappingMeetings = await _meetingService.GetTeamMeetingsInPeriodAsync(
-                //     incomingMeetingDTO.TeamId,
-                //     incomingMeetingDTO.Date,
-                //     incomingMeetingDTO.Date.AddMinutes(incomingMeetingDTO.Minutes)
-                // );
-
-                // if (overlappingMeetings.Count > 0)
-                // {
-                //     return BadRequest("There are overlapping meetings for the team in the specified time period.");
-                // }
-
-                if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
-                {
-                    var meetingCreated = await _meetingService.CreateTeamMeetingAsync(
-                        incomingMeetingDTO
-                    );
-
-                    if (meetingCreated == null)
-                    {
-                        return BadRequest("Failed to create team.");
-                    }
-
-                    return meetingCreated;
-                }
-                else
-                {
-                    throw new Exception(
-                        "The owner of the meeting is not in line with the JWT bearer."
-                    );
-                }
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
-            }
-        }
-
-        [HttpPost("meetingroom")]
-        [Authorize]
-        public async Task<ActionResult<MeetingRoom>> Getmeetingroombyteamid(
-            [FromBody] string teamId
-        )
-        {
-            try
-            {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
-                MeetingRoom meetingRoom = await _meetingRoomService.GetMeetingRoomByTeamId(teamId);
-                return Ok(meetingRoom);
+                return meetingCreated;
             }
             catch (Exception e)
             {
@@ -155,27 +109,16 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string meetingId)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+               var loggedInUser = await GetLoggedInUserAsync();
 
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
+                await _meetingService.DeleteMeetingAndOccasions(id, loggedInUser.Id);
 
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
-                await _meetingService.DeleteMeetingAndOccasions(meetingId, loggedInUser.Id);
-
-                return Ok("Successfully deleted meeting.");
+                return NoContent();
             }
             catch (Exception e)
             {
@@ -191,24 +134,10 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 if (loggedInUser.Profiles.Any(p => p.Id == meeting.OwnerId))
                 {
-                    Console.WriteLine(
-                        ".------------------------------möte kommer in: " + meeting.Date
-                    );
                     var updatedMeeting = await _meetingService.UpdateMeeting(meeting);
                     return Ok(updatedMeeting);
                 }
@@ -223,25 +152,13 @@ namespace Controllers
             }
         }
 
-        [HttpPost("allmeetings")]
+        [HttpGet("{profileid}")]
         [Authorize]
-        public async Task<ActionResult<List<OutgoingMeetingDTO>>> Get([FromBody] string profileId)
+        public async Task<ActionResult<List<OutgoingMeetingDTO>>> Get(string profileId)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
+                var loggedInUser = await GetLoggedInUserAsync();
                 var meetings = await _meetingService.GetMeetingsByProfile(profileId, loggedInUser);
 
                 return Ok(meetings);

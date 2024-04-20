@@ -1,4 +1,4 @@
-import { CreateTeamDTO, Team } from "../../types";
+import { CreateTeamDTO, Team, TeamRequest } from "../../types";
 import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + "/team";
@@ -30,7 +30,7 @@ export const FetchCreateTeam = async (
   newTeam: CreateTeamDTO
 ): Promise<Team> => {
   try {
-    const response = await fetch(apiUrl + "/create", {
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export const FetchJoinTeam = async ({
 }: {
   code: string;
   role: string;
-}): Promise<Team> => {
+}): Promise<Team | TeamRequest> => {
   try {
     const response = await fetch(apiUrl + "/join", {
       method: "POST",
@@ -71,6 +71,36 @@ export const FetchJoinTeam = async ({
 
     if (!response.ok) {
       throw new Error("Något gick fel vid gå med i team.");
+    }
+
+    const data = await response.json();
+
+    if ("type" in data && data.type === "Team") {
+      return data as Team;
+    } else if ("type" in data && data.type === "TeamRequest") {
+      return data as TeamRequest;
+    } else {
+      throw new Error("Okänt svar från servern.");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const FetchUpdateTeam = async (team: Team): Promise<Team> => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(team),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid att uppdatera team.");
     }
 
     const data = await response.json();

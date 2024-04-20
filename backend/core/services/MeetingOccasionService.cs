@@ -43,21 +43,21 @@ public class MeetingOccasionService : IMeetingOccasionService
             }
 
             var occasionsDTOs = new List<OutgoingOcassionDTO>();
-            occasionsDTOs = occasionsNotPast
-                .Select(
-                    p =>
-                        new OutgoingOcassionDTO(
-                            p.Id,
-                            p.MeetingId,
-                            p.ProfileId,
-                            p.Meeting.Name,
-                            p.Meeting.Description,
-                            p.Meeting.Date,
-                            p.Meeting.Minutes,
-                            p.Meeting.RoomId
-                        )
-                )
-                .ToList();
+            occasionsDTOs =
+                occasionsNotPast
+                    .Select(
+                        p =>
+                            new OutgoingOcassionDTO(
+                                p.Id,
+                                p.MeetingId,
+                                p.ProfileId,
+                                p.Meeting.Name,
+                                p.Meeting.Description,
+                                p.Meeting.Date,
+                                p.Meeting.Minutes
+                            )
+                    )
+                    .ToList() ?? new List<OutgoingOcassionDTO>();
             return occasionsDTOs;
         }
         catch (Exception)
@@ -83,8 +83,7 @@ public class MeetingOccasionService : IMeetingOccasionService
                             p.Meeting.Name,
                             p.Meeting.Description,
                             p.Meeting.Date,
-                            p.Meeting.Minutes,
-                            p.Meeting.RoomId
+                            p.Meeting.Minutes
                         )
                 )
                 .ToList();
@@ -190,8 +189,7 @@ public class MeetingOccasionService : IMeetingOccasionService
                     meeting.Name,
                     meeting.Description,
                     meeting.Date,
-                    meeting.Minutes,
-                    meeting.RoomId
+                    meeting.Minutes
                 );
                 return occasionDTO;
             }

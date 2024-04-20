@@ -1,3 +1,4 @@
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import {
@@ -6,9 +7,12 @@ import {
   CardActionArea,
   CardContent,
   Container,
+  IconButton,
+  Menu,
+  MenuItem,
   Typography,
 } from "@mui/material";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
@@ -40,6 +44,8 @@ interface ConnectFormProps {
 export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const dispatch = useAppDispatch();
   const [connection, setConnection] = useState<Connector>();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const activeProfile = useAppSelector(
@@ -109,19 +115,14 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   const meetingRoomColor = theme1.palette.room.main;
 
-  const ProfileItem = memo(({ profile }: { profile: ProfileHubDTO }) => (
-    <div
-      key={profile.profileId}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginBottom: "5px",
-      }}
-    >
-      <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
-      <Typography>{profile.fullName}</Typography>
-    </div>
-  ));
+  const toggleOnlineList = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Container
       sx={{
@@ -167,7 +168,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: isMobile ? "column" : "row",
           justifyContent: "center",
           gap: isMobile ? 1 : 4,
           width: "100%",
@@ -231,53 +232,62 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           title="Statistik"
           icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
         />
+        <FlexNavcard
+          backgroundColor={meetingRoomColor}
+          navigationPage="settings"
+          title="Inställningar"
+          icon={
+            <img
+              src="      https://i.imgur.com/6YGqDBk.png"
+              alt="project management icon"
+              style={{ width: 40, height: 40 }}
+            />
+          }
+        />
       </Box>
-      <div style={{ display: "flex", flexDirection: "row", width: "100%" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          width: "100%",
+          marginRight: isMobile ? 0 : 60,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <div
           style={{
-            marginRight: isMobile ? 0 : 60,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
             width: isMobile ? "100%" : "90%",
             flex: 1,
           }}
         >
           <Outlet />
         </div>
-        {isMobile ? null : (
-          <Card
-            sx={{
-              padding: 2,
-              backgroundColor: "rgba(250,250,250,0.8)",
-              borderRadius: "10px",
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-              maxWidth: "15%",
-              margin: "0 auto",
-              marginTop: 2,
-              right: 20,
-              position: "absolute",
-            }}
-          >
-            <CardContent>
-              <Typography sx={{ color: "black", mb: 2 }}>
-                {activeTeam?.name.toUpperCase()}'S MÖTESRUM
-              </Typography>
-              {onlineProfiles && onlineProfiles.length > 0 ? (
-                <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  {onlineProfiles.map((profile: ProfileHubDTO) => (
-                    <ProfileItem key={profile.profileId} profile={profile} />
-                  ))}
-                </Box>
-              ) : (
-                <Typography variant="body2" sx={{ color: "black" }}>
-                  Ingen profil online
-                </Typography>
-              )}
-            </CardContent>
-          </Card>
-        )}
+        <IconButton
+          sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 100 }}
+          onClick={toggleOnlineList}
+        >
+          <Typography variant="body2">Medlemmar online</Typography>
+          <ArrowDropDownIcon sx={{ transform: "rotate(-1eg)" }} />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          {onlineProfiles && onlineProfiles.length > 0 ? (
+            onlineProfiles.map((profile: ProfileHubDTO) => (
+              <MenuItem key={profile.profileId} onClick={handleClose}>
+                <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
+                <Typography>{profile.fullName}</Typography>
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem onClick={handleClose}>
+              <Typography>Ingen profil online</Typography>
+            </MenuItem>
+          )}
+        </Menu>
       </div>
     </Container>
   );

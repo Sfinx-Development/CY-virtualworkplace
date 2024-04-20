@@ -72,6 +72,13 @@ public class HealthCheckRepository : IHealthCheckRepository
             var healthCheckToDelete = await _cyDbContext.HealthChecks.FindAsync(id);
             if (healthCheckToDelete != null)
             {
+                var profileHealthChecks = await _cyDbContext
+                    .ProfileHealthChecks.Where(p => p.HealthCheckId == healthCheckToDelete.Id)
+                    .ToListAsync();
+                if (profileHealthChecks != null)
+                {
+                    _cyDbContext.ProfileHealthChecks.RemoveRange(profileHealthChecks);
+                }
                 _cyDbContext.HealthChecks.Remove(healthCheckToDelete);
                 await _cyDbContext.SaveChangesAsync();
             }

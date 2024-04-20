@@ -30,7 +30,26 @@ namespace Controllers
             _logger = logger;
         }
 
-        [HttpPost]
+          private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
+        [HttpGet]
         [Authorize]
         public async Task<ActionResult<UserDTO>> GetUserDTO()
         {
@@ -83,7 +102,7 @@ namespace Controllers
             try
             {
                 UserDTO foundUser = await _userService.GetById(id);
-                return foundUser;
+                return Ok(foundUser);
             }
             catch (Exception e)
             {
@@ -91,8 +110,8 @@ namespace Controllers
             }
         }
 
-        [HttpPost("Create")]
-        public async Task<ActionResult<UserDTO>> Post(UserCreateDTO userCreateDto)
+        [HttpPost]
+        public async Task<ActionResult<UserDTO>> Post([FromBody] UserCreateDTO userCreateDto)
         {
             try
             {
@@ -102,7 +121,7 @@ namespace Controllers
                 {
                     return BadRequest("Failed to create user.");
                 }
-                return Ok(userCreated);
+                return CreatedAtAction(nameof(GetById), new { id = userCreated.Id }, userCreated);
             }
             catch (Exception e)
             {
@@ -111,25 +130,12 @@ namespace Controllers
         }
 
         [Authorize]
-        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
-        [AllowAnonymous]
         [HttpPut]
         public async Task<ActionResult<UserDTO>> UpdateUser(User user)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+              var loggedInUser = await GetLoggedInUserAsync();
 
                 UserDTO updatedUser = await _userService.Edit(user);
                 return Ok(updatedUser);
@@ -141,25 +147,12 @@ namespace Controllers
         }
 
         [HttpDelete]
-        [Authorize]
-        //DENNA TILLÅTER ATT VI KOMMER IN I METODEN
         [AllowAnonymous]
         public async Task<ActionResult> DeleteUser(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+               var loggedInUser = await GetLoggedInUserAsync();
                 await _userService.DeleteById(id);
                 return NoContent();
             }

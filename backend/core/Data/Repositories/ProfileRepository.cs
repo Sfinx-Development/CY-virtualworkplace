@@ -200,6 +200,30 @@ public class ProfileRepository : IProfileRepository
         }
     }
 
+    public async Task<Profile> UpdateOnlineAsync(ProfileUpdateDTO profile)
+    {
+        try
+        {
+            var profileToUpdate = await _cyDbContext.Profiles.FirstAsync(p => p.Id == profile.Id);
+
+            if (profileToUpdate == null)
+            {
+                throw new Exception();
+            }
+
+            profileToUpdate.IsOnline = profile.IsOnline;
+
+            _cyDbContext.Profiles.Update(profileToUpdate);
+
+            await _cyDbContext.SaveChangesAsync();
+            return profileToUpdate;
+        }
+        catch (Exception e)
+        {
+            throw new Exception();
+        }
+    }
+
     // public async Task DeleteAsync()
     // {
     //     try

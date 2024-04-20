@@ -24,23 +24,33 @@ namespace Controllers
             _projectService = projectService;
         }
 
+          private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
+
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<OutgoingProjectDTO>> Post([FromBody] ProjectDTO projectDTO)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+              var loggedInUser = await GetLoggedInUserAsync();
 
                 var projectCreated = await _projectService.CreateProjectAsync(
                     projectDTO,
@@ -64,23 +74,12 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 await _projectService.DeleteById(id, loggedInUser);
 
@@ -98,18 +97,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 OutgoingProjectDTO updatedProject = await _projectService.UpdateProject(
                     projectDTO,
@@ -123,26 +111,13 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byteam")]
+        [HttpGet("teamid/{teamid}")]
         [Authorize]
-        //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<List<OutgoingProjectDTO>>> Get([FromBody] string teamId)
+        public async Task<ActionResult<List<OutgoingProjectDTO>>> Get(string teamId)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
+                var loggedInUser = await GetLoggedInUserAsync();
                 var projects = await _projectService.GetByTeam(teamId, loggedInUser);
 
                 return Ok(projects);
@@ -153,25 +128,14 @@ namespace Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
         //varför skickar vi inte in teamId - även med healthchecks? tänk och se
-        public async Task<ActionResult<OutgoingProjectDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<OutgoingProjectDTO>> GetById(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
                 //någon mer check så rätt person hämtar rätt project? denna ska inte användas förutom från detta projectet
 
                 var project = await _projectService.GetProjectBykId(id);

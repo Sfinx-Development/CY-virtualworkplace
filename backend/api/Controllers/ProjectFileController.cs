@@ -19,23 +19,33 @@ namespace Controllers
             _fileService = fileService;
         }
 
+           private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
+
         [Authorize]
-        [HttpPost("Create")]
+        [HttpPost]
         public async Task<ActionResult<ProjectFileDTO>> Post()
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 var formFile = Request.Form.Files.GetFile("file");
                 var updateCommentId = Request.Form["updateCommentId"];
@@ -86,23 +96,12 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 await _fileService.DeleteById(id, loggedInUser);
 
@@ -122,18 +121,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 var updatedFile = await _fileService.UpdateAsync(projectFileDTO, loggedInUser);
                 return Ok(updatedFile);
@@ -144,24 +132,13 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byupdatecomment")]
+        [HttpGet("byupdatecommentid/{updatecommentid}")]
         [Authorize]
-        public async Task<ActionResult<List<ProjectFileDTO>>> Get([FromBody] string updateCommentId)
+        public async Task<ActionResult<List<ProjectFileDTO>>> Get(string updateCommentId)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+               var loggedInUser = await GetLoggedInUserAsync();
 
                 var files = await _fileService.GetByUpdateComment(updateCommentId, loggedInUser);
 
@@ -173,24 +150,13 @@ namespace Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<ProjectFileDTO>> GetById([FromBody] string id)
+        public async Task<ActionResult<ProjectFileDTO>> GetById(string id)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
                 //någon mer check så rätt person hämtar rätt project? denna ska inte användas förutom från detta projectet
 
                 var file = await _fileService.GetById(id, loggedInUser);

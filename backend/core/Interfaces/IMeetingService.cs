@@ -2,7 +2,10 @@ namespace core;
 
 public interface IMeetingService
 {
-    Task<OutgoingMeetingDTO> CreateTeamMeetingAsync(CreateMeetingDTO incomingMeetingDTO);
+    Task<OutgoingMeetingDTO> CreateTeamMeetingAsync(
+        CreateMeetingDTO incomingMeetingDTO,
+        User loggedInUser
+    );
 
     Task<OutgoingMeetingDTO> CreateAsync(CreateMeetingDTO incomingMeetingDTO);
 

@@ -1,12 +1,6 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
@@ -24,26 +18,34 @@ namespace Controllers
             _profileService = profileService;
         }
 
-        [HttpPost]
+         private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwtCookie = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwtCookie))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
+        [HttpGet("{teamid}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ProfileOutgoingDTO>>> GetProfilesByTeamId(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
             {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+              var loggedInUser = await GetLoggedInUserAsync();
                 var profiles = await _profileService.GetProfilesByTeamId(loggedInUser.Id, teamId);
                 var profilesDtos = new List<ProfileOutgoingDTO>();
 
@@ -74,26 +76,15 @@ namespace Controllers
             }
         }
 
-        [HttpPost("online")]
+        [HttpGet("online/{teamid}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Profile>>> GetOnlineProfilesByTeamId(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
             {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
                 var profiles = await _profileService.GetOnlineProfilesByTeam(loggedInUser, teamId);
                 profiles.ForEach(p => Console.WriteLine("ONLIINE: " + p.FullName));
                 return Ok(profiles);
@@ -104,26 +95,15 @@ namespace Controllers
             }
         }
 
-        [HttpPost("byauth")]
+        [HttpGet("byauth/{teamid}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ProfileOutgoingDTO>>> GetProfileByAuthAndTeam(
-            [FromBody] string teamId
+            string teamId
         )
         {
             try
             {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
                 var profile = await _profileService.GetProfileByAuthAndTeam(loggedInUser, teamId);
 
                 var profileOutgoingDTO = new ProfileOutgoingDTO(
@@ -149,24 +129,13 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<Profile>> UpdateProfile(ProfileUpdateDTO profileUpdateDTO)
+        public async Task<ActionResult<Profile>> UpdateProfile(
+            [FromBody] ProfileUpdateDTO profileUpdateDTO
+        )
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                Console.WriteLine("LOGGED IN: ", loggedInUser.Id);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 if (profileUpdateDTO.UserId != loggedInUser.Id)
                 {
@@ -183,23 +152,12 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete]
-        public async Task<ActionResult> Delete([FromBody] string profileId)
+        [HttpDelete("{profileid}")]
+        public async Task<ActionResult> Delete(string profileId)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
 

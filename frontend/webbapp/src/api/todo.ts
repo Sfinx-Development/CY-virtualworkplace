@@ -1,8 +1,7 @@
 import { Todo } from "../../types";
 import { getApiUrl } from "./config";
 
-const apiUrl = getApiUrl() + "/todo"; 
-
+const apiUrl = getApiUrl() + "/todo";
 
 export const FetchEditTodo = async (todo: Todo): Promise<Todo> => {
   try {
@@ -27,18 +26,14 @@ export const FetchEditTodo = async (todo: Todo): Promise<Todo> => {
   }
 };
 
-export const FetchDeleteTodo = async (
-
-  todoId: string
-): Promise<boolean> => {
+export const FetchDeleteTodo = async (todoId: string): Promise<boolean> => {
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`${apiUrl}/${todoId}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(todoId),
     });
 
     if (!response.ok) {
@@ -52,17 +47,14 @@ export const FetchDeleteTodo = async (
   }
 };
 
-export const FetchGetTodo = async (
-  teamId: string
-): Promise<Todo[]> => {
+export const FetchGetTodo = async (teamId: string): Promise<Todo[]> => {
   try {
-    const response = await fetch(apiUrl + "/getTodos", {
-      method: "POST",
+    const response = await fetch(`${apiUrl}/byteam/${teamId}`, {
+      method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(teamId),
     });
 
     if (!response.ok) {
@@ -70,16 +62,14 @@ export const FetchGetTodo = async (
     }
 
     const responseBody = await response.json();
-  
+
     const todos = responseBody.$values as Todo[];
     return todos;
-
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-
 
 // export const FetchGetTodo = async (
 //   teamId:string
@@ -87,13 +77,13 @@ export const FetchGetTodo = async (
 //   try {
 //     console.log("teamid", teamId)
 //     const response = await fetch(apiUrl + "/getTodos",{
-      
+
 //       method: "POST",
 //       credentials: "include",
 //       headers: {
 //         "Content-Type": "application/json",
 //       },
-//       //  body: JSON.stringify({teamId}), 
+//       //  body: JSON.stringify({teamId}),
 //     });
 //     const responseBody = await response.json();
 
@@ -109,12 +99,9 @@ export const FetchGetTodo = async (
 //   }
 // };
 
-
-export const FetchCreateTeamTodo = async (
-  newTodo: Todo
-): Promise<Todo> => {
+export const FetchCreateTeamTodo = async (newTodo: Todo): Promise<Todo> => {
   try {
-    const response = await fetch(apiUrl + "/create", {
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -9,7 +9,6 @@ public class OutgoingOcassionDTO
     public string Description { get; set; }
     public string Date { get; set; }
     public int Minutes { get; set; }
-    public string RoomId { get; set; }
 
     public OutgoingOcassionDTO(
         string id,
@@ -18,8 +17,7 @@ public class OutgoingOcassionDTO
         string name,
         string description,
         DateTime date,
-        int minutes,
-        string roomId
+        int minutes
     )
     {
         Id = id;
@@ -29,6 +27,5 @@ public class OutgoingOcassionDTO
         Description = description;
         Date = date.ToString("yyyy-MM-ddTHH:mm:ss");
         Minutes = minutes;
-        RoomId = roomId;
     }
 }

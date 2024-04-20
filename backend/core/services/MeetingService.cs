@@ -7,24 +7,22 @@ public class MeetingService : IMeetingService
 {
     private readonly IMeetingRepository _meetingRepository;
     private readonly IProfileRepository _profileRepository;
-    private readonly IRoomService _roomService;
     private readonly IMeetingOccasionRepository _meetingOccasionRepository;
 
     public MeetingService(
         IMeetingRepository meetingRepository,
         IProfileRepository profileRepository,
-        IRoomService roomService,
         IMeetingOccasionRepository meetingOccasionRepository
     )
     {
         _meetingRepository = meetingRepository;
         _profileRepository = profileRepository;
-        _roomService = roomService;
         _meetingOccasionRepository = meetingOccasionRepository;
     }
 
     public async Task<OutgoingMeetingDTO> CreateTeamMeetingAsync(
-        CreateMeetingDTO incomingMeetingDTO
+        CreateMeetingDTO incomingMeetingDTO,
+        User loggedInUser
     )
     {
         try
@@ -33,10 +31,30 @@ public class MeetingService : IMeetingService
             {
                 throw new Exception("Overlapped meetings");
             }
-            Room room = await _roomService.GetRoomById(incomingMeetingDTO.RoomId);
-            Profile profile = await _profileRepository.GetByIdAsync(incomingMeetingDTO.OwnerId);
+            bool canCreate = false;
+
+            Profile profile = await _profileRepository.GetByUserAndTeamIdAsync(
+                loggedInUser.Id,
+                incomingMeetingDTO.TeamId
+            );
+
+            if (profile.Team.AllCanCreateMeetings)
+            {
+                canCreate = true;
+            }
+            else
+            {
+                if (loggedInUser.Profiles.Any(p => p.Id == incomingMeetingDTO.OwnerId))
+                {
+                    canCreate = true;
+                }
+            }
 
             //add hours är bara SÅLÄNGE tills vi vet hur man serialiserar date -> datetime korrekt
+            if (!canCreate)
+            {
+                throw new Exception("Not allowed to create meeting.");
+            }
             Meeting meeting =
                 new()
                 {
@@ -45,7 +63,6 @@ public class MeetingService : IMeetingService
                     Description = incomingMeetingDTO.Description,
                     Date = incomingMeetingDTO.Date.AddHours(2),
                     Minutes = incomingMeetingDTO.Minutes,
-                    Room = room,
                     OwnerId = incomingMeetingDTO.OwnerId,
                     IsRepeating = incomingMeetingDTO.IsRepeating,
                     Interval = incomingMeetingDTO.Interval,
@@ -76,7 +93,6 @@ public class MeetingService : IMeetingService
                     createdMeeting.Date,
                     createdMeeting.Minutes,
                     createdMeeting.IsRepeating,
-                    createdMeeting.RoomId,
                     createdMeeting.OwnerId,
                     createdMeeting.Interval,
                     createdMeeting.EndDate
@@ -94,7 +110,6 @@ public class MeetingService : IMeetingService
     {
         try
         {
-            Room room = await _roomService.GetRoomById(incomingMeetingDTO.RoomId);
             Profile profile = await _profileRepository.GetByIdAsync(incomingMeetingDTO.OwnerId);
 
             //add hours är bara SÅLÄNGE tills vi vet hur man serialiserar date -> datetime korrekt
@@ -106,7 +121,6 @@ public class MeetingService : IMeetingService
                     Description = incomingMeetingDTO.Description,
                     Date = incomingMeetingDTO.Date.AddHours(2),
                     Minutes = incomingMeetingDTO.Minutes,
-                    Room = room,
                     OwnerId = incomingMeetingDTO.OwnerId,
                     IsRepeating = incomingMeetingDTO.IsRepeating,
                     Interval = incomingMeetingDTO.Interval,
@@ -132,7 +146,6 @@ public class MeetingService : IMeetingService
                     createdMeeting.Date,
                     createdMeeting.Minutes,
                     createdMeeting.IsRepeating,
-                    createdMeeting.RoomId,
                     createdMeeting.OwnerId,
                     createdMeeting.Interval,
                     createdMeeting.EndDate
@@ -169,7 +182,6 @@ public class MeetingService : IMeetingService
                     updatedMeeting.Date,
                     updatedMeeting.Minutes,
                     updatedMeeting.IsRepeating,
-                    updatedMeeting.RoomId,
                     updatedMeeting.OwnerId,
                     updatedMeeting.Interval,
                     updatedMeeting.EndDate
@@ -190,7 +202,7 @@ public class MeetingService : IMeetingService
 
             if (meeting == null)
             {
-                throw new Exception("meetingroom can't be found");
+                throw new Exception("meeting can't be found");
             }
             else
             {
@@ -202,7 +214,6 @@ public class MeetingService : IMeetingService
                         meeting.Date,
                         meeting.Minutes,
                         meeting.IsRepeating,
-                        meeting.RoomId,
                         meeting.OwnerId,
                         meeting.Interval,
                         meeting.EndDate
@@ -269,7 +280,6 @@ public class MeetingService : IMeetingService
                         meeting.Date,
                         meeting.Minutes,
                         meeting.IsRepeating,
-                        meeting.RoomId,
                         meeting.OwnerId,
                         meeting.Interval,
                         meeting.EndDate
@@ -311,7 +321,6 @@ public class MeetingService : IMeetingService
                             m.Date,
                             m.Minutes,
                             m.IsRepeating,
-                            m.RoomId,
                             m.OwnerId,
                             m.Interval,
                             m.EndDate
@@ -369,7 +378,6 @@ public class MeetingService : IMeetingService
                             m.Date,
                             m.Minutes,
                             m.IsRepeating,
-                            m.RoomId,
                             m.OwnerId,
                             m.Interval,
                             m.EndDate
