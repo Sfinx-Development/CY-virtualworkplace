@@ -24,7 +24,7 @@ namespace Controllers
             _healthCheckService = healthCheckService;
         }
 
-          private async Task<User> GetLoggedInUserAsync()
+        private async Task<User> GetLoggedInUserAsync()
         {
             var jwt = Request.Cookies["jwttoken"];
 
@@ -49,7 +49,7 @@ namespace Controllers
         {
             try
             {
-              var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 var healthCheckCreated = await _healthCheckService.CreateHealthCheckAsync(
                     healthCheck,
@@ -74,7 +74,7 @@ namespace Controllers
         {
             try
             {
-               var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 await _healthCheckService.DeleteById(id, loggedInUser);
 
@@ -92,7 +92,7 @@ namespace Controllers
         {
             try
             {
-              var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 HealthCheck updatedHealthCheck = await _healthCheckService.UpdateHealthCheck(
                     healthCheck,
@@ -113,7 +113,7 @@ namespace Controllers
         {
             try
             {
-               var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 var healthChecks = await _healthCheckService.GetByTeam(profileId, loggedInUser);
 
