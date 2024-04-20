@@ -24,6 +24,25 @@ namespace Controllers
             _profileService = profileService;
         }
 
+          private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<Team>> Post(
@@ -32,17 +51,8 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
+                 var loggedInUser = await GetLoggedInUserAsync();
 
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
 
                 var teamCreated = await _teamService.CreateAsync(
                     incomingCreateTeamDTO,
@@ -65,18 +75,7 @@ namespace Controllers
             //ATT GÖRA: kolla villkor så man inte kan gå med flera gånger i samma team
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                  var loggedInUser = await GetLoggedInUserAsync();
                 var foundTeam = await _teamService.GetByCodeAsync(request.Code);
 
                 if (foundTeam == null)
@@ -108,18 +107,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                  var loggedInUser = await GetLoggedInUserAsync();
                 // FLYTTA LOGIKEN IN I SERVICE KLASSEN :) :
 
                 // var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
@@ -152,18 +140,7 @@ namespace Controllers
         {
             try
             {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                    var loggedInUser = await GetLoggedInUserAsync();
                 var teams = await _teamService.GetTeamsByUserId(loggedInUser.Id);
                 teams.ForEach(t => Console.WriteLine(t.Name));
                 return Ok(teams);
@@ -180,18 +157,7 @@ namespace Controllers
         {
             try
             {
-                var jwtCookie = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwtCookie))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwtCookie);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+                  var loggedInUser = await GetLoggedInUserAsync();
 
                 Team updatedTeam = await _teamService.UpdateTeam(team, loggedInUser);
                 return Ok(updatedTeam);
