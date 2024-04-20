@@ -24,7 +24,7 @@ namespace Controllers
             _profileService = profileService;
         }
 
-          private async Task<User> GetLoggedInUserAsync()
+        private async Task<User> GetLoggedInUserAsync()
         {
             var jwt = Request.Cookies["jwttoken"];
 
@@ -51,7 +51,7 @@ namespace Controllers
         {
             try
             {
-                 var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
 
 
                 var teamCreated = await _teamService.CreateAsync(
@@ -75,7 +75,7 @@ namespace Controllers
             //ATT GÖRA: kolla villkor så man inte kan gå med flera gånger i samma team
             try
             {
-                  var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
                 var foundTeam = await _teamService.GetByCodeAsync(request.Code);
 
                 if (foundTeam == null)
@@ -107,7 +107,7 @@ namespace Controllers
         {
             try
             {
-                  var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
                 // FLYTTA LOGIKEN IN I SERVICE KLASSEN :) :
 
                 // var userProfiles = await _profileService.GetProfilesByUserId(loggedInUser);
@@ -140,7 +140,7 @@ namespace Controllers
         {
             try
             {
-                    var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
                 var teams = await _teamService.GetTeamsByUserId(loggedInUser.Id);
                 teams.ForEach(t => Console.WriteLine(t.Name));
                 return Ok(teams);
@@ -157,7 +157,7 @@ namespace Controllers
         {
             try
             {
-                  var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 Team updatedTeam = await _teamService.UpdateTeam(team, loggedInUser);
                 return Ok(updatedTeam);
