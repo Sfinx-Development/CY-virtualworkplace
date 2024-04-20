@@ -139,7 +139,27 @@ const todoSlice = createSlice({
       .addCase(createTeamTodoAsync.rejected, (state) => {
         state.todos = undefined;
         state.error = "Något gick fel med skapandet av konto.";
+      })
+      .addCase(EditTodoAsync.fulfilled, (state, action) => {
+        if (state.todos) {
+          const editedTodoIndex = state.todos.findIndex(
+            (todo) => todo.id === action.payload.id
+          );
+          if (editedTodoIndex !== -1) {
+            state.todos[editedTodoIndex] = action.payload;
+          }
+          state.error = null;
+        }
+      })
+      
+      .addCase(EditTodoAsync.rejected, (state, action) => {
+        if (action.payload) {
+          state.error = action.payload;
+        } else {
+          state.error = null; // Tilldela null om action.payload är undefined
+        }
       });
+      
   },
 });
 
