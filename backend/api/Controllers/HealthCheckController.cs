@@ -24,23 +24,32 @@ namespace Controllers
             _healthCheckService = healthCheckService;
         }
 
+          private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<HealthCheck>> Post([FromBody] HealthCheckDTO healthCheck)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+              var loggedInUser = await GetLoggedInUserAsync();
 
                 var healthCheckCreated = await _healthCheckService.CreateHealthCheckAsync(
                     healthCheck,
@@ -65,18 +74,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+               var loggedInUser = await GetLoggedInUserAsync();
 
                 await _healthCheckService.DeleteById(id, loggedInUser);
 
@@ -94,18 +92,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("JWT token is missing.");
-                }
+              var loggedInUser = await GetLoggedInUserAsync();
 
                 HealthCheck updatedHealthCheck = await _healthCheckService.UpdateHealthCheck(
                     healthCheck,
@@ -126,18 +113,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+               var loggedInUser = await GetLoggedInUserAsync();
 
                 var healthChecks = await _healthCheckService.GetByTeam(profileId, loggedInUser);
 
