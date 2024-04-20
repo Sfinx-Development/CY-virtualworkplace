@@ -20,24 +20,32 @@ namespace Controllers
             _meetingOccasionService = meetingOccasionService;
         }
 
+        private async Task<User> GetLoggedInUserAsync()
+        {
+            var jwt = Request.Cookies["jwttoken"];
+
+            if (string.IsNullOrWhiteSpace(jwt))
+            {
+                throw new Exception("JWT token is missing.");
+            }
+
+            var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+            if (loggedInUser == null)
+            {
+                throw new Exception("Failed to get user.");
+            }
+
+            return loggedInUser;
+        }
+
         [Authorize]
         [HttpGet("{profileid}")]
         public async Task<ActionResult<List<OutgoingOcassionDTO>>> Get(string profileId)
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 if (loggedInUser.Profiles.Any(p => p.Id == profileId))
                 {
@@ -65,18 +73,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                 var loggedInUser = await GetLoggedInUserAsync();
 
                 if (loggedInUser.Profiles.Any(p => p.Id == profileId))
                 {
@@ -102,19 +99,7 @@ namespace Controllers
         {
             try
             {
-                var jwt = Request.Cookies["jwttoken"];
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
-
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
-
+                 var loggedInUser = await GetLoggedInUserAsync();
                 await _meetingOccasionService.DeleteOccasion(id, loggedInUser.Id);
 
                 return Ok("Deleted meeting occasion.");
@@ -134,21 +119,23 @@ namespace Controllers
         {
             try
             {
-                var jwt = HttpContext
-                    .Request.Headers["Authorization"]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
 
-                if (string.IsNullOrWhiteSpace(jwt))
-                {
-                    return BadRequest("JWT token is missing.");
-                }
-                var loggedInUser = await _jwtService.GetByJWT(jwt);
+                 var loggedInUser = await GetLoggedInUserAsync();
+                // var jwt = HttpContext
+                //     .Request.Headers["Authorization"]
+                //     .ToString()
+                //     .Replace("Bearer ", string.Empty);
 
-                if (loggedInUser == null)
-                {
-                    return BadRequest("Failed to get user.");
-                }
+                // if (string.IsNullOrWhiteSpace(jwt))
+                // {
+                //     return BadRequest("JWT token is missing.");
+                // }
+                // var loggedInUser = await _jwtService.GetByJWT(jwt);
+
+                // if (loggedInUser == null)
+                // {
+                //     return BadRequest("Failed to get user.");
+                // }
 
                 var occasionCreated = await _meetingOccasionService.AddOccasion(
                     addToMeetingDTO,

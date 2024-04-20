@@ -319,7 +319,7 @@ namespace core.Migrations
 
                     b.HasIndex("UpdateCommentId");
 
-                    b.ToTable("ProjectFiles");
+                   
                 });
 
             modelBuilder.Entity("core.ProjectUpdate", b =>
