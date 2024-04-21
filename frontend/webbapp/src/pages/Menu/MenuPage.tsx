@@ -143,177 +143,175 @@ export default function Menu() {
   };
 
   return (
-    <Box
-      sx={{
-        padding: "20px",
-        backgroundPosition: "center",
-        minHeight: "100%",
-        position: "relative",
-      }}
-    >
-      {/* <BackGroundDesignNoAnimation
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100vh",
-          zIndex: -1,
+    <section className="pattern">
+      <div className="geeks">
+        {/* <Box
+        sx={{
+          padding: "20px",
+          backgroundPosition: "center",
+          minHeight: "100%",
+          position: "relative",
         }}
-        color1={"black"}
-        color2="black"
-        waveColor={"rgba(255, 107, 107,0.4)"}
-      /> */}
-      <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "20px",
-          }}
-        >
-          <div>
-            <NavCard
-              navigationPage="/calendar"
-              onClick={handleNavigateToCalendar}
-              imageUrl="https://i.imgur.com/V05Tc5r.png"
-              title="Kalender"
-            />
-          </div>
+      > */}
+
+        <Container>
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              mt: { xs: 2, md: 0 },
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              gap: { xs: 3, md: 6 },
+              marginTop: "20px",
+              zIndex: 1,
             }}
           >
-            <Typography variant={isMobile ? "h5" : "h4"}>
-              {activeTeam?.name}
-            </Typography>
-            <Button
-              onClick={copyCodeToClipboard}
-              variant="contained"
-              sx={{ mt: 2 }}
-            >
-              Kopiera kod: {activeTeam?.code}
-            </Button>
-            {copied && !isMobile ? (
-              <Alert
-                variant="outlined"
-                severity="success"
-                sx={{ position: "absolute", marginTop: isMobile ? 20 : 15 }}
-              >
-                Du har kopierat koden!
-              </Alert>
-            ) : null}
-          </Box>
-          <Box
-            component="div"
-            sx={{
-              backgroundColor: "transparent",
-              paddingX: "50px",
-              maxHeight: 40,
-              mx: 2,
-            }}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
-          </Box>
+            <NavCard
+              backgroundColor="#FDF3FC"
+              navigationPage="/calendar"
+              onClick={handleNavigateToCalendar}
+              imageUrl="https://i.imgur.com/VGWm4TR.png"
+              title="Kalender"
+            />
 
-          {profileDropdown && (
-            <Popper
-              open={profileDropdown}
-              anchorEl={anchorEl}
+            <NavCard
+              backgroundColor={meetingRoomColor}
+              imageUrl="https://i.imgur.com/rBEeXh4.png"
+              navigationPage="/meetingroom"
+              title="Mötesrum"
+              onClick={handleNavigationToMeetingRoom}
+              icon={
+                ongoingMeeting ? (
+                  <NotificationsNoneIcon
+                    sx={{
+                      paddingLeft: 1,
+                      flexDirection: "row",
+                      fontSize: isMobile ? "1rem" : "22px",
+                    }}
+                  />
+                ) : null
+              }
+            />
+
+            <NavCard
+              backgroundColor={chatRoomColor}
+              navigationPage="/chatroom"
+              imageUrl="https://i.imgur.com/6269fVi.png"
+              title="Chatt"
+              icon={
+                unreadMessages != null && unreadMessages > 0 ? (
+                  <MarkUnreadChatAltIcon
+                    sx={{
+                      paddingLeft: 1,
+                      flexDirection: "row",
+                      fontSize: isMobile ? "1rem" : "22px",
+                    }}
+                  />
+                ) : null
+              }
+            />
+
+            <NavCard
+              backgroundColor={officeColor}
+              imageUrl="https://i.imgur.com/ZTzr4ST.png"
+              navigationPage="/office"
+              title="Min sida"
+            />
+          </Box>
+        </Container>
+        <Container sx={{ marginTop: 5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "20px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                mt: { xs: 2, md: 0 },
+                zIndex: 1,
+              }}
+            >
+              <Typography variant={isMobile ? "h5" : "h4"}>
+                {activeTeam?.name}
+              </Typography>
+              <Button
+                onClick={copyCodeToClipboard}
+                variant="contained"
+                sx={{ mt: 2, backgroundColor: "white" }}
+              >
+                Kopiera kod: {activeTeam?.code}
+              </Button>
+              {copied && !isMobile ? (
+                <Alert
+                  variant="outlined"
+                  severity="success"
+                  sx={{ position: "absolute", marginTop: isMobile ? 20 : 15 }}
+                >
+                  Du har kopierat koden!
+                </Alert>
+              ) : null}
+            </Box>
+            <Box
+              component="div"
+              sx={{
+                backgroundColor: "transparent",
+                paddingX: "50px",
+                maxHeight: 40,
+                mx: 2,
+                zIndex: 1,
+              }}
+              onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <Card
-                sx={{
-                  p: 2,
-                  borderRadius: 2,
-                  boxShadow: 2,
-                  maxWidth: 300,
-                }}
+              <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
+            </Box>
+
+            {profileDropdown && (
+              <Popper
+                open={profileDropdown}
+                anchorEl={anchorEl}
+                onMouseLeave={handleMouseLeave}
               >
-                {Array.isArray(profiles) &&
-                  profiles.map((profile) => (
-                    <Typography
-                      key={profile.id}
-                      sx={{
-                        marginBottom: 1,
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar
-                        src={profile.avatarUrl}
-                        sx={{ height: 25, width: 20, marginRight: 1 }}
-                      />
-                      {profile.fullName} - {profile.role}
-                    </Typography>
-                  ))}
-              </Card>
-            </Popper>
-          )}
-        </Box>
-      </Container>
-      <Container>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            justifyContent: "space-between",
-            gap: { xs: 3, md: 6 },
-            marginTop: "20px",
-          }}
-        >
-          <NavCard
-            backgroundColor={meetingRoomColor}
-            navigationPage="/meetingroom"
-            title="Mötesrum"
-            onClick={handleNavigationToMeetingRoom}
-            icon={
-              ongoingMeeting ? (
-                <NotificationsNoneIcon
+                <Card
                   sx={{
-                    paddingLeft: 1,
-                    flexDirection: "row",
-                    fontSize: isMobile ? "1rem" : "22px",
+                    p: 2,
+                    borderRadius: 2,
+                    boxShadow: 2,
+                    maxWidth: 300,
                   }}
-                />
-              ) : null
-            }
-          />
-
-          <NavCard
-            backgroundColor={chatRoomColor}
-            navigationPage="/chatroom"
-            title="Chatt"
-            icon={
-              unreadMessages != null && unreadMessages > 0 ? (
-                <MarkUnreadChatAltIcon
-                  sx={{
-                    paddingLeft: 1,
-                    flexDirection: "row",
-                    fontSize: isMobile ? "1rem" : "22px",
-                  }}
-                />
-              ) : null
-            }
-          />
-
-          <NavCard
-            backgroundColor={officeColor}
-            navigationPage="/office"
-            title="Min sida"
-          />
-        </Box>
-      </Container>
-    </Box>
+                >
+                  {Array.isArray(profiles) &&
+                    profiles.map((profile) => (
+                      <Typography
+                        key={profile.id}
+                        sx={{
+                          marginBottom: 1,
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Avatar
+                          src={profile.avatarUrl}
+                          sx={{ height: 25, width: 20, marginRight: 1 }}
+                        />
+                        {profile.fullName} - {profile.role}
+                      </Typography>
+                    ))}
+                </Card>
+              </Popper>
+            )}
+          </Box>
+        </Container>
+        {/* </Box> */}
+      </div>
+    </section>
   );
 }

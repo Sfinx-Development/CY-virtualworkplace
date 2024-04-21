@@ -115,6 +115,19 @@ export default function CreateTeam() {
           ))}
         </ImageList>
       </div>
+      <Typography>
+        Alternativt kan du ladda upp en egen bild till ditt team genom att ange
+        bildadressens url
+      </Typography>
+      <TextField
+        id="team-name"
+        label="Bildadress (URL)"
+        variant="outlined"
+        sx={{ width: "300px", margin: 2 }}
+        onChange={(event) => {
+          setImageUrl(event.target.value);
+        }}
+      />
       <div style={{ marginTop: "20px", textAlign: "center" }}>
         <Button
           variant="contained"
