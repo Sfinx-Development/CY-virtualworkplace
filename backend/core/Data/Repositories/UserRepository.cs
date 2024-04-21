@@ -86,7 +86,14 @@ public class UserRepository : IUserRepository
         try
         {
             _cyDbContext.Users.Update(user);
-
+            var profiles = await _cyDbContext
+                .Profiles.Where(p => p.UserId == user.Id)
+                .ToListAsync();
+            foreach (var profile in profiles)
+            {
+                profile.FullName = user.FirstName + " " + user.LastName;
+                _cyDbContext.Profiles.Update(profile);
+            }
             await _cyDbContext.SaveChangesAsync();
             return user;
         }

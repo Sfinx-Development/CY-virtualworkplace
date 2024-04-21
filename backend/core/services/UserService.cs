@@ -9,11 +9,17 @@ namespace core
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IProfileRepository _profileRepository;
         private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository userRepository, ILogger<UserService> logger)
+        public UserService(
+            IUserRepository userRepository,
+            IProfileRepository profileRepository,
+            ILogger<UserService> logger
+        )
         {
             _userRepository = userRepository;
+            _profileRepository = profileRepository;
             _logger = logger;
         }
 
@@ -64,14 +70,13 @@ namespace core
             }
         }
 
-        public async Task<UserDTO> Edit(User user)
+        public async Task<UserDTO> Edit(UserDTO user)
         {
             try
             {
                 var userToUpdate =
                     await _userRepository.GetByIdAsync(user.Id) ?? throw new Exception();
                 userToUpdate.PhoneNumber = user.PhoneNumber;
-                userToUpdate.Password = user.Password;
                 userToUpdate.FirstName = user.FirstName;
                 userToUpdate.LastName = user.LastName;
                 userToUpdate.Age = user.Age;
