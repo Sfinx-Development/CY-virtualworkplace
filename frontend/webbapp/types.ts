@@ -28,7 +28,7 @@ export interface User {
   gender: string;
   age: number;
   avatarUrl: string;
-  dateCreated: Date;
+  dateCreated: string;
 }
 
 export interface LogIn {

@@ -64,14 +64,13 @@ namespace core
             }
         }
 
-        public async Task<UserDTO> Edit(User user)
+        public async Task<UserDTO> Edit(UserDTO user)
         {
             try
             {
                 var userToUpdate =
                     await _userRepository.GetByIdAsync(user.Id) ?? throw new Exception();
                 userToUpdate.PhoneNumber = user.PhoneNumber;
-                userToUpdate.Password = user.Password;
                 userToUpdate.FirstName = user.FirstName;
                 userToUpdate.LastName = user.LastName;
                 userToUpdate.Age = user.Age;

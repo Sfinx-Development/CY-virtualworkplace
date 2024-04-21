@@ -12,6 +12,8 @@ public class UserDTO
     public string AvatarUrl { get; set; }
     public string DateCreated { get; set; }
 
+    public UserDTO() { }
+
     public UserDTO(
         string id,
         string firstName,

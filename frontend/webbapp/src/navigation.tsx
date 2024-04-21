@@ -16,9 +16,9 @@ import CreateMeeting from "./pages/MeetingRoom/CreateMeetingPage";
 import CreateProject from "./pages/MeetingRoom/CreateProject";
 import HealthCheckHub from "./pages/MeetingRoom/HealthCheckPage";
 import MeetingInTeamsPage from "./pages/MeetingRoom/MeetingInTeam";
-import SettingsPage from "./pages/MeetingRoom/SettingsPage";
 import { MeetingRoom } from "./pages/MeetingRoom/MeetingRoomPage";
 import Projects from "./pages/MeetingRoom/Projects";
+import SettingsPage from "./pages/MeetingRoom/SettingsPage";
 import CalendarPage from "./pages/Menu/CalendarPage";
 import ChatRoom from "./pages/Menu/ChatRoomPage";
 import Menu from "./pages/Menu/MenuPage";
@@ -33,6 +33,7 @@ import RootLayout from "./pages/RootLayout";
 import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
+import UserSettings from "./pages/StartSignedIn/UserSettings";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { getUserAsync } from "./slices/userSlice";
 
@@ -78,6 +79,8 @@ const Navigation = () => {
           <Route path="chooseteam" element={<ChooseTeam />} />
           <Route path="createteam" element={<CreateTeam />} />
           <Route path="jointeam" element={<JoinTeam />} />
+          <Route path="usersettings" element={<UserSettings />} />
+          {/* //DENNA EJ SOM EN VANLIG NAVIGATION - BARA KÖRAS? GÅR DET */}
           <Route path="enterhouse" element={<EnterHouse />} />
           <Route path="menu" element={<Menu />} />
           <Route

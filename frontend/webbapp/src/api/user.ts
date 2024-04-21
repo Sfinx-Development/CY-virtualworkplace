@@ -47,3 +47,26 @@ export const FetchCreateUseer = async (newUser: UserCreate): Promise<User> => {
     throw error;
   }
 };
+
+export const FetchUpdateUser = async (user: User): Promise<User> => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid uppdatering av användare.");
+    }
+
+    const data = await response.json();
+    return data as User;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
