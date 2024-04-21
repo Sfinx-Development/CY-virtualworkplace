@@ -2,6 +2,7 @@ import {
   Add as AddIcon,
   ConnectWithoutContact as ConnectWithoutContactIcon,
 } from "@mui/icons-material";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import {
   Box,
   Button,
@@ -11,9 +12,9 @@ import {
   CardMedia,
   Container,
   Grid,
+  IconButton,
   Typography,
 } from "@mui/material";
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
@@ -61,6 +62,14 @@ const ChooseTeam = () => {
         justifyContent: "space-between",
       }}
     >
+      <IconButton
+        sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 100 }}
+        onClick={() => {
+          navigate("/usersettings");
+        }}
+      >
+        <SettingsOutlinedIcon />
+      </IconButton>
       <Box sx={{ marginTop: 3 }}>
         <Grid container spacing={2}>
           <Grid item xs={10} sm={6}>
