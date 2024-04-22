@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import NavCard from "../../components/NavCard";
+import NavButtonCard from "../../components/NavButton";
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import {
   GetConversationParticipant,
@@ -35,9 +35,9 @@ export default function Menu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const officeColor = theme1.palette.office.main;
-  const meetingRoomColor = theme1.palette.room.main;
-  const chatRoomColor = theme1.palette.chat.main;
+  // const officeColor = theme1.palette.office.main;
+  // const meetingRoomColor = theme1.palette.room.main;
+  // const chatRoomColor = theme1.palette.chat.main;
   // const leaveColor = theme1.palette.leave.main för att lämna/gå ur team?;
 
   const dispatch = useAppDispatch();
@@ -143,82 +143,9 @@ export default function Menu() {
   };
 
   return (
-    <section className="pattern">
+    <section className="pattern gradient-background">
       <div className="geeks">
-        {/* <Box
-        sx={{
-          padding: "20px",
-          backgroundPosition: "center",
-          minHeight: "100%",
-          position: "relative",
-        }}
-      > */}
-
-        <Container>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              justifyContent: "space-between",
-              gap: { xs: 3, md: 6 },
-              marginTop: "20px",
-              zIndex: 1,
-            }}
-          >
-            <NavCard
-              backgroundColor="#FDF3FC"
-              navigationPage="/calendar"
-              onClick={handleNavigateToCalendar}
-              imageUrl="https://i.imgur.com/VGWm4TR.png"
-              title="Kalender"
-            />
-
-            <NavCard
-              backgroundColor={meetingRoomColor}
-              imageUrl="https://i.imgur.com/rBEeXh4.png"
-              navigationPage="/meetingroom"
-              title="Mötesrum"
-              onClick={handleNavigationToMeetingRoom}
-              icon={
-                ongoingMeeting ? (
-                  <NotificationsNoneIcon
-                    sx={{
-                      paddingLeft: 1,
-                      flexDirection: "row",
-                      fontSize: isMobile ? "1rem" : "22px",
-                    }}
-                  />
-                ) : null
-              }
-            />
-
-            <NavCard
-              backgroundColor={chatRoomColor}
-              navigationPage="/chatroom"
-              imageUrl="https://i.imgur.com/6269fVi.png"
-              title="Chatt"
-              icon={
-                unreadMessages != null && unreadMessages > 0 ? (
-                  <MarkUnreadChatAltIcon
-                    sx={{
-                      paddingLeft: 1,
-                      flexDirection: "row",
-                      fontSize: isMobile ? "1rem" : "22px",
-                    }}
-                  />
-                ) : null
-              }
-            />
-
-            <NavCard
-              backgroundColor={officeColor}
-              imageUrl="https://i.imgur.com/ZTzr4ST.png"
-              navigationPage="/office"
-              title="Min sida"
-            />
-          </Box>
-        </Container>
-        <Container sx={{ marginTop: 5 }}>
+        <Container sx={{ marginTop: 0 }}>
           <Box
             sx={{
               display: "flex",
@@ -238,13 +165,20 @@ export default function Menu() {
                 zIndex: 1,
               }}
             >
-              <Typography variant={isMobile ? "h5" : "h4"}>
+              <Typography
+                variant={isMobile ? "h5" : "h4"}
+                sx={{ color: "white" }}
+              >
                 {activeTeam?.name}
               </Typography>
               <Button
                 onClick={copyCodeToClipboard}
                 variant="contained"
-                sx={{ mt: 2, backgroundColor: "white" }}
+                sx={{
+                  mt: 2,
+                  backgroundColor: theme1.palette.primary.main,
+                  color: "white",
+                }}
               >
                 Kopiera kod: {activeTeam?.code}
               </Button>
@@ -261,16 +195,33 @@ export default function Menu() {
             <Box
               component="div"
               sx={{
-                backgroundColor: "transparent",
-                paddingX: "50px",
-                maxHeight: 40,
                 mx: 2,
                 zIndex: 1,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-end",
+                flexDirection: "column",
               }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
+              <Button
+                variant="outlined"
+                sx={{
+                  mt: 2,
+                  color: "white",
+                  padding: 1,
+                }}
+              >
+                <Typography>Mitt Team</Typography>
+                <GroupsIcon
+                  sx={{
+                    fontSize: isMobile ? 30 : 50,
+                    color: theme1.palette.primary.main,
+                    paddingX: 1,
+                  }}
+                />
+              </Button>
             </Box>
 
             {profileDropdown && (
@@ -310,6 +261,76 @@ export default function Menu() {
             )}
           </Box>
         </Container>
+
+        <Container>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              gap: { xs: 3, md: 6 },
+              marginTop: "20px",
+              zIndex: 1,
+            }}
+          >
+            <NavButtonCard
+              // backgroundColor={theme1.palette.calendar.main}
+              navigationPage="/calendar"
+              onClick={handleNavigateToCalendar}
+              imageUrl="https://i.imgur.com/pwlV6UM.png"
+              title="Kalender"
+              borderColor={theme1.palette.primary.main}
+            />
+
+            <NavButtonCard
+              // backgroundColor={meetingRoomColor}
+              imageUrl="https://i.imgur.com/PeKAt1b.png"
+              navigationPage="/meetingroom"
+              title="Mötesrum"
+              borderColor={theme1.palette.room.main}
+              onClick={handleNavigationToMeetingRoom}
+              icon={
+                ongoingMeeting ? (
+                  <NotificationsNoneIcon
+                    sx={{
+                      paddingLeft: 1,
+                      flexDirection: "row",
+                      fontSize: isMobile ? "1rem" : "22px",
+                    }}
+                  />
+                ) : null
+              }
+            />
+
+            <NavButtonCard
+              // backgroundColor={chatRoomColor}
+              navigationPage="/chatroom"
+              imageUrl="https://i.imgur.com/b2Dsqjx.png"
+              borderColor={theme1.palette.chat.main}
+              title="Chatt"
+              icon={
+                unreadMessages != null && unreadMessages > 0 ? (
+                  <MarkUnreadChatAltIcon
+                    sx={{
+                      paddingLeft: 1,
+                      flexDirection: "row",
+                      fontSize: isMobile ? "1rem" : "22px",
+                    }}
+                  />
+                ) : null
+              }
+            />
+
+            <NavButtonCard
+              // backgroundColor={officeColor}
+              imageUrl="https://i.imgur.com/rSFa9TZ.png"
+              navigationPage="/office"
+              borderColor={theme1.palette.office.main}
+              title="Min sida"
+            />
+          </Box>
+        </Container>
+
         {/* </Box> */}
       </div>
     </section>

@@ -126,7 +126,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   return (
     <Container
       sx={{
-        height: isMobile ? "100%" : "100%",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -250,14 +250,13 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           display: "flex",
           flexDirection: "row",
           width: "100%",
-          marginRight: isMobile ? 0 : 60,
           alignItems: "center",
           justifyContent: "center",
         }}
       >
         <div
           style={{
-            width: isMobile ? "100%" : "90%",
+            width: "100%",
             flex: 1,
           }}
         >

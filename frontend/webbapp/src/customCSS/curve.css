@@ -1,6 +1,6 @@
 .geeks {
   padding-bottom: 120px;
-  padding-top: 80px;
+  padding-top: 30px;
   text-align: center;
 }
 
@@ -11,8 +11,13 @@ section {
 
 .pattern {
   position: relative;
-  background-color: #feede5;
-  background-image: linear-gradient(315deg, #ffc0a1 0%, #ffc0a1 74%);
+  background-color: rgba(0, 0, 0, 0.2);
+  /* background-image: linear-gradient(315deg, #333333 0%, #777777 74%); */
+  background-image: linear-gradient(
+    315deg,
+    rgba(0, 0, 0, 0.5) 0%,
+    rgba(0, 0, 0, 0.9) 74%
+  );
 
   /* blått: #5262ab 0%, #5262ab */
   /* oranget: #ffc0a1 0%, #ffc0a1 */

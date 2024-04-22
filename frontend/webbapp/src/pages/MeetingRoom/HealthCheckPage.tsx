@@ -187,8 +187,8 @@ export default function HealthCheckPage() {
                 ) : null}
                 <PieChart
                   series={[{ type: "pie", data: chartData.data }]}
-                  width={isMobile ? 300 : 550}
-                  height={isMobile ? 250 : 350}
+                  width={isMobile ? 300 : 500}
+                  height={isMobile ? 250 : 300}
                   sx={{
                     [`& .${pieArcLabelClasses.root}`]: {
                       fill: "white",
