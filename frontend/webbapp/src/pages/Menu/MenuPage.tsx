@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import NavCard from "../../components/NavCard";
+import NavButtonCard from "../../components/NavButton";
 import { GetMyMeetingsAsync } from "../../slices/meetingSlice";
 import {
   GetConversationParticipant,
@@ -35,9 +35,9 @@ export default function Menu() {
   const [profileDropdown, setProfileDropdown] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  const officeColor = theme1.palette.office.main;
-  const meetingRoomColor = theme1.palette.room.main;
-  const chatRoomColor = theme1.palette.chat.main;
+  // const officeColor = theme1.palette.office.main;
+  // const meetingRoomColor = theme1.palette.room.main;
+  // const chatRoomColor = theme1.palette.chat.main;
   // const leaveColor = theme1.palette.leave.main för att lämna/gå ur team?;
 
   const dispatch = useAppDispatch();
@@ -143,177 +143,196 @@ export default function Menu() {
   };
 
   return (
-    <Box
-      sx={{
-        padding: "20px",
-        backgroundPosition: "center",
-        minHeight: "100%",
-        position: "relative",
-      }}
-    >
-      {/* <BackGroundDesignNoAnimation
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100vh",
-          zIndex: -1,
-        }}
-        color1={"black"}
-        color2="black"
-        waveColor={"rgba(255, 107, 107,0.4)"}
-      /> */}
-      <Container sx={{ marginTop: "20px", marginBottom: "20px" }}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "20px",
-          }}
-        >
-          <div>
-            <NavCard
-              navigationPage="/calendar"
-              onClick={handleNavigateToCalendar}
-              imageUrl="https://i.imgur.com/V05Tc5r.png"
-              title="Kalender"
-            />
-          </div>
+    <section className="pattern gradient-background">
+      <div className="geeks">
+        <Container sx={{ marginTop: 0 }}>
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
+              flexDirection: { xs: "column", md: "row" },
               alignItems: "center",
-              textAlign: "center",
-              mt: { xs: 2, md: 0 },
+              justifyContent: "space-between",
+              gap: "20px",
             }}
           >
-            <Typography variant={isMobile ? "h5" : "h4"}>
-              {activeTeam?.name}
-            </Typography>
-            <Button
-              onClick={copyCodeToClipboard}
-              variant="contained"
-              sx={{ mt: 2 }}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                mt: { xs: 2, md: 0 },
+                zIndex: 1,
+              }}
             >
-              Kopiera kod: {activeTeam?.code}
-            </Button>
-            {copied && !isMobile ? (
-              <Alert
-                variant="outlined"
-                severity="success"
-                sx={{ position: "absolute", marginTop: isMobile ? 20 : 15 }}
+              <Typography
+                variant={isMobile ? "h5" : "h4"}
+                sx={{ color: "white" }}
               >
-                Du har kopierat koden!
-              </Alert>
-            ) : null}
-          </Box>
-          <Box
-            component="div"
-            sx={{
-              backgroundColor: "transparent",
-              paddingX: "50px",
-              maxHeight: 40,
-              mx: 2,
-            }}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            <GroupsIcon sx={{ fontSize: isMobile ? 30 : 50 }} />
-          </Box>
-
-          {profileDropdown && (
-            <Popper
-              open={profileDropdown}
-              anchorEl={anchorEl}
-              onMouseLeave={handleMouseLeave}
-            >
-              <Card
+                {activeTeam?.name}
+              </Typography>
+              <Button
+                onClick={copyCodeToClipboard}
+                variant="contained"
                 sx={{
-                  p: 2,
-                  borderRadius: 2,
-                  boxShadow: 2,
-                  maxWidth: 300,
+                  mt: 2,
+                  backgroundColor: theme1.palette.primary.main,
+                  color: "white",
                 }}
               >
-                {Array.isArray(profiles) &&
-                  profiles.map((profile) => (
-                    <Typography
-                      key={profile.id}
-                      sx={{
-                        marginBottom: 1,
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar
-                        src={profile.avatarUrl}
-                        sx={{ height: 25, width: 20, marginRight: 1 }}
-                      />
-                      {profile.fullName} - {profile.role}
-                    </Typography>
-                  ))}
-              </Card>
-            </Popper>
-          )}
-        </Box>
-      </Container>
-      <Container>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: { xs: "column", md: "row" },
-            justifyContent: "space-between",
-            gap: { xs: 3, md: 6 },
-            marginTop: "20px",
-          }}
-        >
-          <NavCard
-            backgroundColor={meetingRoomColor}
-            navigationPage="/meetingroom"
-            title="Mötesrum"
-            onClick={handleNavigationToMeetingRoom}
-            icon={
-              ongoingMeeting ? (
-                <NotificationsNoneIcon
+                Kopiera kod: {activeTeam?.code}
+              </Button>
+              {copied && !isMobile ? (
+                <Alert
+                  variant="outlined"
+                  severity="success"
+                  sx={{ position: "absolute", marginTop: isMobile ? 20 : 15 }}
+                >
+                  Du har kopierat koden!
+                </Alert>
+              ) : null}
+            </Box>
+            <Box
+              component="div"
+              sx={{
+                mx: 2,
+                zIndex: 1,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-end",
+                flexDirection: "column",
+              }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <Button
+                variant="outlined"
+                sx={{
+                  mt: 2,
+                  color: "white",
+                  padding: 1,
+                }}
+              >
+                <Typography>Mitt Team</Typography>
+                <GroupsIcon
                   sx={{
-                    paddingLeft: 1,
-                    flexDirection: "row",
-                    fontSize: isMobile ? "1rem" : "22px",
+                    fontSize: isMobile ? 30 : 50,
+                    color: theme1.palette.primary.main,
+                    paddingX: 1,
                   }}
                 />
-              ) : null
-            }
-          />
+              </Button>
+            </Box>
 
-          <NavCard
-            backgroundColor={chatRoomColor}
-            navigationPage="/chatroom"
-            title="Chatt"
-            icon={
-              unreadMessages != null && unreadMessages > 0 ? (
-                <MarkUnreadChatAltIcon
+            {profileDropdown && (
+              <Popper
+                open={profileDropdown}
+                anchorEl={anchorEl}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Card
                   sx={{
-                    paddingLeft: 1,
-                    flexDirection: "row",
-                    fontSize: isMobile ? "1rem" : "22px",
+                    p: 2,
+                    borderRadius: 2,
+                    boxShadow: 2,
+                    maxWidth: 300,
                   }}
-                />
-              ) : null
-            }
-          />
+                >
+                  {Array.isArray(profiles) &&
+                    profiles.map((profile) => (
+                      <Typography
+                        key={profile.id}
+                        sx={{
+                          marginBottom: 1,
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Avatar
+                          src={profile.avatarUrl}
+                          sx={{ height: 25, width: 20, marginRight: 1 }}
+                        />
+                        {profile.fullName} - {profile.role}
+                      </Typography>
+                    ))}
+                </Card>
+              </Popper>
+            )}
+          </Box>
+        </Container>
 
-          <NavCard
-            backgroundColor={officeColor}
-            navigationPage="/office"
-            title="Min sida"
-          />
-        </Box>
-      </Container>
-    </Box>
+        <Container>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              gap: { xs: 3, md: 6 },
+              marginTop: "20px",
+              zIndex: 1,
+            }}
+          >
+            <NavButtonCard
+              // backgroundColor={theme1.palette.calendar.main}
+              navigationPage="/calendar"
+              onClick={handleNavigateToCalendar}
+              imageUrl="https://i.imgur.com/pwlV6UM.png"
+              title="Kalender"
+              borderColor={theme1.palette.primary.main}
+            />
+
+            <NavButtonCard
+              // backgroundColor={meetingRoomColor}
+              imageUrl="https://i.imgur.com/PeKAt1b.png"
+              navigationPage="/meetingroom"
+              title="Mötesrum"
+              borderColor={theme1.palette.room.main}
+              onClick={handleNavigationToMeetingRoom}
+              icon={
+                ongoingMeeting ? (
+                  <NotificationsNoneIcon
+                    sx={{
+                      paddingLeft: 1,
+                      flexDirection: "row",
+                      fontSize: isMobile ? "1rem" : "22px",
+                    }}
+                  />
+                ) : null
+              }
+            />
+
+            <NavButtonCard
+              // backgroundColor={chatRoomColor}
+              navigationPage="/chatroom"
+              imageUrl="https://i.imgur.com/b2Dsqjx.png"
+              borderColor={theme1.palette.chat.main}
+              title="Chatt"
+              icon={
+                unreadMessages != null && unreadMessages > 0 ? (
+                  <MarkUnreadChatAltIcon
+                    sx={{
+                      paddingLeft: 1,
+                      flexDirection: "row",
+                      fontSize: isMobile ? "1rem" : "22px",
+                    }}
+                  />
+                ) : null
+              }
+            />
+
+            <NavButtonCard
+              // backgroundColor={officeColor}
+              imageUrl="https://i.imgur.com/rSFa9TZ.png"
+              navigationPage="/office"
+              borderColor={theme1.palette.office.main}
+              title="Min sida"
+            />
+          </Box>
+        </Container>
+
+        {/* </Box> */}
+      </div>
+    </section>
   );
 }

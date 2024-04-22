@@ -1,18 +1,19 @@
 import {
   Box,
-  Card,
+  Button,
   CardActionArea,
   CardContent,
   CardMedia,
   Typography,
-  keyframes,
 } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../globalConstants";
+import { theme1 } from "../theme";
 
-interface NavCardProps {
+interface NavButtonProps {
   backgroundColor?: string;
+  borderColor?: string;
   navigationPage: string;
   title?: string;
   icon?: React.ReactNode;
@@ -20,31 +21,33 @@ interface NavCardProps {
   onClick?: () => void;
 }
 
-export default function NavCard(props: NavCardProps) {
+export default function NavButtonCard(props: NavButtonProps) {
   const navigate = useNavigate();
 
-  const gradientAnimation = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-`;
-
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minWidth: isMobile ? "300px" : "200px",
-        height: isMobile ? "200px" : "150px",
-        borderRadius: "10px",
-        backgroundColor: "white", // Vit bakgrundsfärg
-        boxShadow: "0 1px 5px #FF6B6B", // Skugga för 3D-effekt
-        transition: "transform 0.2s ease, border-color 0.2s ease", // Lägg till transition för border-color
-        border: "4px solid", // Använd en solid border
-        backgroundImage: "linear-gradient(45deg, white, #FF6B6B)", // Gradient för border
-        backgroundClip: "padding-box", // Sätt bakgrundens ursprung till "padding-box"
-        padding: "4px", // Lägg till padding för att skilja border från innehåll
+    <Button
+      variant={"outlined"}
+      sx={{
+        backgroundColor: props.backgroundColor
+          ? props.backgroundColor
+          : "white",
+        padding: 4,
+        borderWidth: "2px",
+        borderRadius: 10,
+        borderColor: props.borderColor
+          ? props.borderColor
+          : theme1.palette.primary.main,
+        color: "black",
+        "&:hover": {
+          backgroundColor: props.borderColor
+            ? props.borderColor
+            : theme1.palette.primary.main,
+          borderWidth: "3px",
+          borderColor: props.borderColor
+            ? props.borderColor
+            : theme1.palette.primary.main,
+        },
+        minWidth: 200,
       }}
     >
       <CardActionArea
@@ -52,15 +55,6 @@ export default function NavCard(props: NavCardProps) {
           props.onClick ? props.onClick() : navigate(props.navigationPage);
         }}
       >
-        {props.imageUrl && (
-          <CardMedia
-            component="img"
-            height={isMobile ? "50" : "100"} // Justera höjden här
-            image={props.imageUrl}
-            alt={props.title}
-            sx={{ objectFit: "scale-down", borderRadius: "10px 10px 0 0" }}
-          />
-        )}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           {props.icon || props.title ? (
             <CardContent
@@ -69,7 +63,7 @@ export default function NavCard(props: NavCardProps) {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                flexDirection: isMobile ? "row" : "column",
+                flexDirection: "row",
               }}
             >
               <Typography
@@ -77,6 +71,7 @@ export default function NavCard(props: NavCardProps) {
                 sx={{
                   textAlign: "center",
                   fontSize: isMobile ? "10" : 20,
+                  fontWeight: 550,
                 }}
               >
                 {props.title}
@@ -94,8 +89,17 @@ export default function NavCard(props: NavCardProps) {
               ) : null}
             </CardContent>
           ) : null}
+          {props.imageUrl && (
+            <CardMedia
+              component="img"
+              height={isMobile ? "50" : "100"} // Justera höjden här
+              image={props.imageUrl}
+              alt={props.title}
+              sx={{ objectFit: "scale-down", borderRadius: "10px 10px 0 0" }}
+            />
+          )}
         </Box>
       </CardActionArea>
-    </div>
+    </Button>
   );
 }

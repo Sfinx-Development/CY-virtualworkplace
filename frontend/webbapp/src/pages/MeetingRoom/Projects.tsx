@@ -29,14 +29,14 @@ export default function Projects() {
       style={{
         width: "100%",
         display: "flex",
-        justifyContent: "flex-start",
+        justifyContent: "center",
       }}
     >
       <Container
         sx={{
           marginTop: isMobile ? 1 : 2,
           maxHeight: is800Mobile ? "350px" : "300px",
-          width: "90%",
+          width: "100%",
           overflow: "auto",
           marginLeft: 0,
         }}

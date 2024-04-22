@@ -61,7 +61,6 @@ namespace core
 
             try
             {
-                Console.WriteLine("USERN: " + user.Email + user.Id);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Issuer = _configuration["Jwt:Issuer"],

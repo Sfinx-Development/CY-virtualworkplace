@@ -15,7 +15,9 @@ public class LogInRepository
     {
         try
         {
-            User user = await _cyDbContext.Users.FirstAsync(u => u.Email == email);
+            User user = await _cyDbContext.Users.FirstAsync(
+                u => u.Email.ToLower().Trim() == email.ToLower().Trim()
+            );
             if (user != null)
             {
                 return user;
