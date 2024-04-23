@@ -31,6 +31,7 @@ import {
 } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
+import { formatDate } from "../../../dateUtil";
 
 export default function UpdateComments() {
   const activeUpdate = useAppSelector(
@@ -179,7 +180,7 @@ export default function UpdateComments() {
                 >
                   <div>
                     <Typography variant="subtitle1">
-                      {comment.dateCreated.toString()}
+                      {formatDate(new Date(comment.dateCreated))}
                     </Typography>
                     {commentIdToEdit == comment.id ? (
                       <TextField
