@@ -22,6 +22,7 @@ import { getActiveProfile } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
+import { formatDate } from "../../../dateUtil";
 
 export default function MeetingInTeamsPage() {
   // const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
@@ -172,7 +173,9 @@ export default function MeetingInTeamsPage() {
                         onKeyDown={handleKeyPress}
                       />
                     ) : (
-                      <Typography variant="body2">{meeting.date}</Typography>
+                      <Typography variant="body2">
+                        {formatDate(new Date(meeting.date))}
+                      </Typography>
                     )}
                     {isEditMode && meetingIdToEdit == meeting.meetingId ? (
                       <TextField
@@ -229,7 +232,7 @@ export default function MeetingInTeamsPage() {
                   <div>
                     <Typography variant="subtitle1">{meeting.name}</Typography>
                     <Typography variant="body2">
-                      {meeting.date.toString()}
+                      {formatDate(new Date(meeting.date))}
                     </Typography>
                   </div>
                   <div>
