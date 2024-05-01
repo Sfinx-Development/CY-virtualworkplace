@@ -278,7 +278,7 @@ export default function ChatRoom() {
           overflow: "auto",
         }}
       >
-        <Typography variant="h6">{activeTeam?.name} - Chatt</Typography>
+        <Typography>{activeTeam?.name.toUpperCase()} CHATT</Typography>
         {Array.isArray(messages) &&
           activeParticipant &&
           messages.map((message) => {

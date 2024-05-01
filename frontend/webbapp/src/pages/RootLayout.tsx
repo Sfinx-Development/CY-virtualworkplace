@@ -9,6 +9,7 @@ const RootLayout = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.userSlice.user);
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const handleSignOut = async () => {
     await dispatch(logOutUserAsync()).then(() => {
       navigate("/signin");
@@ -49,27 +50,53 @@ const RootLayout = () => {
             </Typography>
           </div>
         </Link>
-        {user ? (
-          <div>
-            {" "}
-            <Button
-              sx={{ paddingRight: 2, paddingLeft: 2 }}
-              onClick={handleSignOut}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {activeTeam ? (
+            <Link
+              to={"/menu"}
+              style={{ textDecoration: "none", color: "black" }}
             >
-              Logga ut
-            </Button>{" "}
-          </div>
-        ) : (
-          <div>
-            {" "}
-            <Button
-              sx={{ paddingRight: 2, paddingLeft: 2 }}
-              onClick={handleSignIn}
-            >
-              Logga in
-            </Button>{" "}
-          </div>
-        )}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  sx={{
+                    color: "white",
+                    padding: 1,
+                  }}
+                >
+                  <Typography>{activeTeam.name}</Typography>
+                </Button>
+              </div>
+            </Link>
+          ) : null}
+
+          {user ? (
+            <div>
+              {" "}
+              <Button
+                sx={{ paddingRight: 2, paddingLeft: 2 }}
+                onClick={handleSignOut}
+              >
+                Logga ut
+              </Button>{" "}
+            </div>
+          ) : (
+            <div>
+              {" "}
+              <Button
+                sx={{ paddingRight: 2, paddingLeft: 2 }}
+                onClick={handleSignIn}
+              >
+                Logga in
+              </Button>{" "}
+            </div>
+          )}
+        </div>
       </AppBar>
 
       <main className="bg-neutral-100 flex flex-1 flex-col w-full">

@@ -159,8 +159,6 @@ export default function Menu() {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
                 mt: { xs: 2, md: 0 },
                 zIndex: 1,
               }}

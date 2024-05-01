@@ -263,7 +263,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
           <Outlet />
         </div>
         <IconButton
-          sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 100 }}
+          sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 300 }}
           onClick={toggleOnlineList}
         >
           <Typography variant="body2">Medlemmar online</Typography>

@@ -2,7 +2,7 @@
 
 import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 import { useEffect, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import CreateComment from "./pages/AfterChosenTeam/CreateComment";
 import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
 import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
@@ -35,15 +35,13 @@ import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import UserSettings from "./pages/StartSignedIn/UserSettings";
 import { useAppDispatch, useAppSelector } from "./slices/store";
+import { resetActiveTeam } from "./slices/teamSlice";
 import { getUserAsync } from "./slices/userSlice";
+import { resetActiveProile } from "./slices/profileSlice";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
   const user = useAppSelector((state) => state.userSlice.user);
-  // const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  // const activeProfile = useAppSelector(
-  //   (state) => state.profileSlice.activeProfile
-  // );
 
   const dispatch = useAppDispatch();
 
@@ -53,6 +51,14 @@ const Navigation = () => {
     });
   }, []);
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/chooseteam") {
+      dispatch(resetActiveProile());
+      dispatch(resetActiveTeam());
+    }
+  }, [dispatch, location]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -68,6 +74,7 @@ const Navigation = () => {
   const handleConnect = () => {
     navigate(`livemeeting`); // on form submit, navigate to new route
   };
+
   return (
     <Routes>
       {/* <Route
