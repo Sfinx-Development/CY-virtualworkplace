@@ -209,6 +209,7 @@ export default function Menu() {
                   mt: 2,
                   color: "white",
                   padding: 1,
+                  paddingX: 2,
                 }}
               >
                 <Typography>Mitt Team</Typography>
@@ -266,6 +267,7 @@ export default function Menu() {
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
               justifyContent: "space-between",
+              alignItems: "center",
               gap: { xs: 3, md: 6 },
               marginTop: "20px",
               zIndex: 1,

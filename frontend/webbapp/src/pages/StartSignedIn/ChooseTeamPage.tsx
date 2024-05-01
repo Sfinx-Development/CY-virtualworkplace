@@ -63,7 +63,7 @@ const ChooseTeam = () => {
       }}
     >
       <IconButton
-        sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 100 }}
+        sx={{ position: "absolute", top: 10, right: 100 }}
         onClick={() => {
           navigate("/usersettings");
         }}
@@ -72,7 +72,7 @@ const ChooseTeam = () => {
       </IconButton>
       <Box sx={{ marginTop: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={10} sm={6}>
+          <Grid item xs={12} sm={6}>
             <Button
               variant="contained"
               color="primary"

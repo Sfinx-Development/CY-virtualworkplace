@@ -35,20 +35,34 @@ const RootLayout = () => {
           to={user ? "/chooseteam" : "/"}
           style={{ textDecoration: "none", color: "black" }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <ComputerIcon
-              fontSize="large"
-              sx={{ paddingRight: 2, paddingLeft: 2 }}
-            />
-            <Typography sx={{ fontSize: isMobile ? 16 : 35 }}>
-              CY Virtual Workplace
-            </Typography>
-          </div>
+          {isMobile ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <ComputerIcon
+                fontSize="large"
+                sx={{ paddingRight: 2, paddingLeft: 2 }}
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <ComputerIcon
+                fontSize="large"
+                sx={{ paddingRight: 2, paddingLeft: 2 }}
+              />
+              <Typography sx={{ fontSize: isMobile ? 16 : 35 }}>
+                CY Virtual Workplace
+              </Typography>
+            </div>
+          )}
         </Link>
         <div style={{ display: "flex", alignItems: "center" }}>
           {activeTeam ? (

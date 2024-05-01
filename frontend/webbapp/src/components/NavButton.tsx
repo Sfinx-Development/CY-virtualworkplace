@@ -24,7 +24,8 @@ export default function NavButtonCard(props: NavButtonProps) {
         backgroundColor: props.backgroundColor
           ? props.backgroundColor
           : "white",
-        padding: 3,
+        paddingX: isMobile ? 1 : 3,
+        paddingY: isMobile ? 2 : 4,
         borderWidth: "2px",
         borderRadius: 10,
         borderColor: props.borderColor
@@ -40,7 +41,7 @@ export default function NavButtonCard(props: NavButtonProps) {
             ? props.borderColor
             : theme1.palette.primary.main,
         },
-        width: 200,
+        width: isMobile ? 300 : 200,
       }}
       onClick={() => {
         props.onClick ? props.onClick() : navigate(props.navigationPage);
@@ -61,7 +62,7 @@ export default function NavButtonCard(props: NavButtonProps) {
               component="div"
               sx={{
                 textAlign: "center",
-                fontSize: isMobile ? "10" : 20,
+                fontSize: isMobile ? 18 : 20,
                 fontWeight: 550,
               }}
             >
@@ -83,7 +84,7 @@ export default function NavButtonCard(props: NavButtonProps) {
         {props.imageUrl && (
           <CardMedia
             component="img"
-            height={isMobile ? "50" : "100"} // Justera höjden här
+            height={isMobile ? "60" : "100"} // Justera höjden här
             image={props.imageUrl}
             alt={props.title}
             sx={{ objectFit: "scale-down", borderRadius: "10px 10px 0 0" }}
