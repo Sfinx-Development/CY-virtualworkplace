@@ -39,11 +39,7 @@ export default function SignIn() {
   ) => {
     event.preventDefault();
   };
-  // useEffect(() => {
-  //   console.log("LOGGAR UT");
-  //   dispatch(logOutUserAsync());
-  // }, []);
-
+  
   useEffect(() => {
     const hasConsented = localStorage.getItem("cookieConsent");
     if (!hasConsented) {

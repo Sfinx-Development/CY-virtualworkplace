@@ -150,9 +150,10 @@ export default function CreateAccount() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "89vh",
+        height: "100%",
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
+        overflowY: "auto",
       }}
     >
       <div
@@ -172,9 +173,6 @@ export default function CreateAccount() {
       >
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12} textAlign="center">
-            {/* <Typography variant="h5" sx={{ color: "#FFF" }}>
-              Skapa ett konto
-            </Typography> */}
           </Grid>
           {passwordError && (
             <Grid item xs={12}>

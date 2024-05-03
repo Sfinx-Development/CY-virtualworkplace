@@ -21,7 +21,7 @@ export interface TeamState {
   error: string | null;
 }
 
-const saveTeamToLocalStorage = (activeTeam: Team) => {
+const saveTeamToLocalStorage = (activeTeam: Team | undefined) => {
   localStorage.setItem("activeTeam", JSON.stringify(activeTeam));
 };
 const loadTeamFromLocalStorage = (): Team | undefined => {
@@ -191,6 +191,10 @@ const teamSlice = createSlice({
   name: "team",
   initialState,
   reducers: {
+    resetActiveTeam: (state) => {
+      state.activeTeam = undefined;
+      saveTeamToLocalStorage(undefined);
+    },
     setActiveTeam: (state, action) => {
       const teamId = action.payload;
       const activeTeam = state.teams?.find((team) => team.id === teamId);
@@ -297,5 +301,6 @@ const teamSlice = createSlice({
   },
 });
 
-export const { setActiveTeam, getActiveTeam } = teamSlice.actions;
+export const { setActiveTeam, getActiveTeam, resetActiveTeam } =
+  teamSlice.actions;
 export const teamReducer = teamSlice.reducer;

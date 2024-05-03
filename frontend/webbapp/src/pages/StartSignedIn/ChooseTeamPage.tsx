@@ -63,7 +63,7 @@ const ChooseTeam = () => {
       }}
     >
       <IconButton
-        sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 100 }}
+        sx={{ position: "absolute", top: 10, right: 100 }}
         onClick={() => {
           navigate("/usersettings");
         }}
@@ -72,7 +72,7 @@ const ChooseTeam = () => {
       </IconButton>
       <Box sx={{ marginTop: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={10} sm={6}>
+          <Grid item xs={12} sm={6}>
             <Button
               variant="contained"
               color="primary"
@@ -113,8 +113,6 @@ const ChooseTeam = () => {
                       borderRadius: "16px",
                       boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
                       height: "100%",
-
-                      // border: "20px solid white",
                     }}
                   >
                     <Card sx={{ height: "100%", border: "20px solid white" }}>
@@ -125,8 +123,6 @@ const ChooseTeam = () => {
                           <CardMedia
                             component="img"
                             height="280"
-                            // borderRadius="16px"
-                            // border="10px grey white"
                             image={team.imageUrl}
                             alt={team.name}
                           />

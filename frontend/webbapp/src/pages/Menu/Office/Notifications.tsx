@@ -198,6 +198,11 @@ export default function Notifications() {
             </List>
           </Box>
         ) : null}
+        {teamRequests?.length == 0 && activeHealthChecks?.length == 0 ? (
+          <Box mt={0.5}>
+            <Typography>Ingen oläst notifikation</Typography>
+          </Box>
+        ) : null}
       </Card>
     </Container>
   );

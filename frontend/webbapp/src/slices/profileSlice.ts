@@ -29,7 +29,12 @@ const saveActiveProfileToLocalStorage = (profile: Profile | undefined) => {
 };
 const loadActiveProfileFromLocalStorage = (): Profile | undefined => {
   const storedActiveProfile = localStorage.getItem("activeProfile");
-  return storedActiveProfile ? JSON.parse(storedActiveProfile) : undefined;
+  try {
+    return storedActiveProfile ? JSON.parse(storedActiveProfile) : undefined;
+  } catch (error) {
+    console.error("Error parsing active profile from localStorage:", error);
+    return undefined;
+  }
 };
 
 export const initialState: ProfileState = {
@@ -213,6 +218,10 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
+    resetActiveProile: (state) => {
+      state.activeProfile = undefined;
+      saveActiveProfileToLocalStorage(undefined);
+    },
     setActiveProfile: (state, action) => {
       const profileId = action.payload;
       const activeProfile = state.profiles?.find(
@@ -303,5 +312,5 @@ const profileSlice = createSlice({
   },
 });
 
-export const { getActiveProfile } = profileSlice.actions;
+export const { getActiveProfile, resetActiveProile } = profileSlice.actions;
 export const profileReducer = profileSlice.reducer;

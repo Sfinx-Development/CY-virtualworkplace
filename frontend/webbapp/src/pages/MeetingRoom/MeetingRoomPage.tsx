@@ -7,13 +7,15 @@ import {
   CardActionArea,
   CardContent,
   Container,
+  FormControl,
   IconButton,
   Menu,
   MenuItem,
+  Select,
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import BackGroundDesign from "../../components/BackgroundDesign";
@@ -54,9 +56,18 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const onlineProfiles = useAppSelector(
     (state) => state.profileSlice.onlineProfiles
   );
-
+  const menuChoices: [string, string][] = [
+    ["Alla möten", "meetinginteam"],
+    ["Nytt möte", "createmeeting"],
+    ["Alla projekt", ""],
+    ["Nytt projekt", "createproject"],
+    ["Statistik", "healthcheck"],
+    ["Inställningar", "settings"],
+  ];
+  const [activeMenuChoice, setActiveMenuChoice] = useState("Alla projekt");
   const occasions = useAppSelector((state) => state.meetingSlice.occasions);
   const now = new Date();
+  const navigate = useNavigate();
 
   const ongoingMeeting = occasions
     ? occasions.find((occasion: MeetingOccasionNoDate) => {
@@ -123,6 +134,20 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
     setAnchorEl(null);
   };
 
+  const getTupleFromValue = (value: string): [string, string] | undefined => {
+    return menuChoices.find((tuple) => tuple[0] === value);
+  };
+
+  const handleMenuChoice = (selectedMenuChoice: string) => {
+    if (selectedMenuChoice) {
+      setActiveMenuChoice(selectedMenuChoice);
+      const path = getTupleFromValue(selectedMenuChoice);
+      if (path != undefined) {
+        navigate(`${path[1]}`);
+      }
+    }
+  };
+
   return (
     <Container
       sx={{
@@ -165,86 +190,107 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         </Card>
       )}
       {/* Navigation */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          justifyContent: "center",
-          gap: isMobile ? 1 : 4,
-          width: "100%",
-          mt: isMobile ? 0 : 2,
-        }}
-      >
-        <FlexNavcard
-          backgroundColor={meetingRoomColor}
-          navigationPage="createMeeting"
-          title="Nytt möte"
-          icon={
-            <img
-              src="https://i.imgur.com/HRZXZA9.png"
-              alt="project management icon"
-              style={{ width: isMobile ? 30 : 40, height: isMobile ? 30 : 40 }}
-            />
-          }
-        />
+      {isMobile ? (
+        <FormControl fullWidth>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={activeMenuChoice ?? "Alla projekt"}
+            onChange={(event) => handleMenuChoice(event.target.value)}
+          >
+            {menuChoices.map((m, index) => (
+              <MenuItem key={index} value={m[0]}>
+                {m[0]}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            justifyContent: "center",
+            gap: isMobile ? 1 : 4,
+            width: "100%",
+            mt: isMobile ? 0 : 2,
+          }}
+        >
+          <FlexNavcard
+            backgroundColor={meetingRoomColor}
+            navigationPage="createMeeting"
+            title="Nytt möte"
+            icon={
+              <img
+                src="https://i.imgur.com/HRZXZA9.png"
+                alt="project management icon"
+                style={{
+                  width: isMobile ? 30 : 40,
+                  height: isMobile ? 30 : 40,
+                }}
+              />
+            }
+          />
 
-        <FlexNavcard
-          backgroundColor={meetingRoomColor}
-          navigationPage="meetinginteam"
-          title="Alla möten"
-          icon={
-            <img
-              src="https://i.imgur.com/HeztEpU.png"
-              alt="project management icon"
-              style={{ width: 40, height: 40 }}
-            />
-          }
-        />
+          <FlexNavcard
+            backgroundColor={meetingRoomColor}
+            navigationPage="meetinginteam"
+            title="Alla möten"
+            icon={
+              <img
+                src="https://i.imgur.com/HeztEpU.png"
+                alt="project management icon"
+                style={{ width: 40, height: 40 }}
+              />
+            }
+          />
 
-        <FlexNavcard
-          backgroundColor={meetingRoomColor}
-          navigationPage="createproject"
-          title="Nytt projekt"
-          icon={
-            <img
-              src="https://i.imgur.com/GvdAMWN.png"
-              alt="project management icon"
-              style={{ width: 40, height: 40 }}
-            />
-          }
-        />
+          <FlexNavcard
+            backgroundColor={meetingRoomColor}
+            navigationPage="createproject"
+            title="Nytt projekt"
+            icon={
+              <img
+                src="https://i.imgur.com/GvdAMWN.png"
+                alt="project management icon"
+                style={{ width: 40, height: 40 }}
+              />
+            }
+          />
 
-        <FlexNavcard
-          backgroundColor={meetingRoomColor}
-          navigationPage=""
-          title="Alla projekt"
-          icon={
-            <img
-              src="https://i.imgur.com/HeztEpU.png"
-              alt="project management icon"
-              style={{ width: 40, height: 40 }}
-            />
-          }
-        />
-        <FlexNavcard
-          backgroundColor={meetingRoomColor}
-          navigationPage="healthcheck"
-          title="Statistik"
-          icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
-        />
-        <FlexNavcard
-          backgroundColor={meetingRoomColor}
-          navigationPage="settings"
-          title="Inställningar"
-          icon={
-            <img
-              src="      https://i.imgur.com/6YGqDBk.png"
-              alt="project management icon"
-              style={{ width: 40, height: 40 }}
-            />
-          }
-        />
-      </Box>
+          <FlexNavcard
+            backgroundColor={meetingRoomColor}
+            navigationPage=""
+            title="Alla projekt"
+            icon={
+              <img
+                src="https://i.imgur.com/HeztEpU.png"
+                alt="project management icon"
+                style={{ width: 40, height: 40 }}
+              />
+            }
+          />
+          <FlexNavcard
+            backgroundColor={meetingRoomColor}
+            navigationPage="healthcheck"
+            title="Statistik"
+            icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
+          />
+          <FlexNavcard
+            backgroundColor={meetingRoomColor}
+            navigationPage="settings"
+            title="Inställningar"
+            icon={
+              <img
+                src="      https://i.imgur.com/6YGqDBk.png"
+                alt="project management icon"
+                style={{ width: 40, height: 40 }}
+              />
+            }
+          />
+        </Box>
+      )}
+
       <div
         style={{
           display: "flex",
@@ -262,13 +308,16 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         >
           <Outlet />
         </div>
-        <IconButton
-          sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 100 }}
-          onClick={toggleOnlineList}
-        >
-          <Typography variant="body2">Medlemmar online</Typography>
-          <ArrowDropDownIcon sx={{ transform: "rotate(-1eg)" }} />
-        </IconButton>
+        {isMobile ? null : (
+          <IconButton
+            sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 300 }}
+            onClick={toggleOnlineList}
+          >
+            <Typography variant="body2">Medlemmar online</Typography>
+            <ArrowDropDownIcon sx={{ transform: "rotate(-1eg)" }} />
+          </IconButton>
+        )}
+
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

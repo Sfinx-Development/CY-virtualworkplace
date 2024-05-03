@@ -159,8 +159,6 @@ export default function Menu() {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
                 mt: { xs: 2, md: 0 },
                 zIndex: 1,
               }}
@@ -211,6 +209,7 @@ export default function Menu() {
                   mt: 2,
                   color: "white",
                   padding: 1,
+                  paddingX: 2,
                 }}
               >
                 <Typography>Mitt Team</Typography>
@@ -268,13 +267,13 @@ export default function Menu() {
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
               justifyContent: "space-between",
+              alignItems: "center",
               gap: { xs: 3, md: 6 },
               marginTop: "20px",
               zIndex: 1,
             }}
           >
             <NavButtonCard
-              // backgroundColor={theme1.palette.calendar.main}
               navigationPage="/calendar"
               onClick={handleNavigateToCalendar}
               imageUrl="https://i.imgur.com/pwlV6UM.png"
@@ -283,7 +282,6 @@ export default function Menu() {
             />
 
             <NavButtonCard
-              // backgroundColor={meetingRoomColor}
               imageUrl="https://i.imgur.com/PeKAt1b.png"
               navigationPage="/meetingroom"
               title="Mötesrum"
@@ -303,7 +301,6 @@ export default function Menu() {
             />
 
             <NavButtonCard
-              // backgroundColor={chatRoomColor}
               navigationPage="/chatroom"
               imageUrl="https://i.imgur.com/b2Dsqjx.png"
               borderColor={theme1.palette.chat.main}
@@ -322,7 +319,6 @@ export default function Menu() {
             />
 
             <NavButtonCard
-              // backgroundColor={officeColor}
               imageUrl="https://i.imgur.com/rSFa9TZ.png"
               navigationPage="/office"
               borderColor={theme1.palette.office.main}
@@ -331,7 +327,6 @@ export default function Menu() {
           </Box>
         </Container>
 
-        {/* </Box> */}
       </div>
     </section>
   );

@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { CreateMeetingDTO } from "../../../types";
 import { createTeamMeetingAsync } from "../../slices/meetingSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
@@ -90,12 +91,18 @@ export default function CreateMeetingPage() {
 
   return (
     <Container
-      sx={{ padding: "20px", display: "flex", justifyContent: "center" }}
+      sx={{
+        padding: "20px",
+        margin: 1,
+        display: "flex",
+        justifyContent: "center",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+      }}
     >
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: isMobile ? "column" : "row",
           alignItems: "center",
           height: "100%",
         }}
@@ -217,44 +224,8 @@ export default function CreateMeetingPage() {
             </Button>
           </div>
         )}
-
-        {/* {meetings && (
-          <div>
-            <Typography variant="h6">Latest Meeting:</Typography>
-            <Typography>{meetings[meetings.length - 1].name}</Typography>
-          </div>
-        )} */}
-
         {error && <Typography color="error">{error}</Typography>}
       </div>
     </Container>
   );
 }
-
-// import { Container, Typography } from "@mui/material";
-
-// import { useParams } from "react-router-dom";
-// import { Meeting } from "../../../types";
-// import { useAppSelector } from "../../slices/store";
-
-// export default function CreateMeeting() {
-//   const { meetingId } = useParams<{ meetingId: string }>();
-//   const meetings = useAppSelector((state) => state.meetingSlice.meetings);
-//   const activeMeeting: Meeting | undefined = meetings?.find(
-//     (meeting) => String(meeting.id) === meetingId
-//     );
-//   return (
-//     <Container sx={{ padding: "20px" }}>
-//       <div
-//         style={{
-//           display: "flex",
-//           flexDirection: "column",
-//           alignItems: "center",
-//         }}
-//       >
-//         create meeting
-//         <Typography variant={"h4"}>MEETING: {activeMeeting?.name}</Typography>
-//       </div>
-//     </Container>
-//   );
-// }
