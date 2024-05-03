@@ -39,7 +39,7 @@ export default function SignIn() {
   ) => {
     event.preventDefault();
   };
-  
+
   useEffect(() => {
     const hasConsented = localStorage.getItem("cookieConsent");
     if (!hasConsented) {
@@ -118,8 +118,9 @@ export default function SignIn() {
           <div>
             <Typography variant="body1">
               Denna webbplats använder tredjepartscookies för att förbättra din
-              upplevelse. Godkänn i inställningar för användningen av
-              tredjepartcookies för att fortsätta.
+              upplevelse. Godkänn användning av tredjepartscookies för att
+              fortsätta. För Iphone: Avmarkera "Spåra inte mellan webbplatser"
+              och "Blockera alla cookies" i inställningar - Safari.
             </Typography>
             <Button
               variant="contained"
