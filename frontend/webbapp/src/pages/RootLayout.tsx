@@ -46,11 +46,7 @@ const RootLayout = () => {
                 fontSize="large"
                 sx={{ paddingRight: 1, paddingLeft: 2 }}
               />
-              <Typography
-                sx={{ fontSize: isMobile ? 20 : 35, fontWeight: 600 }}
-              >
-                CY
-              </Typography>
+              <Typography sx={{ fontSize: isMobile ? 20 : 35 }}>CY</Typography>
             </div>
           ) : (
             <div
