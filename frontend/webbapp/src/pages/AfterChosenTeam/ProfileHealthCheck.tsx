@@ -139,8 +139,6 @@ export default function ProfileHealthCheck() {
         >
           Skapa
         </Button>
-
-        {/* {error && <Typography color="error">{error}</Typography>} */}
       </div>
     </Container>
   );

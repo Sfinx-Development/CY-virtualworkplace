@@ -223,44 +223,8 @@ export default function CreateMeetingPage() {
             </Button>
           </div>
         )}
-
-        {/* {meetings && (
-          <div>
-            <Typography variant="h6">Latest Meeting:</Typography>
-            <Typography>{meetings[meetings.length - 1].name}</Typography>
-          </div>
-        )} */}
-
         {error && <Typography color="error">{error}</Typography>}
       </div>
     </Container>
   );
 }
-
-// import { Container, Typography } from "@mui/material";
-
-// import { useParams } from "react-router-dom";
-// import { Meeting } from "../../../types";
-// import { useAppSelector } from "../../slices/store";
-
-// export default function CreateMeeting() {
-//   const { meetingId } = useParams<{ meetingId: string }>();
-//   const meetings = useAppSelector((state) => state.meetingSlice.meetings);
-//   const activeMeeting: Meeting | undefined = meetings?.find(
-//     (meeting) => String(meeting.id) === meetingId
-//     );
-//   return (
-//     <Container sx={{ padding: "20px" }}>
-//       <div
-//         style={{
-//           display: "flex",
-//           flexDirection: "column",
-//           alignItems: "center",
-//         }}
-//       >
-//         create meeting
-//         <Typography variant={"h4"}>MEETING: {activeMeeting?.name}</Typography>
-//       </div>
-//     </Container>
-//   );
-// }

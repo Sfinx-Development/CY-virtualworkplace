@@ -21,9 +21,7 @@ export default function CreateComment() {
   const activeUpdate = useAppSelector(
     (state) => state.projectSlice.activeUpdate
   );
-  // const activeProject = useAppSelector(
-  //   (state) => state.projectSlice.activeProject
-  // );
+ 
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );

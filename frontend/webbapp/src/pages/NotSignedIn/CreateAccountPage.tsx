@@ -173,9 +173,6 @@ export default function CreateAccount() {
       >
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12} textAlign="center">
-            {/* <Typography variant="h5" sx={{ color: "#FFF" }}>
-              Skapa ett konto
-            </Typography> */}
           </Grid>
           {passwordError && (
             <Grid item xs={12}>

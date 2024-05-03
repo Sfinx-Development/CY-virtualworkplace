@@ -274,7 +274,6 @@ export default function Menu() {
             }}
           >
             <NavButtonCard
-              // backgroundColor={theme1.palette.calendar.main}
               navigationPage="/calendar"
               onClick={handleNavigateToCalendar}
               imageUrl="https://i.imgur.com/pwlV6UM.png"
@@ -283,7 +282,6 @@ export default function Menu() {
             />
 
             <NavButtonCard
-              // backgroundColor={meetingRoomColor}
               imageUrl="https://i.imgur.com/PeKAt1b.png"
               navigationPage="/meetingroom"
               title="Mötesrum"
@@ -303,7 +301,6 @@ export default function Menu() {
             />
 
             <NavButtonCard
-              // backgroundColor={chatRoomColor}
               navigationPage="/chatroom"
               imageUrl="https://i.imgur.com/b2Dsqjx.png"
               borderColor={theme1.palette.chat.main}
@@ -322,7 +319,6 @@ export default function Menu() {
             />
 
             <NavButtonCard
-              // backgroundColor={officeColor}
               imageUrl="https://i.imgur.com/rSFa9TZ.png"
               navigationPage="/office"
               borderColor={theme1.palette.office.main}
@@ -331,7 +327,6 @@ export default function Menu() {
           </Box>
         </Container>
 
-        {/* </Box> */}
       </div>
     </section>
   );

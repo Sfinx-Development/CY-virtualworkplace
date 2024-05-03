@@ -113,8 +113,6 @@ const ChooseTeam = () => {
                       borderRadius: "16px",
                       boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
                       height: "100%",
-
-                      // border: "20px solid white",
                     }}
                   >
                     <Card sx={{ height: "100%", border: "20px solid white" }}>
@@ -125,8 +123,6 @@ const ChooseTeam = () => {
                           <CardMedia
                             component="img"
                             height="280"
-                            // borderRadius="16px"
-                            // border="10px grey white"
                             image={team.imageUrl}
                             alt={team.name}
                           />
