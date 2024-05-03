@@ -8,7 +8,10 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
   IconButton,
+  MenuItem,
+  Select,
   Typography,
 } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
@@ -109,6 +112,22 @@ export default function HealthCheckPage() {
     return "";
   };
 
+  const [menuChoices, setMenuChoices] = useState<
+    [string, string][] | undefined
+  >();
+
+  useEffect(() => {
+    if (healthchecks) {
+      const newMenuChoices: [string, string][] = healthchecks.map((p) => [
+        p.question,
+        p.id,
+      ]);
+      setMenuChoices(newMenuChoices);
+    }
+  }, [healthchecks]);
+
+  const [activeMenuChoice, setActiveMenuChoice] = useState("Alla frågor");
+
   const handleSetPopopOpen = (id: string) => {
     setIdToDelete(id);
     setOpenTodoPopup(true);
@@ -117,6 +136,16 @@ export default function HealthCheckPage() {
   const loadStatistic = async (check: HealthCheck) => {
     setCurrentHealthCheck(check);
     await dispatch(GetProfileHealthChecksAsync(check.id));
+  };
+
+  const handleChooseFromMenu = (healthcheckQuestion: string) => {
+    setActiveMenuChoice(healthcheckQuestion);
+    const selectedQuestion = healthchecks?.find(
+      (h) => h.question == healthcheckQuestion
+    );
+    if (selectedQuestion) {
+      loadStatistic(selectedQuestion);
+    }
   };
 
   return (
@@ -220,26 +249,46 @@ export default function HealthCheckPage() {
               <AddIcon /> Ny fråga
             </Button>
             <Typography variant="h6">Se statistik</Typography>
-            {Array.isArray(healthchecks) &&
-              healthchecks?.map((check) => (
-                <Button
-                  key={check.id}
-                  variant="contained"
-                  onClick={() => loadStatistic(check)}
-                  sx={{
-                    marginTop: 2,
-                    backgroundColor: "lightgrey",
-                    minWidth: isMobile ? "100%" : 200,
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
+            {isMobile ? (
+              <FormControl fullWidth>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  fullWidth
+                  value={activeMenuChoice}
+                  onChange={(event) => handleChooseFromMenu(event.target.value)}
                 >
-                  {check.question}
-                  <IconButton onClick={() => handleSetPopopOpen(check.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Button>
-              ))}
+                  {menuChoices?.map((m, index) => (
+                    <MenuItem key={index} value={m[0]}>
+                      {m[0]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : (
+              <>
+                {Array.isArray(healthchecks) &&
+                  healthchecks.map((check) => (
+                    <Button
+                      key={check.id}
+                      variant="contained"
+                      onClick={() => loadStatistic(check)}
+                      sx={{
+                        marginTop: 2,
+                        backgroundColor: "lightgrey",
+                        minWidth: isMobile ? "100%" : 200,
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {check.question}
+                      <IconButton onClick={() => handleSetPopopOpen(check.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Button>
+                  ))}
+              </>
+            )}
           </Box>
         </Container>
       </div>

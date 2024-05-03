@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { CreateMeetingDTO } from "../../../types";
 import { createTeamMeetingAsync } from "../../slices/meetingSlice";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
@@ -90,12 +91,17 @@ export default function CreateMeetingPage() {
 
   return (
     <Container
-      sx={{ padding: "20px", display: "flex", justifyContent: "center" }}
+      sx={{
+        padding: "20px",
+        display: "flex",
+        justifyContent: "center",
+        backgroundColor: "white",
+      }}
     >
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: isMobile ? "column" : "row",
           alignItems: "center",
           height: "100%",
         }}

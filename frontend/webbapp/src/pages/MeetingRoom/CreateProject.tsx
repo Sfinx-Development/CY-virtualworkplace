@@ -50,7 +50,7 @@ export default function CreateProject() {
   };
 
   return (
-    <Container sx={{ padding: "20px" }}>
+    <Container sx={{ padding: "20px", backgroundColor: "white" }}>
       <div
         style={{
           display: "flex",

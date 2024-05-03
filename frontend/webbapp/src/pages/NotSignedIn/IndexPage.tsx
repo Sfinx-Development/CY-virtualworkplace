@@ -24,7 +24,7 @@ const IndexPage = () => {
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
         color: "#FFF",
-        overflowX: "hidden", // För att hindra horisontell scrollning
+        overflowX: "hidden",
       }}
     >
       <Container
@@ -33,14 +33,17 @@ const IndexPage = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: "40px 20px",
+          padding: isMobile ? "20px 10px" : "40px 20px",
         }}
       >
         <section
           style={{
             textAlign: "center",
-            marginBottom: "40px",
+            marginBottom: isMobile ? "0px" : "40px",
             color: "#FFF",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <Typography variant={isMobile ? "h5" : "h3"} gutterBottom>
@@ -55,7 +58,7 @@ const IndexPage = () => {
             size="large"
             fullWidth
             style={{
-              margin: "20px",
+              margin: isMobile ? "30px" : "20px",
               backgroundColor: "#FF6B6B",
               color: "white",
             }}
@@ -94,26 +97,25 @@ const IndexPage = () => {
           >
             <div>
               <Typography variant="h6" gutterBottom>
-                 Effektivt samarbete
+                Effektivt samarbete
               </Typography>
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
-               
               >
-               Arbeta smidigt tillsammans oavsett var ni är.
+                Arbeta smidigt tillsammans oavsett var ni är.
               </Typography>
             </div>
             <div>
               <Typography variant="h6" gutterBottom>
-               Säker och pålitlig
+                Säker och pålitlig
               </Typography>
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
-                style={{ marginLeft: '5px' }}
+                style={{ marginLeft: "5px" }}
               >
-                 Din data är säker och skyddad hos oss.
+                Din data är säker och skyddad hos oss.
               </Typography>
             </div>
             <div>
@@ -123,7 +125,7 @@ const IndexPage = () => {
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
-                style={{ marginLeft: '5px' }}
+                style={{ marginLeft: "5px" }}
               >
                 Intuitivt gränssnitt för alla användare.
               </Typography>
@@ -136,6 +138,9 @@ const IndexPage = () => {
             textAlign: "center",
             marginTop: "40px",
             color: "#FFF",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <Typography variant={isMobile ? "h6" : "h4"} gutterBottom>

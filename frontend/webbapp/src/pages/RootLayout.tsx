@@ -44,8 +44,13 @@ const RootLayout = () => {
             >
               <ComputerIcon
                 fontSize="large"
-                sx={{ paddingRight: 2, paddingLeft: 2 }}
+                sx={{ paddingRight: 1, paddingLeft: 2 }}
               />
+              <Typography
+                sx={{ fontSize: isMobile ? 20 : 35, fontWeight: 600 }}
+              >
+                CY
+              </Typography>
             </div>
           ) : (
             <div
@@ -77,13 +82,14 @@ const RootLayout = () => {
                 }}
               >
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   sx={{
-                    color: "white",
                     padding: 1,
                   }}
                 >
-                  <Typography>{activeTeam.name}</Typography>
+                  <Typography sx={{ fontSize: isMobile ? 14 : 20 }}>
+                    {activeTeam.name}
+                  </Typography>
                 </Button>
               </div>
             </Link>
@@ -96,7 +102,7 @@ const RootLayout = () => {
                 sx={{ paddingRight: 2, paddingLeft: 2 }}
                 onClick={handleSignOut}
               >
-                Logga ut
+                <Typography fontSize={isMobile ? 13 : 20}>Logga ut</Typography>
               </Button>{" "}
             </div>
           ) : (
