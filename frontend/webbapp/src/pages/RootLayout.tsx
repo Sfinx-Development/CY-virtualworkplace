@@ -87,7 +87,7 @@ const RootLayout = () => {
                     padding: 1,
                   }}
                 >
-                  <Typography sx={{ fontSize: isMobile ? 14 : 20 }}>
+                  <Typography sx={{ fontSize: isMobile ? 14 : 15 }}>
                     {activeTeam.name}
                   </Typography>
                 </Button>
@@ -102,7 +102,7 @@ const RootLayout = () => {
                 sx={{ paddingRight: 2, paddingLeft: 2 }}
                 onClick={handleSignOut}
               >
-                <Typography fontSize={isMobile ? 13 : 20}>Logga ut</Typography>
+                <Typography fontSize={isMobile ? 13 : 15}>Logga ut</Typography>
               </Button>{" "}
             </div>
           ) : (

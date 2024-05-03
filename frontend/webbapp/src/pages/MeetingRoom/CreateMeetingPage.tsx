@@ -93,9 +93,10 @@ export default function CreateMeetingPage() {
     <Container
       sx={{
         padding: "20px",
+        margin: 1,
         display: "flex",
         justifyContent: "center",
-        backgroundColor: "white",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
       }}
     >
       <div

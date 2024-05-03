@@ -9,7 +9,6 @@ import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
 import { LiveVideo } from "./pages/AfterChosenTeam/LiveForm";
-import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
 import TestWave from "./pages/AfterChosenTeam/TestWave";
 import UpdateComments from "./pages/AfterChosenTeam/UpdateComments";
 import CreateMeeting from "./pages/MeetingRoom/CreateMeetingPage";
@@ -34,10 +33,10 @@ import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
 import UserSettings from "./pages/StartSignedIn/UserSettings";
+import { resetActiveProile } from "./slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { resetActiveTeam } from "./slices/teamSlice";
 import { getUserAsync } from "./slices/userSlice";
-import { resetActiveProile } from "./slices/profileSlice";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
@@ -113,7 +112,6 @@ const Navigation = () => {
           <Route path="signin" element={<SignIn />} />
           <Route path="createaccount" element={<CreateAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
-          <Route path="joinmeeting" element={<OngoingMeeting />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="createupdate" element={<CreateUpdate />} />
           <Route path="updateevents" element={<UpdateComments />} />
