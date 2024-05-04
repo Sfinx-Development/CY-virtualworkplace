@@ -254,3 +254,9 @@ export interface FileDTO {
   updateCommentId: string;
   filepath: string;
 }
+
+export type TranslationMessages = {
+  sv: { [key: string]: string },
+  en: { [key: string]: string },
+  [key: string]: { [key: string]: string }
+};

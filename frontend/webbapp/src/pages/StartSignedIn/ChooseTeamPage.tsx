@@ -63,7 +63,7 @@ const ChooseTeam = () => {
       }}
     >
       <IconButton
-        sx={{ position: "absolute", top: 10, right: 100 }}
+        sx={{ position: "absolute", top: 10, right: 180 }}
         onClick={() => {
           navigate("/usersettings");
         }}
