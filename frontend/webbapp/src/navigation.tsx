@@ -77,10 +77,6 @@ const Navigation = () => {
 
   return (
     <Routes>
-      {/* <Route
-        path="*"
-        element={user ? null : <Navigate to="/signin" replace />}
-      /> */}
       {user ? (
         <Route element={<RootLayout />}>
           <Route path="chooseteam" element={<ChooseTeam />} />

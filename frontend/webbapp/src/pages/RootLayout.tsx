@@ -1,7 +1,15 @@
 import ComputerIcon from "@mui/icons-material/Computer";
-import { AppBar, Button, Typography } from "@mui/material";
+import {
+  AppBar,
+  Button,
+  FormControl,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { isMobile } from "../../globalConstants";
+import { useLanguageContext } from "../contexts/languageContext";
 import { useAppDispatch, useAppSelector } from "../slices/store";
 import { logOutUserAsync } from "../slices/userSlice";
 
@@ -10,6 +18,7 @@ const RootLayout = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.userSlice.user);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const { language, setLanguage } = useLanguageContext();
   const handleSignOut = async () => {
     await dispatch(logOutUserAsync()).then(() => {
       navigate("/signin");
@@ -18,6 +27,11 @@ const RootLayout = () => {
   const handleSignIn = async () => {
     navigate("/signin");
   };
+  const languageChoices: string[] = ["sv", "en"];
+  const handleLanguageChoice = (newLanguage: string) => {
+    setLanguage(newLanguage);
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <AppBar
@@ -112,6 +126,20 @@ const RootLayout = () => {
               </Button>{" "}
             </div>
           )}
+          <FormControl fullWidth>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={language}
+              onChange={(event) => handleLanguageChoice(event.target.value)}
+            >
+              {languageChoices.map((m, index) => (
+                <MenuItem key={index} value={m}>
+                  {m}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
       </AppBar>
 
