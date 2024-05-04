@@ -27,7 +27,10 @@ const RootLayout = () => {
   const handleSignIn = async () => {
     navigate("/signin");
   };
-  const languageChoices: string[] = ["sv", "en"];
+  const languageChoices: [string, string][] = [
+    ["https://i.imgur.com/t7SbmDF.png", "sv"],
+    ["https://i.imgur.com/pDGraHD.png", "en"],
+  ];
   const handleLanguageChoice = (newLanguage: string) => {
     setLanguage(newLanguage);
   };
@@ -98,7 +101,7 @@ const RootLayout = () => {
                   }}
                 >
                   <Typography sx={{ fontSize: isMobile ? 14 : 15 }}>
-                    {activeTeam.name}
+                    Mitt Team
                   </Typography>
                 </Button>
               </div>
@@ -126,16 +129,32 @@ const RootLayout = () => {
               </Button>{" "}
             </div>
           )}
-          <FormControl fullWidth>
+          <FormControl sx={{ "& .MuiOutlinedInput-root": { border: "none" } }}>
             <Select
+              sx={{
+                boxShadow: "none",
+                ".MuiOutlinedInput-notchedOutline": { border: 0 },
+                "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    border: 0,
+                  },
+              }}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={language}
               onChange={(event) => handleLanguageChoice(event.target.value)}
             >
               {languageChoices.map((m, index) => (
-                <MenuItem key={index} value={m}>
-                  {m}
+                <MenuItem key={index} value={m[1]}>
+                  <img
+                    src={m[0]}
+                    alt={`Flag for ${m[1]}`}
+                    style={{
+                      marginRight: "2px",
+                      width: "20px",
+                      height: "15px",
+                    }}
+                  />
                 </MenuItem>
               ))}
             </Select>

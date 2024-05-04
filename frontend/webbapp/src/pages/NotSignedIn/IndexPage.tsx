@@ -60,7 +60,7 @@ const IndexPage = () => {
             size="large"
             fullWidth
             style={{
-              margin: isMobile ? "30px" : "20px",
+              margin: isMobile ? "30px" : "40px",
               backgroundColor: "#FF6B6B",
               color: "white",
             }}
@@ -83,8 +83,12 @@ const IndexPage = () => {
         <section
           style={{
             textAlign: "center",
-            marginTop: "40px",
+            marginTop: "10px",
             color: "#FFF",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignContent: "space-between",
           }}
         >
           <Typography variant={isMobile ? "h5" : "h4"} gutterBottom>
@@ -98,18 +102,7 @@ const IndexPage = () => {
             }}
           >
             <div>
-              <Typography variant="h6" gutterBottom>
-                <FormattedMessage id="index4_title" />
-              </Typography>
-              <Typography
-                variant={isMobile ? "subtitle2" : "body1"}
-                gutterBottom
-              >
-                <FormattedMessage id="index4_sub" />
-              </Typography>
-            </div>
-            <div>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h5" gutterBottom>
                 <FormattedMessage id="index5_title" />
               </Typography>
               <Typography
@@ -121,7 +114,18 @@ const IndexPage = () => {
               </Typography>
             </div>
             <div>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h5" gutterBottom>
+                <FormattedMessage id="index4_title" />
+              </Typography>
+              <Typography
+                variant={isMobile ? "subtitle2" : "body1"}
+                gutterBottom
+              >
+                <FormattedMessage id="index4_sub" />
+              </Typography>
+            </div>
+            <div>
+              <Typography variant="h5" gutterBottom>
                 <FormattedMessage id="index6_title" />
               </Typography>
               <Typography
