@@ -19,5 +19,23 @@
     "signIn4_password_label": "Password",
     "signIn5_button_signIn": "Sign in",   
     "signIn6_link_forgotP": "Forgot password?",   
-    "signIn7_create": "Create account"
+    "signIn7_create": "Create account",   
+    "createAccount1_password_error": "Password do not match",
+    
+"createAccount2_password_error": "Password must be at least 6 characters long",
+"createAccount3_phone_error": "Please enter a valid phone number",
+"createAccount4_email_error": "Please enter a valid email",
+"createAccount5_age_error": "You must be at least 16 years old to create an account",
+"createAccount6_field_error": "All fields must be filled in",
+
+"firsname_label": "First name",
+"lastname_label": "Last name",
+"email_label": "Email",
+"phonenumber_label": "Phone number",
+"password_label": "Password",
+"confirm_password_label": "Confirm password",
+"gender_label": "Gender",
+"age_label": "Age",
+
+"choose_avatar": "Choose an avatar"  
 }
