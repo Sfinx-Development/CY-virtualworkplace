@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using api;
 using core;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -94,7 +89,6 @@ namespace Controllers
 
             return loggedInUser;
         }
-
 
         [Authorize]
         [HttpPut]

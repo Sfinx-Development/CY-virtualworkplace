@@ -1,5 +1,4 @@
 using core;
-using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -114,7 +113,7 @@ namespace Controllers
         {
             try
             {
-               var loggedInUser = await GetLoggedInUserAsync();
+                var loggedInUser = await GetLoggedInUserAsync();
 
                 await _meetingService.DeleteMeetingAndOccasions(id, loggedInUser.Id);
 
