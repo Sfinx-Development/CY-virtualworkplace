@@ -124,16 +124,24 @@ public class ProjectUpdateService : IProjectUpdateService
         try
         {
             //villkor?
-            var projectUpdate = await _projectUpdateRepository.GetByIdAsync(id);
-            return new OutgoingUpdateDTO(
-                projectUpdate.Id,
-                projectUpdate.Title,
-                projectUpdate.ProjectId,
-                projectUpdate.DateCreated,
-                projectUpdate.Version
-            );
+            var projectUpdate = await _projectUpdateRepository.GetByIdAsync(id) ?? null;
+
+            if (projectUpdate == null)
+            {
+                return null;
+            }
+            else
+            {
+                return new OutgoingUpdateDTO(
+                    projectUpdate.Id,
+                    projectUpdate.Title,
+                    projectUpdate.ProjectId,
+                    projectUpdate.DateCreated,
+                    projectUpdate.Version
+                );
+            }
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             throw new(e.Message);
         }

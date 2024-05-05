@@ -17,6 +17,8 @@ public class Project
     public string TeamId { get; set; }
     public Team Team { get; set; }
 
+    public Project() { }
+
     public Project(
         string id,
         string title,
