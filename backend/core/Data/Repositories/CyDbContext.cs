@@ -10,8 +10,8 @@ public class CyDbContext : DbContext
     public DbSet<Meeting> Meetings { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<MeetingOccasion> MeetingOccasions { get; set; }
-    public DbSet<HealthCheck> HealthChecks { get; set; }
-    public DbSet<ProfileHealthCheck> ProfileHealthChecks { get; set; }
+    public DbSet<Survey> Surveys { get; set; }
+    public DbSet<ProfileToSurvey> ProfileToSurveys { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Conversation> Conversations { get; set; }
     public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
@@ -55,9 +55,9 @@ public class CyDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<MeetingOccasion>().HasOne(mo => mo.Meeting);
-        modelBuilder.Entity<HealthCheck>().HasOne(h => h.Team);
-        modelBuilder.Entity<ProfileHealthCheck>().HasOne(ph => ph.Profile);
-        modelBuilder.Entity<ProfileHealthCheck>().HasOne(ph => ph.HealthCheck);
+        modelBuilder.Entity<Survey>().HasOne(h => h.Team);
+        modelBuilder.Entity<ProfileToSurvey>().HasOne(ph => ph.Profile);
+        modelBuilder.Entity<ProfileToSurvey>().HasOne(ph => ph.Survey);
         modelBuilder.Entity<Todo>().HasOne(t => t.Team);
         modelBuilder.Entity<Profile>().HasOne(p => p.User).WithMany(u => u.Profiles);
         modelBuilder.Entity<Profile>().HasOne(p => p.Team).WithMany(t => t.Profiles);

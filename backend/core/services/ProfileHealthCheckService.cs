@@ -2,16 +2,16 @@ using Interfaces;
 
 namespace core;
 
-public class ProfileHealthCheckService : IProfileHealthCheckService
+public class ProfileHealthCheckService : IProfileSurveyService
 {
-    private readonly IProfileHealthCheckRepository _profileHealthCheckRepository;
-    private readonly IHealthCheckRepository _healthCheckRepository;
+    private readonly IProfileSurveyRepository _profileHealthCheckRepository;
+    private readonly ISurveyRepository _healthCheckRepository;
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
 
     public ProfileHealthCheckService(
-        IProfileHealthCheckRepository profileHealthCheckRepository,
-        IHealthCheckRepository healthCheckRepository,
+        IProfileSurveyRepository profileHealthCheckRepository,
+        ISurveyRepository healthCheckRepository,
         IProfileRepository profileRepository,
         ITeamRepository teamRepository
     )
@@ -46,7 +46,7 @@ public class ProfileHealthCheckService : IProfileHealthCheckService
             {
                 throw new Exception("Healtcheck endtime has passed.");
             }
-            ProfileHealthCheck profileHealthCheck =
+            ProfileToSurvey profileHealthCheck =
                 new(
                     Utils.GenerateRandomId(),
                     incomingHealthCheck.Date.AddHours(1),
@@ -132,7 +132,6 @@ public class ProfileHealthCheckService : IProfileHealthCheckService
         }
     }
 
-
     public async Task<IEnumerable<ProfileHealthCheckDTO>> GetAllByProfileId(
         string profileId,
         User loggedInUser
@@ -172,6 +171,7 @@ public class ProfileHealthCheckService : IProfileHealthCheckService
             throw new Exception(e.Message);
         }
     }
+
     public async Task<ProfileHealthCheckDTO> GetByIdAsync(string id)
     {
         try
@@ -209,7 +209,7 @@ public class ProfileHealthCheckService : IProfileHealthCheckService
             {
                 throw new Exception("Only owner of result can update.");
             }
-            var profileHCToUpdate = new ProfileHealthCheck()
+            var profileHCToUpdate = new ProfileToSurvey()
             {
                 Id = profileHealthCheck.Id,
                 Date = existingProfileHC.Date,

@@ -6,7 +6,7 @@ using Moq;
 using Moq.Protected;
 using Xunit;
 
-public class HealthCheckServiceTests
+public class SurveyServiceTests
 {
     [Fact]
     public async Task CreateHealthCheck_ShouldNotWork_IfStartTimeNotInFuture()

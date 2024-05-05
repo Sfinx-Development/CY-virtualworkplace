@@ -3,18 +3,18 @@ using Interfaces;
 
 namespace core;
 
-public class HealthCheckService : IHealthCheckService
+public class HealthCheckService : ISurveyService
 {
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
-    private readonly IHealthCheckRepository _healthCheckRepository;
-    private readonly IProfileHealthCheckRepository _profileHealthCheckRepository;
+    private readonly ISurveyRepository _healthCheckRepository;
+    private readonly IProfileSurveyRepository _profileHealthCheckRepository;
 
     public HealthCheckService(
         IProfileRepository profileRepository,
-        IHealthCheckRepository healthCheckRepository,
+        ISurveyRepository healthCheckRepository,
         ITeamRepository teamRepository,
-        IProfileHealthCheckRepository profileHealthCheckRepository
+        IProfileSurveyRepository profileHealthCheckRepository
     )
     {
         _profileRepository = profileRepository;

@@ -1,27 +1,23 @@
-using System;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using api;
 using core;
-using core.Migrations;
-using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class HealthCheckController : ControllerBase
+    public class ProfileSurveyController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly IHealthCheckService _healthCheckService;
+        private readonly IProfileSurveyService _profileSurveyService;
 
-        public HealthCheckController(JwtService jwtService, IHealthCheckService healthCheckService)
+        public ProfileSurveyController(
+            JwtService jwtService,
+            IProfileSurveyService profileSurveyService
+        )
         {
             _jwtService = jwtService;
-            _healthCheckService = healthCheckService;
+            _profileSurveyService = profileSurveyService;
         }
 
         private async Task<User> GetLoggedInUserAsync()
@@ -45,22 +41,24 @@ namespace Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<HealthCheck>> Post([FromBody] HealthCheckDTO healthCheck)
+        public async Task<ActionResult<ProfileSurveyDTO>> Post(
+            [FromBody] ProfileSurveyDTO profileSurvey
+        )
         {
             try
             {
                 var loggedInUser = await GetLoggedInUserAsync();
 
-                var healthCheckCreated = await _healthCheckService.CreateHealthCheckAsync(
-                    healthCheck,
+                var profileHCCreated = await _profileSurveyService.CreateAsync(
+                    profileSurvey,
                     loggedInUser
                 );
 
-                if (healthCheckCreated == null)
+                if (profileHCCreated == null)
                 {
-                    return BadRequest("Failed to create healthcheck.");
+                    return BadRequest("Failed to create profile health check.");
                 }
-                return Ok(healthCheckCreated);
+                return profileHCCreated;
             }
             catch (Exception e)
             {
@@ -76,9 +74,9 @@ namespace Controllers
             {
                 var loggedInUser = await GetLoggedInUserAsync();
 
-                await _healthCheckService.DeleteById(id, loggedInUser);
+                await _profileSurveyService.DeleteByIdAsync(id, loggedInUser);
 
-                return NoContent();
+                return Ok("Successfully deleted Survey.");
             }
             catch (Exception e)
             {
@@ -88,17 +86,19 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<HealthCheck>> Update([FromBody] HealthCheckDTO healthCheck)
+        public async Task<ActionResult<ProfileSurveyDTO>> Update(
+            [FromBody] ProfileSurveyDTO profileSurvey
+        )
         {
             try
             {
                 var loggedInUser = await GetLoggedInUserAsync();
 
-                HealthCheck updatedHealthCheck = await _healthCheckService.UpdateHealthCheck(
-                    healthCheck,
+                ProfileSurveyDTO updatedProfileSurvey = await _profileSurveyService.UpdateAsync(
+                    profileSurvey,
                     loggedInUser
                 );
-                return Ok(updatedHealthCheck);
+                return Ok(updatedProfileSurvey);
             }
             catch (Exception e)
             {
@@ -106,27 +106,40 @@ namespace Controllers
             }
         }
 
-        //hämta alla by teamet på profilid samt som gäller för nutiden
-        [HttpGet("{profileid}")]
+        [HttpGet("byid/{surveyid}")]
         [Authorize]
-        public async Task<ActionResult<List<HealthCheckDTO>>> Get(string profileId)
+        public async Task<ActionResult<List<ProfileSurveyDTO>>> Get(string surveyId)
         {
             try
             {
                 var loggedInUser = await GetLoggedInUserAsync();
 
-                var healthChecks = await _healthCheckService.GetByTeam(profileId, loggedInUser);
+                var profileSurveys = await _profileSurveyService.GetAllBySurvey(
+                    surveyId,
+                    loggedInUser
+                );
 
-                var healthCheckDTOs = new List<HealthCheckDTO>();
+                return Ok(profileSurveys);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
 
-                healthCheckDTOs = healthChecks
-                    .Select(
-                        h => new HealthCheckDTO(h.Id, h.TeamId, h.Question, h.StartTime, h.EndTime)
-                    )
-                    .OrderBy(h => h.StartTime)
-                    .ToList();
+        [HttpGet("byprofile/{profileid}")]
+        [Authorize]
+        public async Task<ActionResult<List<ProfileSurveyDTO>>> GetByProfile(string profileId)
+        {
+            try
+            {
+                var loggedInUser = await GetLoggedInUserAsync();
+                var profileSurveys = await _profileSurveyService.GetAllByProfileId(
+                    profileId,
+                    loggedInUser
+                );
 
-                return Ok(healthCheckDTOs);
+                return Ok(profileSurveys);
             }
             catch (Exception e)
             {
