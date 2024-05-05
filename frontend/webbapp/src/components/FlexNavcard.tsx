@@ -12,7 +12,7 @@ import { isMobile } from "../../globalConstants";
 
 interface NavCardProps {
   backgroundColor?: string;
-  navigationPage: string;
+  navigationPage?: string;
   title?: string;
   icon?: React.ReactNode;
   imageUrl?: string;
@@ -22,6 +22,14 @@ interface NavCardProps {
 export default function FlexNavcard(props: NavCardProps) {
   const navigate = useNavigate();
 
+  const handleClick = () => {
+    if (props.onClick) {
+      props.onClick();
+    } else if (props.navigationPage) {
+      navigate(props.navigationPage);
+    }
+  };
+
   return (
     <Card
       sx={{
@@ -29,13 +37,10 @@ export default function FlexNavcard(props: NavCardProps) {
         flex: 1,
         backgroundColor: "white",
         borderColor: props.backgroundColor,
+        maxHeight: 90,
       }}
     >
-      <CardActionArea
-        onClick={() => {
-          props.onClick ? props.onClick() : navigate(props.navigationPage);
-        }}
-      >
+      <CardActionArea onClick={handleClick}>
         {props.imageUrl && (
           <CardMedia
             component="img"
