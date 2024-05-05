@@ -53,7 +53,10 @@ const Navigation = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === "/chooseteam") {
+    if (
+      location.pathname === "/chooseteam" ||
+      location.pathname === "/signin"
+    ) {
       console.log("choose team");
       dispatch(resetActiveProile());
       dispatch(resetActiveTeam());

@@ -19,6 +19,7 @@ const RootLayout = () => {
   const user = useAppSelector((state) => state.userSlice.user);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const { language, setLanguage } = useLanguageContext();
+
   const handleSignOut = async () => {
     await dispatch(logOutUserAsync()).then(() => {
       navigate("/signin");
@@ -100,7 +101,7 @@ const RootLayout = () => {
                     padding: 1,
                   }}
                 >
-                  <Typography sx={{ fontSize: isMobile ? 14 : 15 }}>
+                  <Typography sx={{ fontSize: isMobile ? 13 : 15 }}>
                     Mitt Team
                   </Typography>
                 </Button>

@@ -1,8 +1,8 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-import PieChartIcon from "@mui/icons-material/PieChart";
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -69,6 +69,21 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const now = new Date();
   const navigate = useNavigate();
 
+  const [showMeetingDropdown, setShowMeetingDropdown] = useState(false);
+  const [showProjectDropdown, setShowProjectDropdown] = useState(false);
+
+  const handleMeetingDropdownToggle = () => {
+    setShowMeetingDropdown(!showMeetingDropdown);
+  };
+
+  const handleProjectDropdownToggle = () => {
+    setShowProjectDropdown(!showProjectDropdown);
+  };
+  const handleDropdownOptionClick = (option: string) => {
+    setShowMeetingDropdown(false);
+    setShowProjectDropdown(false);
+    navigate(option);
+  };
   const ongoingMeeting = occasions
     ? occasions.find((occasion: MeetingOccasionNoDate) => {
         const startDate = new Date(occasion.date);
@@ -216,73 +231,101 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             mt: isMobile ? 0 : 2,
           }}
         >
-          <FlexNavcard
-            backgroundColor={meetingRoomColor}
-            navigationPage="createMeeting"
-            title="Nytt möte"
-            icon={
-              <img
-                src="https://i.imgur.com/HRZXZA9.png"
-                alt="project management icon"
-                style={{
-                  width: isMobile ? 30 : 40,
-                  height: isMobile ? 30 : 40,
-                }}
-              />
-            }
-          />
+          <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
+            <FlexNavcard
+              backgroundColor={meetingRoomColor}
+              title="Möten"
+              icon={
+                <img
+                  src="https://i.imgur.com/HRZXZA9.png"
+                  alt="project management icon"
+                  style={{
+                    width: isMobile ? 30 : 40,
+                    height: isMobile ? 30 : 40,
+                  }}
+                />
+              }
+              onClick={handleMeetingDropdownToggle}
+            />
+            {showMeetingDropdown && (
+              <div
+                className="dropdown-menu"
+                style={{ display: "flex", flex: 1, flexDirection: "column" }}
+              >
+                <Button
+                  variant="contained"
+                  onClick={() => handleDropdownOptionClick("createmeeting")}
+                  sx={{ color: "black", backgroundColor: "#F8F8F8" }}
+                >
+                  Nytt möte
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => handleDropdownOptionClick("meetinginteam")}
+                  sx={{ color: "black", backgroundColor: "#F8F8F8" }}
+                >
+                  Alla möten
+                </Button>
+              </div>
+            )}
+          </div>
+          <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
+            <FlexNavcard
+              backgroundColor={meetingRoomColor}
+              navigationPage="createproject"
+              title="Projekt"
+              icon={
+                <img
+                  src="https://i.imgur.com/GvdAMWN.png"
+                  alt="project management icon"
+                  style={{ width: 40, height: 40 }}
+                />
+              }
+              onClick={handleProjectDropdownToggle}
+            />
+            {showProjectDropdown && (
+              <div
+                className="dropdown-menu"
+                style={{ display: "flex", flex: 1, flexDirection: "column" }}
+              >
+                <Button
+                  variant="contained"
+                  onClick={() => handleDropdownOptionClick("createproject")}
+                  sx={{ color: "black", backgroundColor: "#F8F8F8" }}
+                >
+                  Nytt projekt
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => handleDropdownOptionClick("")}
+                  sx={{ color: "black", backgroundColor: "#F8F8F8" }}
+                >
+                  Alla projekt
+                </Button>
+              </div>
+            )}
+          </div>
 
-          <FlexNavcard
-            backgroundColor={meetingRoomColor}
-            navigationPage="meetinginteam"
-            title="Alla möten"
-            icon={
-              <img
-                src="https://i.imgur.com/HeztEpU.png"
-                alt="project management icon"
-                style={{ width: 40, height: 40 }}
-              />
-            }
-          />
-
-          <FlexNavcard
-            backgroundColor={meetingRoomColor}
-            navigationPage="createproject"
-            title="Nytt projekt"
-            icon={
-              <img
-                src="https://i.imgur.com/GvdAMWN.png"
-                alt="project management icon"
-                style={{ width: 40, height: 40 }}
-              />
-            }
-          />
-
-          <FlexNavcard
-            backgroundColor={meetingRoomColor}
-            navigationPage=""
-            title="Alla projekt"
-            icon={
-              <img
-                src="https://i.imgur.com/HeztEpU.png"
-                alt="project management icon"
-                style={{ width: 40, height: 40 }}
-              />
-            }
-          />
           <FlexNavcard
             backgroundColor={meetingRoomColor}
             navigationPage="healthcheck"
             title="Statistik"
-            icon={<PieChartIcon sx={{ fontSize: isMobile ? 30 : 40 }} />}
+            icon={
+              <img
+                src="https://i.imgur.com/XrvQ6nN.png"
+                alt="pie chart icon"
+                style={{ width: 40, height: 40 }}
+              />
+            }
           />
+
           <FlexNavcard
             backgroundColor={meetingRoomColor}
             navigationPage="settings"
             title="Inställningar"
             icon={
               <img
-                src="      https://i.imgur.com/6YGqDBk.png"
+                src="https://i.imgur.com/U8AEeOy.png"
                 alt="project management icon"
                 style={{ width: 40, height: 40 }}
               />
