@@ -56,7 +56,7 @@ namespace Controllers
 
                 if (profileHCCreated == null)
                 {
-                    return BadRequest("Failed to create profile health check.");
+                    return BadRequest("Failed to create profile survey.");
                 }
                 return profileHCCreated;
             }

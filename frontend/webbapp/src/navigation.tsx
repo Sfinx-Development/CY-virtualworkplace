@@ -4,7 +4,7 @@ import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import CreateComment from "./pages/AfterChosenTeam/CreateComment";
-import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
+import CreateSurvey from "./pages/AfterChosenTeam/CreateSurvey";
 import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
@@ -13,11 +13,11 @@ import TestWave from "./pages/AfterChosenTeam/TestWave";
 import UpdateComments from "./pages/AfterChosenTeam/UpdateComments";
 import CreateMeeting from "./pages/MeetingRoom/CreateMeetingPage";
 import CreateProject from "./pages/MeetingRoom/CreateProject";
-import HealthCheckHub from "./pages/MeetingRoom/HealthCheckPage";
 import MeetingInTeamsPage from "./pages/MeetingRoom/MeetingInTeam";
 import { MeetingRoom } from "./pages/MeetingRoom/MeetingRoomPage";
 import Projects from "./pages/MeetingRoom/Projects";
 import SettingsPage from "./pages/MeetingRoom/SettingsPage";
+import HealthCheckHub from "./pages/MeetingRoom/SurveyPage";
 import CalendarPage from "./pages/Menu/CalendarPage";
 import ChatRoom from "./pages/Menu/ChatRoomPage";
 import Menu from "./pages/Menu/MenuPage";
@@ -101,7 +101,7 @@ const Navigation = () => {
             <Route path="" element={<Notifications />} />
             <Route path="information" element={<ProfileInformation />} />
           </Route>
-          <Route path="createhealthcheck" element={<CreateHealthCheck />} />
+          <Route path="createsurvey" element={<CreateSurvey />} />
           <Route path="chatroom" element={<ChatRoom />} />
           <Route path="invitetomeeting" element={<InviteToMeeting />} />
           <Route path="/" element={<IndexPage />} />

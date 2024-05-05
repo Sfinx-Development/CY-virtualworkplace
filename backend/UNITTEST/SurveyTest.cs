@@ -9,26 +9,26 @@ using Xunit;
 public class SurveyServiceTests
 {
     [Fact]
-    public async Task CreateHealthCheck_ShouldNotWork_IfStartTimeNotInFuture()
+    public async Task CreateSurvey_ShouldNotWork_IfStartTimeNotInFuture()
     {
         // Arrange
 
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var teamRepositoryMock = new Mock<ITeamRepository>();
-        var healthCheckRepositoryMock = new Mock<IHealthCheckRepository>();
-        var profileHealthCheckRepositoryMock = new Mock<IProfileHealthCheckRepository>();
+        var surveyRepositoryMock = new Mock<ISurveyRepository>();
+        var profileSurveyRepositoryMock = new Mock<IProfileSurveyRepository>();
 
-        var healthCheckService = new HealthCheckService(
+        var surveyService = new SurveyService(
             profileRepositoryMock.Object,
-            healthCheckRepositoryMock.Object,
+            surveyRepositoryMock.Object,
             teamRepositoryMock.Object,
-            profileHealthCheckRepositoryMock.Object
+            profileSurveyRepositoryMock.Object
         );
 
         var now = DateTime.UtcNow;
         var yesterday = now.AddDays(-1);
 
-        var healthCheckDTO = new HealthCheckDTO
+        var surveyDTO = new SurveyDTO
         {
             Id = "123",
             Question = "En fråga?",
@@ -53,31 +53,31 @@ public class SurveyServiceTests
             .ReturnsAsync(profile);
 
         await Assert.ThrowsAsync<Exception>(
-            () => healthCheckService.CreateHealthCheckAsync(healthCheckDTO, loggedInUser)
+            () => surveyService.CreateSurveyAsync(surveyDTO, loggedInUser)
         );
     }
 
     [Fact]
-    public async Task DeleteHealthCheck_ShouldRemove_AllProfileHealthCheck_WithHealthCheckId()
+    public async Task DeleteSurvey_ShouldRemove_AllProfileSurvey_WithSurveyId()
     {
         // Arrange
 
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var teamRepositoryMock = new Mock<ITeamRepository>();
-        var healthCheckRepositoryMock = new Mock<IHealthCheckRepository>();
-        var profileHealthCheckRepositoryMock = new Mock<IProfileHealthCheckRepository>();
+        var surveyRepositoryMock = new Mock<ISurveyRepository>();
+        var profileSurveyRepositoryMock = new Mock<IProfileSurveyRepository>();
 
-        var healthCheckService = new HealthCheckService(
+        var surveyService = new SurveyService(
             profileRepositoryMock.Object,
-            healthCheckRepositoryMock.Object,
+            surveyRepositoryMock.Object,
             teamRepositoryMock.Object,
-            profileHealthCheckRepositoryMock.Object
+            profileSurveyRepositoryMock.Object
         );
 
         var tomorrow = DateTime.UtcNow.AddDays(1);
         var nextWeek = tomorrow.AddDays(7);
 
-        var healthCheck = new HealthCheck
+        var survey = new Survey
         {
             Id = "123",
             Question = "En fråga?",
@@ -96,25 +96,25 @@ public class SurveyServiceTests
             UserId = "userId123"
         };
 
-        var listOfProfileHC = new List<ProfileHealthCheck>();
-        var profileHealthCheck = new ProfileHealthCheck() { Id = "PHC123", HealthCheckId = "123" };
-        listOfProfileHC.Add(profileHealthCheck);
+        var listOfProfileHC = new List<ProfileSurvey>();
+        var profileSurvey = new ProfileSurvey() { Id = "PHC123", SurveyId = "123" };
+        listOfProfileHC.Add(profileSurvey);
 
-        healthCheckRepositoryMock
+        surveyRepositoryMock
             .Setup(repo => repo.GetByIdAsync(It.IsAny<string>()))
-            .ReturnsAsync(healthCheck);
+            .ReturnsAsync(survey);
 
         profileRepositoryMock
             .Setup(repo => repo.GetByUserAndTeamIdAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(profile);
 
-        profileHealthCheckRepositoryMock
-            .Setup(repo => repo.GetAllByHealthCheck(healthCheck.Id))
+        profileSurveyRepositoryMock
+            .Setup(repo => repo.GetAllBySurvey(survey.Id))
             .ReturnsAsync(listOfProfileHC);
 
-        await healthCheckService.DeleteById(healthCheck.Id, loggedInUser);
+        await surveyService.DeleteById(survey.Id, loggedInUser);
 
-        profileHealthCheckRepositoryMock.Verify(
+        profileSurveyRepositoryMock.Verify(
             repo => repo.DeleteByIdAsync(It.IsAny<string>()),
             Times.Exactly(1)
         );

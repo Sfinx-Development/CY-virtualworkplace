@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 
 namespace core;
@@ -30,10 +29,10 @@ public class ProfileSurveyRepository : IProfileSurveyRepository
     {
         try
         {
-            var foundProfileHealthCheck = await _cyDbContext.ProfileToSurveys.FindAsync(id);
-            if (foundProfileHealthCheck != null)
+            var foundProfileSurvey = await _cyDbContext.ProfileToSurveys.FindAsync(id);
+            if (foundProfileSurvey != null)
             {
-                _cyDbContext.ProfileToSurveys.Remove(foundProfileHealthCheck);
+                _cyDbContext.ProfileToSurveys.Remove(foundProfileSurvey);
                 await _cyDbContext.SaveChangesAsync();
             }
         }

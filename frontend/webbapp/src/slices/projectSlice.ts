@@ -24,7 +24,6 @@ import {
   FetchGetProjectUpdates,
   FetchGetTeamProjects,
 } from "../api/project";
-import { CreateHealthCheckAsync } from "./healthcheck";
 
 export interface ProjectState {
   projects: ProjectNoDate[] | undefined;
@@ -474,9 +473,6 @@ const projectSlice = createSlice({
           }
           state.error = null;
         }
-      })
-      .addCase(CreateHealthCheckAsync.rejected, (state) => {
-        state.error = "Något gick fel.";
       })
       .addCase(GetTeamProjectsAsync.fulfilled, (state, action) => {
         if (action.payload) {

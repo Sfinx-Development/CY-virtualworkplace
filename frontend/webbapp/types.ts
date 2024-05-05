@@ -88,7 +88,7 @@ export interface CreateMeetingDTO {
   teamId?: string;
 }
 
-export interface HealthCheck {
+export interface Survey {
   id: string;
   teamId: string;
   question: string;
@@ -96,13 +96,13 @@ export interface HealthCheck {
   endTime: Date;
 }
 
-export interface ProfileHealthCheck {
+export interface ProfileToSurvey {
   id: string;
   date: Date;
   rating: number;
   isAnonymous: boolean;
   profileId: string;
-  healthCheckId: string;
+  surveyId: string;
 }
 
 export interface Meeting {
