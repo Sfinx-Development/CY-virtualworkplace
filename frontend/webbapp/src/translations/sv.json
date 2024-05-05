@@ -10,5 +10,13 @@
     "index6_title": "Enkel användning",
     "index6_sub": "Intuitivt gränssnitt för alla användare.",
     "index7": "Redan en användare?",
-    "index_button_signin": "Logga in här"
+    "index_button_signin": "Logga in här",
+
+    "signIn1_coocie_text": "Denna webbplats använder tredjepartscookies för att förbättra din upplevelse. Godkänn användning av tredjepartscookies för att fortsätta. För Iphone: Avmarkera 'Spåra inte mellan webbplatser' och 'Blockera alla cookies' i inställningar - Safari.",
+    "signIn2_button_cookieOk": "Ok",
+    "signIn3-inlog": "Inloggning misslyckades",
+    "signIn4_password_label": "Lösenord",
+    "signIn5_button_signIn": "Logga in",
+    "signIn6_link_forgotP": "Glömt lösenord?",
+    "signIn7_create": "Skapa konto"
 }

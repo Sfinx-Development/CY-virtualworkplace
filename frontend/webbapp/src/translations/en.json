@@ -10,5 +10,14 @@
     "index6_title": "Easy to use",
     "index6_sub": "Intuitive interface for all users.",
     "index7": "Already a user?",
-    "index_button_signin": "Sign in here"
+    "index_button_signin": "Sign in here",
+
+ 
+    "signIn1": "This website uses third-party cookies to enhance your experience. Please accept the use of third-party cookies to continue. For iPhone: Uncheck 'Prevent cross-site tracking' and 'Block all cookies' in Safari settings.",
+    "signIn2_button_cookieOk": "Ok",
+    "signIn3-inlog": "Login failed",
+    "signIn4_password_label": "Password",
+    "signIn5_button_signIn": "Sign in",   
+    "signIn6_link_forgotP": "Forgot password?",   
+    "signIn7_create": "Create account"
 }
