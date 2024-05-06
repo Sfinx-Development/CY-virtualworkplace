@@ -21,6 +21,7 @@ public class CyDbContext : DbContext
     public DbSet<UpdateComment> UpdateComments { get; set; }
     public DbSet<ProjectFile> ProjectFiles { get; set; }
     public DbSet<TeamRequest> TeamRequests { get; set; }
+    public DbSet<OwnerRequest> OwnerRequests { get; set; }
 
     public CyDbContext() { }
 
