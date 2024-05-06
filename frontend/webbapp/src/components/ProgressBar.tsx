@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
@@ -8,14 +9,16 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../globalConstants";
-import { ProjectNoDate, ProjectUpdateNoDate } from "../../types";
+import { Project, ProjectNoDate, ProjectUpdateNoDate } from "../../types";
 import {
   DeleteProjectAsync,
+  EditProjectAsync,
   GetProjectUpdatesAsync,
   setActiveProject,
   setActiveUpdate,
@@ -34,9 +37,7 @@ interface UpdateDatesWithId {
 const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  // const projectUpdates = useAppSelector(
-  //   (state) => state.projectSlice.activeProjectUpdates
-  // );
+
   const [updates, setUpdates] = useState<ProjectUpdateNoDate[] | undefined>(
     undefined
   );
@@ -47,7 +48,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   const [daysSinceStart, setDaysSinceStart] = useState<number>(0);
   const [totalDays, setTotalDays] = useState<number>(0);
   const [fillerWidths, setFillerWidths] = useState<number[]>();
-  const [openTodoPopup, setOpenTodoPopup] = useState(false);
+  const [openDeletePopUp, setOpenDeletePopUp] = useState(false);
+  const [openEditPopUp, setOpenEditPopUp] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedEndDate, setEditedEndDate] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,6 +75,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
 
     return () => {};
   }, []);
+
+  const handleSetEditMode = () => {
+    setEditedTitle(project.title);
+    setEditedEndDate(project.endDate.toString());
+    setOpenEditPopUp(true);
+  };
 
   useEffect(() => {
     if (updates) {
@@ -141,6 +151,17 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
   const handleDeleteProject = (id: string) => {
     dispatch(DeleteProjectAsync(id));
   };
+  const handleEditProject = async () => {
+    const editedProject: Project = {
+      ...project,
+      dateCreated: new Date(project.dateCreated),
+      title: editedTitle,
+      endDate: new Date(editedEndDate),
+    };
+    console.log("projektet : ", editedProject);
+    await dispatch(EditProjectAsync(editedProject));
+    setOpenEditPopUp(false);
+  };
 
   const handleNavigateToUpdateEvents = (projectUpdateId: string) => {
     const update = updates?.find((p) => p.id == projectUpdateId);
@@ -152,7 +173,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
 
   return (
     <div style={{ width: "100%", marginTop: isMobile ? 2 : 10 }}>
-      <Dialog open={openTodoPopup} onClose={() => setOpenTodoPopup(false)}>
+      <Dialog open={openDeletePopUp} onClose={() => setOpenDeletePopUp(false)}>
         <DialogTitle>Ta bort</DialogTitle>
         <DialogContent dividers>
           <Typography>
@@ -163,13 +184,48 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
           </IconButton>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+          <Button onClick={() => setOpenDeletePopUp(false)}>Stäng</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openEditPopUp}
+        onClose={() => setOpenEditPopUp(false)}
+        sx={{ display: "flex", flexDirection: "column" }}
+      >
+        <DialogTitle>Redigera</DialogTitle>
+        <DialogContent dividers>
+          <Typography>
+            Flytta fram projektets mål-datum eller uppdatera titel
+          </Typography>
+          <TextField
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+            type="text"
+            fullWidth
+            variant="outlined"
+          />
+          <TextField
+            label="Date"
+            type="datetime-local"
+            value={editedEndDate}
+            onChange={(e) => setEditedEndDate(e.target.value)}
+            variant="outlined"
+            sx={{ width: "250px", marginTop: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <IconButton onClick={() => handleEditProject()}>
+            <Typography>Spara</Typography>
+          </IconButton>
+          <Button onClick={() => setOpenEditPopUp(false)}>Stäng</Button>
         </DialogActions>
       </Dialog>
       <Box display="flex" flexDirection="row" justifyContent={"space-between"}>
         <div style={{ display: "flex", flexDirection: "row" }}>
-          {" "}
-          <IconButton onClick={() => setOpenTodoPopup(true)}>
+          <IconButton onClick={() => handleSetEditMode()} sx={{ paddingX: 0 }}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => setOpenDeletePopUp(true)}>
             <DeleteIcon />
           </IconButton>
           <Typography variant="h6">{project.title}</Typography>
