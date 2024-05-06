@@ -1,7 +1,7 @@
 namespace core;
 
 //detta är som en survey med en fråga per gång
-public class HealthCheck
+public class Survey
 {
     public string Id { get; set; }
     public Team Team { get; set; }
@@ -10,15 +10,9 @@ public class HealthCheck
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
 
-    public HealthCheck() { }
+    public Survey() { }
 
-    public HealthCheck(
-        string id,
-        string teamId,
-        string question,
-        DateTime startTime,
-        DateTime endTime
-    )
+    public Survey(string id, string teamId, string question, DateTime startTime, DateTime endTime)
     {
         Id = id;
         TeamId = teamId;

@@ -2,13 +2,13 @@ import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { HealthCheck } from "../../../types";
-import { CreateHealthCheckAsync } from "../../slices/healthcheck";
+import { Survey } from "../../../types";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { CreateSurveyAsync } from "../../slices/survey";
 import { getActiveTeam } from "../../slices/teamSlice";
 
-export default function CreateHealthCheck() {
+export default function CreateSurvey() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ export default function CreateHealthCheck() {
       const parsedStartDate = new Date(startDate);
       const parsedEndDate = new Date(endDate);
 
-      const healthcheck: HealthCheck = {
+      const survey: Survey = {
         id: "undefined",
         question: question,
         startTime: parsedStartDate,
@@ -44,7 +44,7 @@ export default function CreateHealthCheck() {
         teamId: activeTeam?.id,
       };
 
-      await dispatch(CreateHealthCheckAsync(healthcheck));
+      await dispatch(CreateSurveyAsync(survey));
 
       setEndDate("");
       setStartDate("");

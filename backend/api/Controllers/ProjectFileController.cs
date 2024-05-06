@@ -1,9 +1,6 @@
 using core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-
 namespace Controllers
 {
     [ApiController]

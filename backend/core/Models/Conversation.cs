@@ -9,4 +9,10 @@ public class Conversation
     public List<Message> Messages { get; set; }
 
     public Conversation() { }
+    public Conversation(string id, DateTime dateCreated, string creatorId, string teamId) {
+        Id = id;
+        DateCreated = dateCreated;
+        CreatorId = creatorId;
+        TeamId = teamId;
+     }
 }

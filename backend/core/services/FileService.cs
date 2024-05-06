@@ -139,7 +139,7 @@ public class FileService : IFileService
                         )
                 )
                 .ToList();
-            return filesDTOs;
+            return filesDTOs ?? new List<ProjectFileDTO>();
         }
         catch (Exception e)
         {

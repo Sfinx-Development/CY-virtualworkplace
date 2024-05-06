@@ -48,7 +48,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<ProfileHealthCheckDTO>> Post(
+        public async Task<ActionResult<ProfileSurveyDTO>> Post(
             [FromBody] UpdateCommentDTO updateCommentDTO
         )
         {
@@ -97,7 +97,7 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<ProfileHealthCheckDTO>> Update(
+        public async Task<ActionResult<ProfileSurveyDTO>> Update(
             [FromBody] UpdateCommentDTO updateCommentDTO
         )
         {

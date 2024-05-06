@@ -13,4 +13,15 @@ public class Team
     public List<Profile> Profiles = new();
 
     public Team() { }
+    public Team(string id, string name, string code, DateTime createdAt, string teamRole, string imageurl, bool isOpenForJoining, bool allCanCreateMeetings) 
+    {
+        Id = id;
+        Name = name;
+        Code = code;
+        CreatedAt = createdAt;
+        TeamRole = teamRole;
+        ImageUrl = imageurl;
+        IsOpenForJoining = isOpenForJoining;
+        AllCanCreateMeetings = allCanCreateMeetings;
+     }
 }
