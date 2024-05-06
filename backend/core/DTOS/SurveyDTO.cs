@@ -1,7 +1,6 @@
 namespace core;
 
-//detta är som en survey med en fråga per gång
-public class HealthCheckDTO
+public class SurveyDTO
 {
     public string Id { get; set; }
     public string TeamId { get; set; }
@@ -9,9 +8,9 @@ public class HealthCheckDTO
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
 
-    public HealthCheckDTO() { }
+    public SurveyDTO() { }
 
-    public HealthCheckDTO(
+    public SurveyDTO(
         string id,
         string teamId,
         string question,

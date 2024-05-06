@@ -1,8 +1,3 @@
-// //edasat ägare kan lägga upp process/uppdatering
-// process klass:
-// updatenumber : vilken uppdatering det är, 1.2.3...
-// projektID
-
 namespace core;
 
 public class ProjectUpdate

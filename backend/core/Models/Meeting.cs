@@ -15,4 +15,27 @@ public class Meeting
     public string? TeamId { get; set; }
 
     public Meeting() { }
+
+    public Meeting(
+        string id,
+        string name,
+        string description,
+        DateTime date,
+        int minutes,
+        string ownerId,
+        bool isRepeating,
+        int interval,
+        string teamId
+    )
+    {
+        Id = id;
+        Name = name;
+        Description = description;
+        Date = date;
+        Minutes = minutes;
+        OwnerId = ownerId;
+        IsRepeating = isRepeating;
+        Interval = interval;
+        TeamId = teamId;
+    }
 }

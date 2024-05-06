@@ -1,13 +1,13 @@
 import { AnyAction, Reducer, combineReducers } from "@reduxjs/toolkit";
 import { AuthState, authReducer } from "./authSlice";
-import { HealthCheckState, healthcheckReducer } from "./healthcheck";
 import { MeetingState, meetingReducer } from "./meetingSlice";
 import { MessageState, messageReducer } from "./messageSlice";
 import { ProfileState, profileReducer } from "./profileSlice";
 import { ProjectState, projectReducer } from "./projectSlice";
+import { SurveyState, surveyReducer } from "./survey";
 import { TeamState, teamReducer } from "./teamSlice";
-import { UserState, userReducer } from "./userSlice";
 import { TodoState, todoReducer } from "./todoSlice";
+import { UserState, userReducer } from "./userSlice";
 
 export interface RootState {
   profileSlice: ProfileState;
@@ -16,7 +16,7 @@ export interface RootState {
   teamSlice: TeamState;
   meetingSlice: MeetingState;
   messageSlice: MessageState;
-  healthcheckSlice: HealthCheckState;
+  surveySlice: SurveyState;
   projectSlice: ProjectState;
   todoSlice: TodoState;
 }
@@ -28,7 +28,7 @@ const appReducer = combineReducers({
   teamSlice: teamReducer,
   meetingSlice: meetingReducer,
   messageSlice: messageReducer,
-  healthcheckSlice: healthcheckReducer,
+  surveySlice: surveyReducer,
   projectSlice: projectReducer,
   todoSlice: todoReducer,
 });

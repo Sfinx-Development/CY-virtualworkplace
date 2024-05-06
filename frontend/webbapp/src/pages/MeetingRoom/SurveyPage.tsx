@@ -19,14 +19,14 @@ import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { HealthCheck } from "../../../types";
-import {
-  DeleteHealthCheckAsync,
-  GetProfileHealthChecksAsync,
-  GetTeamHealthChecksAsync,
-} from "../../slices/healthcheck";
+import { Survey } from "../../../types";
 import { getActiveProfile } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
+import {
+  DeleteSurveyAsync,
+  GetProfileSurveysAsync,
+  GetTeamSurveysAsync,
+} from "../../slices/survey";
 
 interface PieValueType {
   id: string;
@@ -42,15 +42,15 @@ type RatingsCount = {
   [rating: string]: number;
 };
 
-export default function HealthCheckPage() {
+export default function SurveyPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [openTodoPopup, setOpenTodoPopup] = useState(false);
   const [idToDelete, setIdToDelete] = useState("");
 
-  const handleDeleteHealthCheck = () => {
+  const handleDeleteSurvey = () => {
     if (idToDelete) {
-      dispatch(DeleteHealthCheckAsync(idToDelete));
+      dispatch(DeleteSurveyAsync(idToDelete));
       setOpenTodoPopup(false);
     }
   };
@@ -58,15 +58,13 @@ export default function HealthCheckPage() {
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-  const healthchecks = useAppSelector(
-    (state) => state.healthcheckSlice.healthchecks
-  );
-  const profileHealthChecks = useAppSelector(
-    (state) => state.healthcheckSlice.profileHealthChecks
+  const surveys = useAppSelector((state) => state.surveySlice.surveys);
+  const profileSurveys = useAppSelector(
+    (state) => state.surveySlice.profileSurveys
   );
   const [chartData, setChartData] = useState<ChartData>({ data: [] });
-  const [currentHealthCheck, setCurrentHealthCheck] =
-    useState<HealthCheck | null>();
+  const [currentSurvey, setCurrentSurvey] =
+    useState<Survey | null>();
 
   useEffect(() => {
     dispatch(getActiveProfile());
@@ -74,14 +72,14 @@ export default function HealthCheckPage() {
 
   useEffect(() => {
     if (activeProfile) {
-      dispatch(GetTeamHealthChecksAsync(activeProfile.id));
+      dispatch(GetTeamSurveysAsync(activeProfile.id));
     }
   }, [activeProfile]);
 
   useEffect(() => {
-    if (profileHealthChecks) {
+    if (profileSurveys) {
       const ratingsCount: RatingsCount = {};
-      profileHealthChecks.forEach((check) => {
+      profileSurveys.forEach((check) => {
         ratingsCount[check.rating] = (ratingsCount[check.rating] || 0) + 1;
       });
 
@@ -95,7 +93,7 @@ export default function HealthCheckPage() {
 
       setChartData({ data: seriesData });
     }
-  }, [profileHealthChecks]);
+  }, [profileSurveys]);
 
   const getLabel = (rating: number) => {
     if (rating == 1) {
@@ -117,14 +115,14 @@ export default function HealthCheckPage() {
   >();
 
   useEffect(() => {
-    if (healthchecks) {
-      const newMenuChoices: [string, string][] = healthchecks.map((p) => [
+    if (surveys) {
+      const newMenuChoices: [string, string][] = surveys.map((p) => [
         p.question,
         p.id,
       ]);
       setMenuChoices(newMenuChoices);
     }
-  }, [healthchecks]);
+  }, [surveys]);
 
   const [activeMenuChoice, setActiveMenuChoice] = useState("Alla frågor");
 
@@ -133,16 +131,14 @@ export default function HealthCheckPage() {
     setOpenTodoPopup(true);
   };
 
-  const loadStatistic = async (check: HealthCheck) => {
-    setCurrentHealthCheck(check);
-    await dispatch(GetProfileHealthChecksAsync(check.id));
+  const loadStatistic = async (check: Survey) => {
+    setCurrentSurvey(check);
+    await dispatch(GetProfileSurveysAsync(check.id));
   };
 
-  const handleChooseFromMenu = (healthcheckQuestion: string) => {
-    setActiveMenuChoice(healthcheckQuestion);
-    const selectedQuestion = healthchecks?.find(
-      (h) => h.question == healthcheckQuestion
-    );
+  const handleChooseFromMenu = (surveyQuestion: string) => {
+    setActiveMenuChoice(surveyQuestion);
+    const selectedQuestion = surveys?.find((h) => h.question == surveyQuestion);
     if (selectedQuestion) {
       loadStatistic(selectedQuestion);
     }
@@ -185,7 +181,7 @@ export default function HealthCheckPage() {
                   permanent?
                 </Typography>
 
-                <IconButton onClick={() => handleDeleteHealthCheck()}>
+                <IconButton onClick={() => handleDeleteSurvey()}>
                   <Typography>Ta bort</Typography>
                 </IconButton>
               </DialogContent>
@@ -195,7 +191,7 @@ export default function HealthCheckPage() {
             </Dialog>
             {chartData.data.length > 0 ? (
               <Container>
-                {currentHealthCheck != null ? (
+                {currentSurvey != null ? (
                   <Box
                     display={"flex"}
                     flexDirection={"column"}
@@ -204,14 +200,14 @@ export default function HealthCheckPage() {
                   >
                     <Typography>
                       {new Date(
-                        currentHealthCheck.startTime
+                        currentSurvey.startTime
                       ).toLocaleDateString("sv-SE")}{" "}
                       -{" "}
-                      {new Date(currentHealthCheck.endTime).toLocaleDateString(
+                      {new Date(currentSurvey.endTime).toLocaleDateString(
                         "sv-SE"
                       )}
                     </Typography>
-                    <Typography>{currentHealthCheck.question}</Typography>
+                    <Typography>{currentSurvey.question}</Typography>
                   </Box>
                 ) : null}
                 <PieChart
@@ -239,7 +235,7 @@ export default function HealthCheckPage() {
           <Box sx={{ maxWidth: isMobile ? "100%" : 300, textAlign: "center" }}>
             <Button
               variant="contained"
-              onClick={() => navigate("/createhealthcheck")}
+              onClick={() => navigate("/createsurvey")}
               sx={{
                 marginTop: 2,
                 marginBottom: 2,
@@ -267,8 +263,8 @@ export default function HealthCheckPage() {
               </FormControl>
             ) : (
               <>
-                {Array.isArray(healthchecks) &&
-                  healthchecks.map((check) => (
+                {Array.isArray(surveys) &&
+                  surveys.map((check) => (
                     <Button
                       key={check.id}
                       variant="contained"
