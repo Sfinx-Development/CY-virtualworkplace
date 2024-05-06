@@ -37,6 +37,7 @@ import { resetActiveProile } from "./slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "./slices/store";
 import { resetActiveTeam } from "./slices/teamSlice";
 import { getUserAsync } from "./slices/userSlice";
+import Guide from "./pages/StartSignedIn/Guide";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
@@ -86,6 +87,7 @@ const Navigation = () => {
           <Route path="createteam" element={<CreateTeam />} />
           <Route path="jointeam" element={<JoinTeam />} />
           <Route path="usersettings" element={<UserSettings />} />
+          <Route path="guide" element={<Guide />} />
           {/* //DENNA EJ SOM EN VANLIG NAVIGATION - BARA KÖRAS? GÅR DET */}
           <Route path="enterhouse" element={<EnterHouse />} />
           <Route path="menu" element={<Menu />} />

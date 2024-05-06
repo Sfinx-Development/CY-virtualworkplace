@@ -26,6 +26,7 @@ import {
   GetMyTeamsAsync,
   setActiveTeam,
 } from "../../slices/teamSlice";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const ChooseTeam = () => {
   //const user = useAppSelector((state) => state.userSlice.user);
@@ -62,6 +63,15 @@ const ChooseTeam = () => {
         justifyContent: "space-between",
       }}
     >
+      <IconButton
+        sx={{ position: "absolute", top: 10, right: 215, color: "grey" }}
+        onClick={() => {
+          navigate("/guide");
+        }}
+      >
+        <HelpOutlineIcon />
+      </IconButton>
+
       <IconButton
         sx={{ position: "absolute", top: 10, right: 180 }}
         onClick={() => {
