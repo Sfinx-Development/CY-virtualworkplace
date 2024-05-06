@@ -9,6 +9,8 @@ public class ProjectUpdate
     public DateTime DateCreated { get; set; }
     public int Version { get; set; }
 
+    public ProjectUpdate() { }
+
     public ProjectUpdate(
         string id,
         string title,
