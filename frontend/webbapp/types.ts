@@ -71,13 +71,10 @@ export interface TeamRequest {
 
 export interface OwnerRequest {
   id: string;
-  userId: string;
-  teamId: string;
+  profileId: string;
   teamName: string;
   isOwner: boolean;
   isConfirmed: boolean;
-  role: string;
-  userFullName: string;
 }
 
 export interface CreateTeamDTO {
