@@ -1,4 +1,5 @@
 using core;
+using core.Migrations;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,9 +38,33 @@ namespace Controllers
             return loggedInUser;
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<OwnerRequestDTO>> Post(
+            [FromBody] OwnerRequestDTO ownerRequestDTO
+        )
+        {
+            try
+            {
+                var loggedInUser = await GetLoggedInUserAsync();
+
+                var requestCreated = await _requestService.CreateAsync(
+                    ownerRequestDTO,
+                    loggedInUser
+                );
+
+                return Ok(requestCreated);
+                //return CreatedAtAction(nameof(GetById), new { id = teamCreated.Id }, teamCreated);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
+
         [HttpGet("{profileid}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<OwnerRequest>>> GetMyOwnerRequests(
+        public async Task<ActionResult<IEnumerable<OwnerRequestDTO>>> GetMyOwnerRequests(
             string profileId
         )
         {
@@ -57,7 +82,7 @@ namespace Controllers
 
         [HttpGet("{teamid}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<OwnerRequest>>> GetUnconfirmedRequests(
+        public async Task<ActionResult<IEnumerable<OwnerRequestDTO>>> GetUnconfirmedRequests(
             string teamId
         )
         {
@@ -78,7 +103,7 @@ namespace Controllers
 
         [HttpGet("id")]
         [Authorize]
-        public async Task<ActionResult<OwnerRequest>> GetById(string id)
+        public async Task<ActionResult<OwnerRequestDTO>> GetById(string id)
         {
             try
             {
@@ -94,7 +119,7 @@ namespace Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<OwnerRequest>>> UpdateOwnerRequest(
+        public async Task<ActionResult<IEnumerable<OwnerRequestDTO>>> UpdateOwnerRequest(
             [FromBody] OwnerRequest teamRequest
         )
         {
@@ -115,7 +140,7 @@ namespace Controllers
 
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<OwnerRequest>>> DeleteOwnerRequest(string id)
+        public async Task<ActionResult> DeleteOwnerRequest(string id)
         {
             try
             {
