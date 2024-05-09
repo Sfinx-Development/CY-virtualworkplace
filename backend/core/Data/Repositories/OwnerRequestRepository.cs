@@ -12,14 +12,14 @@ public class OwnerRequestRepository : IOwnerRequestRepository
         _cyDbContext = cyDbContext;
     }
 
-    public async Task<List<OwnerRequest>> GetRequestsByProfileIdAsync(string profileId)
+    public async Task<OwnerRequest> GetRequestByProfileIdAsync(string profileId)
     {
         try
         {
-            var ownerRequests = await _cyDbContext
+            var ownerRequest = await _cyDbContext
                 .OwnerRequests.Where(t => t.ProfileId == profileId)
-                .ToListAsync();
-            return ownerRequests ?? new List<OwnerRequest>();
+                .FirstOrDefaultAsync();
+            return ownerRequest ?? null;
         }
         catch (Exception e)
         {

@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { OwnerRequest, Profile, ProfileHubDTO } from "../../types";
 import {
   FetchCreateOwnerRequest,
-  FetchGetMyOwnerRequests,
+  FetchGetMyOwnerRequest,
 } from "../api/ownerrequest";
 import {
   FetchDeleteProfile,
@@ -19,7 +19,8 @@ export interface ProfileState {
   activeProfile: Profile | undefined;
   error: string | null;
   onlineProfiles: ProfileHubDTO[];
-  profileOwnerRequests: OwnerRequest[] | undefined;
+  allOwnerRequests: OwnerRequest[] | undefined;
+  myOwnerRequest: OwnerRequest | undefined;
 }
 
 const saveProfilesToLocalStorage = (profiles: Profile[]) => {
@@ -47,16 +48,17 @@ export const initialState: ProfileState = {
   activeProfile: loadActiveProfileFromLocalStorage(),
   error: null,
   onlineProfiles: [],
-  profileOwnerRequests: [],
+  allOwnerRequests: [],
+  myOwnerRequest: undefined,
 };
 
-export const GetMyOwnerRequestsAsync = createAsyncThunk<
-  OwnerRequest[],
-  void,
+export const GetMyOwnerRequestAsync = createAsyncThunk<
+  OwnerRequest,
+  string,
   { rejectValue: string }
->("profile/getmyownerrequests", async (_, thunkAPI) => {
+>("profile/getmyownerrequest", async (profileId, thunkAPI) => {
   try {
-    const myOwnerRequests = await FetchGetMyOwnerRequests();
+    const myOwnerRequests = await FetchGetMyOwnerRequest(profileId);
     if (myOwnerRequests) {
       return myOwnerRequests;
     } else {
@@ -352,6 +354,15 @@ const profileSlice = createSlice({
             (profile) => profile.profileId !== action.payload
           );
         }
+      })
+      .addCase(GetMyOwnerRequestAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.myOwnerRequest = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetMyOwnerRequestAsync.rejected, (state) => {
+        state.myOwnerRequest = undefined;
       });
   },
 });

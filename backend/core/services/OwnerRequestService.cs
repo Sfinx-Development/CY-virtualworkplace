@@ -31,12 +31,12 @@ public class OwnerRequestService : IOwnerRequestService
         _teamRepository = teamRepository;
     }
 
-    public async Task<List<OwnerRequestDTO>> GetOwnerRequestsByProfileId(string profileId)
+    public async Task<OwnerRequestDTO> GetOwnerRequestByProfileId(string profileId)
     {
         try
         {
-            var requests = await _requestRepository.GetRequestsByProfileIdAsync(profileId);
-            return requests.Select(r => StaticMapper.MapToOwnerRequestDTO(r)).ToList();
+            var request = await _requestRepository.GetRequestByProfileIdAsync(profileId);
+            return StaticMapper.MapToOwnerRequestDTO(request);
         }
         catch (Exception e)
         {
@@ -147,6 +147,13 @@ public class OwnerRequestService : IOwnerRequestService
             if (profileToAdd.IsOwner)
             {
                 throw new Exception("Member is already an owner.");
+            }
+            var existingRequest = await _requestRepository.GetRequestByProfileIdAsync(
+                profileToAdd.Id
+            );
+            if (existingRequest != null)
+            {
+                throw new Exception("Request already exists.");
             }
             var requestToAdd = StaticMapper.MapToOwnerRequest(request, profileToAdd);
             requestToAdd.Id = Utils.GenerateRandomId();

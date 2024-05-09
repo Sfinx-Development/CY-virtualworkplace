@@ -4,7 +4,7 @@ namespace Interfaces
 {
     public interface IOwnerRequestRepository
     {
-        Task<List<OwnerRequest>> GetRequestsByProfileIdAsync(string profileId);
+        Task<OwnerRequest> GetRequestByProfileIdAsync(string profileId);
         Task<OwnerRequest> UpdateOwnerRequestAsync(OwnerRequest request);
         Task DeleteRequest(string id);
         Task<OwnerRequest> GetRequestByIdAsync(string requestId);

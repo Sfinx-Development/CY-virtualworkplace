@@ -3,9 +3,11 @@ import { getApiUrl } from "./config";
 
 const apiUrl = getApiUrl() + "/ownerrequest";
 
-export const FetchGetMyOwnerRequests = async (): Promise<OwnerRequest[]> => {
+export const FetchGetMyOwnerRequest = async (
+  profileId: string
+): Promise<OwnerRequest> => {
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`${apiUrl}/byprofile/${profileId}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -18,7 +20,7 @@ export const FetchGetMyOwnerRequests = async (): Promise<OwnerRequest[]> => {
       throw new Error("Något gick fel vid hämtning av ownerrequests");
     }
 
-    const data = responseBody.$values as OwnerRequest[];
+    const data = responseBody as OwnerRequest;
     return data;
   } catch (error) {
     console.error(error);

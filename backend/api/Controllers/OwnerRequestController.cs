@@ -62,17 +62,15 @@ namespace Controllers
             }
         }
 
-        [HttpGet("{profileid}")]
+        [HttpGet("byprofile/{profileId}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<OwnerRequestDTO>>> GetMyOwnerRequests(
-            string profileId
-        )
+        public async Task<ActionResult<OwnerRequestDTO>> GetMyOwnerRequest(string profileId)
         {
             try
             {
                 var loggedInUser = await GetLoggedInUserAsync();
-                var teamRequests = await _requestService.GetOwnerRequestsByProfileId(profileId);
-                return Ok(teamRequests);
+                var teamRequest = await _requestService.GetOwnerRequestByProfileId(profileId);
+                return Ok(teamRequest);
             }
             catch (Exception e)
             {
