@@ -36,7 +36,14 @@ public class OwnerRequestService : IOwnerRequestService
         try
         {
             var request = await _requestRepository.GetRequestByProfileIdAsync(profileId);
-            return StaticMapper.MapToOwnerRequestDTO(request);
+            if (request.IsConfirmed)
+            {
+                return null;
+            }
+            else
+            {
+                return StaticMapper.MapToOwnerRequestDTO(request);
+            }
         }
         catch (Exception e)
         {

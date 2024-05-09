@@ -4,6 +4,7 @@ import { OwnerRequest, Profile, ProfileHubDTO } from "../../types";
 import {
   FetchCreateOwnerRequest,
   FetchGetMyOwnerRequest,
+  FetchUpdateOwnerRequest,
 } from "../api/ownerrequest";
 import {
   FetchDeleteProfile,
@@ -69,6 +70,27 @@ export const GetMyOwnerRequestAsync = createAsyncThunk<
   } catch (error) {
     return thunkAPI.rejectWithValue(
       "Ett fel inträffade vid hämtning av förfrågningar."
+    );
+  }
+});
+
+export const UpdateOwnerRequestAsync = createAsyncThunk<
+  OwnerRequest,
+  OwnerRequest,
+  { rejectValue: string }
+>("profile/updateownerrequest", async (ownerRequest, thunkAPI) => {
+  try {
+    const updatedRequest = await FetchUpdateOwnerRequest(ownerRequest);
+    if (updatedRequest) {
+      return updatedRequest;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid uppdatering av ägareförfrågan."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid uppdatering av ägareförfrågan."
     );
   }
 });
@@ -362,6 +384,15 @@ const profileSlice = createSlice({
         }
       })
       .addCase(GetMyOwnerRequestAsync.rejected, (state) => {
+        state.myOwnerRequest = undefined;
+      })
+      .addCase(UpdateOwnerRequestAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.myOwnerRequest = undefined;
+          state.error = null;
+        }
+      })
+      .addCase(UpdateOwnerRequestAsync.rejected, (state) => {
         state.myOwnerRequest = undefined;
       });
   },

@@ -9,10 +9,18 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Survey, ProfileToSurvey, TeamRequest } from "../../../../types";
+import {
+  OwnerRequest,
+  ProfileToSurvey,
+  Survey,
+  TeamRequest,
+} from "../../../../types";
 import { RadioGroupRating } from "../../../components/StyledRating";
 import {
   GetMyOwnerRequestAsync,
+  GetMyProfileAsync,
+  GetTeamProfiles,
+  UpdateOwnerRequestAsync,
   getActiveProfile,
 } from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
@@ -114,6 +122,30 @@ export default function Notifications() {
     }
   }, [surveys, profilesurveys, ratingShow]);
 
+  const handleApproveOwnerRequest = async () => {
+    if (ownerRequest && activeTeam) {
+      const updatedOwnerRequest: OwnerRequest = {
+        ...ownerRequest,
+        isConfirmed: true,
+        isOwner: true,
+      };
+      await dispatch(UpdateOwnerRequestAsync(updatedOwnerRequest));
+      await dispatch(GetMyProfileAsync(activeTeam.id));
+      await dispatch(GetTeamProfiles(activeTeam.id));
+    }
+  };
+
+  const handleRejectOwnerRequest = () => {
+    if (ownerRequest) {
+      const updatedOwnerRequest: OwnerRequest = {
+        ...ownerRequest,
+        isConfirmed: true,
+        isOwner: false,
+      };
+      dispatch(UpdateOwnerRequestAsync(updatedOwnerRequest));
+    }
+  };
+
   return (
     <Container sx={{ display: "flex", height: "100%", gap: 4, padding: 4 }}>
       <Card sx={{ flex: 1, padding: 2 }}>
@@ -208,14 +240,14 @@ export default function Notifications() {
             </Typography>
             <Button
               onClick={() => {
-                console.log("JA");
+                handleApproveOwnerRequest();
               }}
             >
               Godkänn
             </Button>
             <Button
               onClick={() => {
-                console.log("NEJ");
+                handleRejectOwnerRequest();
               }}
             >
               Neka
