@@ -9,6 +9,7 @@ import { createTheme, SimplePaletteColorOptions } from "@mui/material/styles";
 
 interface CustomPalette {
   primary: SimplePaletteColorOptions;
+  calendar: SimplePaletteColorOptions;
   office: SimplePaletteColorOptions;
   room: SimplePaletteColorOptions;
   chat: SimplePaletteColorOptions;
@@ -24,16 +25,19 @@ declare module "@mui/material/styles" {
 export const theme1 = createTheme({
   palette: {
     primary: {
-      main: "#FF6B6B",
+      main: "#f15c6f",
     },
     office: {
-      main: "#FCF3CF",
+      main: "#e7b46b",
+    },
+    calendar: {
+      main: "#fff6f2",
     },
     room: {
-      main: "#E2F2FC",
+      main: "#52b0d9",
     },
     chat: {
-      main: "#f3e4fa",
+      main: "#b4838f",
     },
     leave: {
       main: "#F5CBA7",

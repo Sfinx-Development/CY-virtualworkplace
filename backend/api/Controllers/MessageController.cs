@@ -1,12 +1,7 @@
-using System;
-using System.Threading.Tasks;
-using api;
 using core;
 using Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Controllers
 {

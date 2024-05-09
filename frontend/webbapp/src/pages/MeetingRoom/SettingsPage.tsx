@@ -15,7 +15,6 @@ import { getActiveTeam, updateAsync } from "../../slices/teamSlice";
 
 export default function SettingsPage() {
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  // const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const dispatch = useAppDispatch();
 
   // const [newOwner, setNewOwner] = useState<Profile>();

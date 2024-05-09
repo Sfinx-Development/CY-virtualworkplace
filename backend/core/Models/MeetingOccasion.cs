@@ -9,4 +9,10 @@ public class MeetingOccasion
     public string ProfileId { get; set; }
 
     public MeetingOccasion() { }
+    public MeetingOccasion(string id, string meetingId, string profileId) 
+    {
+        Id = id;
+        MeetingId = meetingId;
+        ProfileId = profileId;
+     }
 }

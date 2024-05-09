@@ -39,15 +39,13 @@ public class MessageService : IMessageService
 
             if (conversationParticipant.Profile.UserId == loggedInUserId)
             {
-                var newMessage = new Message
-                {
-                    Id = Utils.GenerateRandomId(),
-                    ConversationParticipantId = conversationParticipant.Id,
-                    Content = incomingMessageDTO.Content,
-                    DateCreated = DateTime.Now,
-                    ConversationId = conversationParticipant.ConversationId
-                };
-
+                var newMessage = new Message(
+                    Utils.GenerateRandomId(),
+                    incomingMessageDTO.Content,
+                    DateTime.Now,
+                    conversationParticipant.Id,
+                    conversationParticipant.ConversationId
+                );
                 return await _messageRepository.CreateAsync(newMessage);
             }
             else

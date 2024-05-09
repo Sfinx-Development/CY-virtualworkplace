@@ -149,8 +149,6 @@ public class TeamServiceTests
                 }
             );
 
-        var deleteTeamDTO = new DeleteTeamDTO { TeamId = team.Id };
-
         Console.WriteLine("Before calling DeleteTeamAndProfiles");
 
         teamRepositoryMock.Verify(repo => repo.DeleteByIdAsync(It.IsAny<string>()), Times.Never); // Teamet ska inte raderas direkt
@@ -161,10 +159,10 @@ public class TeamServiceTests
             .Returns(Task.CompletedTask);
 
         profileRepositoryMock.Verify(repo => repo.DeleteByIdAsync("profileId1"), Times.Never); // Radera specifik profil
-        profileRepositoryMock.Verify(repo => repo.DeleteByIdAsync("profileId2"), Times.Never); // Radera specifik profil
+        profileRepositoryMock.Verify(repo => repo.DeleteByIdAsync("profileId2"), Times.Never);
 
         await Assert.ThrowsAsync<Exception>(
-            () => profileService.DeleteTeamAndProfiles(deleteTeamDTO)
+            () => profileService.DeleteTeamAndProfiles(team.Id, user)
         );
 
         teamRepositoryMock.Verify(repo => repo.DeleteByIdAsync(team.Id), Times.Never);

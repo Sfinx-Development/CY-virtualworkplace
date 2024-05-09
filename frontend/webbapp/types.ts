@@ -28,7 +28,7 @@ export interface User {
   gender: string;
   age: number;
   avatarUrl: string;
-  dateCreated: Date;
+  dateCreated: string;
 }
 
 export interface LogIn {
@@ -69,6 +69,14 @@ export interface TeamRequest {
   userFullName: string;
 }
 
+export interface OwnerRequest {
+  id: string;
+  profileId: string;
+  teamName: string;
+  isOwner: boolean;
+  isConfirmed: boolean;
+}
+
 export interface CreateTeamDTO {
   teamName: string;
   teamRole: string;
@@ -88,7 +96,7 @@ export interface CreateMeetingDTO {
   teamId?: string;
 }
 
-export interface HealthCheck {
+export interface Survey {
   id: string;
   teamId: string;
   question: string;
@@ -96,13 +104,13 @@ export interface HealthCheck {
   endTime: Date;
 }
 
-export interface ProfileHealthCheck {
+export interface ProfileToSurvey {
   id: string;
   date: Date;
   rating: number;
   isAnonymous: boolean;
   profileId: string;
-  healthCheckId: string;
+  surveyId: string;
 }
 
 export interface Meeting {
@@ -254,3 +262,9 @@ export interface FileDTO {
   updateCommentId: string;
   filepath: string;
 }
+
+export type TranslationMessages = {
+  sv: { [key: string]: string };
+  en: { [key: string]: string };
+  [key: string]: { [key: string]: string };
+};

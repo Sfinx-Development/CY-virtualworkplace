@@ -68,32 +68,6 @@ namespace core.Migrations
                     b.ToTable("ConversationParticipants");
                 });
 
-            modelBuilder.Entity("core.HealthCheck", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("TeamId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("HealthChecks");
-                });
-
             modelBuilder.Entity("core.Meeting", b =>
                 {
                     b.Property<string>("Id")
@@ -185,6 +159,32 @@ namespace core.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("core.OwnerRequest", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ProfileId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("TeamName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("OwnerRequests");
+                });
+
             modelBuilder.Entity("core.Profile", b =>
                 {
                     b.Property<string>("Id")
@@ -230,17 +230,13 @@ namespace core.Migrations
                     b.ToTable("Profiles");
                 });
 
-            modelBuilder.Entity("core.ProfileHealthCheck", b =>
+            modelBuilder.Entity("core.ProfileToSurvey", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("HealthCheckId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("IsAnonymous")
                         .HasColumnType("tinyint(1)");
@@ -252,13 +248,17 @@ namespace core.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<string>("SurveyId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
-                    b.HasIndex("HealthCheckId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("ProfileHealthChecks");
+                    b.HasIndex("SurveyId");
+
+                    b.ToTable("ProfileToSurveys");
                 });
 
             modelBuilder.Entity("core.Project", b =>
@@ -343,6 +343,32 @@ namespace core.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectUpdates");
+                });
+
+            modelBuilder.Entity("core.Survey", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("TeamId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("Surveys");
                 });
 
             modelBuilder.Entity("core.Team", b =>
@@ -533,17 +559,6 @@ namespace core.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("core.HealthCheck", b =>
-                {
-                    b.HasOne("core.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("core.MeetingOccasion", b =>
                 {
                     b.HasOne("core.Meeting", "Meeting")
@@ -580,6 +595,17 @@ namespace core.Migrations
                     b.Navigation("ConversationParticipant");
                 });
 
+            modelBuilder.Entity("core.OwnerRequest", b =>
+                {
+                    b.HasOne("core.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+                });
+
             modelBuilder.Entity("core.Profile", b =>
                 {
                     b.HasOne("core.Team", "Team")
@@ -599,23 +625,23 @@ namespace core.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("core.ProfileHealthCheck", b =>
+            modelBuilder.Entity("core.ProfileToSurvey", b =>
                 {
-                    b.HasOne("core.HealthCheck", "HealthCheck")
-                        .WithMany()
-                        .HasForeignKey("HealthCheckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("core.Profile", "Profile")
                         .WithMany()
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("HealthCheck");
+                    b.HasOne("core.Survey", "Survey")
+                        .WithMany()
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Profile");
+
+                    b.Navigation("Survey");
                 });
 
             modelBuilder.Entity("core.Project", b =>
@@ -649,6 +675,17 @@ namespace core.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("core.Survey", b =>
+                {
+                    b.HasOne("core.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("core.Todo", b =>

@@ -10,18 +10,25 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
-  HealthCheck,
-  ProfileHealthCheck,
+  OwnerRequest,
+  ProfileToSurvey,
+  Survey,
   TeamRequest,
 } from "../../../../types";
 import { RadioGroupRating } from "../../../components/StyledRating";
 import {
-  CreateProfileHealthCheckAsync,
-  GetProfileHealthChecksByProfileAsync,
-  GetTeamHealthChecksAsync,
-} from "../../../slices/healthcheck";
-import { getActiveProfile } from "../../../slices/profileSlice";
+  GetMyOwnerRequestAsync,
+  GetMyProfileAsync,
+  GetTeamProfiles,
+  UpdateOwnerRequestAsync,
+  getActiveProfile,
+} from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
+import {
+  CreateProfileSurveyAsync,
+  GetProfileSurveysByProfileAsync,
+  GetTeamSurveysAsync,
+} from "../../../slices/survey";
 import {
   GetAllTeamRequestsAsync,
   getActiveTeam,
@@ -35,33 +42,33 @@ export default function Notifications() {
   );
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const teamRequests = useAppSelector((state) => state.teamSlice.teamRequests);
-
+  const ownerRequest = useAppSelector(
+    (state) => state.profileSlice.myOwnerRequest
+  );
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
   }, []);
 
-  const healthchecks = useAppSelector(
-    (state) => state.healthcheckSlice.healthchecks
+  const surveys = useAppSelector((state) => state.surveySlice.surveys);
+  const profilesurveys = useAppSelector(
+    (state) => state.surveySlice.profileSurveys
   );
-  const profilehealthchecks = useAppSelector(
-    (state) => state.healthcheckSlice.profileHealthChecks
-  );
-  const [activeHealthChecks, setActiveHealthChecks] = useState<HealthCheck[]>();
+  const [activeSurveys, setActiveSurveys] = useState<Survey[]>();
   const [ratingShow, setRatingShow] = useState(false);
-  const [healthCheckId, setHealthcheckId] = useState("");
+  const [surveyId, setSurveyId] = useState("");
 
-  const handleRating = (healthCheckId: string, rating: number | null) => {
+  const handleRating = (surveyId: string, rating: number | null) => {
     if (activeProfile && rating !== null) {
-      const profileHealthcheck: ProfileHealthCheck = {
+      const profileSurvey: ProfileToSurvey = {
         id: "undefined",
         date: new Date(),
         rating: rating,
         isAnonymous: true,
         profileId: activeProfile?.id,
-        healthCheckId: healthCheckId,
+        surveyId: surveyId,
       };
-      dispatch(CreateProfileHealthCheckAsync(profileHealthcheck));
+      dispatch(CreateProfileSurveyAsync(profileSurvey));
     }
     setRatingShow(false);
   };
@@ -86,8 +93,9 @@ export default function Notifications() {
 
   useEffect(() => {
     if (activeProfile) {
-      dispatch(GetTeamHealthChecksAsync(activeProfile.id));
-      dispatch(GetProfileHealthChecksByProfileAsync(activeProfile.id));
+      dispatch(GetTeamSurveysAsync(activeProfile.id));
+      dispatch(GetProfileSurveysByProfileAsync(activeProfile.id));
+      dispatch(GetMyOwnerRequestAsync(activeProfile.id));
     }
   }, [activeProfile]);
 
@@ -98,37 +106,59 @@ export default function Notifications() {
   }, [activeTeam]);
 
   useEffect(() => {
-    if (healthchecks && profilehealthchecks) {
-      const activeHS = healthchecks.filter(
+    if (surveys && profilesurveys) {
+      const activeHS = surveys.filter(
         (c) =>
           new Date(c.endTime) > new Date() && new Date(c.startTime) < new Date()
       );
 
       const filteredActiveHS = activeHS.filter((check) => {
-        return !profilehealthchecks.some(
-          (profileCheck) => profileCheck.healthCheckId === check.id
+        return !profilesurveys.some(
+          (profileCheck) => profileCheck.surveyId === check.id
         );
       });
 
-      setActiveHealthChecks(filteredActiveHS);
+      setActiveSurveys(filteredActiveHS);
     }
-  }, [healthchecks, profilehealthchecks, ratingShow]);
+  }, [surveys, profilesurveys, ratingShow]);
+
+  const handleApproveOwnerRequest = async () => {
+    if (ownerRequest && activeTeam) {
+      const updatedOwnerRequest: OwnerRequest = {
+        ...ownerRequest,
+        isConfirmed: true,
+        isOwner: true,
+      };
+      await dispatch(UpdateOwnerRequestAsync(updatedOwnerRequest));
+      await dispatch(GetMyProfileAsync(activeTeam.id));
+      await dispatch(GetTeamProfiles(activeTeam.id));
+    }
+  };
+
+  const handleRejectOwnerRequest = () => {
+    if (ownerRequest) {
+      const updatedOwnerRequest: OwnerRequest = {
+        ...ownerRequest,
+        isConfirmed: true,
+        isOwner: false,
+      };
+      dispatch(UpdateOwnerRequestAsync(updatedOwnerRequest));
+    }
+  };
 
   return (
     <Container sx={{ display: "flex", height: "100%", gap: 4, padding: 4 }}>
       <Card sx={{ flex: 1, padding: 2 }}>
-        {activeHealthChecks && activeHealthChecks.length > 0 ? (
+        {activeSurveys && activeSurveys.length > 0 ? (
           <Box mt={0.5}>
-            {activeHealthChecks.length > 1 ? (
-              <Typography>
-                Du har fått {activeHealthChecks.length} frågor
-              </Typography>
+            {activeSurveys.length > 1 ? (
+              <Typography>Du har fått {activeSurveys.length} frågor</Typography>
             ) : (
               <Typography>Du har fått 1 fråga</Typography>
             )}
             <List>
-              {activeHealthChecks &&
-                activeHealthChecks.map((check) => (
+              {activeSurveys &&
+                activeSurveys.map((check) => (
                   <ListItem key={check.id}>
                     <ListItemText
                       primary={check.question}
@@ -139,7 +169,7 @@ export default function Notifications() {
                       ).toLocaleString()}`}
                     />
 
-                    {ratingShow && healthCheckId == check.id ? (
+                    {ratingShow && surveyId == check.id ? (
                       <RadioGroupRating
                         onChange={(value) => handleRating(check.id, value)}
                       />
@@ -149,7 +179,7 @@ export default function Notifications() {
                         color="primary"
                         onClick={() => {
                           setRatingShow(true);
-                          setHealthcheckId(check.id);
+                          setSurveyId(check.id);
                         }}
                       >
                         Svara
@@ -198,6 +228,32 @@ export default function Notifications() {
             </List>
           </Box>
         ) : null}
+        {teamRequests?.length == 0 && activeSurveys?.length == 0 ? (
+          <Box mt={0.5}>
+            <Typography>Ingen oläst notifikation</Typography>
+          </Box>
+        ) : null}
+        {ownerRequest && (
+          <Box>
+            <Typography>
+              Du har fått en förfrågan om att bli ägare av teamet
+            </Typography>
+            <Button
+              onClick={() => {
+                handleApproveOwnerRequest();
+              }}
+            >
+              Godkänn
+            </Button>
+            <Button
+              onClick={() => {
+                handleRejectOwnerRequest();
+              }}
+            >
+              Neka
+            </Button>
+          </Box>
+        )}
       </Card>
     </Container>
   );

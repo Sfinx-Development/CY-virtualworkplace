@@ -2,13 +2,13 @@ import { Button, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { HealthCheck } from "../../../types";
-import { CreateHealthCheckAsync } from "../../slices/healthcheck";
+import { Survey } from "../../../types";
 import { GetMyProfileAsync } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { CreateSurveyAsync } from "../../slices/survey";
 import { getActiveTeam } from "../../slices/teamSlice";
 
-export default function ProfileHealthCheck() {
+export default function ProfileSurvey() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -29,14 +29,14 @@ export default function ProfileHealthCheck() {
     }
   }, [activeTeam]);
 
-  const handleCreateMeeting = async () => {
+  const handleCreateSurvey = async () => {
     if (question !== "" && startDate !== "" && endDate !== "" && activeTeam) {
       setFieldError(false);
 
       const parsedStartDate = new Date(startDate);
       const parsedEndDate = new Date(endDate);
 
-      const healthcheck: HealthCheck = {
+      const survey: Survey = {
         id: "undefined",
         question: question,
         startTime: parsedStartDate,
@@ -44,7 +44,7 @@ export default function ProfileHealthCheck() {
         teamId: activeTeam?.id,
       };
 
-      await dispatch(CreateHealthCheckAsync(healthcheck));
+      await dispatch(CreateSurveyAsync(survey));
 
       setEndDate("");
       setStartDate("");
@@ -134,13 +134,11 @@ export default function ProfileHealthCheck() {
 
         <Button
           variant="contained"
-          onClick={handleCreateMeeting}
+          onClick={handleCreateSurvey}
           sx={{ marginTop: 2 }}
         >
           Skapa
         </Button>
-
-        {/* {error && <Typography color="error">{error}</Typography>} */}
       </div>
     </Container>
   );

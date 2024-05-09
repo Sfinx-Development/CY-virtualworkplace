@@ -3,30 +3,27 @@ using Interfaces;
 
 namespace core;
 
-public class HealthCheckService : IHealthCheckService
+public class SurveyService : ISurveyService
 {
     private readonly IProfileRepository _profileRepository;
     private readonly ITeamRepository _teamRepository;
-    private readonly IHealthCheckRepository _healthCheckRepository;
-    private readonly IProfileHealthCheckRepository _profileHealthCheckRepository;
+    private readonly ISurveyRepository _healthCheckRepository;
+    private readonly IProfileSurveyRepository _profileSurveyRepository;
 
-    public HealthCheckService(
+    public SurveyService(
         IProfileRepository profileRepository,
-        IHealthCheckRepository healthCheckRepository,
+        ISurveyRepository healthCheckRepository,
         ITeamRepository teamRepository,
-        IProfileHealthCheckRepository profileHealthCheckRepository
+        IProfileSurveyRepository profileSurveyRepository
     )
     {
         _profileRepository = profileRepository;
         _healthCheckRepository = healthCheckRepository;
         _teamRepository = teamRepository;
-        _profileHealthCheckRepository = profileHealthCheckRepository;
+        _profileSurveyRepository = profileSurveyRepository;
     }
 
-    public async Task<HealthCheck> CreateHealthCheckAsync(
-        HealthCheckDTO healthCheck,
-        User loggedInUser
-    )
+    public async Task<Survey> CreateSurveyAsync(SurveyDTO healthCheck, User loggedInUser)
     {
         try
         {
@@ -41,7 +38,7 @@ public class HealthCheckService : IHealthCheckService
             {
                 throw new Exception("Can not create healthchecks for the past.");
             }
-            HealthCheck newHealthCheck =
+            Survey newSurvey =
                 new(
                     Utils.GenerateRandomId(),
                     healthCheck.TeamId,
@@ -50,11 +47,9 @@ public class HealthCheckService : IHealthCheckService
                     healthCheck.EndTime.AddHours(1)
                 );
 
-            HealthCheck createdHealthCheck = await _healthCheckRepository.CreateAsync(
-                newHealthCheck
-            );
+            Survey createdSurvey = await _healthCheckRepository.CreateAsync(newSurvey);
 
-            return createdHealthCheck;
+            return createdSurvey;
         }
         catch (Exception e)
         {
@@ -62,11 +57,11 @@ public class HealthCheckService : IHealthCheckService
         }
     }
 
-    public async Task<HealthCheck> UpdateHealthCheck(HealthCheckDTO healthCheck, User loggedInUser)
+    public async Task<Survey> UpdateSurvey(SurveyDTO healthCheck, User loggedInUser)
     {
         try
         {
-            var foundHealthCheck =
+            var foundSurvey =
                 await _healthCheckRepository.GetByIdAsync(healthCheck.Id) ?? throw new Exception();
             var profile = await _profileRepository.GetByUserAndTeamIdAsync(
                 loggedInUser.Id,
@@ -78,12 +73,12 @@ public class HealthCheckService : IHealthCheckService
                 throw new Exception("Only owner of team can update healthcheck");
             }
 
-            foundHealthCheck.Question = healthCheck.Question ?? foundHealthCheck.Question;
-            foundHealthCheck.StartTime = healthCheck.StartTime;
-            foundHealthCheck.EndTime = healthCheck.EndTime;
+            foundSurvey.Question = healthCheck.Question ?? foundSurvey.Question;
+            foundSurvey.StartTime = healthCheck.StartTime;
+            foundSurvey.EndTime = healthCheck.EndTime;
 
-            var updatedHealthCheck = await _healthCheckRepository.UpdateAsync(foundHealthCheck);
-            return updatedHealthCheck;
+            var updatedSurvey = await _healthCheckRepository.UpdateAsync(foundSurvey);
+            return updatedSurvey;
         }
         catch (Exception e)
         {
@@ -91,7 +86,7 @@ public class HealthCheckService : IHealthCheckService
         }
     }
 
-    public async Task<HealthCheck> GetHealthCheckBykId(string id)
+    public async Task<Survey> GetSurveyById(string id)
     {
         try
         {
@@ -99,7 +94,7 @@ public class HealthCheckService : IHealthCheckService
 
             if (healthCheck == null)
             {
-                throw new Exception("HealthCheck can't be found");
+                throw new Exception("Survey can't be found");
             }
             else
             {
@@ -112,7 +107,7 @@ public class HealthCheckService : IHealthCheckService
         }
     }
 
-    public async Task<List<HealthCheck>> GetByTeam(string profileId, User loggedInUser)
+    public async Task<List<Survey>> GetByTeam(string profileId, User loggedInUser)
     {
         try
         {
@@ -122,7 +117,8 @@ public class HealthCheckService : IHealthCheckService
                 throw new Exception("Not valid user");
             }
             // var now = new DateTime();
-            var healthChecks = await _healthCheckRepository.GetAllByTeam(profile.TeamId);
+            var healthChecks =
+                await _healthCheckRepository.GetAllByTeam(profile.TeamId) ?? new List<Survey>();
             // var healthChecksValidNow = healthChecks.FindAll(
             //     h => h.StartTime >= now && h.EndTime < now
             // );
@@ -134,30 +130,30 @@ public class HealthCheckService : IHealthCheckService
         }
     }
 
-    // public async Task DeleteHealthCheckAndProfileChecks(string HealthCheckId, string loggedInUserId)
+    // public async Task DeleteSurveyAndProfileChecks(string SurveyId, string loggedInUserId)
     // {
     //     try
     //     {
-    //         var HealthCheck = await _HealthCheckRepository.GetByIdAsync(HealthCheckId);
-    //         var profile = await _profileRepository.GetByIdAsync(HealthCheck.OwnerId);
+    //         var Survey = await _SurveyRepository.GetByIdAsync(SurveyId);
+    //         var profile = await _profileRepository.GetByIdAsync(Survey.OwnerId);
     //         if (profile.UserId == loggedInUserId)
     //         {
-    //             //hämta alla HealthCheckoccasions för mötet och radera dom sen mötet
-    //             var HealthCheckOccasions =
-    //                 await _HealthCheckOccasionRepository.GetAllOccasionsByHealthCheckId(
-    //                     HealthCheck.Id
+    //             //hämta alla Surveyoccasions för mötet och radera dom sen mötet
+    //             var SurveyOccasions =
+    //                 await _SurveyOccasionRepository.GetAllOccasionsBySurveyId(
+    //                     Survey.Id
     //                 );
 
-    //             foreach (var mo in HealthCheckOccasions)
+    //             foreach (var mo in SurveyOccasions)
     //             {
-    //                 await _HealthCheckOccasionRepository.DeleteByIdAsync(mo.Id);
+    //                 await _SurveyOccasionRepository.DeleteByIdAsync(mo.Id);
     //             }
 
-    //             await _HealthCheckRepository.DeleteByIdAsync(HealthCheck.Id);
+    //             await _SurveyRepository.DeleteByIdAsync(Survey.Id);
     //         }
     //         else
     //         {
-    //             throw new Exception("Only owner can delete HealthCheck");
+    //             throw new Exception("Only owner can delete Survey");
     //         }
     //     }
     //     catch (Exception)
@@ -182,12 +178,10 @@ public class HealthCheckService : IHealthCheckService
             }
             //kolla här så den som raderar är ägaren av teamet
             //hämta ut healthcheck sen matcha loggedinuser med ownerns userid
-            var profileHealthChecks = await _profileHealthCheckRepository.GetAllByHealthCheck(
-                healthCheck.Id
-            );
-            foreach (var profileHC in profileHealthChecks)
+            var profileSurveys = await _profileSurveyRepository.GetAllBySurvey(healthCheck.Id);
+            foreach (var profileHC in profileSurveys)
             {
-                await _profileHealthCheckRepository.DeleteByIdAsync(profileHC.Id);
+                await _profileSurveyRepository.DeleteByIdAsync(profileHC.Id);
             }
             await _healthCheckRepository.DeleteByIdAsync(id);
         }

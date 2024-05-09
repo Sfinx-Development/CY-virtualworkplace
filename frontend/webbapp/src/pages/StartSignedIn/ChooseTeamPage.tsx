@@ -2,6 +2,7 @@ import {
   Add as AddIcon,
   ConnectWithoutContact as ConnectWithoutContactIcon,
 } from "@mui/icons-material";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import {
   Box,
   Button,
@@ -11,9 +12,9 @@ import {
   CardMedia,
   Container,
   Grid,
+  IconButton,
   Typography,
 } from "@mui/material";
-
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
@@ -25,6 +26,7 @@ import {
   GetMyTeamsAsync,
   setActiveTeam,
 } from "../../slices/teamSlice";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const ChooseTeam = () => {
   //const user = useAppSelector((state) => state.userSlice.user);
@@ -61,9 +63,26 @@ const ChooseTeam = () => {
         justifyContent: "space-between",
       }}
     >
+      <IconButton
+        sx={{ position: "absolute", top: 10, right: 215, color: "grey" }}
+        onClick={() => {
+          navigate("/guide");
+        }}
+      >
+        <HelpOutlineIcon />
+      </IconButton>
+
+      <IconButton
+        sx={{ position: "absolute", top: 10, right: 180 }}
+        onClick={() => {
+          navigate("/usersettings");
+        }}
+      >
+        <SettingsOutlinedIcon />
+      </IconButton>
       <Box sx={{ marginTop: 3 }}>
         <Grid container spacing={2}>
-          <Grid item xs={10} sm={6}>
+          <Grid item xs={12} sm={6}>
             <Button
               variant="contained"
               color="primary"
@@ -104,8 +123,6 @@ const ChooseTeam = () => {
                       borderRadius: "16px",
                       boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
                       height: "100%",
-
-                      // border: "20px solid white",
                     }}
                   >
                     <Card sx={{ height: "100%", border: "20px solid white" }}>
@@ -116,8 +133,6 @@ const ChooseTeam = () => {
                           <CardMedia
                             component="img"
                             height="280"
-                            // borderRadius="16px"
-                            // border="10px grey white"
                             image={team.imageUrl}
                             alt={team.name}
                           />

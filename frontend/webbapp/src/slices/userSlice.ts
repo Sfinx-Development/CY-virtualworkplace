@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User, UserCreate } from "../../types";
 import { FetchLogOut, FetchSignIn } from "../api/logIn";
-import { FetchCreateUseer, FetchGetUseer } from "../api/user";
+import { FetchCreateUseer, FetchGetUseer, FetchUpdateUser } from "../api/user";
 
 export interface UserState {
   user: User | undefined;
@@ -32,6 +32,25 @@ export const createUserAsync = createAsyncThunk<
   } catch (error) {
     return thunkAPI.rejectWithValue(
       "Det verkar som att denna email redan finns registrerad."
+    );
+  }
+});
+
+export const updateUserAsync = createAsyncThunk<
+  User,
+  User,
+  { rejectValue: string }
+>("user/updateUser", async (user, thunkAPI) => {
+  try {
+    const updatedUser = await FetchUpdateUser(user);
+    if (updatedUser) {
+      return updatedUser;
+    } else {
+      return thunkAPI.rejectWithValue("Något gick fel");
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Något fick fel vid uppdateringen av användare."
     );
   }
 });
@@ -162,6 +181,15 @@ const userSlice = createSlice({
       .addCase(createUserAsync.rejected, (state, action) => {
         state.createAccountError =
           action.payload ?? "Ett oväntat fel inträffade.";
+      })
+      .addCase(updateUserAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(updateUserAsync.rejected, (state, action) => {
+        state.error = action.payload ?? "Ett oväntat fel inträffade.";
       });
   },
 });

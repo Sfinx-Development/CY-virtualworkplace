@@ -2,6 +2,7 @@ import { keyframes } from "@emotion/react";
 import { Button, Container, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
+import { FormattedMessage } from "react-intl";
 
 const IndexPage = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const IndexPage = () => {
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
         color: "#FFF",
-        overflowX: "hidden", // För att hindra horisontell scrollning
+        overflowX: "hidden",
       }}
     >
       <Container
@@ -33,21 +34,25 @@ const IndexPage = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: "40px 20px",
+          padding: isMobile ? "20px 10px" : "40px 20px",
         }}
       >
         <section
           style={{
             textAlign: "center",
-            marginBottom: "40px",
+            marginBottom: isMobile ? "0px" : "40px",
             color: "#FFF",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <Typography variant={isMobile ? "h5" : "h3"} gutterBottom>
-            Revolutionera din kommunikation
+            <FormattedMessage id="index1" />
           </Typography>
+
           <Typography variant="subtitle1" gutterBottom>
-            En plattform för sömlöst samarbete och kommunikation
+            <FormattedMessage id="index2" />
           </Typography>
           <Button
             variant="contained"
@@ -55,13 +60,13 @@ const IndexPage = () => {
             size="large"
             fullWidth
             style={{
-              margin: "20px",
+              margin: isMobile ? "30px" : "40px",
               backgroundColor: "#FF6B6B",
               color: "white",
             }}
             onClick={() => navigate("/createaccount")}
           >
-            Börja nu
+            <FormattedMessage id="index_button_createaccount" />
           </Button>
         </section>
 
@@ -78,12 +83,16 @@ const IndexPage = () => {
         <section
           style={{
             textAlign: "center",
-            marginTop: "40px",
+            marginTop: "10px",
             color: "#FFF",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignContent: "space-between",
           }}
         >
           <Typography variant={isMobile ? "h5" : "h4"} gutterBottom>
-            Varför välja oss?
+            <FormattedMessage id="index3" />
           </Typography>
           <div
             style={{
@@ -93,39 +102,38 @@ const IndexPage = () => {
             }}
           >
             <div>
-              <Typography variant="h6" gutterBottom>
-                 Effektivt samarbete
+              <Typography variant="h5" gutterBottom>
+                <FormattedMessage id="index5_title" />
               </Typography>
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
-               
+                style={{ marginLeft: "5px" }}
               >
-               Arbeta smidigt tillsammans oavsett var ni är.
+                <FormattedMessage id="index5_sub" />
               </Typography>
             </div>
             <div>
-              <Typography variant="h6" gutterBottom>
-               Säker och pålitlig
+              <Typography variant="h5" gutterBottom>
+                <FormattedMessage id="index4_title" />
               </Typography>
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
-                style={{ marginLeft: '5px' }}
               >
-                 Din data är säker och skyddad hos oss.
+                <FormattedMessage id="index4_sub" />
               </Typography>
             </div>
             <div>
-              <Typography variant="h6" gutterBottom>
-                Enkel användning
+              <Typography variant="h5" gutterBottom>
+                <FormattedMessage id="index6_title" />
               </Typography>
               <Typography
                 variant={isMobile ? "subtitle2" : "body1"}
                 gutterBottom
-                style={{ marginLeft: '5px' }}
+                style={{ marginLeft: "5px" }}
               >
-                Intuitivt gränssnitt för alla användare.
+                <FormattedMessage id="index6_sub" />
               </Typography>
             </div>
           </div>
@@ -136,10 +144,13 @@ const IndexPage = () => {
             textAlign: "center",
             marginTop: "40px",
             color: "#FFF",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <Typography variant={isMobile ? "h6" : "h4"} gutterBottom>
-            Redan en användare?
+            <FormattedMessage id="index7" />
           </Typography>
           <Button
             variant="outlined"
@@ -149,7 +160,7 @@ const IndexPage = () => {
             style={{ margin: "20px", borderColor: "#FF6B6B", color: "#FF6B6B" }}
             onClick={() => navigate("/signin")}
           >
-            Logga in här
+            <FormattedMessage id="index_button_signin" />
           </Button>
         </section>
       </Container>

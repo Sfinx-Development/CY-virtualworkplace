@@ -2,23 +2,22 @@
 
 import AgoraRTC, { AgoraRTCProvider, useRTCClient } from "agora-rtc-react";
 import { useEffect, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import CreateComment from "./pages/AfterChosenTeam/CreateComment";
-import CreateHealthCheck from "./pages/AfterChosenTeam/CreateHealthCheck";
+import CreateSurvey from "./pages/AfterChosenTeam/CreateSurvey";
 import CreateUpdate from "./pages/AfterChosenTeam/CreateUpdate";
 import EnterHouse from "./pages/AfterChosenTeam/EnterHousePage";
 import InviteToMeeting from "./pages/AfterChosenTeam/InviteToMeetingPage";
 import { LiveVideo } from "./pages/AfterChosenTeam/LiveForm";
-import OngoingMeeting from "./pages/AfterChosenTeam/OngoingMeeting";
 import TestWave from "./pages/AfterChosenTeam/TestWave";
 import UpdateComments from "./pages/AfterChosenTeam/UpdateComments";
 import CreateMeeting from "./pages/MeetingRoom/CreateMeetingPage";
 import CreateProject from "./pages/MeetingRoom/CreateProject";
-import HealthCheckHub from "./pages/MeetingRoom/HealthCheckPage";
 import MeetingInTeamsPage from "./pages/MeetingRoom/MeetingInTeam";
-import SettingsPage from "./pages/MeetingRoom/SettingsPage";
 import { MeetingRoom } from "./pages/MeetingRoom/MeetingRoomPage";
 import Projects from "./pages/MeetingRoom/Projects";
+import SettingsPage from "./pages/MeetingRoom/SettingsPage";
+import HealthCheckHub from "./pages/MeetingRoom/SurveyPage";
 import CalendarPage from "./pages/Menu/CalendarPage";
 import ChatRoom from "./pages/Menu/ChatRoomPage";
 import Menu from "./pages/Menu/MenuPage";
@@ -33,16 +32,16 @@ import RootLayout from "./pages/RootLayout";
 import ChooseTeam from "./pages/StartSignedIn/ChooseTeamPage";
 import CreateTeam from "./pages/StartSignedIn/CreateTeamPage";
 import JoinTeam from "./pages/StartSignedIn/JoinTeamPage";
+import UserSettings from "./pages/StartSignedIn/UserSettings";
+import { resetActiveProile } from "./slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "./slices/store";
+import { resetActiveTeam } from "./slices/teamSlice";
 import { getUserAsync } from "./slices/userSlice";
+import Guide from "./pages/StartSignedIn/Guide";
 
 const Navigation = () => {
   const [userLoaded, setUserLoaded] = useState(false);
   const user = useAppSelector((state) => state.userSlice.user);
-  // const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
-  // const activeProfile = useAppSelector(
-  //   (state) => state.profileSlice.activeProfile
-  // );
 
   const dispatch = useAppDispatch();
 
@@ -52,6 +51,18 @@ const Navigation = () => {
     });
   }, []);
 
+  const location = useLocation();
+
+  useEffect(() => {
+    if (
+      location.pathname === "/chooseteam" ||
+      location.pathname === "/signin"
+    ) {
+      console.log("choose team");
+      dispatch(resetActiveProile());
+      dispatch(resetActiveTeam());
+    }
+  }, [dispatch, location]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,17 +78,17 @@ const Navigation = () => {
   const handleConnect = () => {
     navigate(`livemeeting`); // on form submit, navigate to new route
   };
+
   return (
     <Routes>
-      {/* <Route
-        path="*"
-        element={user ? null : <Navigate to="/signin" replace />}
-      /> */}
       {user ? (
         <Route element={<RootLayout />}>
           <Route path="chooseteam" element={<ChooseTeam />} />
           <Route path="createteam" element={<CreateTeam />} />
           <Route path="jointeam" element={<JoinTeam />} />
+          <Route path="usersettings" element={<UserSettings />} />
+          <Route path="guide" element={<Guide />} />
+          {/* //DENNA EJ SOM EN VANLIG NAVIGATION - BARA KÖRAS? GÅR DET */}
           <Route path="enterhouse" element={<EnterHouse />} />
           <Route path="menu" element={<Menu />} />
           <Route
@@ -95,14 +106,13 @@ const Navigation = () => {
             <Route path="" element={<Notifications />} />
             <Route path="information" element={<ProfileInformation />} />
           </Route>
-          <Route path="createhealthcheck" element={<CreateHealthCheck />} />
+          <Route path="createsurvey" element={<CreateSurvey />} />
           <Route path="chatroom" element={<ChatRoom />} />
           <Route path="invitetomeeting" element={<InviteToMeeting />} />
           <Route path="/" element={<IndexPage />} />
           <Route path="signin" element={<SignIn />} />
           <Route path="createaccount" element={<CreateAccount />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
-          <Route path="joinmeeting" element={<OngoingMeeting />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="createupdate" element={<CreateUpdate />} />
           <Route path="updateevents" element={<UpdateComments />} />

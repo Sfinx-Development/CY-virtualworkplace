@@ -121,7 +121,7 @@ const todoSlice = createSlice({
     builder
     .addCase(createTeamTodoAsync.fulfilled, (state, action) => {
       if (action.payload) {
-        state.todos = state.todos ?? []; // Ensure state.todos is initialized
+        state.todos = state.todos ?? []; 
         state.todos.push(action.payload);
         state.error = null;
       }
@@ -139,7 +139,44 @@ const todoSlice = createSlice({
       .addCase(createTeamTodoAsync.rejected, (state) => {
         state.todos = undefined;
         state.error = "Något gick fel med skapandet av konto.";
+      })
+      .addCase(EditTodoAsync.fulfilled, (state, action) => {
+        if (state.todos) {
+          const editedTodoIndex = state.todos.findIndex(
+            (todo) => todo.id === action.payload.id
+          );
+          if (editedTodoIndex !== -1) {
+            state.todos[editedTodoIndex] = action.payload;
+          }
+          state.error = null;
+        }
+      })
+      
+      .addCase(EditTodoAsync.rejected, (state, action) => {
+        if (action.payload) {
+          state.error = action.payload;
+        } else {
+          state.error = null; 
+        }
+      })
+      .addCase(DeleteTodoAsync.fulfilled, (state, action) => {
+        if (state.todos) {
+          const todoIndex = state.todos.findIndex((todo) => todo.id === action.payload);
+          if (todoIndex !== -1) {
+            state.todos.splice(todoIndex, 1); 
+            state.error = null;
+          }
+        }
+      })
+      .addCase(DeleteTodoAsync.rejected, (state, action) => {
+        if (action.payload) {
+          state.error = action.payload;
+        } else {
+          state.error = null; 
+        }
       });
+      
+      
   },
 });
 

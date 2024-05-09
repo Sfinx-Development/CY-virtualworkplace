@@ -1,0 +1,41 @@
+{
+    "index1": "Revolutionize your communication",
+    "index2": "A platform for seamless collaboration and communication",
+    "index_button_createaccount": "Get started",
+    "index3": "Why choose CY?",
+    "index4_title": "Effective collaboration",
+    "index4_sub": "Work smoothly together regardless of where you are.",
+    "index5_title": "Safe and reliable",
+    "index5_sub": "Your data is safe and protected with us.",
+    "index6_title": "Easy to use",
+    "index6_sub": "Intuitive interface for all users.",
+    "index7": "Already a user?",
+    "index_button_signin": "Sign in here",
+
+ 
+    "signIn1": "This website uses third-party cookies to enhance your experience. Please accept the use of third-party cookies to continue. For iPhone: Uncheck 'Prevent cross-site tracking' and 'Block all cookies' in Safari settings.",
+    "signIn2_button_cookieOk": "Ok",
+    "signIn3-inlog": "Login failed",
+    "signIn4_password_label": "Password",
+    "signIn5_button_signIn": "Sign in",   
+    "signIn6_link_forgotP": "Forgot password?",   
+    "signIn7_create": "Create account",   
+    "createAccount1_password_error": "Password do not match",
+    
+"createAccount2_password_error": "Password must be at least 6 characters long",
+"createAccount3_phone_error": "Please enter a valid phone number",
+"createAccount4_email_error": "Please enter a valid email",
+"createAccount5_age_error": "You must be at least 16 years old to create an account",
+"createAccount6_field_error": "All fields must be filled in",
+
+"firsname_label": "First name",
+"lastname_label": "Last name",
+"email_label": "Email",
+"phonenumber_label": "Phone number",
+"password_label": "Password",
+"confirm_password_label": "Confirm password",
+"gender_label": "Gender",
+"age_label": "Age",
+
+"choose_avatar": "Choose an avatar"  
+}

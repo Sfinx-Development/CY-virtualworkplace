@@ -18,6 +18,7 @@ import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
 import { logInUserAsync, logOutUserAsync } from "../../slices/userSlice";
+import { FormattedMessage } from "react-intl";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
   const logInError = useAppSelector((state) => state.userSlice.logInError);
@@ -39,10 +40,6 @@ export default function SignIn() {
   ) => {
     event.preventDefault();
   };
-  // useEffect(() => {
-  //   console.log("LOGGAR UT");
-  //   dispatch(logOutUserAsync());
-  // }, []);
 
   useEffect(() => {
     const hasConsented = localStorage.getItem("cookieConsent");
@@ -121,21 +118,21 @@ export default function SignIn() {
         {showCookieConsent && (
           <div>
             <Typography variant="body1">
-              Denna webbplats använder tredjepartscookies för att förbättra din
-              upplevelse. Godkänn i inställningar för användningen av
-              tredjepartcookies för att fortsätta.
+              <FormattedMessage id="signIn1_coocie_text" />
             </Typography>
             <Button
               variant="contained"
               onClick={handleCookieConsent}
               sx={{ marginTop: 2 }}
             >
-              Ok
+              <FormattedMessage id="signIn2_button_cookieOk" />
             </Button>
           </div>
         )}
         {logInError ? (
-          <Typography variant="h6">Inloggning misslyckades</Typography>
+          <Typography variant="h6">
+            <FormattedMessage id="signIn3-inlog" />
+          </Typography>
         ) : null}
         <TextField
           id="standard-basic"
@@ -150,7 +147,7 @@ export default function SignIn() {
 
         <FormControl sx={{ width: "250px", marginTop: 5 }} variant="standard">
           <InputLabel htmlFor="standard-adornment-password">
-            Lösenord
+            <FormattedMessage id="signIn4_password_label" />
           </InputLabel>
           <Input
             id="standard-adornment-password"
@@ -184,10 +181,11 @@ export default function SignIn() {
           }}
           onClick={handleSignIn}
         >
-          Logga in
+          <FormattedMessage id="signIn5_button_signIn" />
         </Button>
         <Link href="forgotpassword" underline="hover">
-          Glömt lösenord?
+         
+          <FormattedMessage id="signIn6_link_forgotP" />
         </Link>
 
         <Button
@@ -197,7 +195,8 @@ export default function SignIn() {
             navigate("/createaccount");
           }}
         >
-          Skapa konto
+        
+          <FormattedMessage id="signIn7_create" />
         </Button>
       </div>
     </div>

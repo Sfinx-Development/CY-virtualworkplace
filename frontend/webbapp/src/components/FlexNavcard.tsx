@@ -12,7 +12,7 @@ import { isMobile } from "../../globalConstants";
 
 interface NavCardProps {
   backgroundColor?: string;
-  navigationPage: string;
+  navigationPage?: string;
   title?: string;
   icon?: React.ReactNode;
   imageUrl?: string;
@@ -22,19 +22,25 @@ interface NavCardProps {
 export default function FlexNavcard(props: NavCardProps) {
   const navigate = useNavigate();
 
+  const handleClick = () => {
+    if (props.onClick) {
+      props.onClick();
+    } else if (props.navigationPage) {
+      navigate(props.navigationPage);
+    }
+  };
+
   return (
     <Card
       sx={{
         display: "flex",
         flex: 1,
-        backgroundColor: props.backgroundColor,
+        backgroundColor: "white",
+        borderColor: props.backgroundColor,
+        maxHeight: 90,
       }}
     >
-      <CardActionArea
-        onClick={() => {
-          props.onClick ? props.onClick() : navigate(props.navigationPage);
-        }}
-      >
+      <CardActionArea onClick={handleClick}>
         {props.imageUrl && (
           <CardMedia
             component="img"
@@ -49,9 +55,9 @@ export default function FlexNavcard(props: NavCardProps) {
               sx={{
                 flex: "1 0 auto",
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: isMobile ? "space-evenly" : "center",
                 alignItems: "center",
-                flexDirection: "column",
+                flexDirection: isMobile ? "row" : "column",
                 padding: 1,
               }}
             >
@@ -59,7 +65,8 @@ export default function FlexNavcard(props: NavCardProps) {
                 component="div"
                 sx={{
                   textAlign: "center",
-                  fontSize: isMobile ? "10" : "22",
+                  fontSize: isMobile ? 20 : "22",
+                  fontWeight: 500,
                 }}
               >
                 {props.title}

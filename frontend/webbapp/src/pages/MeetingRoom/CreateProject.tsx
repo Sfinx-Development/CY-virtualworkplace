@@ -50,7 +50,9 @@ export default function CreateProject() {
   };
 
   return (
-    <Container sx={{ padding: "20px" }}>
+    <Container
+      sx={{ padding: "20px", backgroundColor: "rgba(255, 255, 255, 0.9)" }}
+    >
       <div
         style={{
           display: "flex",
@@ -61,28 +63,6 @@ export default function CreateProject() {
         {fieldError && (
           <Typography color="error">Alla fält måste vara ifyllda</Typography>
         )}
-        {/* <Typography variant={isMobile ? "h5" : "h4"}>
-          Skapa ett nytt projekt
-        </Typography> */}
-        {/* <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        > */}
-        {/* <Typography
-            sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
-          >
-            Skapa ett projekt där alla i teamet kan följa processen
-          </Typography>
-          <Typography
-            sx={{ textAlign: "center", fontSize: isMobile ? 15 : 20 }}
-          >
-            Fyll på med uppdateringar under tidens gång
-          </Typography> */}
-        {/* </div> */}
         <TextField
           label="Namn på projekt"
           value={title}

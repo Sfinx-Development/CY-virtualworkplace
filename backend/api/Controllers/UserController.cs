@@ -131,7 +131,7 @@ namespace Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<ActionResult<UserDTO>> UpdateUser(User user)
+        public async Task<ActionResult<UserDTO>> UpdateUser(UserDTO user)
         {
             try
             {

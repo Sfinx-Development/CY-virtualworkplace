@@ -19,6 +19,7 @@ import { isMobile } from "../../../globalConstants";
 import { UserCreate } from "../../../types";
 import { useAppDispatch } from "../../slices/store";
 import { createUserAsync } from "../../slices/userSlice";
+import { FormattedMessage } from "react-intl";
 
 export default function CreateAccount() {
   const [firstname, setFirstname] = useState("");
@@ -150,9 +151,10 @@ export default function CreateAccount() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "89vh",
+        height: "100%",
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
+        overflowY: "auto",
       }}
     >
       <div
@@ -172,44 +174,49 @@ export default function CreateAccount() {
       >
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid item xs={12} textAlign="center">
-            {/* <Typography variant="h5" sx={{ color: "#FFF" }}>
-              Skapa ett konto
-            </Typography> */}
           </Grid>
           {passwordError && (
             <Grid item xs={12}>
-              <Typography color="error">Lösenord matchar inte</Typography>
+              <Typography color="error">
+              <FormattedMessage id="createAccount1_password_error" />
+             </Typography>
             </Grid>
           )}
           {passwordLengthError && (
             <Grid item xs={12}>
               <Typography color="error">
-                Lösenordet måste bestå av minst 6 tecken
+              
+                <FormattedMessage id="createAccount2_password_error" />
               </Typography>
             </Grid>
           )}
           {phoneError && (
             <Grid item xs={12}>
               <Typography color="error">
-                Ange ett giltigt telefonnummer
+               
+                <FormattedMessage id="createAccount3_phone_error" />
               </Typography>
             </Grid>
           )}
           {emailError && (
             <Grid item xs={12}>
-              <Typography color="error">Ange en giltig e-post</Typography>
+              <Typography color="error">
+              <FormattedMessage id="createAccount4_email_error" /></Typography>
             </Grid>
           )}
           {ageError && (
             <Grid item xs={12}>
               <Typography color="error">
-                Du måste vara minst 16 år för att skapa ett konto
+                
+                <FormattedMessage id="createAccount5_age_error" />
               </Typography>
             </Grid>
           )}
           {fieldsError && (
             <Grid item xs={12}>
-              <Typography color="error">Alla fält måste fyllas i</Typography>
+              <Typography color="error">
+              <FormattedMessage id="createAccount6_field_error" />
+              </Typography>
             </Grid>
           )}
           {createError && (
@@ -219,7 +226,8 @@ export default function CreateAccount() {
           )}
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Förnamn"
+              // label="Förnamn"
+              label={<FormattedMessage id="firsname_label" />}
               variant="outlined"
               type="fname"
               autoComplete="given-name"
@@ -230,7 +238,7 @@ export default function CreateAccount() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Efternamn"
+              label={<FormattedMessage id="lastname_label" />}
               variant="outlined"
               autoComplete="family-name"
               type="lname"
@@ -241,7 +249,7 @@ export default function CreateAccount() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Email"
+              label={<FormattedMessage id="email_label" />}
               variant="outlined"
               value={email}
               autoComplete="email"
@@ -252,7 +260,8 @@ export default function CreateAccount() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Telefonnummer"
+             
+              label={<FormattedMessage id="phonenumber_label" />}
               variant="outlined"
               autoComplete="tel"
               value={phoneNumber}
@@ -263,7 +272,8 @@ export default function CreateAccount() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Lösenord"
+            
+              label={<FormattedMessage id="password_label" />}
               variant="outlined"
               type="password"
               autoComplete="new-password"
@@ -274,7 +284,8 @@ export default function CreateAccount() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Bekräfta lösenord"
+              
+              label={<FormattedMessage id="confirm_password_label" />}
               variant="outlined"
               type="password"
               autoComplete="new-password"
@@ -284,14 +295,15 @@ export default function CreateAccount() {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl variant="outlined" fullWidth>
+          <FormControl variant="outlined" fullWidth>
               <InputLabel id="gender-label" sx={{ color: "#FFF" }}>
-                Kön
+                
+                <FormattedMessage id="gender_label" />
               </InputLabel>
               <Select
                 labelId="gender-label"
                 value={gender}
-                label="Kön"
+                label={<FormattedMessage id="gender_label" />}
                 onChange={(event) => setGender(event.target.value)}
               >
                 <MenuItem value={"Man"}>Man</MenuItem>
@@ -302,7 +314,8 @@ export default function CreateAccount() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Ålder"
+              
+              label={<FormattedMessage id="age_label" />}
               variant="outlined"
               type="number"
               value={age}
@@ -314,7 +327,8 @@ export default function CreateAccount() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="body1" sx={{ color: "#FFF" }}>
-              Välj en avatar
+          
+              <FormattedMessage id="choose_avatar" />
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -345,8 +359,8 @@ export default function CreateAccount() {
               variant="contained"
               onClick={handleCreateUser}
               sx={{ margin: 1, fontSize: 20, color: "white" }}
-            >
-              Skapa konto
+            > 
+              <FormattedMessage id="signIn7_create" />
             </Button>
           </Grid>
         </Grid>

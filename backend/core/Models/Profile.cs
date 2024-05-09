@@ -19,4 +19,13 @@ public class Profile
     public List<ConversationParticipant> ConversationParticipants { get; set; }
 
     public Profile() { }
+    public Profile(string id, string fullName, string role, bool isOwner, string userId, string teamId, DateTime dateCreated ) {
+        Id = id;
+        FullName = fullName;
+        Role = role;
+        IsOwner = isOwner;
+        UserId = userId;
+        TeamId = teamId;
+        DateCreated = dateCreated;
+     }
 }

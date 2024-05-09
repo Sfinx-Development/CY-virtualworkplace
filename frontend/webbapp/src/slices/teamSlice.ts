@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateTeamDTO, Team, TeamRequest } from "../../types";
 import {
   FetchCreateTeam,
+  FetchDeleteTeam,
   FetchGetMyTeams,
   FetchJoinTeam,
   FetchUpdateTeam,
@@ -21,7 +22,7 @@ export interface TeamState {
   error: string | null;
 }
 
-const saveTeamToLocalStorage = (activeTeam: Team) => {
+const saveTeamToLocalStorage = (activeTeam: Team | undefined) => {
   localStorage.setItem("activeTeam", JSON.stringify(activeTeam));
 };
 const loadTeamFromLocalStorage = (): Team | undefined => {
@@ -187,10 +188,28 @@ export const DeleteTeamRequest = createAsyncThunk<
   }
 });
 
+export const DeleteTeam = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: string }
+>("team/deleteteam", async (teamId, thunkAPI) => {
+  try {
+    await FetchDeleteTeam(teamId);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid borttagning av förfrågning."
+    );
+  }
+});
+
 const teamSlice = createSlice({
   name: "team",
   initialState,
   reducers: {
+    resetActiveTeam: (state) => {
+      state.activeTeam = undefined;
+      saveTeamToLocalStorage(undefined);
+    },
     setActiveTeam: (state, action) => {
       const teamId = action.payload;
       const activeTeam = state.teams?.find((team) => team.id === teamId);
@@ -297,5 +316,6 @@ const teamSlice = createSlice({
   },
 });
 
-export const { setActiveTeam, getActiveTeam } = teamSlice.actions;
+export const { setActiveTeam, getActiveTeam, resetActiveTeam } =
+  teamSlice.actions;
 export const teamReducer = teamSlice.reducer;

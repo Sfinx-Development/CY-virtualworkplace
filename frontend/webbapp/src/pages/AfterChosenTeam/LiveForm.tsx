@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AgoraRTC from "agora-rtc-sdk-ng"; // Importera AgoraRTC SDK
@@ -12,7 +9,7 @@ import {
   useRemoteAudioTracks,
   useRemoteUsers,
   LocalUser,
-  RemoteUser
+  RemoteUser,
 } from "agora-rtc-react";
 import { useAppSelector } from "../../slices/store";
 import MicIcon from "@mui/icons-material/Mic";
@@ -23,7 +20,9 @@ import { AIDenoiserExtension } from "agora-extension-ai-denoiser";
 
 export const LiveVideo = () => {
   const appId = import.meta.env.VITE_APP_AGORA_APP_ID ?? "";
-  const activeMeetingId = useAppSelector((state) => state.meetingSlice.activeMeetingId);
+  const activeMeetingId = useAppSelector(
+    (state) => state.meetingSlice.activeMeetingId
+  );
   const navigate = useNavigate();
 
   // set the connection state
@@ -37,55 +36,49 @@ export const LiveVideo = () => {
   const { localMicrophoneTrack } = useLocalMicrophoneTrack(micOn);
   const { localCameraTrack } = useLocalCameraTrack(cameraOn);
 
-  // Join the channel
-  useJoin({
-    appid: appId,
-    channel: activeMeetingId!,
-    token: null,
-  }, activeConnection);
+  useJoin(
+    {
+      appid: appId,
+      channel: activeMeetingId!,
+      token: null,
+    },
+    activeConnection
+  );
 
-  // Publish local tracks
   usePublish([localMicrophoneTrack, localCameraTrack]);
 
-  // Remote users
   const remoteUsers = useRemoteUsers();
   const { audioTracks } = useRemoteAudioTracks(remoteUsers);
-  const activeProfile = useAppSelector((state) => state.profileSlice.activeProfile);
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
-  // Play the remote user audio tracks
   useEffect(() => {
     audioTracks.forEach((track) => track.play());
   }, [audioTracks]);
 
-  // Initialize AIDenoiserExtension and processor
   useEffect(() => {
     const initializeProcessor = async () => {
-      const denoiser = new AIDenoiserExtension({ assetsPath: './external' });
+      const denoiser = new AIDenoiserExtension({ assetsPath: "./external" });
       AgoraRTC.registerExtensions([denoiser]);
 
-      // Handle loading error
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       denoiser.onloaderror = (e: any) => {
-        console.error('Failed to load AIDenoiserExtension:', e);
+        console.error("Failed to load AIDenoiserExtension:", e);
       };
 
-      // Create processor
       const processor = denoiser.createProcessor();
 
-      // Enable processor by default
       processor.enable();
 
-      // Connect processor to microphone audio track
       const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
       audioTrack.pipe(processor).pipe(audioTrack.processorDestination);
 
-      // Optional: Listen to processor overload callback
       processor.onoverload = async () => {
         console.log("overload!!!");
         await processor.disable();
       };
 
-      // Dump audio
       processor.ondump = (blob, name) => {
         const objectURL = URL.createObjectURL(blob);
         const tag = document.createElement("a");
@@ -103,23 +96,18 @@ export const LiveVideo = () => {
 
     initializeProcessor();
 
-    return () => {
-      // Cleanup if needed
-    };
+    return () => {};
   }, []);
 
   return (
     <>
       <div id="remoteVideoGrid">
-        {
-          // Initialize each remote stream using RemoteUser component
-          remoteUsers.map((user) => (
-            <div key={user.uid} className="remote-video-container">
-              <p>{activeProfile?.fullName}</p>
-              <RemoteUser user={user} />
-            </div>
-          ))
-        }
+        {remoteUsers.map((user) => (
+          <div key={user.uid} className="remote-video-container">
+            <p>{activeProfile?.fullName}</p>
+            <RemoteUser user={user} />
+          </div>
+        ))}
       </div>
       <div id="localVideo">
         <LocalUser
@@ -132,7 +120,6 @@ export const LiveVideo = () => {
           className=""
         />
         <div>
-          {/* media-controls toolbar component - UI controlling mic, camera, & connection state */}
           <div id="controlsToolbar">
             <div id="mediaControls">
               <button className="btn" onClick={() => setMic((a) => !a)}>
@@ -158,5 +145,3 @@ export const LiveVideo = () => {
     </>
   );
 };
-
-

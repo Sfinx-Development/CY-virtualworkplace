@@ -10,10 +10,6 @@ import { theme1 } from "../../../theme";
 
 export default function Office() {
   const dispatch = useAppDispatch();
-  // const activeProfile = useAppSelector(
-  //   (state) => state.profileSlice.activeProfile
-  // );
-
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
@@ -46,10 +42,6 @@ export default function Office() {
         color1={theme1.palette.office.main}
         color2="white"
       />
-      {/* <Typography variant="h6" sx={{ padding: 2 }}>
-        {" "}
-        {activeProfile?.fullName.toUpperCase()}'S SIDA
-      </Typography> */}
       <Box
         sx={{
           display: "flex",
@@ -59,7 +51,7 @@ export default function Office() {
         }}
       >
         <FlexNavcard
-          navigationPage=""
+          navigationPage="/office"
           title="Notiser"
           icon={
             <img
@@ -84,7 +76,6 @@ export default function Office() {
           backgroundColor={officeColor}
         />
       </Box>
-      {/* </Card> */}
       <div style={{ height: "100%", width: "100%" }}>
         <Outlet />
       </div>
