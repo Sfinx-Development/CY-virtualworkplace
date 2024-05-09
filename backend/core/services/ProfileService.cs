@@ -188,18 +188,16 @@ public class ProfileService : IProfileService
         }
     }
 
-    public async Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO)
+    public async Task DeleteTeamAndProfiles(string teamId, User loggedInUser)
     {
         try
         {
-            var profile = await _profileRepository.GetByIdAsync(deleteTeamDTO.ProfileId);
+            var profile = await _profileRepository.GetByUserAndTeamIdAsync(loggedInUser.Id, teamId);
 
             if (profile.IsOwner == true)
             {
-                var team = await _teamRepository.GetByIdAsync(deleteTeamDTO.TeamId);
-                var profilesInTeam = await _profileRepository.GetProfilesInTeamAsync(
-                    deleteTeamDTO.TeamId
-                );
+                var team = await _teamRepository.GetByIdAsync(teamId);
+                var profilesInTeam = await _profileRepository.GetProfilesInTeamAsync(teamId);
 
                 foreach (var p in profilesInTeam)
                 {

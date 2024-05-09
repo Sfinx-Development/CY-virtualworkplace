@@ -111,3 +111,26 @@ export const FetchUpdateTeam = async (team: Team): Promise<Team> => {
     throw error;
   }
 };
+
+export const FetchDeleteTeam = async (teamId: string) => {
+  try {
+    const response = await fetch(`${apiUrl}/${teamId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel med att radera team.");
+    }
+
+    const data = await response.json();
+
+    return data as Team;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -51,7 +51,7 @@ export default function Office() {
         }}
       >
         <FlexNavcard
-          navigationPage=""
+          navigationPage="/office"
           title="Notiser"
           icon={
             <img

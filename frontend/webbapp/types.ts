@@ -6,7 +6,6 @@ export interface Todo {
   title?: string;
 }
 
-
 // DateTime date,
 
 export interface UserCreate {
@@ -68,6 +67,14 @@ export interface TeamRequest {
   isConfirmed: boolean;
   role: string;
   userFullName: string;
+}
+
+export interface OwnerRequest {
+  id: string;
+  profileId: string;
+  teamName: string;
+  isOwner: boolean;
+  isConfirmed: boolean;
 }
 
 export interface CreateTeamDTO {
@@ -257,7 +264,7 @@ export interface FileDTO {
 }
 
 export type TranslationMessages = {
-  sv: { [key: string]: string },
-  en: { [key: string]: string },
-  [key: string]: { [key: string]: string }
+  sv: { [key: string]: string };
+  en: { [key: string]: string };
+  [key: string]: { [key: string]: string };
 };

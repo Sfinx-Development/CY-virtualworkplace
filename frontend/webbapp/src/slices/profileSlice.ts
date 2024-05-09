@@ -1,6 +1,11 @@
 import * as signalR from "@microsoft/signalr";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Profile, ProfileHubDTO } from "../../types";
+import { OwnerRequest, Profile, ProfileHubDTO } from "../../types";
+import {
+  FetchCreateOwnerRequest,
+  FetchGetMyOwnerRequest,
+  FetchUpdateOwnerRequest,
+} from "../api/ownerrequest";
 import {
   FetchDeleteProfile,
   FetchGetTeamProfiles,
@@ -15,6 +20,8 @@ export interface ProfileState {
   activeProfile: Profile | undefined;
   error: string | null;
   onlineProfiles: ProfileHubDTO[];
+  allOwnerRequests: OwnerRequest[] | undefined;
+  myOwnerRequest: OwnerRequest | undefined;
 }
 
 const saveProfilesToLocalStorage = (profiles: Profile[]) => {
@@ -42,7 +49,68 @@ export const initialState: ProfileState = {
   activeProfile: loadActiveProfileFromLocalStorage(),
   error: null,
   onlineProfiles: [],
+  allOwnerRequests: [],
+  myOwnerRequest: undefined,
 };
+
+export const GetMyOwnerRequestAsync = createAsyncThunk<
+  OwnerRequest,
+  string,
+  { rejectValue: string }
+>("profile/getmyownerrequest", async (profileId, thunkAPI) => {
+  try {
+    const myOwnerRequests = await FetchGetMyOwnerRequest(profileId);
+    if (myOwnerRequests) {
+      return myOwnerRequests;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid hämtning av förfrågningar."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid hämtning av förfrågningar."
+    );
+  }
+});
+
+export const UpdateOwnerRequestAsync = createAsyncThunk<
+  OwnerRequest,
+  OwnerRequest,
+  { rejectValue: string }
+>("profile/updateownerrequest", async (ownerRequest, thunkAPI) => {
+  try {
+    const updatedRequest = await FetchUpdateOwnerRequest(ownerRequest);
+    if (updatedRequest) {
+      return updatedRequest;
+    } else {
+      return thunkAPI.rejectWithValue(
+        "Ett fel inträffade vid uppdatering av ägareförfrågan."
+      );
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid uppdatering av ägareförfrågan."
+    );
+  }
+});
+
+export const createOwnerRequest = createAsyncThunk<
+  OwnerRequest,
+  OwnerRequest,
+  { rejectValue: string }
+>("profile/createownerrequest", async (ownerRequest, thunkAPI) => {
+  try {
+    const request = await FetchCreateOwnerRequest(ownerRequest);
+    if (request) {
+      return request;
+    } else {
+      return thunkAPI.rejectWithValue("failed to create owner request");
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue("Något gick fel.");
+  }
+});
 
 export const enterMeetingRoomAsync = createAsyncThunk(
   "profile/enterMeetingRoom",
@@ -308,6 +376,24 @@ const profileSlice = createSlice({
             (profile) => profile.profileId !== action.payload
           );
         }
+      })
+      .addCase(GetMyOwnerRequestAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.myOwnerRequest = action.payload;
+          state.error = null;
+        }
+      })
+      .addCase(GetMyOwnerRequestAsync.rejected, (state) => {
+        state.myOwnerRequest = undefined;
+      })
+      .addCase(UpdateOwnerRequestAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.myOwnerRequest = undefined;
+          state.error = null;
+        }
+      })
+      .addCase(UpdateOwnerRequestAsync.rejected, (state) => {
+        state.myOwnerRequest = undefined;
       });
   },
 });

@@ -9,9 +9,20 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Survey, ProfileToSurvey, TeamRequest } from "../../../../types";
+import {
+  OwnerRequest,
+  ProfileToSurvey,
+  Survey,
+  TeamRequest,
+} from "../../../../types";
 import { RadioGroupRating } from "../../../components/StyledRating";
-import { getActiveProfile } from "../../../slices/profileSlice";
+import {
+  GetMyOwnerRequestAsync,
+  GetMyProfileAsync,
+  GetTeamProfiles,
+  UpdateOwnerRequestAsync,
+  getActiveProfile,
+} from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
 import {
   CreateProfileSurveyAsync,
@@ -31,7 +42,9 @@ export default function Notifications() {
   );
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const teamRequests = useAppSelector((state) => state.teamSlice.teamRequests);
-
+  const ownerRequest = useAppSelector(
+    (state) => state.profileSlice.myOwnerRequest
+  );
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
@@ -82,6 +95,7 @@ export default function Notifications() {
     if (activeProfile) {
       dispatch(GetTeamSurveysAsync(activeProfile.id));
       dispatch(GetProfileSurveysByProfileAsync(activeProfile.id));
+      dispatch(GetMyOwnerRequestAsync(activeProfile.id));
     }
   }, [activeProfile]);
 
@@ -107,6 +121,30 @@ export default function Notifications() {
       setActiveSurveys(filteredActiveHS);
     }
   }, [surveys, profilesurveys, ratingShow]);
+
+  const handleApproveOwnerRequest = async () => {
+    if (ownerRequest && activeTeam) {
+      const updatedOwnerRequest: OwnerRequest = {
+        ...ownerRequest,
+        isConfirmed: true,
+        isOwner: true,
+      };
+      await dispatch(UpdateOwnerRequestAsync(updatedOwnerRequest));
+      await dispatch(GetMyProfileAsync(activeTeam.id));
+      await dispatch(GetTeamProfiles(activeTeam.id));
+    }
+  };
+
+  const handleRejectOwnerRequest = () => {
+    if (ownerRequest) {
+      const updatedOwnerRequest: OwnerRequest = {
+        ...ownerRequest,
+        isConfirmed: true,
+        isOwner: false,
+      };
+      dispatch(UpdateOwnerRequestAsync(updatedOwnerRequest));
+    }
+  };
 
   return (
     <Container sx={{ display: "flex", height: "100%", gap: 4, padding: 4 }}>
@@ -195,6 +233,27 @@ export default function Notifications() {
             <Typography>Ingen oläst notifikation</Typography>
           </Box>
         ) : null}
+        {ownerRequest && (
+          <Box>
+            <Typography>
+              Du har fått en förfrågan om att bli ägare av teamet
+            </Typography>
+            <Button
+              onClick={() => {
+                handleApproveOwnerRequest();
+              }}
+            >
+              Godkänn
+            </Button>
+            <Button
+              onClick={() => {
+                handleRejectOwnerRequest();
+              }}
+            >
+              Neka
+            </Button>
+          </Box>
+        )}
       </Card>
     </Container>
   );

@@ -82,6 +82,7 @@ builder.Services.AddScoped<IProjectUpdateRepository, ProjectUpdateRepository>();
 builder.Services.AddScoped<IUpdateCommentRepository, UpdateCommentRepository>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<ITeamRequestRepository, TeamRequestRepository>();
+builder.Services.AddScoped<IOwnerRequestRepository, OwnerRequestRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
@@ -106,6 +107,7 @@ builder.Services.AddScoped<IProjectUpdateService, ProjectUpdateService>();
 builder.Services.AddScoped<IUpdateCommentService, UpdateCommentService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ITeamRequestService, TeamRequestService>();
+builder.Services.AddScoped<IOwnerRequestService, OwnerRequestService>();
 
 var serviceProvider = builder.Services.BuildServiceProvider();
 var projectRepository = serviceProvider.GetRequiredService<IProjectRepository>();

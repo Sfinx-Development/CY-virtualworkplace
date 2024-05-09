@@ -53,7 +53,6 @@ namespace Controllers
             {
                 var loggedInUser = await GetLoggedInUserAsync();
 
-
                 var teamCreated = await _teamService.CreateAsync(
                     incomingCreateTeamDTO,
                     loggedInUser
@@ -102,8 +101,8 @@ namespace Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Post(string id)
+        [HttpDelete("{teamId}")]
+        public async Task<ActionResult> Post(string teamId)
         {
             try
             {
@@ -124,7 +123,7 @@ namespace Controllers
                 //     return BadRequest("User profile not found.");
                 // }
 
-                // await _profileService.DeleteTeamAndProfiles(deleteTeamDTO);
+                await _profileService.DeleteTeamAndProfiles(teamId, loggedInUser);
 
                 return Ok("Successfully left the team.");
             }
