@@ -96,8 +96,8 @@ public class SurveyServiceTests
             UserId = "userId123"
         };
 
-        var listOfProfileHC = new List<ProfileSurvey>();
-        var profileSurvey = new ProfileSurvey() { Id = "PHC123", SurveyId = "123" };
+        var listOfProfileHC = new List<ProfileToSurvey>();
+        var profileSurvey = new ProfileToSurvey() { Id = "PHC123", SurveyId = "123" };
         listOfProfileHC.Add(profileSurvey);
 
         surveyRepositoryMock
