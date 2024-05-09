@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { CreateTeamDTO, Team, TeamRequest } from "../../types";
 import {
   FetchCreateTeam,
+  FetchDeleteTeam,
   FetchGetMyTeams,
   FetchJoinTeam,
   FetchUpdateTeam,
@@ -180,6 +181,20 @@ export const DeleteTeamRequest = createAsyncThunk<
         "Ett fel inträffade vid borttagning av förfrågning."
       );
     }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Ett fel inträffade vid borttagning av förfrågning."
+    );
+  }
+});
+
+export const DeleteTeam = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: string }
+>("team/deleteteam", async (teamId, thunkAPI) => {
+  try {
+    await FetchDeleteTeam(teamId);
   } catch (error) {
     return thunkAPI.rejectWithValue(
       "Ett fel inträffade vid borttagning av förfrågning."

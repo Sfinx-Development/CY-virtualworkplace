@@ -22,7 +22,7 @@ import {
   getActiveProfile,
 } from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
-import { GetMyTeamsAsync, getActiveTeam } from "../../../slices/teamSlice";
+import { DeleteTeam, GetMyTeamsAsync, getActiveTeam } from "../../../slices/teamSlice";
 
 export default function ProfileInformation() {
   const [openTodoPopup, setOpenTodoPopup] = useState(false);
@@ -30,6 +30,8 @@ export default function ProfileInformation() {
   const profiles = useAppSelector((state) => state.profileSlice.profiles);
   const [profileOwnerReqest, setProfileOwnerRequest] = useState("");
   const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>();
+  const [isActiveProfileTheOnlyOwner, setIsActiveProfileTheOnlyOwner] =
+    useState(false);
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
@@ -52,6 +54,14 @@ export default function ProfileInformation() {
     if (profiles) {
       const profilesNotOwners = profiles.filter((p) => p.isOwner == false);
       setFilteredProfiles(profilesNotOwners);
+      if (activeProfile?.isOwner) {
+        const owners = profiles.filter((p) => p.isOwner == true);
+        if (owners.length > 1) {
+          setIsActiveProfileTheOnlyOwner(false);
+        } else {
+          setIsActiveProfileTheOnlyOwner(true);
+        }
+      }
     }
   }, [profiles]);
 
@@ -65,6 +75,13 @@ export default function ProfileInformation() {
         isConfirmed: false,
       };
       await dispatch(createOwnerRequest(ownerRequest));
+    }
+  };
+
+  const handleDeleteTeam = async () => {
+    if (activeTeam) {
+      await dispatch(DeleteTeam(activeTeam.id));
+      navigate("/chooseteam");
     }
   };
 
@@ -84,21 +101,70 @@ export default function ProfileInformation() {
           <Button onClick={() => setOpenTodoPopup(true)}>
             Lämna {activeTeam?.name}
           </Button>
-          <Dialog open={openTodoPopup} onClose={() => setOpenTodoPopup(false)}>
-            <DialogTitle>Ta bort</DialogTitle>
-            <DialogContent dividers>
-              <Typography>
-                Är du säker på att du vill gå ur teamet {activeTeam?.name}?
-              </Typography>
+          {activeProfile?.isOwner && isActiveProfileTheOnlyOwner && (
+            <Dialog
+              open={openTodoPopup}
+              onClose={() => setOpenTodoPopup(false)}
+            >
+              <DialogTitle>Ta bort</DialogTitle>
+              <DialogContent dividers>
+                <Typography>
+                  Är du säker på att du vill gå ur teamet {activeTeam?.name}? Då
+                  du är ensam ägare av {activeTeam?.name} så kan du välja att
+                  lägga till en annan medlem som ägare som kan fortsätta med
+                  aktuellt team. Annars raderas teamet och all dess data
+                  permanent.
+                </Typography>
 
-              <IconButton onClick={handleLeaveTeam}>
-                <Typography>Ta bort</Typography>
-              </IconButton>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
-            </DialogActions>
-          </Dialog>
+                <IconButton onClick={handleDeleteTeam}>
+                  <Typography>Ta bort {activeTeam?.name}</Typography>
+                </IconButton>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+              </DialogActions>
+            </Dialog>
+          )}
+          {!activeProfile?.isOwner && (
+            <Dialog
+              open={openTodoPopup}
+              onClose={() => setOpenTodoPopup(false)}
+            >
+              <DialogTitle>Ta bort</DialogTitle>
+              <DialogContent dividers>
+                <Typography>
+                  Är du säker på att du vill gå ur teamet {activeTeam?.name}?
+                </Typography>
+
+                <IconButton onClick={handleLeaveTeam}>
+                  <Typography>Ta bort</Typography>
+                </IconButton>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+              </DialogActions>
+            </Dialog>
+          )}
+          {activeProfile?.isOwner && !isActiveProfileTheOnlyOwner && (
+            <Dialog
+              open={openTodoPopup}
+              onClose={() => setOpenTodoPopup(false)}
+            >
+              <DialogTitle>Ta bort</DialogTitle>
+              <DialogContent dividers>
+                <Typography>
+                  Är du säker på att du vill gå ur teamet {activeTeam?.name}?
+                </Typography>
+
+                <IconButton onClick={handleLeaveTeam}>
+                  <Typography>Ta bort</Typography>
+                </IconButton>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
+              </DialogActions>
+            </Dialog>
+          )}
         </Paper>
         {activeProfile?.isOwner && filteredProfiles && (
           <Paper sx={{ padding: 2, marginTop: 2 }}>

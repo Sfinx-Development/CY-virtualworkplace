@@ -10,7 +10,7 @@ public interface IProfileService
     Task CantLeaveTeamIfOwner(Profile profile);
     Task<Profile> GetProfileByAuthAndTeam(User user, string teamId);
     Task DeleteProfile(Profile profile);
-    Task DeleteTeamAndProfiles(DeleteTeamDTO deleteTeamDTO);
+    Task DeleteTeamAndProfiles(string teamId, User loggedInUser);
     Task<List<Profile>> GetProfilesByTeamId(string userId, string teamId);
     Task<List<ProfileHboDTO>> GetOnlineProfilesByTeam(User user, string teamId);
 }
