@@ -4,9 +4,13 @@ namespace Interfaces;
 
 public interface IOwnerRequestService
 {
-    Task<OwnerRequest> UpdateOwnerRequest(OwnerRequest request, User loggedInUser);
-    Task<List<OwnerRequest>> GetOwnerRequestsByProfileId(string profileId);
-    Task<OwnerRequest> GetById(string id);
-    Task<List<OwnerRequest>> GetUnconfirmedOwnerRequestsByTeamId(string teamId, User loggedInUser);
+    Task<OwnerRequestDTO> UpdateOwnerRequest(OwnerRequestDTO request, User loggedInUser);
+    Task<OwnerRequestDTO> CreateAsync(OwnerRequestDTO request, User loggedInUser);
+    Task<List<OwnerRequestDTO>> GetOwnerRequestsByProfileId(string profileId);
+    Task<OwnerRequestDTO> GetById(string id);
+    Task<List<OwnerRequestDTO>> GetUnconfirmedOwnerRequestsByTeamId(
+        string teamId,
+        User loggedInUser
+    );
     Task DeleteRequest(string requestId, User loggedInUser);
 }

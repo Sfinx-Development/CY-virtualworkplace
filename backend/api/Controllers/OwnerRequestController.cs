@@ -120,14 +120,14 @@ namespace Controllers
         [HttpPut]
         [Authorize]
         public async Task<ActionResult<IEnumerable<OwnerRequestDTO>>> UpdateOwnerRequest(
-            [FromBody] OwnerRequest teamRequest
+            [FromBody] OwnerRequestDTO ownerRequest
         )
         {
             try
             {
                 var loggedInUser = await GetLoggedInUserAsync();
                 var teamRequests = await _requestService.UpdateOwnerRequest(
-                    teamRequest,
+                    ownerRequest,
                     loggedInUser
                 );
                 return Ok(teamRequests);

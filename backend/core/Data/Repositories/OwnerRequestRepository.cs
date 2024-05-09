@@ -116,4 +116,18 @@ public class OwnerRequestRepository : IOwnerRequestRepository
             throw new Exception(e.Message);
         }
     }
+
+    public async Task<OwnerRequest> CreateRequestAsync(OwnerRequest ownerRequest)
+    {
+        try
+        {
+            await _cyDbContext.OwnerRequests.AddAsync(ownerRequest);
+            await _cyDbContext.SaveChangesAsync();
+            return ownerRequest;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

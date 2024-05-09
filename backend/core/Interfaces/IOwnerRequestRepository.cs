@@ -9,6 +9,6 @@ namespace Interfaces
         Task DeleteRequest(string id);
         Task<OwnerRequest> GetRequestByIdAsync(string requestId);
         Task<List<OwnerRequest>> GetUnconfirmedRequestByTeamIdAsync(string teamId);
-        Task<OwnerRequest> CreateRequest(OwnerRequest teamRequest);
+        Task<OwnerRequest> CreateRequestAsync(OwnerRequest ownerRequest);
     }
 }

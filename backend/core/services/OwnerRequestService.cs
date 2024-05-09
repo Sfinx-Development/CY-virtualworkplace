@@ -31,11 +31,12 @@ public class OwnerRequestService : IOwnerRequestService
         _teamRepository = teamRepository;
     }
 
-    public async Task<List<OwnerRequest>> GetOwnerRequestsByProfileId(string profileId)
+    public async Task<List<OwnerRequestDTO>> GetOwnerRequestsByProfileId(string profileId)
     {
         try
         {
-            return await _requestRepository.GetRequestsByProfileIdAsync(profileId);
+            var requests = await _requestRepository.GetRequestsByProfileIdAsync(profileId);
+            return requests.Select(r => StaticMapper.MapToOwnerRequestDTO(r)).ToList();
         }
         catch (Exception e)
         {
@@ -43,11 +44,12 @@ public class OwnerRequestService : IOwnerRequestService
         }
     }
 
-    public async Task<OwnerRequest> GetById(string id)
+    public async Task<OwnerRequestDTO> GetById(string id)
     {
         try
         {
-            return await _requestRepository.GetRequestByIdAsync(id);
+            var request = await _requestRepository.GetRequestByIdAsync(id);
+            return StaticMapper.MapToOwnerRequestDTO(request);
         }
         catch (Exception e)
         {
@@ -73,7 +75,7 @@ public class OwnerRequestService : IOwnerRequestService
         }
     }
 
-    public async Task<List<OwnerRequest>> GetUnconfirmedOwnerRequestsByTeamId(
+    public async Task<List<OwnerRequestDTO>> GetUnconfirmedOwnerRequestsByTeamId(
         string teamId,
         User loggedInUser
     )
@@ -86,7 +88,8 @@ public class OwnerRequestService : IOwnerRequestService
             {
                 throw new Exception("Only team owners can get requests.");
             }
-            return await _requestRepository.GetUnconfirmedRequestByTeamIdAsync(teamId);
+            var requests = await _requestRepository.GetUnconfirmedRequestByTeamIdAsync(teamId);
+            return requests.Select(request => StaticMapper.MapToOwnerRequestDTO(request)).ToList();
         }
         catch (Exception e)
         {
@@ -94,7 +97,10 @@ public class OwnerRequestService : IOwnerRequestService
         }
     }
 
-    public async Task<OwnerRequest> UpdateOwnerRequest(OwnerRequest request, User loggedInUser)
+    public async Task<OwnerRequestDTO> UpdateOwnerRequest(
+        OwnerRequestDTO request,
+        User loggedInUser
+    )
     {
         try
         {
@@ -103,7 +109,9 @@ public class OwnerRequestService : IOwnerRequestService
                 loggedInUser,
                 profile.TeamId
             );
-            var updatedRequest = await _requestRepository.UpdateOwnerRequestAsync(request);
+            var requestToUpdate = StaticMapper.MapToOwnerRequest(request, loggedInProfile);
+            var updatedRequest = await _requestRepository.UpdateOwnerRequestAsync(requestToUpdate);
+            var updatedRequestDTO = StaticMapper.MapToOwnerRequestDTO(updatedRequest);
             if (updatedRequest.IsOwner && updatedRequest.IsConfirmed)
             {
                 profile.IsOwner = request.IsOwner;
@@ -114,7 +122,37 @@ public class OwnerRequestService : IOwnerRequestService
                 };
                 await _profileRepository.UpdateAsync(profileUpdateDTO);
             }
-            return updatedRequest;
+            return updatedRequestDTO;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<OwnerRequestDTO> CreateAsync(OwnerRequestDTO request, User loggedInUser)
+    {
+        try
+        {
+            var profile = await _profileRepository.GetByIdAsync(request.ProfileId);
+            var loggedInProfile = await _profileService.GetProfileByAuthAndTeam(
+                loggedInUser,
+                profile.TeamId
+            );
+            if (!loggedInProfile.IsOwner)
+            {
+                throw new Exception("Only owners can invite members to be owners.");
+            }
+            var profileToAdd = await _profileRepository.GetByIdAsync(request.ProfileId);
+            if (profileToAdd.IsOwner)
+            {
+                throw new Exception("Member is already an owner.");
+            }
+            var requestToAdd = StaticMapper.MapToOwnerRequest(request, profileToAdd);
+            requestToAdd.Id = Utils.GenerateRandomId();
+            var createdRequest = await _requestRepository.CreateRequestAsync(requestToAdd);
+            var createdRequestDTO = StaticMapper.MapToOwnerRequestDTO(createdRequest);
+            return createdRequestDTO;
         }
         catch (Exception e)
         {
