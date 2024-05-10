@@ -147,13 +147,13 @@ namespace Controllers
         }
 
         [HttpDelete]
-        [AllowAnonymous]
-        public async Task<ActionResult> DeleteUser(string id)
+        [Authorize]
+        public async Task<ActionResult> DeleteUser()
         {
             try
             {
                var loggedInUser = await GetLoggedInUserAsync();
-                await _userService.DeleteById(id);
+                await _userService.DeleteById(loggedInUser.Id);
                 return NoContent();
             }
             catch (Exception e)

@@ -110,6 +110,21 @@ public class UserRepository : IUserRepository
             //OBS!!!!!!!!!!
             //sen behöver vi ta bort allt som har med usern att göra när vi har allt kodat o klart
             var userToDelete = await _cyDbContext.Users.FindAsync(id);
+            var profilesToDelete = await _cyDbContext
+                .Profiles.Where(p => p.UserId == userToDelete.Id)
+                .ToListAsync();
+            //hämtar teamen där endast jag är ägare
+            var teamsToDelete = await _cyDbContext
+                .Teams.Where(
+                    t =>
+                        t.Profiles.Any(p => p.UserId == userToDelete.Id && p.IsOwner)
+                        && t.Profiles.Count(p => p.IsOwner) == 1
+                )
+                .ToListAsync();
+
+            _cyDbContext.Profiles.RemoveRange(profilesToDelete);
+            _cyDbContext.Teams.RemoveRange(teamsToDelete);
+
             var deletedUser = userToDelete;
             if (userToDelete != null)
             {
