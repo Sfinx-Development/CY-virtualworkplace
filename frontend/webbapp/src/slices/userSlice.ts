@@ -1,7 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { User, UserCreate } from "../../types";
 import { FetchLogOut, FetchSignIn } from "../api/logIn";
-import { FetchCreateUseer, FetchGetUseer, FetchUpdateUser } from "../api/user";
+import {
+  FetchCreateUseer,
+  FetchDeleteUser,
+  FetchGetUseer,
+  FetchUpdateUser,
+} from "../api/user";
 
 export interface UserState {
   user: User | undefined;
@@ -55,6 +60,25 @@ export const updateUserAsync = createAsyncThunk<
   }
 });
 
+export const deleteUserAsync = createAsyncThunk<
+  boolean,
+  void,
+  { rejectValue: string }
+>("user/deleteUser", async (_, thunkAPI) => {
+  try {
+    const isDeleted = await FetchDeleteUser();
+    if (isDeleted) {
+      return isDeleted;
+    } else {
+      return thunkAPI.rejectWithValue("Användare ej borttagen.");
+    }
+  } catch (error) {
+    return thunkAPI.rejectWithValue(
+      "Något fick fel vid borttagning av användare."
+    );
+  }
+});
+
 export const logOutUserAsync = createAsyncThunk("user/logOutUser", async () => {
   try {
     const isLoggedOut = await FetchLogOut();
@@ -102,19 +126,6 @@ export const getUserAsync = createAsyncThunk<User>("user/getUser", async () => {
     throw new Error("Ett fel uppstod vid inloggningen.");
   }
 });
-
-// export const deleteUserAsync = createAsyncThunk<
-//   boolean,
-//   UserCreate,
-//   { rejectValue: string }
-// >("user/deleteUser", async (user, thunkAPI) => {
-//   try {
-//     const response = await deleteUserFromDb(user);
-//     return response;
-//   } catch (error) {
-//     throw new Error("Användarnamn eller lösenord var felaktigt.");
-//   }
-// });
 
 // export const handleForgotPasswordAsync = createAsyncThunk<
 //   boolean,
@@ -190,6 +201,15 @@ const userSlice = createSlice({
       })
       .addCase(updateUserAsync.rejected, (state, action) => {
         state.error = action.payload ?? "Ett oväntat fel inträffade.";
+      })
+      .addCase(deleteUserAsync.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.user = undefined;
+          state.error = null;
+        }
+      })
+      .addCase(deleteUserAsync.rejected, (state) => {
+        state.error = "Ett oväntat fel inträffade.";
       });
   },
 });

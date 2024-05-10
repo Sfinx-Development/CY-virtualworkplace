@@ -1,17 +1,19 @@
 import EditIcon from "@mui/icons-material/Edit";
 import {
   Button,
-  Container,
   IconButton,
   Paper,
   TextField,
   Typography,
+  keyframes,
 } from "@mui/material";
 import { useState } from "react";
 import { User } from "../../../types";
+import { useLanguageContext } from "../../contexts/languageContext";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { updateUserAsync } from "../../slices/userSlice";
+import { deleteUserAsync, updateUserAsync } from "../../slices/userSlice";
 import { theme1 } from "../../theme";
+import { useNavigate } from "react-router-dom";
 
 export default function UserSettings() {
   const user = useAppSelector((state) => state.userSlice.user);
@@ -21,6 +23,8 @@ export default function UserSettings() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const dispatch = useAppDispatch();
+  const { language } = useLanguageContext();
+  const navigate = useNavigate();
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -59,13 +63,40 @@ export default function UserSettings() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (user) {
+      await dispatch(deleteUserAsync());
+      navigate("/");
+    }
+  };
+
+  const gradientAnimation = keyframes`
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  `;
+
   return (
-    <Container sx={{ padding: "20px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        background: "linear-gradient(45deg, #333333, #666666)",
+        animation: `${gradientAnimation} 10s ease infinite`,
+        color: "#FFF",
+        overflow: "hidden",
+        alignItems: "center",
+      }}
+    >
       <div
         style={{
           display: "grid",
           gap: "20px",
           gridTemplateColumns: "1fr",
+          width: "98%",
+          marginTop: "20px",
+          marginBottom: "20px",
         }}
       >
         <Paper elevation={3} sx={{ padding: 2, borderRadius: 5 }}>
@@ -158,7 +189,9 @@ export default function UserSettings() {
               marginBottom: "15px",
             }}
           />
-          <Typography sx={{ marginLeft: 7 }}>Svenska</Typography>
+          <Typography sx={{ marginLeft: 7 }}>
+            {language == "sv" ? "Svenska" : "English"}
+          </Typography>
         </Paper>
 
         <Paper elevation={3} sx={{ padding: 2, borderRadius: 5 }}>
@@ -172,11 +205,14 @@ export default function UserSettings() {
               marginBottom: "15px",
             }}
           />
-          <Button sx={{ color: "primary.main", marginLeft: 7 }} disabled>
+          <Button
+            sx={{ color: "primary.main", marginLeft: 6 }}
+            onClick={handleDeleteAccount}
+          >
             Ta bort mitt konto permanent
           </Button>
         </Paper>
       </div>
-    </Container>
+    </div>
   );
 }

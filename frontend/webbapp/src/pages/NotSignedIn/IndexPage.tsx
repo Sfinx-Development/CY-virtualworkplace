@@ -7,7 +7,6 @@ import { FormattedMessage } from "react-intl";
 const IndexPage = () => {
   const navigate = useNavigate();
 
-  // Keyframes för bakgrundsanimering
   const gradientAnimation = keyframes`
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }

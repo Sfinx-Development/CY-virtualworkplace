@@ -70,3 +70,24 @@ export const FetchUpdateUser = async (user: User): Promise<User> => {
     throw error;
   }
 };
+
+export const FetchDeleteUser = async () => {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Något gick fel vid borttagning av användare.");
+    } else {
+      return true;
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
