@@ -7,11 +7,14 @@ interface MainComponentProps {
   handleNextMonth: () => void;
   updateCalendarMonthLabel: () => string;
   weekDays: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generateCalendarRows: (holidays: any[]) => any[][];
   handleDayClick: (day: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   holidays: any[];
   year: number;
   month: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   todosInTeam?: any[];
   isToday: (year: number, month: number, day: number) => boolean;
 }
