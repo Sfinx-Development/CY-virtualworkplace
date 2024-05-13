@@ -2,6 +2,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
+import TodayAside from "../../components/calendarComponents/todayAside";
 import {
   Button,
   Card,
@@ -777,23 +778,7 @@ export default function CalendarPage() {
             {activeTeam?.name} Kalender
           </Typography>
 
-          <div className="today-aside" style={{ textAlign: "center" }}>
-            <Typography
-              variant="h6"
-              style={{ fontWeight: "bold", marginTop: "10px" }}
-            >
-              Dagens Datum
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleTimeString()}
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleDateString()}
-            </Typography>
-            <Typography style={{ marginBottom: "25px" }}>
-              {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
-            </Typography>
-          </div>
+          <TodayAside currentTime={currentTime} />
         </div>
       ) : (
         <aside
@@ -824,23 +809,9 @@ export default function CalendarPage() {
           >
             {activeTeam?.name} Kalender
           </Typography>
-          <div className="today-aside" style={{ textAlign: "center" }}>
-            <Typography
-              variant="h6"
-              style={{ fontWeight: "bold", marginTop: "10px" }}
-            >
-              Dagens Datum
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleTimeString()}
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleDateString()}
-            </Typography>
-            <Typography style={{ marginBottom: "25px" }}>
-              {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
-            </Typography>
-          </div>
+
+          <TodayAside currentTime={currentTime} />
+
           <div
             className="todo-aside"
             style={{
@@ -975,23 +946,26 @@ export default function CalendarPage() {
                 onClose={() => setOpenTodoPopup(false)}
               >
                 <DialogTitle>Dagens Uppgifter/Påminnelser</DialogTitle>
-                <div style={{ display: "flex", alignItems: "center",  }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <DialogTitle
                     style={{
-                
                       fontSize: "14px",
-                      marginTop: "-30px"
-                     // Avstånd mellan "Ny todo" och datumet
+                      marginTop: "-30px",
+                      // Avstånd mellan "Ny todo" och datumet
                     }}
                   >
                     Ny todo
                   </DialogTitle>
-                  <Typography  style={{
-                
-                fontSize: "14px",
-                marginTop: "-30px"
-               // Avstånd mellan "Ny todo" och datumet
-              }} variant="body1">{todoDate}</Typography>
+                  <Typography
+                    style={{
+                      fontSize: "14px",
+                      marginTop: "-30px",
+                      // Avstånd mellan "Ny todo" och datumet
+                    }}
+                    variant="body1"
+                  >
+                    {todoDate}
+                  </Typography>
                 </div>
 
                 <DialogContent style={{ height: "250px" }}>
@@ -1003,7 +977,6 @@ export default function CalendarPage() {
                       display: "flex",
                       flexDirection: "column",
                       gap: "10px",
-                      
                     }}
                   >
                     <TextField
@@ -1025,7 +998,7 @@ export default function CalendarPage() {
                         // marginTop: "20px",
                         height: "60px",
                         // width: "100%",
-                         resize: "none",
+                        resize: "none",
                         padding: "8px",
                         fontSize: "14px",
                         border: "1px solid #ccc",
