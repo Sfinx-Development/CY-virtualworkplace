@@ -107,6 +107,7 @@ public class ConversationParticipantRepository : IConversationParticipantReposit
         {
             var conversationParticipant = await _cyDbContext
                 .ConversationParticipants.Include(c => c.Profile)
+                .ThenInclude(p => p.User)
                 .FirstAsync(c => c.Id == conversationParticipantId);
 
             if (conversationParticipant == null)

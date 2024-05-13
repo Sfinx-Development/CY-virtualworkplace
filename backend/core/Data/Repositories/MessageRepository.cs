@@ -21,9 +21,9 @@ public class MessageRepository : IMessageRepository
 
             return message;
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
 

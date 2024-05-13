@@ -43,7 +43,7 @@ public class MessageService : IMessageService
                     Utils.GenerateRandomId(),
                     incomingMessageDTO.Content,
                     DateTime.Now,
-                    conversationParticipant.Id,
+                    incomingMessageDTO.ConversationParticipantId,
                     conversationParticipant.ConversationId
                 );
                 return await _messageRepository.CreateAsync(newMessage);
