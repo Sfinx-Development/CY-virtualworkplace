@@ -1,160 +1,117 @@
-import React from "react";
-import {
-  Button,
-  Card,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import React from 'react';
+import { TextField, Button, Typography } from '@mui/material';
+import { theme1 } from '../../theme';
 
-const TodoDialog = ({
-  open,
-  onClose,
+interface TodoFormProps {
+  title: string;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
+  description: string;
+  setDescription: React.Dispatch<React.SetStateAction<string>>;
+  todoDate: string;
+  setTodoDate: React.Dispatch<React.SetStateAction<string>>;
+  handleCreateTodo: () => void;
+  fieldError: boolean;
+}
+
+const TodoAside: React.FC<TodoFormProps> = ({
   title,
+  setTitle,
   description,
+  setDescription,
   todoDate,
-  todos,
+  setTodoDate,
   handleCreateTodo,
-  handleEditTodo,
-  handleDeleteTodo,
-  isEditMode,
-  setEditedTitle,
-  setEditedDescription,
-  setEditedDate,
-  editedTitle,
-  editedDescription,
-  editedDate,
-  todoIdToEdit,
-  handleKeyPress,
-  handleSetEditMode,
+  fieldError,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Dagens Uppgifter/Påminnelser</DialogTitle>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <DialogTitle style={{ fontSize: "14px", marginTop: "-30px" }}>
-          Ny todo
-        </DialogTitle>
-        <Typography style={{ fontSize: "14px", marginTop: "-30px" }} variant="body1">
-          {todoDate}
-        </Typography>
-      </div>
+    <div>
+      <TextField
+        label="Titel"
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        variant="outlined"
+        sx={{
+          backgroundColor: "white",
+          borderRadius: "4px",
+          marginTop: "10px",
+        }}
+      />
 
-      <DialogContent style={{ height: "250px" }}>
-        <div
+      <div>
+        <input
+          type="text"
+          placeholder="Beskrivning"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           style={{
-            border: "1px solid #ccc",
-            padding: "10px",
             borderRadius: "4px",
+            marginTop: "20px",
+            marginLeft: "20px",
+            height: "80px",
+            width: "240px",
+            resize: "none",
+            padding: "8px",
+            fontSize: "14px",
+          }}
+        />
+
+        <div
+          className="date-submit-div"
+          style={{
+            width: "260px",
             display: "flex",
-            flexDirection: "column",
-            gap: "10px",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
           <TextField
-            label="Titel"
-            type="text"
-            value={title}
-            onChange={(e) => setEditedTitle(e.target.value)}
+            label="Slutdatum"
+            type="datetime-local"
+            value={todoDate}
+            onChange={(e) => setTodoDate(e.target.value)}
             variant="outlined"
-            fullWidth
-          />
-          <input
-            type="text"
-            placeholder="Beskrivning"
-            value={description}
-            onChange={(e) => setEditedDescription(e.target.value)}
-            style={{
-              borderRadius: "4px",
-              height: "60px",
-              resize: "none",
-              padding: "8px",
-              fontSize: "14px",
-              border: "1px solid #ccc",
+            sx={{
+              width: "250px",
+              marginTop: 2,
+              "& label": {
+                color: "transparent",
+              },
+              "&:focus label": {
+                color: "initial",
+              },
             }}
           />
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCreateTodo}>Skapa</Button>
-      </DialogActions>
-
-      <DialogContent dividers>
-        {todos.map((todo) => (
-          <Card
-            key={todo.id}
+          <Button
+            onClick={handleCreateTodo}
             style={{
-              marginBottom: "10px",
-              padding: "10px",
-              backgroundColor: "lightgrey",
+              display: "flex",
+              alignItems: "center",
+              padding: "10px 30px",
+              backgroundColor: theme1.palette.success.main,
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              textAlign: "center",
+              textDecoration: "none",
+              fontSize: "16px",
+              cursor: "pointer",
+              marginLeft: "30px",
+              marginTop: "15px",
+              transition: "background-color 0.3s",
             }}
           >
-            {isEditMode && todoIdToEdit === todo.id ? (
-              <TextField
-                value={editedTitle}
-                onChange={(e) => setEditedTitle(e.target.value)}
-                type="text"
-                fullWidth
-                variant="outlined"
-                onKeyDown={handleKeyPress}
-              />
-            ) : (
-              <Typography variant="subtitle1">{todo.title}</Typography>
-            )}
-            {isEditMode && todo.id === todoIdToEdit ? (
-              <TextField
-                label="Date"
-                type="datetime-local"
-                value={editedDate}
-                onChange={(e) => setEditedDate(e.target.value)}
-                variant="outlined"
-                sx={{ width: "250px", marginTop: 2 }}
-                onKeyDown={handleKeyPress}
-              />
-            ) : (
-              <Typography variant="body2">{todo.date.toString()}</Typography>
-            )}
-            {isEditMode && todoIdToEdit === todo.id ? (
-              <TextField
-                value={editedDescription}
-                onChange={(e) => setEditedDescription(e.target.value)}
-                type="text"
-                fullWidth
-                variant="outlined"
-                onKeyDown={handleKeyPress}
-              />
-            ) : (
-              <Typography variant="subtitle1">{todo.description}</Typography>
-            )}
+            Skapa
+          </Button>
+        </div>
 
-            <div>
-              <IconButton onClick={() => handleDeleteTodo(todo.id)}>
-                <DeleteIcon />
-              </IconButton>
-              <IconButton
-                size="small"
-                onClick={() => handleSetEditMode(todo.id)}
-              >
-                <EditIcon />
-              </IconButton>
-              {isEditMode && todo.id === todoIdToEdit && (
-                <Button onClick={handleEditTodo}>Spara ändringar</Button>
-              )}
-            </div>
-          </Card>
-        ))}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Stäng</Button>
-      </DialogActions>
-    </Dialog>
+        {fieldError && (
+          <Typography color="error">Alla fält måste fyllas i</Typography>
+        )}
+      </div>
+    </div>
   );
 };
 
 export default TodoAside;
+

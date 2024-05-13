@@ -3,6 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
 import TodayAside from "../../components/calendarComponents/todayAside";
+import TodoAside from "../../components/calendarComponents/todoAside";
 import {
   Button,
   Card,
@@ -436,92 +437,17 @@ export default function CalendarPage() {
                 >
                   Lägg till uppgifter eller påminnelser här nedan
                 </Button>
-                <TextField
-                  label="Titel"
-                  type="text"
-                  value={title}
-                  onChange={(e) => SetTitle(e.target.value)}
-                  variant="outlined"
-                  sx={{
-                    backgroundColor: "white",
-                    borderRadius: "4px",
-                    marginTop: "10px",
-                  }}
+
+                <TodoAside
+                  title={title}
+                  setTitle={SetTitle}
+                  description={description}
+                  setDescription={setDescription}
+                  todoDate={todoDate}
+                  setTodoDate={setTodoDate}
+                  handleCreateTodo={handleCreateTodo}
+                  fieldError={fieldError}
                 />
-
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Beskrivning"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    style={{
-                      borderRadius: "4px",
-                      marginTop: "20px",
-                      marginLeft: "20px",
-                      height: "80px",
-                      width: "240px",
-                      resize: "none",
-                      padding: "8px",
-                      fontSize: "14px",
-                    }}
-                  />
-
-                  <div
-                    className="date-submit-div"
-                    style={{
-                      width: "260px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <TextField
-                      label="Slutdatum"
-                      type="datetime-local"
-                      value={todoDate}
-                      onChange={(e) => setTodoDate(e.target.value)}
-                      variant="outlined"
-                      sx={{
-                        width: "250px",
-                        marginTop: 2,
-                        "& label": {
-                          color: "transparent",
-                        },
-                        "&:focus label": {
-                          color: "initial",
-                        },
-                      }}
-                    />
-                    <Button
-                      onClick={handleCreateTodo}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "10px 30px",
-                        backgroundColor: theme1.palette.success.main,
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        textAlign: "center",
-                        textDecoration: "none",
-                        fontSize: "16px",
-                        cursor: "pointer",
-                        marginLeft: "30px",
-                        marginTop: "15px",
-                        transition: "background-color 0.3s",
-                      }}
-                    >
-                      Skapa
-                    </Button>
-                  </div>
-
-                  {fieldError && (
-                    <Typography color="error">
-                      Alla fält måste fyllas i
-                    </Typography>
-                  )}
-                </div>
               </div>
 
               <div id="todo-list-div" className="alltodos-div">
@@ -845,90 +771,16 @@ export default function CalendarPage() {
             >
               Lägg till uppgifter eller påminnelser här nedan
             </Button>
-            <TextField
-              label="Titel"
-              type="text"
-              value={title}
-              onChange={(e) => SetTitle(e.target.value)}
-              variant="outlined"
-              sx={{
-                backgroundColor: "white",
-                borderRadius: "4px",
-                marginTop: "10px",
-              }}
+            <TodoAside
+              title={title}
+              setTitle={SetTitle}
+              description={description}
+              setDescription={setDescription}
+              todoDate={todoDate}
+              setTodoDate={setTodoDate}
+              handleCreateTodo={handleCreateTodo}
+              fieldError={fieldError}
             />
-
-            <div>
-              <input
-                type="text"
-                placeholder="Beskrivning"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                style={{
-                  borderRadius: "4px",
-                  marginTop: "20px",
-                  marginLeft: "20px",
-                  height: "80px",
-                  width: "240px",
-                  resize: "none",
-                  padding: "8px",
-                  fontSize: "14px",
-                }}
-              />
-
-              <div
-                className="date-submit-div"
-                style={{
-                  width: "260px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TextField
-                  label="Slutdatum"
-                  type="datetime-local"
-                  value={todoDate}
-                  onChange={(e) => setTodoDate(e.target.value)}
-                  variant="outlined"
-                  sx={{
-                    width: "250px",
-                    marginTop: 2,
-                    "& label": {
-                      color: "transparent",
-                    },
-                    "&:focus label": {
-                      color: "initial",
-                    },
-                  }}
-                />
-                <Button
-                  onClick={handleCreateTodo}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "10px 30px",
-                    backgroundColor: theme1.palette.success.main,
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    textAlign: "center",
-                    textDecoration: "none",
-                    fontSize: "16px",
-                    cursor: "pointer",
-                    marginLeft: "30px",
-                    marginTop: "15px",
-                    transition: "background-color 0.3s",
-                  }}
-                >
-                  Skapa
-                </Button>
-              </div>
-
-              {fieldError && (
-                <Typography color="error">Alla fält måste fyllas i</Typography>
-              )}
-            </div>
           </div>
 
           <div id="todo-list-div" className="alltodos-div">
