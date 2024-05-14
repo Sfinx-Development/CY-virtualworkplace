@@ -2,6 +2,11 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { useEffect, useState } from "react";
+import TodayAside from "../../components/calendarComponents/todayAside";
+import TodoAside from "../../components/calendarComponents/todoAside";
+import MainComponent from "../../components/calendarComponents/mainComponent";
+import TodoDialogAside from "../../components/calendarComponents/todoDialogAside";
+import CalendarCellDialog from "../../components/calendarComponents/calendarCellDialog";
 import {
   Button,
   Card,
@@ -371,6 +376,10 @@ export default function CalendarPage() {
     );
   }
 
+  function handleCloseTodoDialog(): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <Container
       style={{
@@ -435,92 +444,17 @@ export default function CalendarPage() {
                 >
                   Lägg till uppgifter eller påminnelser här nedan
                 </Button>
-                <TextField
-                  label="Titel"
-                  type="text"
-                  value={title}
-                  onChange={(e) => SetTitle(e.target.value)}
-                  variant="outlined"
-                  sx={{
-                    backgroundColor: "white",
-                    borderRadius: "4px",
-                    marginTop: "10px",
-                  }}
+
+                <TodoAside
+                  title={title}
+                  setTitle={SetTitle}
+                  description={description}
+                  setDescription={setDescription}
+                  todoDate={todoDate}
+                  setTodoDate={setTodoDate}
+                  handleCreateTodo={handleCreateTodo}
+                  fieldError={fieldError}
                 />
-
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Beskrivning"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    style={{
-                      borderRadius: "4px",
-                      marginTop: "20px",
-                      marginLeft: "20px",
-                      height: "80px",
-                      width: "240px",
-                      resize: "none",
-                      padding: "8px",
-                      fontSize: "14px",
-                    }}
-                  />
-
-                  <div
-                    className="date-submit-div"
-                    style={{
-                      width: "260px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <TextField
-                      label="Slutdatum"
-                      type="datetime-local"
-                      value={todoDate}
-                      onChange={(e) => setTodoDate(e.target.value)}
-                      variant="outlined"
-                      sx={{
-                        width: "250px",
-                        marginTop: 2,
-                        "& label": {
-                          color: "transparent",
-                        },
-                        "&:focus label": {
-                          color: "initial",
-                        },
-                      }}
-                    />
-                    <Button
-                      onClick={handleCreateTodo}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "10px 30px",
-                        backgroundColor: theme1.palette.success.main,
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        textAlign: "center",
-                        textDecoration: "none",
-                        fontSize: "16px",
-                        cursor: "pointer",
-                        marginLeft: "30px",
-                        marginTop: "15px",
-                        transition: "background-color 0.3s",
-                      }}
-                    >
-                      Skapa
-                    </Button>
-                  </div>
-
-                  {fieldError && (
-                    <Typography color="error">
-                      Alla fält måste fyllas i
-                    </Typography>
-                  )}
-                </div>
               </div>
 
               <div id="todo-list-div" className="alltodos-div">
@@ -533,94 +467,29 @@ export default function CalendarPage() {
                     alignItems: "center",
                   }}
                 >
-                  <Dialog
-                    open={openTodoPopup}
-                    onClose={() => setOpenTodoPopup(false)}
-                  >
-                    <DialogTitle>Dagens Uppgifter/Påminnelser</DialogTitle>
-                    <DialogContent dividers>
-                      {selectedDayTodos.map((todo) => (
-                        <Card
-                          key={todo.id}
-                          style={{
-                            marginBottom: "10px",
-                            padding: "10px",
-                            backgroundColor: "lightgrey",
-                          }}
-                        >
-                          {isEditMode && todoIdToEdit === todo.id ? (
-                            <TextField
-                              value={editedTitle}
-                              onChange={(e) => setEditedTitle(e.target.value)}
-                              type="text"
-                              fullWidth
-                              variant="outlined"
-                              onKeyDown={handleKeyPress}
-                            />
-                          ) : (
-                            <Typography variant="subtitle1">
-                              {todo.title}
-                            </Typography>
-                          )}
-                          {isEditMode && todo.id === todoIdToEdit ? (
-                            <TextField
-                              label="Date"
-                              type="datetime-local"
-                              value={editedDate}
-                              onChange={(e) => setEditedDate(e.target.value)}
-                              variant="outlined"
-                              sx={{ width: "250px", marginTop: 2 }}
-                              onKeyDown={handleKeyPress}
-                            />
-                          ) : (
-                            <Typography variant="body2">
-                              {todo.date.toString()}
-                            </Typography>
-                          )}
-                          {isEditMode && todoIdToEdit === todo.id ? (
-                            <TextField
-                              value={editedDescription}
-                              onChange={(e) =>
-                                setEditedDescription(e.target.value)
-                              }
-                              type="text"
-                              fullWidth
-                              variant="outlined"
-                              onKeyDown={handleKeyPress}
-                            />
-                          ) : (
-                            <Typography variant="subtitle1">
-                              {todo.description}
-                            </Typography>
-                          )}
-
-                          <div>
-                            <IconButton
-                              onClick={() => handleDeleteTodo(todo.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleSetEditMode(todo.id)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            {isEditMode && todo.id === todoIdToEdit && (
-                              <Button onClick={handleEditTodo}>
-                                Spara ändringar
-                              </Button>
-                            )}
-                          </div>
-                        </Card>
-                      ))}
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={() => setOpenTodoPopup(false)}>
-                        Stäng
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
+                 <CalendarCellDialog
+                open={openTodoPopup}
+                onClose={() => setOpenTodoPopup(false)}
+                todoDate={todoDate}
+                title={title}
+                SetTitle={SetTitle}
+                description={description}
+                setDescription={setDescription}
+                handleCreateTodo={handleCreateTodo}
+                selectedDayTodos={selectedDayTodos}
+                isEditMode={isEditMode}
+                todoIdToEdit={todoIdToEdit}
+                editedTitle={editedTitle}
+                setEditedTitle={setEditedTitle}
+                editedDate={editedDate}
+                setEditedDate={setEditedDate}
+                editedDescription={editedDescription}
+                setEditedDescription={setEditedDescription}
+                handleDeleteTodo={handleDeleteTodo}
+                handleSetEditMode={handleSetEditMode}
+                handleEditTodo={handleEditTodo}
+                handleKeyPress={handleKeyPress}
+              />
 
                   <Button
                     id="show-todos-btn"
@@ -649,94 +518,25 @@ export default function CalendarPage() {
                     Se alla uppgifter
                   </Button>
 
-                  <Dialog
+                  <TodoDialogAside
                     open={openDialog}
-                    onClose={() => setOpenDialog(false)}
-                  >
-                    <DialogTitle>Uppgifter/Påminnelser</DialogTitle>
-                    <DialogContent dividers>
-                      {todosInTeam?.map((todo) => (
-                        <Card
-                          key={todo.id}
-                          style={{
-                            marginBottom: "10px",
-                            padding: "10px",
-                            backgroundColor: "lightgrey",
-                          }}
-                        >
-                          {isEditMode && todoIdToEdit === todo.id ? (
-                            <TextField
-                              value={editedTitle}
-                              onChange={(e) => setEditedTitle(e.target.value)}
-                              type="text"
-                              fullWidth
-                              variant="outlined"
-                              onKeyDown={handleKeyPress}
-                            />
-                          ) : (
-                            <Typography variant="subtitle1">
-                              {todo.title}
-                            </Typography>
-                          )}
-                          {isEditMode && todo.id === todoIdToEdit ? (
-                            <TextField
-                              label="Date"
-                              type="datetime-local"
-                              value={editedDate}
-                              onChange={(e) => setEditedDate(e.target.value)}
-                              variant="outlined"
-                              sx={{ width: "250px", marginTop: 2 }}
-                              onKeyDown={handleKeyPress}
-                            />
-                          ) : (
-                            <Typography variant="body2">
-                              {todo.date.toString()}
-                            </Typography>
-                          )}
-                          {isEditMode && todoIdToEdit === todo.id ? (
-                            <TextField
-                              value={editedDescription}
-                              onChange={(e) =>
-                                setEditedDescription(e.target.value)
-                              }
-                              type="text"
-                              fullWidth
-                              variant="outlined"
-                              onKeyDown={handleKeyPress}
-                            />
-                          ) : (
-                            <Typography variant="subtitle1">
-                              {todo.description}
-                            </Typography>
-                          )}
-
-                          <div>
-                            <IconButton
-                              onClick={() => handleDeleteTodo(todo.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleSetEditMode(todo.id)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            {isEditMode && todo.id === todoIdToEdit && (
-                              <Button onClick={handleEditTodo}>
-                                Spara ändringar
-                              </Button>
-                            )}
-                          </div>
-                        </Card>
-                      ))}
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={() => setOpenDialog(false)}>
-                        Stäng
-                      </Button>
-                    </DialogActions>
-                  </Dialog>
+                    onClose={handleCloseTodoDialog}
+                    todos={todosen}
+                    handleDeleteTodo={handleDeleteTodo}
+                    handleSetEditMode={handleSetEditMode}
+                    isEditMode={isEditMode}
+                    todoIdToEdit={todoIdToEdit}
+                    editedTitle={editedTitle}
+                    setEditedTitle={setEditedTitle}
+                    editedDate={editedDate}
+                    setEditedDate={setEditedDate}
+                    editedDescription={editedDescription}
+                    setEditedDescription={setEditedDescription}
+                    handleKeyPress={handleKeyPress}
+                    handleEditTodo={handleEditTodo}
+                    openDialog={false}
+                    setOpenDialog={setOpenDialog}
+                  />
 
                   <Button id="read-todos-btn" aria-label="headphone icon">
                     <i
@@ -777,23 +577,7 @@ export default function CalendarPage() {
             {activeTeam?.name} Kalender
           </Typography>
 
-          <div className="today-aside" style={{ textAlign: "center" }}>
-            <Typography
-              variant="h6"
-              style={{ fontWeight: "bold", marginTop: "10px" }}
-            >
-              Dagens Datum
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleTimeString()}
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleDateString()}
-            </Typography>
-            <Typography style={{ marginBottom: "25px" }}>
-              {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
-            </Typography>
-          </div>
+          <TodayAside currentTime={currentTime} />
         </div>
       ) : (
         <aside
@@ -824,23 +608,9 @@ export default function CalendarPage() {
           >
             {activeTeam?.name} Kalender
           </Typography>
-          <div className="today-aside" style={{ textAlign: "center" }}>
-            <Typography
-              variant="h6"
-              style={{ fontWeight: "bold", marginTop: "10px" }}
-            >
-              Dagens Datum
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleTimeString()}
-            </Typography>
-            <Typography style={{ marginBottom: "5px" }}>
-              {currentTime.toLocaleDateString()}
-            </Typography>
-            <Typography style={{ marginBottom: "25px" }}>
-              {currentTime.toLocaleDateString("sv-SE", { weekday: "long" })}
-            </Typography>
-          </div>
+
+          <TodayAside currentTime={currentTime} />
+
           <div
             className="todo-aside"
             style={{
@@ -874,90 +644,16 @@ export default function CalendarPage() {
             >
               Lägg till uppgifter eller påminnelser här nedan
             </Button>
-            <TextField
-              label="Titel"
-              type="text"
-              value={title}
-              onChange={(e) => SetTitle(e.target.value)}
-              variant="outlined"
-              sx={{
-                backgroundColor: "white",
-                borderRadius: "4px",
-                marginTop: "10px",
-              }}
+            <TodoAside
+              title={title}
+              setTitle={SetTitle}
+              description={description}
+              setDescription={setDescription}
+              todoDate={todoDate}
+              setTodoDate={setTodoDate}
+              handleCreateTodo={handleCreateTodo}
+              fieldError={fieldError}
             />
-
-            <div>
-              <input
-                type="text"
-                placeholder="Beskrivning"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                style={{
-                  borderRadius: "4px",
-                  marginTop: "20px",
-                  marginLeft: "20px",
-                  height: "80px",
-                  width: "240px",
-                  resize: "none",
-                  padding: "8px",
-                  fontSize: "14px",
-                }}
-              />
-
-              <div
-                className="date-submit-div"
-                style={{
-                  width: "260px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TextField
-                  label="Slutdatum"
-                  type="datetime-local"
-                  value={todoDate}
-                  onChange={(e) => setTodoDate(e.target.value)}
-                  variant="outlined"
-                  sx={{
-                    width: "250px",
-                    marginTop: 2,
-                    "& label": {
-                      color: "transparent",
-                    },
-                    "&:focus label": {
-                      color: "initial",
-                    },
-                  }}
-                />
-                <Button
-                  onClick={handleCreateTodo}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "10px 30px",
-                    backgroundColor: theme1.palette.success.main,
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    textAlign: "center",
-                    textDecoration: "none",
-                    fontSize: "16px",
-                    cursor: "pointer",
-                    marginLeft: "30px",
-                    marginTop: "15px",
-                    transition: "background-color 0.3s",
-                  }}
-                >
-                  Skapa
-                </Button>
-              </div>
-
-              {fieldError && (
-                <Typography color="error">Alla fält måste fyllas i</Typography>
-              )}
-            </div>
           </div>
 
           <div id="todo-list-div" className="alltodos-div">
@@ -970,150 +666,29 @@ export default function CalendarPage() {
                 alignItems: "center",
               }}
             >
-              <Dialog
+              <CalendarCellDialog
                 open={openTodoPopup}
                 onClose={() => setOpenTodoPopup(false)}
-              >
-                <DialogTitle>Dagens Uppgifter/Påminnelser</DialogTitle>
-                <div style={{ display: "flex", alignItems: "center",  }}>
-                  <DialogTitle
-                    style={{
-                
-                      fontSize: "14px",
-                      marginTop: "-30px"
-                     // Avstånd mellan "Ny todo" och datumet
-                    }}
-                  >
-                    Ny todo
-                  </DialogTitle>
-                  <Typography  style={{
-                
-                fontSize: "14px",
-                marginTop: "-30px"
-               // Avstånd mellan "Ny todo" och datumet
-              }} variant="body1">{todoDate}</Typography>
-                </div>
-
-                <DialogContent style={{ height: "250px" }}>
-                  <div
-                    style={{
-                      border: "1px solid #ccc",
-                      padding: "10px",
-                      borderRadius: "4px",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      
-                    }}
-                  >
-                    <TextField
-                      label="Titel"
-                      type="text"
-                      value={title}
-                      onChange={(e) => SetTitle(e.target.value)}
-                      variant="outlined"
-                      fullWidth
-                      //  sx={{  marginBottom: 2, height: "30px",}}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Beskrivning"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      style={{
-                        borderRadius: "4px",
-                        // marginTop: "20px",
-                        height: "60px",
-                        // width: "100%",
-                         resize: "none",
-                        padding: "8px",
-                        fontSize: "14px",
-                        border: "1px solid #ccc",
-                      }}
-                    />
-                  </div>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCreateTodo}>Skapa</Button>
-                </DialogActions>
-
-                <DialogContent dividers>
-                  {selectedDayTodos.map((todo) => (
-                    <Card
-                      key={todo.id}
-                      style={{
-                        marginBottom: "10px",
-                        padding: "10px",
-                        backgroundColor: "lightgrey",
-                      }}
-                    >
-                      {isEditMode && todoIdToEdit === todo.id ? (
-                        <TextField
-                          value={editedTitle}
-                          onChange={(e) => setEditedTitle(e.target.value)}
-                          type="text"
-                          fullWidth
-                          variant="outlined"
-                          onKeyDown={handleKeyPress}
-                        />
-                      ) : (
-                        <Typography variant="subtitle1">
-                          {todo.title}
-                        </Typography>
-                      )}
-                      {isEditMode && todo.id === todoIdToEdit ? (
-                        <TextField
-                          label="Date"
-                          type="datetime-local"
-                          value={editedDate}
-                          onChange={(e) => setEditedDate(e.target.value)}
-                          variant="outlined"
-                          sx={{ width: "250px", marginTop: 2 }}
-                          onKeyDown={handleKeyPress}
-                        />
-                      ) : (
-                        <Typography variant="body2">
-                          {todo.date.toString()}
-                        </Typography>
-                      )}
-                      {isEditMode && todoIdToEdit === todo.id ? (
-                        <TextField
-                          value={editedDescription}
-                          onChange={(e) => setEditedDescription(e.target.value)}
-                          type="text"
-                          fullWidth
-                          variant="outlined"
-                          onKeyDown={handleKeyPress}
-                        />
-                      ) : (
-                        <Typography variant="subtitle1">
-                          {todo.description}
-                        </Typography>
-                      )}
-
-                      <div>
-                        <IconButton onClick={() => handleDeleteTodo(todo.id)}>
-                          <DeleteIcon />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleSetEditMode(todo.id)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        {isEditMode && todo.id === todoIdToEdit && (
-                          <Button onClick={handleEditTodo}>
-                            Spara ändringar
-                          </Button>
-                        )}
-                      </div>
-                    </Card>
-                  ))}
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setOpenTodoPopup(false)}>Stäng</Button>
-                </DialogActions>
-              </Dialog>
+                todoDate={todoDate}
+                title={title}
+                SetTitle={SetTitle}
+                description={description}
+                setDescription={setDescription}
+                handleCreateTodo={handleCreateTodo}
+                selectedDayTodos={selectedDayTodos}
+                isEditMode={isEditMode}
+                todoIdToEdit={todoIdToEdit}
+                editedTitle={editedTitle}
+                setEditedTitle={setEditedTitle}
+                editedDate={editedDate}
+                setEditedDate={setEditedDate}
+                editedDescription={editedDescription}
+                setEditedDescription={setEditedDescription}
+                handleDeleteTodo={handleDeleteTodo}
+                handleSetEditMode={handleSetEditMode}
+                handleEditTodo={handleEditTodo}
+                handleKeyPress={handleKeyPress}
+              />
 
               <Button
                 id="show-todos-btn"
@@ -1142,85 +717,25 @@ export default function CalendarPage() {
                 Se alla uppgifter
               </Button>
 
-              <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>Uppgifter/Påminnelser</DialogTitle>
-                <DialogContent dividers>
-                  {todosInTeam?.map((todo) => (
-                    <Card
-                      key={todo.id}
-                      style={{
-                        marginBottom: "10px",
-                        padding: "10px",
-                        backgroundColor: "lightgrey",
-                      }}
-                    >
-                      {isEditMode && todoIdToEdit === todo.id ? (
-                        <TextField
-                          value={editedTitle}
-                          onChange={(e) => setEditedTitle(e.target.value)}
-                          type="text"
-                          fullWidth
-                          variant="outlined"
-                          onKeyDown={handleKeyPress}
-                        />
-                      ) : (
-                        <Typography variant="subtitle1">
-                          {todo.title}
-                        </Typography>
-                      )}
-                      {isEditMode && todo.id === todoIdToEdit ? (
-                        <TextField
-                          label="Date"
-                          type="datetime-local"
-                          value={editedDate}
-                          onChange={(e) => setEditedDate(e.target.value)}
-                          variant="outlined"
-                          sx={{ width: "250px", marginTop: 2 }}
-                          onKeyDown={handleKeyPress}
-                        />
-                      ) : (
-                        <Typography variant="body2">
-                          {todo.date.toString()}
-                        </Typography>
-                      )}
-                      {isEditMode && todoIdToEdit === todo.id ? (
-                        <TextField
-                          value={editedDescription}
-                          onChange={(e) => setEditedDescription(e.target.value)}
-                          type="text"
-                          fullWidth
-                          variant="outlined"
-                          onKeyDown={handleKeyPress}
-                        />
-                      ) : (
-                        <Typography variant="subtitle1">
-                          {todo.description}
-                        </Typography>
-                      )}
-
-                      <div>
-                        <IconButton onClick={() => handleDeleteTodo(todo.id)}>
-                          <DeleteIcon />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleSetEditMode(todo.id)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        {isEditMode && todo.id === todoIdToEdit && (
-                          <Button onClick={handleEditTodo}>
-                            Spara ändringar
-                          </Button>
-                        )}
-                      </div>
-                    </Card>
-                  ))}
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setOpenDialog(false)}>Stäng</Button>
-                </DialogActions>
-              </Dialog>
+              <TodoDialogAside
+                open={openDialog}
+                onClose={handleCloseTodoDialog}
+                todos={todosen}
+                handleDeleteTodo={handleDeleteTodo}
+                handleSetEditMode={handleSetEditMode}
+                isEditMode={isEditMode}
+                todoIdToEdit={todoIdToEdit}
+                editedTitle={editedTitle}
+                setEditedTitle={setEditedTitle}
+                editedDate={editedDate}
+                setEditedDate={setEditedDate}
+                editedDescription={editedDescription}
+                setEditedDescription={setEditedDescription}
+                handleKeyPress={handleKeyPress}
+                handleEditTodo={handleEditTodo}
+                openDialog={false}
+                setOpenDialog={setOpenDialog}
+              />
 
               <Button id="read-todos-btn" aria-label="headphone icon">
                 <i className="fa-solid fa-headphones" id="headphone-icon"></i>
@@ -1244,189 +759,20 @@ export default function CalendarPage() {
         </aside>
       )}
 
-      <main
-        style={{
-          flex: 1,
-          // overflowY: "auto",
-          display: isAsideVisible ? "none" : "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <header>
-          <div
-            id="header-items"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-              marginTop: "10px",
-            }}
-          >
-            <span
-              title="Föregående månad"
-              onClick={handlePrevMonth}
-              style={{
-                cursor: "pointer",
-                fontSize: "32px",
-                color: "black",
-                marginRight: "20px",
-              }}
-            >
-              &lt;
-            </span>
-
-            <Typography
-              variant="h6"
-              id="month-year"
-              style={{
-                margin: "10px",
-                fontFamily: "Arial, sans-serif",
-                fontWeight: "bold",
-                color: "#000",
-              }}
-            >
-              {updateCalendarMonthLabel()}
-            </Typography>
-
-            <span
-              title="Nästa månad"
-              onClick={handleNextMonth}
-              style={{
-                cursor: "pointer",
-                fontSize: "32px",
-                color: "black",
-                marginLeft: "20px",
-              }}
-            >
-              &gt;
-            </span>
-          </div>
-        </header>
-        <table
-          id="calendar-table"
-          style={{ width: "100%", borderCollapse: "collapse" }}
-        >
-          <thead>
-            <tr>
-              {weekDays.map((day, index) => (
-                <th
-                  key={index}
-                  style={{
-                    color: index === 6 ? "rgb(182, 36, 36)" : "inherit",
-                    padding: "5px",
-                    fontSize: "12px",
-                  }}
-                >
-                  {day}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody id="calendar-body-id">
-            {generateCalendarRows(holidays).map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((day, dayIndex) => {
-                  const holidayName = holidays.find(
-                    (holiday) =>
-                      parseInt(holiday.datum.split("-")[2]) === parseInt(day)
-                  )?.helgdag;
-
-                  const isSunday = dayIndex === 6;
-                  const isTodayCell = isToday(year, month, parseInt(day));
-
-                  const todoCount = todosInTeam?.filter((todo) => {
-                    const todoDate = new Date(todo.date);
-                    const todoDay = todoDate.getDate();
-                    const todoMonth = todoDate.getMonth();
-                    const todoYear = todoDate.getFullYear();
-                    return (
-                      todoDay === parseInt(day) &&
-                      todoMonth === month &&
-                      todoYear === year
-                    );
-                  }).length;
-
-                  return (
-                    <td
-                      key={dayIndex}
-                      onClick={() => handleDayClick(day)}
-                      style={{
-                        border: "1px solid black",
-                        padding: "2.8vw 2.8vw",
-                        cursor: "pointer",
-                        position: "relative",
-                        color: isSunday ? "red" : holidayName ? "red" : "black",
-                        whiteSpace: "nowrap",
-                        backgroundColor: isTodayCell
-                          ? "grey"
-                          : "rgb(214, 196, 203)",
-                        transition: "background-color 0.3s",
-                        fontSize: "12px",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isTodayCell) {
-                          e.currentTarget.style.backgroundColor = "white";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isTodayCell) {
-                          e.currentTarget.style.backgroundColor =
-                            "rgb(214, 196, 203)";
-                        }
-                      }}
-                    >
-                      {day}
-                      {holidayName && (
-                        <div
-                          style={{
-                            fontSize: "9px",
-                            whiteSpace: "nowrap",
-                            backgroundColor: "white",
-                            overflowWrap: "break-word",
-                            position: "absolute",
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            textAlign: "center",
-                            color: "rgb(215, 142, 142)",
-                            opacity: 0.6,
-                            padding: "2px",
-                          }}
-                        >
-                          {holidayName}
-                        </div>
-                      )}
-                      {todoCount > 0 && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 0,
-                            right: 0,
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            color: "black",
-                            borderRadius: "50%",
-                            width: "20px",
-                            height: "20px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            fontStyle: "italic",
-                          }}
-                        >
-                          {todoCount}
-                        </div>
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </main>
+      <MainComponent
+        weekDays={weekDays}
+        generateCalendarRows={generateCalendarRows}
+        handleDayClick={handleDayClick}
+        holidays={holidays}
+        year={year}
+        month={month}
+        todosInTeam={todosInTeam}
+        handlePrevMonth={handlePrevMonth}
+        handleNextMonth={handleNextMonth}
+        updateCalendarMonthLabel={updateCalendarMonthLabel}
+        isToday={isToday}
+        isAsideVisible={false}
+      />
     </Container>
   );
 }
