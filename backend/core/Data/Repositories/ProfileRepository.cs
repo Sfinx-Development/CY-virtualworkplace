@@ -185,6 +185,31 @@ public class ProfileRepository : IProfileRepository
     {
         try
         {
+             // DENNA NÄSTA
+            var meetingOccasions = await _cyDbContext.MeetingOccasions.Where(m => m.ProfileId == id).ToListAsync();
+            _cyDbContext.MeetingOccasions.RemoveRange(meetingOccasions);
+
+            var conversationstopartisipants = await _cyDbContext.ConversationParticipants.Where(c => c.ProfileId == id).ToListAsync();
+            
+            var messages = new List<Message>();
+
+            foreach(var cp in conversationstopartisipants){
+                messages = await _cyDbContext.Messages.Where(m => m.ConversationParticipantId == cp.Id).ToListAsync();
+
+                foreach(var m in messages){
+                    m.ConversationParticipant = null;
+                    m.ConversationParticipantId = null;
+
+                    _cyDbContext.Messages.Update(m);
+                }
+
+                _cyDbContext.ConversationParticipants.Remove(cp);
+            }
+            //kolla så den tas bort från teamet med då direkt
+            // först hitta profilernas alla messeages, conversationtopartisipant, meetinoccasion
+            //updatecomments, profilesurveys, radera alla dessa grejer
+            //till sist orofilen,, hämta alla conversationstopartisipants, och använd removerange ist för foreach. 
+            // alt i projectet som har ett profilid på sig ska försvinna
             //kolla så den tas bort från teamet med då direkt
             var profileToDelete = await _cyDbContext.Profiles.FindAsync(id);
             var deletedProfile = profileToDelete;
