@@ -199,7 +199,7 @@ public class ProfileRepository : IProfileRepository
                 foreach(var m in messages){
                     m.ConversationParticipant = null;
                     m.ConversationParticipantId = null;
-
+                    
                     _cyDbContext.Messages.Update(m);
                 }
 

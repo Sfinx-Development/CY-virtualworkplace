@@ -164,10 +164,10 @@ export interface Message {
   id: string;
   content: string;
   dateCreated: Date;
-  conversationParticipantId: string;
-  conversationId: string;
+  conversationParticipantId?: string;
+  conversationId?: string;
   fullName: string;
-  profileId: string;
+  profileId?: string;
 }
 
 export interface MessageOutgoing {

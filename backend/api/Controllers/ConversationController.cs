@@ -148,8 +148,8 @@ namespace Controllers
                                 m.DateCreated,
                                 m.ConversationParticipantId,
                                 m.ConversationId,
-                                m.ConversationParticipant.FullName,
-                                m.ConversationParticipant.ProfileId
+                            m.ConversationParticipant != null ? m.ConversationParticipant.FullName : "Okänd",
+                m.ConversationParticipant != null ? m.ConversationParticipant.ProfileId : null
                             )
                     )
                     .ToList();
