@@ -3,6 +3,7 @@ import {
   ConnectWithoutContact as ConnectWithoutContactIcon,
 } from "@mui/icons-material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import { FormattedMessage } from "react-intl";
 import {
   Box,
   Button,
@@ -92,7 +93,8 @@ const ChooseTeam = () => {
               onClick={() => navigate("/createteam")}
               startIcon={<AddIcon />}
             >
-              Skapa team
+        
+              <FormattedMessage id="choose_team_page1" />
             </Button>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -105,7 +107,8 @@ const ChooseTeam = () => {
               onClick={() => navigate("/jointeam")}
               startIcon={<ConnectWithoutContactIcon />}
             >
-              Gå med i team
+             
+              <FormattedMessage id="choose_team_page" />
             </Button>
           </Grid>
         </Grid>
@@ -197,7 +200,8 @@ const ChooseTeam = () => {
                           {request.teamName.toUpperCase()}
                         </Typography>
                         <Button onClick={() => deleteRequest(request.id)}>
-                          Ångra förfrågan
+                       
+                          <FormattedMessage id="choose_team_page2regret" />
                         </Button>
                       </CardContent>
                     </Card>

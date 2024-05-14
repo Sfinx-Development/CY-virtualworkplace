@@ -34,5 +34,12 @@
     "confirm_password_label": "Bekräfta lösenord",
     "gender_label": "Kön",
     "age_label": "Ålder",
-    "choose_avatar": "Välj en avatar"  
+    "choose_avatar": "Välj en avatar",
+    
+    "choose_team_page": "Gå med i team",
+    "choose_team_page1": "Skapa team",
+    "choose_team_page2regret": "Ångra förfrågan" 
+
+    
+
 }
