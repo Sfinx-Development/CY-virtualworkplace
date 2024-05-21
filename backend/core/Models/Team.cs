@@ -10,10 +10,20 @@ public class Team
     public string ImageUrl { get; set; }
     public bool IsOpenForJoining { get; set; }
     public bool AllCanCreateMeetings { get; set; }
-    public List<Profile> Profiles = new();
+    public List<Profile> Profiles { get; set; }
 
     public Team() { }
-    public Team(string id, string name, string code, DateTime createdAt, string teamRole, string imageurl, bool isOpenForJoining, bool allCanCreateMeetings) 
+
+    public Team(
+        string id,
+        string name,
+        string code,
+        DateTime createdAt,
+        string teamRole,
+        string imageurl,
+        bool isOpenForJoining,
+        bool allCanCreateMeetings
+    )
     {
         Id = id;
         Name = name;
@@ -23,5 +33,5 @@ public class Team
         ImageUrl = imageurl;
         IsOpenForJoining = isOpenForJoining;
         AllCanCreateMeetings = allCanCreateMeetings;
-     }
+    }
 }

@@ -141,7 +141,6 @@ namespace Controllers
             {
                 var loggedInUser = await GetLoggedInUserAsync();
                 var teams = await _teamService.GetTeamsByUserId(loggedInUser.Id);
-                teams.ForEach(t => Console.WriteLine(t.Name));
                 return Ok(teams);
             }
             catch (Exception e)

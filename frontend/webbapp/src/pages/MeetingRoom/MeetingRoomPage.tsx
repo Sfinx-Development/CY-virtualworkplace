@@ -169,11 +169,11 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         zIndex: -1,
         padding: 2,
         margin: 0,
-        width: "100%",
+        flex: 1,
+        width: "100vw",
       }}
     >
       <BackGroundDesign
@@ -224,9 +224,9 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            justifyContent: "center",
-            gap: isMobile ? 1 : 4,
+            justifyContent: "space-between",
+            alignContent: "center",
+            gap: 2,
             width: "100%",
             mt: isMobile ? 0 : 2,
           }}

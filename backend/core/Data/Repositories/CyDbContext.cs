@@ -33,24 +33,24 @@ public class CyDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (!options.IsConfigured)
-        {
-            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-
-            var connectionString = configuration.GetConnectionString(
-                configuration["Environment"] == "Development" ? "CyDbContextDev" : "CyDbContextProd"
-            );
-
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-        }
-        //använd denna istället för att göra migration till lokala databasen:
         // if (!options.IsConfigured)
         // {
-        //     options.UseMySql(
-        //         "server=localhost;database=cy;user=root;password=",
-        //         ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
+        //     var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+
+        //     var connectionString = configuration.GetConnectionString(
+        //         configuration["Environment"] == "Development" ? "CyDbContextDev" : "CyDbContextProd"
         //     );
+
+        //     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         // }
+        //använd denna istället för att göra migration till lokala databasen:
+        if (!options.IsConfigured)
+        {
+            options.UseMySql(
+                "server=localhost;database=cy;user=root;password=",
+                ServerVersion.AutoDetect("server=localhost;database=cy;user=root;password=")
+            );
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -31,6 +31,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 const ChooseTeam = () => {
   //const user = useAppSelector((state) => state.userSlice.user);
   const myTeams = useAppSelector((state) => state.teamSlice.teams);
+  const user = useAppSelector((state) => state.userSlice.user);
   const myRequests = useAppSelector(
     (state) => state.teamSlice.myRequests
   )?.filter((r) => !r.isConfirmed);
@@ -46,7 +47,7 @@ const ChooseTeam = () => {
   useEffect(() => {
     dispatch(GetMyTeamsAsync());
     dispatch(GetMyTeamRequestsAsync());
-  }, []);
+  }, [user]);
 
   const deleteRequest = (requestId: string) => {
     dispatch(DeleteTeamRequest(requestId));

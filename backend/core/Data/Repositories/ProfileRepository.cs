@@ -150,7 +150,7 @@ public class ProfileRepository : IProfileRepository
         }
         catch (Exception e)
         {
-            throw new Exception();
+            throw new Exception(e.Message);
         }
     }
 
