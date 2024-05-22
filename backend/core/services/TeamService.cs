@@ -35,31 +35,34 @@ public class TeamService : ITeamService
     )
     {
         Team team =
-            new()
-            {
-                Id = Utils.GenerateRandomId(),
-                Code = Utils.GenerateRandomId(6, "upper"),
-                Name = incomingCreateTeamDTO.TeamName,
-                TeamRole = incomingCreateTeamDTO.TeamRole,
-                ImageUrl = incomingCreateTeamDTO.ImageUrl,
-                CreatedAt = DateTime.UtcNow,
-                IsOpenForJoining = true,
-                AllCanCreateMeetings = true
-            };
+            new(
+                Utils.GenerateRandomId(),
+                incomingCreateTeamDTO.TeamName,
+                Utils.GenerateRandomId(6, "upper"),
+                DateTime.UtcNow,
+                incomingCreateTeamDTO.TeamRole,
+                incomingCreateTeamDTO.ImageUrl,
+                true,
+                true
+            );
 
         Team createdTeam = await _teamRepository.CreateAsync(team);
+        Profile createdProfile = new();
+        Conversation createdConversation = new();
+        if (createdTeam != null)
+        {
+            createdProfile = await _profileService.CreateProfile(
+                loggedInUser,
+                true,
+                incomingCreateTeamDTO.ProfileRole,
+                createdTeam
+            );
 
-        Profile createdProfile = await _profileService.CreateProfile(
-            loggedInUser,
-            true,
-            incomingCreateTeamDTO.ProfileRole,
-            createdTeam
-        );
-
-        Conversation createdConversation = await _conversationService.CreateTeamConversationAsync(
-            createdProfile.Id,
-            createdTeam.Id
-        );
+            createdConversation = await _conversationService.CreateTeamConversationAsync(
+                createdProfile.Id,
+                createdTeam.Id
+            );
+        }
 
         if (createdTeam != null && createdProfile != null && createdConversation != null)
         {

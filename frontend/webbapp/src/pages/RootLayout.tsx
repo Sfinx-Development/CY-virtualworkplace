@@ -37,12 +37,23 @@ const RootLayout = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        height: "100vh",
+        alignItems: "center",
+        width: "100%",
+        margin: 0,
+        padding: 0,
+      }}
+    >
       <AppBar
         position="static"
         sx={{
           backgroundColor: "white",
-          height: "3rem",
+          height: "4rem",
           flexDirection: "row",
           backdropFilter: "blur(10px)",
           alignItems: "center",
@@ -163,7 +174,10 @@ const RootLayout = () => {
         </div>
       </AppBar>
 
-      <main className="bg-neutral-100 flex flex-1 flex-col w-full">
+      <main
+        className="bg-neutral-100 flex flex-1 flex-col"
+        style={{ width: "100vw" }}
+      >
         <Outlet />
       </main>
 

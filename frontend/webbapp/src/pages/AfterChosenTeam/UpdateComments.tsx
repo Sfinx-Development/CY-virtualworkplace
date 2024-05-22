@@ -131,7 +131,14 @@ export default function UpdateComments() {
   };
 
   return (
-    <Container>
+    <Container
+      sx={{
+        width: "100vw",
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+      }}
+    >
       <Typography variant={isMobile ? "h5" : "h4"}>
         {activeUpdate?.title ?? "Ingen titel"}
       </Typography>

@@ -46,15 +46,18 @@ public class ProfileService : IProfileService
     public async Task<Profile> CreateProfile(User user, bool isOwner, string role, Team team)
     {
         Profile newProfile =
-            new()
+            new(
+                Utils.GenerateRandomId(),
+                user.FirstName + " " + user.LastName,
+                role,
+                isOwner,
+                user.Id,
+                team.Id,
+                DateTime.UtcNow
+            )
             {
-                Id = Utils.GenerateRandomId(),
-                FullName = user.FirstName + " " + user.LastName,
-                IsOwner = isOwner,
-                User = user,
-                DateCreated = DateTime.UtcNow,
-                Role = role,
-                Team = team
+                Team = team,
+                User = user
             };
 
         Profile createdProfile = await _profileRepository.CreateAsync(newProfile);
