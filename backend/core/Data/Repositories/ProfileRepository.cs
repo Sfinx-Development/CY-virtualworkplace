@@ -185,6 +185,47 @@ public class ProfileRepository : IProfileRepository
     {
         try
         {
+            // DENNA NÄSTA
+            var meetingOccasions = await _cyDbContext.MeetingOccasions.Where(m => m.ProfileId == id).ToListAsync();
+            _cyDbContext.MeetingOccasions.RemoveRange(meetingOccasions);
+
+            var conversationstopartisipants = await _cyDbContext.ConversationParticipants.Where(c => c.ProfileId == id).ToListAsync();
+
+            var messages = new List<Message>();
+
+            foreach (var cp in conversationstopartisipants)
+            {
+                messages = await _cyDbContext.Messages.Where(m => m.ConversationParticipantId == cp.Id).ToListAsync();
+
+                foreach (var m in messages)
+                {
+                    m.ConversationParticipant = null;
+                    m.ConversationParticipantId = null;
+
+                    _cyDbContext.Messages.Update(m);
+                }
+
+                _cyDbContext.ConversationParticipants.Remove(cp);
+            }
+
+            var profileToSurveys = await _cyDbContext.ProfileToSurveys.Where(ps => ps.ProfileId == id).ToListAsync();
+
+            _cyDbContext.ProfileToSurveys.RemoveRange(profileToSurveys);
+
+            var updateCommments = await _cyDbContext.UpdateComments.Where(u => u.ProfileId == id).ToListAsync();
+
+            foreach (var u in updateCommments)
+            {
+                var projectFiles = await _cyDbContext.ProjectFiles.Where(pf => pf.UpdateCommentId == u.Id).ToListAsync();
+                _cyDbContext.ProjectFiles.RemoveRange(projectFiles);
+            }
+            _cyDbContext.UpdateComments.RemoveRange(updateCommments);
+
+            //kolla så den tas bort från teamet med då direkt
+            // först hitta profilernas alla messeages, conversationtopartisipant, meetinoccasion
+            //updatecomments, profilesurveys, radera alla dessa grejer
+            //till sist orofilen,, hämta alla conversationstopartisipants, och använd removerange ist för foreach. 
+            // alt i projectet som har ett profilid på sig ska försvinna
             //kolla så den tas bort från teamet med då direkt
             var profileToDelete = await _cyDbContext.Profiles.FindAsync(id);
             var deletedProfile = profileToDelete;

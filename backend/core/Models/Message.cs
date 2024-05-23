@@ -8,8 +8,8 @@ public class Message
 
     //detta kan man lägga till senare:
     // public bool IsEdited{get;set;}
-    public ConversationParticipant ConversationParticipant { get; set; }
-    public string ConversationParticipantId { get; set; }
+    public ConversationParticipant? ConversationParticipant { get; set; }
+    public string? ConversationParticipantId { get; set; }
     public string ConversationId { get; set; }
 
     public Message(

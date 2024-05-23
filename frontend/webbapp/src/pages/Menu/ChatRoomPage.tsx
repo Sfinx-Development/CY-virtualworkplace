@@ -142,11 +142,12 @@ export default function ChatRoom() {
   useEffect(() => {
     if (activeTeam) {
       // dispatch(GetMyProfileAsync(activeTeam.id));
+      console.log("ANROPAS");
       dispatch(GetTeamConversation(activeTeam.id));
       dispatch(GetTeamConversationMessages(activeTeam.id));
       dispatch(GetTeamProfiles(activeTeam.id));
     }
-  }, [activeTeam]);
+  }, []);
 
   useEffect(() => {
     if (teamConversation && activeProfile) {
@@ -201,7 +202,7 @@ export default function ChatRoom() {
   const handleEditMessage = () => {
     if (editedContent && isEditMode && messageIdToEdit) {
       const message = messages.find((m) => m.id == messageIdToEdit);
-      if (message) {
+      if (message && message.conversationParticipantId) {
         const messageToEdit: MessageOutgoing = {
           conversationParticipantId: message.conversationParticipantId,
           content: editedContent,
@@ -296,7 +297,7 @@ export default function ChatRoom() {
                           : "flex-start",
                     }}
                   >
-                    {message.fullName && (
+                    {message.fullName && message.profileId && (
                       <Avatar
                         src={getProfilesAvatar(message.profileId)}
                         alt={message.fullName}
@@ -349,7 +350,7 @@ export default function ChatRoom() {
                     key={message.id}
                     activeParticipant={activeParticipant}
                     getProfilesAvatar={() =>
-                      getProfilesAvatar(message.profileId)
+                      getProfilesAvatar(message.profileId ?? "")
                     }
                     handleDeleteMessage={() => handleDeleteMessage(message.id)}
                     handleSetEditMode={() => handleSetEditMode(message)}
