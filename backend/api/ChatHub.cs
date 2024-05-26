@@ -13,15 +13,11 @@ public class ChatHub : Hub
 
     public async Task MessageSent(OutgoingMessageDTO message)
     {
-        Console.WriteLine("------MESSAGE SENT-----------");
-
         await _hubContext.Clients.All.SendAsync("messageSent", message);
     }
 
     public async Task MessageEdited(OutgoingMessageDTO message)
     {
-        Console.WriteLine("------MESSAGE EDITED-----------");
-
         await _hubContext.Clients.All.SendAsync("messageEdited", message);
     }
 

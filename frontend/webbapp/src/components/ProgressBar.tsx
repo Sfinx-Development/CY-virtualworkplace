@@ -24,6 +24,7 @@ import {
   setActiveUpdate,
 } from "../slices/projectSlice";
 import { useAppDispatch } from "../slices/store";
+import { theme1 } from "../theme";
 
 interface ProgressBarProps {
   project: ProjectNoDate;
@@ -222,13 +223,21 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
       </Dialog>
       <Box display="flex" flexDirection="row" justifyContent={"space-between"}>
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <IconButton onClick={() => handleSetEditMode()} sx={{ paddingX: 0 }}>
+          <IconButton
+            onClick={() => handleSetEditMode()}
+            sx={{ paddingX: 0, color: theme1.palette.primary.main }}
+          >
             <EditIcon />
           </IconButton>
-          <IconButton onClick={() => setOpenDeletePopUp(true)}>
+          <IconButton
+            sx={{ color: theme1.palette.primary.main }}
+            onClick={() => setOpenDeletePopUp(true)}
+          >
             <DeleteIcon />
           </IconButton>
-          <Typography variant="h6">{project.title}</Typography>
+          <Typography variant="h6" color={"white"}>
+            {project.title}
+          </Typography>
         </div>
         <Button onClick={handleCreateUpdate}>
           <Box sx={{ display: "flex" }}>
@@ -238,7 +247,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
                 fontSize: isMobile ? "20" : "30",
               }}
             />
-            {isMobile ? null : <Typography>UPPDATERING</Typography>}
+            {isMobile ? null : (
+              <Typography color={"white"}>UPPDATERING</Typography>
+            )}
           </Box>
         </Button>
       </Box>
@@ -255,7 +266,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
               backgroundColor: colors[index],
             }}
           >
-            <Typography variant="caption">
+            <Typography variant="caption" fontWeight={600} color={"black"}>
               {new Date(update.date).toLocaleDateString("sv-SE", {
                 day: "2-digit",
                 month: "2-digit",
@@ -267,12 +278,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ project }) => {
 
       {isMobile ? null : (
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography>{`${progress.toFixed(2)}% AVKLARAT`}</Typography>
-          <Typography>
+          <Typography color={"white"}>{`${progress.toFixed(
+            2
+          )}% AVKLARAT`}</Typography>
+          <Typography color={"white"}>
             {updateDates?.length ?? 0}{" "}
             {updateDates?.length == 1 ? "UPPDATERING" : "UPPDATERINGAR"}
           </Typography>
-          <Typography>{`${daysSinceStart} / ${totalDays} DAGAR`}</Typography>
+          <Typography
+            color={"white"}
+          >{`${daysSinceStart} / ${totalDays} DAGAR`}</Typography>
         </div>
       )}
     </div>

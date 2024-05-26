@@ -1,26 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import { Box, Button, Container, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { Todo } from "../../../types";
+import CalendarCellDialog from "../../components/calendarComponents/calendarCellDialog";
+import MainComponent from "../../components/calendarComponents/mainComponent";
 import TodayAside from "../../components/calendarComponents/todayAside";
 import TodoAside from "../../components/calendarComponents/todoAside";
-import MainComponent from "../../components/calendarComponents/mainComponent";
 import TodoDialogAside from "../../components/calendarComponents/todoDialogAside";
-import CalendarCellDialog from "../../components/calendarComponents/calendarCellDialog";
-import {
-  Button,
-  Card,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { isMobile } from "../../../globalConstants";
-import { Todo } from "../../../types";
 import { GetMyProfileAsync, GetTeamProfiles } from "../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
@@ -30,8 +16,6 @@ import {
   createTeamTodoAsync,
   getTodoAsync,
 } from "../../slices/todoSlice";
-import { theme1 } from "../../theme";
-import { Height } from "@mui/icons-material";
 
 interface Holiday {
   helgdag: string;
@@ -381,85 +365,53 @@ export default function CalendarPage() {
   }
 
   return (
-    <Container
-      style={{
-        height: "100vh",
-        width: "100%",
+    <Box
+      sx={{
         display: "flex",
-        flexDirection: isMobile ? "column" : "row",
-        backgroundColor: "rgb(214, 196, 203)",
+        flexDirection: "column",
+        alignItems: "center",
+        minHeight: "100vh",
+        width: "100%",
+        backgroundImage:
+          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
+        color: "#FFF",
       }}
     >
-      {isMobile ? (
-        <div>
-          <Button onClick={toggleAsideVisibility}>
-            Lägg till uppgift/påminnelse
-          </Button>
-          {isAsideVisible && (
-            <aside
-              style={{
-                zIndex: 1,
-                backgroundColor: "rgb(211, 145, 158)",
-                opacity: 0.8,
-                justifyContent: "center",
-                display: "flex",
-                flexDirection: "column",
-                position: "relative",
-                top: 0,
-                left: 0,
-                height: "100%",
-                width: "100%",
-              }}
-            >
-              <div
-                className="todo-aside"
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: isMobile ? "20px" : "40px",
+          margin: 0,
+          width: "100%",
+          flexGrow: 1,
+        }}
+      >
+        {isMobile ? (
+          <div>
+            <Button onClick={toggleAsideVisibility}>
+              Lägg till uppgift/påminnelse
+            </Button>
+            {isAsideVisible && (
+              <aside
                 style={{
+                  zIndex: 1,
                   backgroundColor: "rgb(211, 145, 158)",
+                  opacity: 0.8,
+                  justifyContent: "center",
                   display: "flex",
                   flexDirection: "column",
-                  alignItems: "center",
+                  position: "relative",
+                  top: 0,
+                  left: 0,
+                  height: "100%",
+                  width: "100%",
                 }}
               >
-                <Button
-                  id="add-todo-btn"
-                  variant="outlined"
-                  style={{
-                    backgroundColor: "rgb(171, 92, 121)",
-                    padding: "4px",
-                    color: "rgb(255, 255, 255)",
-                    border: "none",
-                    borderRadius: "2px",
-                    height: "50px",
-                    width: "280px",
-                    letterSpacing: "2px",
-                    fontSize: "14px",
-                    fontFamily: '"Helvetica", Arial, sans-serif',
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-around",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition: "width 0.3s ease",
-                  }}
-                >
-                  Lägg till uppgifter eller påminnelser här nedan
-                </Button>
-
-                <TodoAside
-                  title={title}
-                  setTitle={SetTitle}
-                  description={description}
-                  setDescription={setDescription}
-                  todoDate={todoDate}
-                  setTodoDate={setTodoDate}
-                  handleCreateTodo={handleCreateTodo}
-                  fieldError={fieldError}
-                />
-              </div>
-
-              <div id="todo-list-div" className="alltodos-div">
                 <div
-                  className="my-todos-div"
+                  className="todo-aside"
                   style={{
                     backgroundColor: "rgb(211, 145, 158)",
                     display: "flex",
@@ -467,40 +419,15 @@ export default function CalendarPage() {
                     alignItems: "center",
                   }}
                 >
-                 <CalendarCellDialog
-                open={openTodoPopup}
-                onClose={() => setOpenTodoPopup(false)}
-                todoDate={todoDate}
-                title={title}
-                SetTitle={SetTitle}
-                description={description}
-                setDescription={setDescription}
-                handleCreateTodo={handleCreateTodo}
-                selectedDayTodos={selectedDayTodos}
-                isEditMode={isEditMode}
-                todoIdToEdit={todoIdToEdit}
-                editedTitle={editedTitle}
-                setEditedTitle={setEditedTitle}
-                editedDate={editedDate}
-                setEditedDate={setEditedDate}
-                editedDescription={editedDescription}
-                setEditedDescription={setEditedDescription}
-                handleDeleteTodo={handleDeleteTodo}
-                handleSetEditMode={handleSetEditMode}
-                handleEditTodo={handleEditTodo}
-                handleKeyPress={handleKeyPress}
-              />
-
                   <Button
-                    id="show-todos-btn"
+                    id="add-todo-btn"
                     variant="outlined"
                     style={{
-                      color: "white",
+                      backgroundColor: "rgb(171, 92, 121)",
+                      padding: "4px",
+                      color: "rgb(255, 255, 255)",
                       border: "none",
                       borderRadius: "2px",
-                      backgroundColor: "rgb(171, 92, 121)",
-
-                      top: "15px",
                       height: "50px",
                       width: "280px",
                       letterSpacing: "2px",
@@ -508,157 +435,183 @@ export default function CalendarPage() {
                       fontFamily: '"Helvetica", Arial, sans-serif',
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
+                      justifyContent: "space-around",
                       position: "relative",
                       overflow: "hidden",
                       transition: "width 0.3s ease",
                     }}
-                    onClick={handleGetTodos}
                   >
-                    Se alla uppgifter
+                    Lägg till uppgifter eller påminnelser här nedan
                   </Button>
 
-                  <TodoDialogAside
-                    open={openDialog}
-                    onClose={handleCloseTodoDialog}
-                    todos={todosen}
-                    handleDeleteTodo={handleDeleteTodo}
-                    handleSetEditMode={handleSetEditMode}
-                    isEditMode={isEditMode}
-                    todoIdToEdit={todoIdToEdit}
-                    editedTitle={editedTitle}
-                    setEditedTitle={setEditedTitle}
-                    editedDate={editedDate}
-                    setEditedDate={setEditedDate}
-                    editedDescription={editedDescription}
-                    setEditedDescription={setEditedDescription}
-                    handleKeyPress={handleKeyPress}
-                    handleEditTodo={handleEditTodo}
-                    openDialog={false}
-                    setOpenDialog={setOpenDialog}
+                  <TodoAside
+                    title={title}
+                    setTitle={SetTitle}
+                    description={description}
+                    setDescription={setDescription}
+                    todoDate={todoDate}
+                    setTodoDate={setTodoDate}
+                    handleCreateTodo={handleCreateTodo}
+                    fieldError={fieldError}
                   />
-
-                  <Button id="read-todos-btn" aria-label="headphone icon">
-                    <i
-                      className="fa-solid fa-headphones"
-                      id="headphone-icon"
-                    ></i>
-                  </Button>
                 </div>
 
-                <div
-                  className="todo-list"
-                  style={{
-                    fontFamily: '"Helvetica", Arial, sans-serif',
-                    display: "flex",
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                    maxWidth: "350px",
-                    overflowX: "auto",
-                  }}
-                >
-                  <ul id="todo-list" className="todo-reveal-list"></ul>
+                <div id="todo-list-div" className="alltodos-div">
+                  <div
+                    className="my-todos-div"
+                    style={{
+                      backgroundColor: "rgb(211, 145, 158)",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <CalendarCellDialog
+                      open={openTodoPopup}
+                      onClose={() => setOpenTodoPopup(false)}
+                      todoDate={todoDate}
+                      title={title}
+                      SetTitle={SetTitle}
+                      description={description}
+                      setDescription={setDescription}
+                      handleCreateTodo={handleCreateTodo}
+                      selectedDayTodos={selectedDayTodos}
+                      isEditMode={isEditMode}
+                      todoIdToEdit={todoIdToEdit}
+                      editedTitle={editedTitle}
+                      setEditedTitle={setEditedTitle}
+                      editedDate={editedDate}
+                      setEditedDate={setEditedDate}
+                      editedDescription={editedDescription}
+                      setEditedDescription={setEditedDescription}
+                      handleDeleteTodo={handleDeleteTodo}
+                      handleSetEditMode={handleSetEditMode}
+                      handleEditTodo={handleEditTodo}
+                      handleKeyPress={handleKeyPress}
+                    />
+
+                    <Button
+                      id="show-todos-btn"
+                      variant="outlined"
+                      style={{
+                        color: "white",
+                        border: "none",
+                        borderRadius: "2px",
+                        backgroundColor: "rgb(171, 92, 121)",
+
+                        top: "15px",
+                        height: "50px",
+                        width: "280px",
+                        letterSpacing: "2px",
+                        fontSize: "14px",
+                        fontFamily: '"Helvetica", Arial, sans-serif',
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative",
+                        overflow: "hidden",
+                        transition: "width 0.3s ease",
+                      }}
+                      onClick={handleGetTodos}
+                    >
+                      Se alla uppgifter
+                    </Button>
+
+                    <TodoDialogAside
+                      open={openDialog}
+                      onClose={handleCloseTodoDialog}
+                      todos={todosen}
+                      handleDeleteTodo={handleDeleteTodo}
+                      handleSetEditMode={handleSetEditMode}
+                      isEditMode={isEditMode}
+                      todoIdToEdit={todoIdToEdit}
+                      editedTitle={editedTitle}
+                      setEditedTitle={setEditedTitle}
+                      editedDate={editedDate}
+                      setEditedDate={setEditedDate}
+                      editedDescription={editedDescription}
+                      setEditedDescription={setEditedDescription}
+                      handleKeyPress={handleKeyPress}
+                      handleEditTodo={handleEditTodo}
+                      openDialog={false}
+                      setOpenDialog={setOpenDialog}
+                    />
+
+                    <Button id="read-todos-btn" aria-label="headphone icon">
+                      <i
+                        className="fa-solid fa-headphones"
+                        id="headphone-icon"
+                      ></i>
+                    </Button>
+                  </div>
+
+                  <div
+                    className="todo-list"
+                    style={{
+                      fontFamily: '"Helvetica", Arial, sans-serif',
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                      maxWidth: "350px",
+                      overflowX: "auto",
+                    }}
+                  >
+                    <ul id="todo-list" className="todo-reveal-list"></ul>
+                  </div>
                 </div>
-              </div>
-            </aside>
-          )}
-          <Typography
-            variant="h5"
-            style={{
-              textAlign: "center",
-              display: isAsideVisible ? "none" : "flex",
-              marginTop: "40px",
-              justifyContent: "center",
-              fontFamily: "Arial, sans-serif",
-              fontWeight: "bold",
-              letterSpacing: "2px",
-            }}
-          >
-            {activeTeam?.name} Kalender
-          </Typography>
-
-          <TodayAside currentTime={currentTime} />
-        </div>
-      ) : (
-        <aside
-          style={{
-            zIndex: 1,
-            marginLeft: "20px",
-            marginRight: "20px",
-            backgroundColor: "rgb(211, 145, 158)",
-            opacity: 0.8,
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            top: 0,
-            left: 0,
-            height: "100%",
-            width: "350px",
-          }}
-        >
-          <Typography
-            variant="h5"
-            style={{
-              textAlign: "center",
-              marginTop: "40px",
-              fontFamily: "Arial, sans-serif",
-              fontWeight: "bold",
-              letterSpacing: "2px",
-            }}
-          >
-            {activeTeam?.name} Kalender
-          </Typography>
-
-          <TodayAside currentTime={currentTime} />
-
-          <div
-            className="todo-aside"
-            style={{
-              backgroundColor: "rgb(211, 145, 158)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Button
-              id="add-todo-btn"
-              variant="outlined"
+              </aside>
+            )}
+            <Typography
+              variant="h5"
               style={{
-                backgroundColor: "rgb(171, 92, 121)",
-                padding: "4px",
-                color: "rgb(255, 255, 255)",
-                border: "none",
-                borderRadius: "2px",
-                height: "50px",
-                width: "280px",
+                textAlign: "center",
+                display: isAsideVisible ? "none" : "flex",
+                marginTop: "40px",
+                justifyContent: "center",
+                fontFamily: "Arial, sans-serif",
+                fontWeight: "bold",
                 letterSpacing: "2px",
-                fontSize: "14px",
-                fontFamily: '"Helvetica", Arial, sans-serif',
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-around",
-                position: "relative",
-                overflow: "hidden",
-                transition: "width 0.3s ease",
               }}
             >
-              Lägg till uppgifter eller påminnelser här nedan
-            </Button>
-            <TodoAside
-              title={title}
-              setTitle={SetTitle}
-              description={description}
-              setDescription={setDescription}
-              todoDate={todoDate}
-              setTodoDate={setTodoDate}
-              handleCreateTodo={handleCreateTodo}
-              fieldError={fieldError}
-            />
-          </div>
+              {activeTeam?.name} Kalender
+            </Typography>
 
-          <div id="todo-list-div" className="alltodos-div">
+            <TodayAside currentTime={currentTime} />
+          </div>
+        ) : (
+          <aside
+            style={{
+              zIndex: 1,
+              marginLeft: "20px",
+              marginRight: "20px",
+              backgroundColor: "rgb(211, 145, 158)",
+              opacity: 0.8,
+              display: "flex",
+              flexDirection: "column",
+              position: "relative",
+              top: 0,
+              left: 0,
+              height: "100%",
+              width: "350px",
+            }}
+          >
+            <Typography
+              variant="h5"
+              style={{
+                textAlign: "center",
+                marginTop: "40px",
+                fontFamily: "Arial, sans-serif",
+                fontWeight: "bold",
+                letterSpacing: "2px",
+              }}
+            >
+              {activeTeam?.name} Kalender
+            </Typography>
+
+            <TodayAside currentTime={currentTime} />
+
             <div
-              className="my-todos-div"
+              className="todo-aside"
               style={{
                 backgroundColor: "rgb(211, 145, 158)",
                 display: "flex",
@@ -666,40 +619,15 @@ export default function CalendarPage() {
                 alignItems: "center",
               }}
             >
-              <CalendarCellDialog
-                open={openTodoPopup}
-                onClose={() => setOpenTodoPopup(false)}
-                todoDate={todoDate}
-                title={title}
-                SetTitle={SetTitle}
-                description={description}
-                setDescription={setDescription}
-                handleCreateTodo={handleCreateTodo}
-                selectedDayTodos={selectedDayTodos}
-                isEditMode={isEditMode}
-                todoIdToEdit={todoIdToEdit}
-                editedTitle={editedTitle}
-                setEditedTitle={setEditedTitle}
-                editedDate={editedDate}
-                setEditedDate={setEditedDate}
-                editedDescription={editedDescription}
-                setEditedDescription={setEditedDescription}
-                handleDeleteTodo={handleDeleteTodo}
-                handleSetEditMode={handleSetEditMode}
-                handleEditTodo={handleEditTodo}
-                handleKeyPress={handleKeyPress}
-              />
-
               <Button
-                id="show-todos-btn"
+                id="add-todo-btn"
                 variant="outlined"
                 style={{
-                  color: "white",
+                  backgroundColor: "rgb(171, 92, 121)",
+                  padding: "4px",
+                  color: "rgb(255, 255, 255)",
                   border: "none",
                   borderRadius: "2px",
-                  backgroundColor: "rgb(171, 92, 121)",
-
-                  top: "15px",
                   height: "50px",
                   width: "280px",
                   letterSpacing: "2px",
@@ -707,72 +635,144 @@ export default function CalendarPage() {
                   fontFamily: '"Helvetica", Arial, sans-serif',
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  justifyContent: "space-around",
                   position: "relative",
                   overflow: "hidden",
                   transition: "width 0.3s ease",
                 }}
-                onClick={handleGetTodos}
               >
-                Se alla uppgifter
+                Lägg till uppgifter eller påminnelser här nedan
               </Button>
-
-              <TodoDialogAside
-                open={openDialog}
-                onClose={handleCloseTodoDialog}
-                todos={todosen}
-                handleDeleteTodo={handleDeleteTodo}
-                handleSetEditMode={handleSetEditMode}
-                isEditMode={isEditMode}
-                todoIdToEdit={todoIdToEdit}
-                editedTitle={editedTitle}
-                setEditedTitle={setEditedTitle}
-                editedDate={editedDate}
-                setEditedDate={setEditedDate}
-                editedDescription={editedDescription}
-                setEditedDescription={setEditedDescription}
-                handleKeyPress={handleKeyPress}
-                handleEditTodo={handleEditTodo}
-                openDialog={false}
-                setOpenDialog={setOpenDialog}
+              <TodoAside
+                title={title}
+                setTitle={SetTitle}
+                description={description}
+                setDescription={setDescription}
+                todoDate={todoDate}
+                setTodoDate={setTodoDate}
+                handleCreateTodo={handleCreateTodo}
+                fieldError={fieldError}
               />
-
-              <Button id="read-todos-btn" aria-label="headphone icon">
-                <i className="fa-solid fa-headphones" id="headphone-icon"></i>
-              </Button>
             </div>
 
-            <div
-              className="todo-list"
-              style={{
-                fontFamily: '"Helvetica", Arial, sans-serif',
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                maxWidth: "350px",
-                overflowX: "auto",
-              }}
-            >
-              <ul id="todo-list" className="todo-reveal-list"></ul>
-            </div>
-          </div>
-        </aside>
-      )}
+            <div id="todo-list-div" className="alltodos-div">
+              <div
+                className="my-todos-div"
+                style={{
+                  backgroundColor: "rgb(211, 145, 158)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <CalendarCellDialog
+                  open={openTodoPopup}
+                  onClose={() => setOpenTodoPopup(false)}
+                  todoDate={todoDate}
+                  title={title}
+                  SetTitle={SetTitle}
+                  description={description}
+                  setDescription={setDescription}
+                  handleCreateTodo={handleCreateTodo}
+                  selectedDayTodos={selectedDayTodos}
+                  isEditMode={isEditMode}
+                  todoIdToEdit={todoIdToEdit}
+                  editedTitle={editedTitle}
+                  setEditedTitle={setEditedTitle}
+                  editedDate={editedDate}
+                  setEditedDate={setEditedDate}
+                  editedDescription={editedDescription}
+                  setEditedDescription={setEditedDescription}
+                  handleDeleteTodo={handleDeleteTodo}
+                  handleSetEditMode={handleSetEditMode}
+                  handleEditTodo={handleEditTodo}
+                  handleKeyPress={handleKeyPress}
+                />
 
-      <MainComponent
-        weekDays={weekDays}
-        generateCalendarRows={generateCalendarRows}
-        handleDayClick={handleDayClick}
-        holidays={holidays}
-        year={year}
-        month={month}
-        todosInTeam={todosInTeam}
-        handlePrevMonth={handlePrevMonth}
-        handleNextMonth={handleNextMonth}
-        updateCalendarMonthLabel={updateCalendarMonthLabel}
-        isToday={isToday}
-        isAsideVisible={false}
-      />
-    </Container>
+                <Button
+                  id="show-todos-btn"
+                  variant="outlined"
+                  style={{
+                    color: "white",
+                    border: "none",
+                    borderRadius: "2px",
+                    backgroundColor: "rgb(171, 92, 121)",
+
+                    top: "15px",
+                    height: "50px",
+                    width: "280px",
+                    letterSpacing: "2px",
+                    fontSize: "14px",
+                    fontFamily: '"Helvetica", Arial, sans-serif',
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    overflow: "hidden",
+                    transition: "width 0.3s ease",
+                  }}
+                  onClick={handleGetTodos}
+                >
+                  Se alla uppgifter
+                </Button>
+
+                <TodoDialogAside
+                  open={openDialog}
+                  onClose={handleCloseTodoDialog}
+                  todos={todosen}
+                  handleDeleteTodo={handleDeleteTodo}
+                  handleSetEditMode={handleSetEditMode}
+                  isEditMode={isEditMode}
+                  todoIdToEdit={todoIdToEdit}
+                  editedTitle={editedTitle}
+                  setEditedTitle={setEditedTitle}
+                  editedDate={editedDate}
+                  setEditedDate={setEditedDate}
+                  editedDescription={editedDescription}
+                  setEditedDescription={setEditedDescription}
+                  handleKeyPress={handleKeyPress}
+                  handleEditTodo={handleEditTodo}
+                  openDialog={false}
+                  setOpenDialog={setOpenDialog}
+                />
+
+                <Button id="read-todos-btn" aria-label="headphone icon">
+                  <i className="fa-solid fa-headphones" id="headphone-icon"></i>
+                </Button>
+              </div>
+
+              <div
+                className="todo-list"
+                style={{
+                  fontFamily: '"Helvetica", Arial, sans-serif',
+                  display: "flex",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  maxWidth: "350px",
+                  overflowX: "auto",
+                }}
+              >
+                <ul id="todo-list" className="todo-reveal-list"></ul>
+              </div>
+            </div>
+          </aside>
+        )}
+
+        <MainComponent
+          weekDays={weekDays}
+          generateCalendarRows={generateCalendarRows}
+          handleDayClick={handleDayClick}
+          holidays={holidays}
+          year={year}
+          month={month}
+          todosInTeam={todosInTeam}
+          handlePrevMonth={handlePrevMonth}
+          handleNextMonth={handleNextMonth}
+          updateCalendarMonthLabel={updateCalendarMonthLabel}
+          isToday={isToday}
+          isAsideVisible={false}
+        />
+      </Container>
+    </Box>
   );
 }

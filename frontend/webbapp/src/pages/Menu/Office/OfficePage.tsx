@@ -1,12 +1,11 @@
-import { Box, Container } from "@mui/material";
+import { Avatar, Box, Container, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import BackGroundDesign from "../../../components/BackgroundDesign";
+import { isMobile } from "../../../../globalConstants";
 import FlexNavcard from "../../../components/FlexNavcard";
 import { getActiveProfile } from "../../../slices/profileSlice";
-import { useAppDispatch } from "../../../slices/store";
+import { useAppDispatch, useAppSelector } from "../../../slices/store";
 import { getActiveTeam } from "../../../slices/teamSlice";
-import { theme1 } from "../../../theme";
 
 export default function Office() {
   const dispatch = useAppDispatch();
@@ -15,70 +14,93 @@ export default function Office() {
     dispatch(getActiveProfile());
   }, []);
 
-  const officeColor = theme1.palette.office.main;
+  const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
+  const activeProfile = useAppSelector(
+    (state) => state.profileSlice.activeProfile
+  );
 
   return (
-    <Container
+    <Box
       sx={{
-        padding: "20px",
-        backgroundPosition: "center",
-        height: "100%",
         display: "flex",
         flexDirection: "column",
-        flex: 1,
-        justifyContent: "center",
         alignItems: "center",
+        minHeight: "100vh",
+        width: "100%",
+        backgroundImage:
+          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
+        color: "#FFF",
       }}
     >
-      <BackGroundDesign
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: -1,
-        }}
-        color1={theme1.palette.office.main}
-        color2="white"
-      />
-      <Box
+      <Container
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: isMobile ? "20px" : "40px",
+          margin: 0,
           width: "100%",
-          gap: 2,
+          flexGrow: 1,
         }}
       >
-        <FlexNavcard
-          navigationPage="/office"
-          title="Notiser"
-          icon={
-            <img
-              src="      https://i.imgur.com/q8RGT4n.png"
-              alt="project management icon"
-              style={{ width: 40, height: 40 }}
-            />
-          }
-          backgroundColor={officeColor}
-        />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 2,
+            padding: "20px 0",
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            Min sida på {activeTeam?.name}
+          </Typography>
+          <Avatar
+            alt="profile image"
+            src={activeProfile?.avatarUrl}
+            sx={{ height: 50, width: 50 }}
+          />
+        </Box>
 
-        <FlexNavcard
-          navigationPage="information"
-          title="Min info"
-          icon={
-            <img
-              src="      https://i.imgur.com/6YGqDBk.png"
-              alt="project management icon"
-              style={{ width: 40, height: 40 }}
-            />
-          }
-          backgroundColor={officeColor}
-        />
-      </Box>
-      <div style={{ height: "100%", width: "100%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            justifyContent: "center",
+            width: "100%",
+            gap: isMobile ? 2 : 4,
+          }}
+        >
+          <FlexNavcard
+            navigationPage="/office"
+            title="Notiser"
+            icon={
+              <img
+                src="https://i.imgur.com/q8RGT4n.png"
+                alt="notification icon"
+                style={{ width: 40, height: 40 }}
+              />
+            }
+            backgroundColor="#fbe3b4"
+          />
+
+          <FlexNavcard
+            navigationPage="information"
+            title="Min info"
+            icon={
+              <img
+                src="https://i.imgur.com/6YGqDBk.png"
+                alt="information icon"
+                style={{ width: 40, height: 40 }}
+              />
+            }
+            backgroundColor="#fbe3b4"
+          />
+        </Box>
+
         <Outlet />
-      </div>
-    </Container>
+      </Container>
+    </Box>
   );
 }

@@ -1,14 +1,20 @@
 import ComputerIcon from "@mui/icons-material/Computer";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import {
   AppBar,
   Button,
   FormControl,
+  IconButton,
+  Menu,
   MenuItem,
   Select,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { isMobile } from "../../globalConstants";
+import { ProfileHubDTO } from "../../types";
 import { useLanguageContext } from "../contexts/languageContext";
 import { useAppDispatch, useAppSelector } from "../slices/store";
 import { logOutUserAsync } from "../slices/userSlice";
@@ -19,6 +25,11 @@ const RootLayout = () => {
   const user = useAppSelector((state) => state.userSlice.user);
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const { language, setLanguage } = useLanguageContext();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const onlineProfiles = useAppSelector(
+    (state) => state.profileSlice.onlineProfiles
+  );
 
   const handleSignOut = async () => {
     await dispatch(logOutUserAsync()).then(() => {
@@ -36,17 +47,26 @@ const RootLayout = () => {
     setLanguage(newLanguage);
   };
 
+  const toggleOnlineList = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "column",
         flex: 1,
-        height: "100vh",
+        minHeight: "100vh",
         alignItems: "center",
         width: "100%",
         margin: 0,
         padding: 0,
+        boxSizing: "border-box",
       }}
     >
       <AppBar
@@ -58,6 +78,7 @@ const RootLayout = () => {
           backdropFilter: "blur(10px)",
           alignItems: "center",
           justifyContent: "space-between",
+          width: "100%",
         }}
       >
         <Link
@@ -95,6 +116,34 @@ const RootLayout = () => {
           )}
         </Link>
         <div style={{ display: "flex", alignItems: "center" }}>
+          {isMobile || !activeTeam ? null : (
+            <IconButton
+              onClick={toggleOnlineList}
+              sx={{ marginRight: "160px" }}
+            >
+              <Typography variant="body2">Medlemmar online</Typography>
+              <ArrowDropDownIcon sx={{ transform: "rotate(-1eg)" }} />
+            </IconButton>
+          )}
+
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            {onlineProfiles && onlineProfiles.length > 0 ? (
+              onlineProfiles.map((profile: ProfileHubDTO) => (
+                <MenuItem key={profile.profileId} onClick={handleClose}>
+                  <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
+                  <Typography>{profile.fullName}</Typography>
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem onClick={handleClose}>
+                <Typography>Ingen profil online</Typography>
+              </MenuItem>
+            )}
+          </Menu>
           {activeTeam ? (
             <Link
               to={"/menu"}
@@ -175,8 +224,18 @@ const RootLayout = () => {
       </AppBar>
 
       <main
-        className="bg-neutral-100 flex flex-1 flex-col"
-        style={{ width: "100vw" }}
+        style={{
+          width: "100%",
+          height: "100vh",
+          display: "flex",
+          flex: 1,
+          flexGrow: 1,
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: 0,
+          margin: 0,
+          boxSizing: "border-box",
+        }}
       >
         <Outlet />
       </main>

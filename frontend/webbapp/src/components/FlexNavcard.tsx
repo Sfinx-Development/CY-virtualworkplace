@@ -53,12 +53,13 @@ export default function FlexNavcard(props: NavCardProps) {
           {props.icon || props.title ? (
             <CardContent
               sx={{
-                flex: "1 0 auto",
+                flex: "1",
                 display: "flex",
                 justifyContent: isMobile ? "space-evenly" : "center",
                 alignItems: "center",
                 flexDirection: isMobile ? "row" : "column",
                 padding: 1,
+                backgroundColor: props.backgroundColor,
               }}
             >
               <Typography

@@ -1,15 +1,10 @@
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import {
   Box,
   Button,
   Card,
   CardActionArea,
   CardContent,
-  Container,
   FormControl,
-  IconButton,
-  Menu,
   MenuItem,
   Select,
   Typography,
@@ -18,7 +13,6 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
-import BackGroundDesign from "../../components/BackgroundDesign";
 import FlexNavcard from "../../components/FlexNavcard";
 import {
   GetMyMeetingsAsync,
@@ -47,15 +41,11 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   const dispatch = useAppDispatch();
   const [connection, setConnection] = useState<Connector>();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const activeTeam = useAppSelector((state) => state.teamSlice.activeTeam);
   const activeProfile = useAppSelector(
     (state) => state.profileSlice.activeProfile
   );
-  const onlineProfiles = useAppSelector(
-    (state) => state.profileSlice.onlineProfiles
-  );
+
   const menuChoices: [string, string][] = [
     ["Alla möten", "meetinginteam"],
     ["Nytt möte", "createmeeting"],
@@ -99,7 +89,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       dispatch(GetTeamProfiles(activeTeam?.id));
       dispatch(GetTeamProjectsAsync(activeTeam.id));
     }
-    if (activeTeam && onlineProfiles == undefined) {
+    if (activeTeam) {
       dispatch(GetOnlineProfiles(activeTeam?.id));
     }
   }, [activeTeam]);
@@ -141,14 +131,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
 
   const meetingRoomColor = theme1.palette.room.main;
 
-  const toggleOnlineList = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const getTupleFromValue = (value: string): [string, string] | undefined => {
     return menuChoices.find((tuple) => tuple[0] === value);
   };
@@ -164,19 +146,22 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
   };
 
   return (
-    <Container
-      sx={{
+    <div
+      style={{
+        position: "relative",
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        zIndex: -1,
-        padding: 2,
+        backgroundColor: "rgba(0, 0, 0, 0.2)",
+        backgroundImage:
+          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
         margin: 0,
         flex: 1,
-        width: "100vw",
+        alignItems: "center",
+        width: "100%",
       }}
     >
-      <BackGroundDesign
+      {/* <BackGroundDesign
         style={{
           position: "absolute",
           top: 0,
@@ -186,7 +171,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         }}
         color1={theme1.palette.room.main}
         color2="white"
-      />
+      /> */}
 
       {ongoingMeeting && (
         <Card sx={{ my: 2 }}>
@@ -197,14 +182,13 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             }}
           >
             <CardContent>
-              <Typography variant="h6" align="center">
+              <Typography variant="h6" align="center" color={"white"}>
                 Gå med i mötet {ongoingMeeting.name}
               </Typography>
             </CardContent>
           </CardActionArea>
         </Card>
       )}
-      {/* Navigation */}
       {isMobile ? (
         <FormControl fullWidth>
           <Select
@@ -224,14 +208,24 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            alignContent: "center",
-            gap: 2,
+            justifyContent: "space-around",
+            alignItems: "center",
             width: "100%",
+            gap: 2,
+            marginRight: 4,
+            marginLeft: 4,
+            position: "relative",
             mt: isMobile ? 0 : 2,
           }}
         >
-          <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              position: "relative",
+            }}
+          >
             <FlexNavcard
               backgroundColor={meetingRoomColor}
               title="Möten"
@@ -240,7 +234,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
                   src="https://i.imgur.com/HRZXZA9.png"
                   alt="project management icon"
                   style={{
-                    width: isMobile ? 30 : 40,
+                    maxWidth: isMobile ? 30 : 40,
                     height: isMobile ? 30 : 40,
                   }}
                 />
@@ -250,7 +244,14 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             {showMeetingDropdown && (
               <div
                 className="dropdown-menu"
-                style={{ display: "flex", flex: 1, flexDirection: "column" }}
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  zIndex: 999,
+                }}
               >
                 <Button
                   variant="contained"
@@ -269,7 +270,15 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               </div>
             )}
           </div>
-          <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              position: "relative",
+            }}
+          >
             <FlexNavcard
               backgroundColor={meetingRoomColor}
               navigationPage="createproject"
@@ -278,7 +287,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
                 <img
                   src="https://i.imgur.com/GvdAMWN.png"
                   alt="project management icon"
-                  style={{ width: 40, height: 40 }}
+                  style={{ maxWidth: 40, height: 40 }}
                 />
               }
               onClick={handleProjectDropdownToggle}
@@ -286,7 +295,14 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             {showProjectDropdown && (
               <div
                 className="dropdown-menu"
-                style={{ display: "flex", flex: 1, flexDirection: "column" }}
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                  zIndex: 999,
+                }}
               >
                 <Button
                   variant="contained"
@@ -314,7 +330,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               <img
                 src="https://i.imgur.com/XrvQ6nN.png"
                 alt="pie chart icon"
-                style={{ width: 40, height: 40 }}
+                style={{ maxWidth: 40, height: 40 }}
               />
             }
           />
@@ -327,7 +343,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               <img
                 src="https://i.imgur.com/U8AEeOy.png"
                 alt="project management icon"
-                style={{ width: 40, height: 40 }}
+                style={{ maxWidth: 40, height: 40 }}
               />
             }
           />
@@ -351,35 +367,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         >
           <Outlet />
         </div>
-        {isMobile ? null : (
-          <IconButton
-            sx={{ position: "absolute", top: isMobile ? 30 : 10, right: 360 }}
-            onClick={toggleOnlineList}
-          >
-            <Typography variant="body2">Medlemmar online</Typography>
-            <ArrowDropDownIcon sx={{ transform: "rotate(-1eg)" }} />
-          </IconButton>
-        )}
-
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          {onlineProfiles && onlineProfiles.length > 0 ? (
-            onlineProfiles.map((profile: ProfileHubDTO) => (
-              <MenuItem key={profile.profileId} onClick={handleClose}>
-                <FiberManualRecordIcon sx={{ color: "lightgreen" }} />
-                <Typography>{profile.fullName}</Typography>
-              </MenuItem>
-            ))
-          ) : (
-            <MenuItem onClick={handleClose}>
-              <Typography>Ingen profil online</Typography>
-            </MenuItem>
-          )}
-        </Menu>
       </div>
-    </Container>
+    </div>
   );
 };

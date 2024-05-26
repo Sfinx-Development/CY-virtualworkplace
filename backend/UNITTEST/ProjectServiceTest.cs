@@ -10,7 +10,6 @@ public class ProjectServiceTest
     [Fact]
     public async Task DeletingProject_Should_Delete_ProjectUpdates()
     {
-        // Arrange
         var profileRepositoryMock = new Mock<IProfileRepository>();
         var projectRepositoryMock = new Mock<IProjectRepository>();
         var projectUpdateRepositoryMock = new Mock<IProjectUpdateRepository>();

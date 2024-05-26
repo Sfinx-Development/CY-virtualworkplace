@@ -128,11 +128,11 @@ export default function CreateTeam() {
           setImageUrl(event.target.value);
         }}
       />
-      <div style={{ marginTop: "20px", textAlign: "center" }}>
+      <div style={{ textAlign: "center" }}>
         <Button
           variant="contained"
           color="primary"
-          sx={{ paddingY: 2, paddingX: 4, color: "white" }}
+          sx={{ paddingY: 2, paddingX: 6, color: "white" }}
           onClick={handleCreateTeam}
         >
           Skapa Team

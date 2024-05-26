@@ -4,8 +4,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Avatar,
+  Box,
   Button,
   Card,
+  Container,
   IconButton,
   TextField,
   Typography,
@@ -19,7 +21,6 @@ import {
   Message,
   MessageOutgoing,
 } from "../../../types";
-import BackGroundDesign from "../../components/BackgroundDesign";
 import ChatMessage from "../../components/ChatMessage";
 import {
   CreateMessageAsync,
@@ -84,6 +85,7 @@ export default function ChatRoom() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addEmoji = (emoji: any) => {
     setContent(content + emoji.emoji);
+    setShowEmojiPicker(false);
   };
 
   useEffect(() => {
@@ -239,18 +241,30 @@ export default function ChatRoom() {
   }
 
   return (
-    <div
-      style={{
-        padding: isMobile ? 2 : "20px",
-        height: isMobile ? "50vh" : "100%",
+    <Box
+      sx={{
         display: "flex",
-        width: "100%",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-between",
+        minHeight: "100vh",
+        width: "100%",
+        backgroundImage:
+          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
+        color: "#FFF",
       }}
     >
-      <BackGroundDesign
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "20px",
+          margin: 0,
+          width: "100%",
+          flexGrow: 1,
+        }}
+      >
+        {/* <BackGroundDesign
         style={{
           position: "absolute",
           top: 0,
@@ -261,206 +275,209 @@ export default function ChatRoom() {
         }}
         color1={theme1.palette.chat.main}
         color2="white"
-      />
-      <audio
-        ref={audioRef}
-        src="/message.mp3"
-        style={{ display: "none" }}
-        itemType="mp3"
-      />
-      <Card
-        className="card-content"
-        sx={{
-          padding: 2,
-          backgroundColor: "rgba(255, 255, 255, 0.8)",
-          height: "60vh",
-          width: "90%",
-          flexGrow: 1,
-          overflow: "auto",
-        }}
-      >
-        <Typography>{activeTeam?.name.toUpperCase()} CHATT</Typography>
-        {Array.isArray(messages) &&
-          activeParticipant &&
-          messages.map((message) => {
-            if (message.id) {
-              return (
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: 2,
-                      justifyContent:
-                        message.profileId == activeProfile?.id
-                          ? "flex-end"
-                          : "flex-start",
-                    }}
-                  >
-                    {message.fullName && message.profileId && (
-                      <Avatar
-                        src={getProfilesAvatar(message.profileId)}
-                        alt={message.fullName}
-                        sx={{
-                          marginRight: 1,
-                          width: isMobile ? 18 : 23,
-                          height: isMobile ? 18 : 23,
-                        }}
-                      />
-                    )}
-                    <Typography
-                      sx={{
-                        fontWeight: 600,
-                        fontSize: 13,
-                        color: "#666666",
-                      }}
-                    >
-                      {message.fullName}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        marginLeft: 1,
-                        fontSize: 13,
-                        color: "#666666",
-                      }}
-                    >
-                      {formatDate(message.dateCreated)}
-                    </Typography>
-                    {message.profileId == activeProfile?.id ? (
-                      <div>
-                        <IconButton
-                          size="small"
-                          sx={{ padding: 0, marginLeft: 1 }}
-                          onClick={() => handleSetEditMode(message)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          sx={{ padding: 0, marginLeft: 1 }}
-                          onClick={() => handleDeleteMessage(message.id)}
-                        >
-                          <DeleteOutlineIcon />
-                        </IconButton>
-                      </div>
-                    ) : null}
-                  </div>
-                  <ChatMessage
-                    message={message}
-                    key={message.id}
-                    activeParticipant={activeParticipant}
-                    getProfilesAvatar={() =>
-                      getProfilesAvatar(message.profileId ?? "")
-                    }
-                    handleDeleteMessage={() => handleDeleteMessage(message.id)}
-                    handleSetEditMode={() => handleSetEditMode(message)}
-                    isEditMode={isEditMode}
-                    messageIdToEdit={messageIdToEdit}
-                    handleKeyPress={(event) => handleKeyPress(event)}
-                    editedContent={editedContent}
-                    setEditedContent={setEditedContent}
-                  />
-                </div>
-              );
-            }
-            return null;
-          })}
-        <div ref={messagesEndRef} />
-      </Card>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-start",
-          marginTop: "10px",
-          width: "90%",
-          position: "relative",
-        }}
-      >
-        <TextField
-          fullWidth
-          variant="outlined"
-          value={content}
-          type="text"
-          label="Skriv ett meddelande"
-          onChange={(e) => setContent(e.target.value)}
+      /> */}
+        <audio
+          ref={audioRef}
+          src="/message.mp3"
+          style={{ display: "none" }}
+          itemType="mp3"
+        />
+        <Card
+          className="card-content"
           sx={{
-            input: {
-              color: "black",
-              borderColor: chatColor,
-              backgroundColor: "white",
-            },
-            "& .MuiInputLabel-outlined": {
-              color: "#666666",
-            },
-            "&.Mui-focused": {
-              color: "#666666",
-            },
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "lightgray",
+            padding: 2,
+            // backgroundColor: "rgba(255, 255, 255, 0.8)",
+            height: "60vh",
+            width: "90%",
+            flexGrow: 1,
+            overflow: "auto",
+          }}
+        >
+          <Typography>{activeTeam?.name.toUpperCase()} CHATT</Typography>
+          {Array.isArray(messages) &&
+            activeParticipant &&
+            messages.map((message) => {
+              if (message.id) {
+                return (
+                  <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: 2,
+                        justifyContent:
+                          message.profileId == activeProfile?.id
+                            ? "flex-end"
+                            : "flex-start",
+                      }}
+                    >
+                      {message.fullName && message.profileId && (
+                        <Avatar
+                          src={getProfilesAvatar(message.profileId)}
+                          alt={message.fullName}
+                          sx={{
+                            marginRight: 1,
+                            width: isMobile ? 18 : 23,
+                            height: isMobile ? 18 : 23,
+                          }}
+                        />
+                      )}
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: 13,
+                          color: "#666666",
+                        }}
+                      >
+                        {message.fullName}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          marginLeft: 1,
+                          fontSize: 13,
+                          color: "#666666",
+                        }}
+                      >
+                        {formatDate(message.dateCreated)}
+                      </Typography>
+                      {message.profileId == activeProfile?.id ? (
+                        <div>
+                          <IconButton
+                            size="small"
+                            sx={{ padding: 0, marginLeft: 1 }}
+                            onClick={() => handleSetEditMode(message)}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            sx={{ padding: 0, marginLeft: 1 }}
+                            onClick={() => handleDeleteMessage(message.id)}
+                          >
+                            <DeleteOutlineIcon />
+                          </IconButton>
+                        </div>
+                      ) : null}
+                    </div>
+                    <ChatMessage
+                      message={message}
+                      key={message.id}
+                      activeParticipant={activeParticipant}
+                      getProfilesAvatar={() =>
+                        getProfilesAvatar(message.profileId ?? "")
+                      }
+                      handleDeleteMessage={() =>
+                        handleDeleteMessage(message.id)
+                      }
+                      handleSetEditMode={() => handleSetEditMode(message)}
+                      isEditMode={isEditMode}
+                      messageIdToEdit={messageIdToEdit}
+                      handleKeyPress={(event) => handleKeyPress(event)}
+                      editedContent={editedContent}
+                      setEditedContent={setEditedContent}
+                    />
+                  </div>
+                );
+              }
+              return null;
+            })}
+          <div ref={messagesEndRef} />
+        </Card>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            marginTop: "10px",
+            width: "90%",
+            position: "relative",
+          }}
+        >
+          <TextField
+            fullWidth
+            variant="outlined"
+            value={content}
+            type="text"
+            label="Skriv ett meddelande"
+            onChange={(e) => setContent(e.target.value)}
+            sx={{
+              input: {
+                color: "black",
+                borderColor: chatColor,
+                backgroundColor: "white",
+              },
+              "& .MuiInputLabel-outlined": {
+                color: "#666666",
               },
               "&.Mui-focused": {
-                "& .MuiOutlinedInput-notchedOutline": {
+                color: "#666666",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "lightgray",
+                },
+                "&.Mui-focused": {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "lightgray",
+                  },
+                },
+                "&:hover fieldset": {
+                  borderColor: "lightgray",
+                },
+                "&.Mui-focused fieldset": {
                   borderColor: "lightgray",
                 },
               },
-              "&:hover fieldset": {
-                borderColor: "lightgray",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "lightgray",
-              },
-            },
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSendMessage();
-          }}
-        />
-        {showEmojiPicker && (
-          <EmojiPicker
-            onEmojiClick={addEmoji}
-            style={{
-              position: "absolute",
-              bottom: "100%",
-              right: 0,
-              zIndex: 10,
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSendMessage();
             }}
           />
-        )}
-        <Button
-          variant="contained"
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          sx={{
-            backgroundColor: content.trim() !== "" ? chatColor : "lightgray",
-            marginLeft: isMobile ? 1 : 2,
-            paddingX: isMobile ? 0 : 2,
-            paddingY: isMobile ? 2 : 1.5,
-            "&:hover": {
-              backgroundColor: "grey",
-            },
-          }}
-        >
-          <AddReactionIcon
-            sx={{ color: "white", fontSize: isMobile ? 12 : 20 }}
-          />
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleSendMessage}
-          sx={{
-            backgroundColor: content.trim() !== "" ? chatColor : "lightgray",
-            marginLeft: isMobile ? 1 : 2,
-            paddingX: isMobile ? 0 : 2,
-            paddingY: isMobile ? 2 : 1.5,
-            "&:hover": {
-              backgroundColor: "grey",
-            },
-          }}
-        >
-          <SendIcon sx={{ color: "white", fontSize: isMobile ? 12 : 20 }} />
-        </Button>
-      </div>
-    </div>
+          {showEmojiPicker && (
+            <EmojiPicker
+              onEmojiClick={addEmoji}
+              style={{
+                position: "absolute",
+                bottom: "100%",
+                right: 0,
+                zIndex: 10,
+              }}
+            />
+          )}
+          <Button
+            variant="contained"
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            sx={{
+              backgroundColor: content.trim() !== "" ? chatColor : "lightgray",
+              marginLeft: isMobile ? 1 : 2,
+              paddingX: isMobile ? 0 : 2,
+              paddingY: isMobile ? 2 : 1.5,
+              "&:hover": {
+                backgroundColor: "grey",
+              },
+            }}
+          >
+            <AddReactionIcon
+              sx={{ color: "white", fontSize: isMobile ? 12 : 20 }}
+            />
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSendMessage}
+            sx={{
+              backgroundColor: content.trim() !== "" ? chatColor : "lightgray",
+              marginLeft: isMobile ? 1 : 2,
+              paddingX: isMobile ? 0 : 2,
+              paddingY: isMobile ? 2 : 1.5,
+              "&:hover": {
+                backgroundColor: "grey",
+              },
+            }}
+          >
+            <SendIcon sx={{ color: "white", fontSize: isMobile ? 12 : 20 }} />
+          </Button>
+        </div>
+      </Container>
+    </Box>
   );
 }

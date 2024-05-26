@@ -42,14 +42,31 @@ export default function Projects() {
         }}
         className="project-list-container"
       >
-        {projects ? (
+        {projects && projects?.length > 0 ? (
           <Box>
             {projects.map((p) => (
               <ProgressBar project={p} key={p.id} />
             ))}
           </Box>
         ) : (
-          <Typography>Inget projekt skapat i teamet</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: 4,
+              backgroundColor: "#f5f5f5",
+              borderRadius: 2,
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              marginTop: 2,
+            }}
+          >
+            <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              Det finns inget projekt för detta teamet ännu.
+            </Typography>
+          </Box>
         )}
       </Container>
     </div>

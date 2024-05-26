@@ -28,13 +28,13 @@ export const theme1 = createTheme({
       main: "#f15c6f",
     },
     office: {
-      main: "#e7b46b",
+      main: "#f9d794",
     },
     calendar: {
       main: "#fff6f2",
     },
     room: {
-      main: "#52b0d9",
+      main: "#91D2EF",
     },
     chat: {
       main: "#b4838f",

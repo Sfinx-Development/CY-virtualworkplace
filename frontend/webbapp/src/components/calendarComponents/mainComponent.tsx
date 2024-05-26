@@ -1,5 +1,5 @@
-import React from 'react';
-import { Typography } from '@mui/material';
+import { Card, Typography } from "@mui/material";
+import React from "react";
 
 interface MainComponentProps {
   isAsideVisible: boolean;
@@ -54,44 +54,46 @@ const MainComponent: React.FC<MainComponentProps> = ({
             marginTop: "10px",
           }}
         >
-          <span
-            title="Föregående månad"
-            onClick={handlePrevMonth}
-            style={{
-              cursor: "pointer",
-              fontSize: "32px",
-              color: "black",
-              marginRight: "20px",
-            }}
-          >
-            &lt;
-          </span>
+          <Card sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
+            <span
+              title="Föregående månad"
+              onClick={handlePrevMonth}
+              style={{
+                cursor: "pointer",
+                fontSize: "32px",
+                color: "black",
+                marginRight: "20px",
+              }}
+            >
+              &lt;
+            </span>
 
-          <Typography
-            variant="h6"
-            id="month-year"
-            style={{
-              margin: "10px",
-              fontFamily: "Arial, sans-serif",
-              fontWeight: "bold",
-              color: "#000",
-            }}
-          >
-            {updateCalendarMonthLabel()}
-          </Typography>
+            <Typography
+              variant="h6"
+              id="month-year"
+              style={{
+                margin: "10px",
+                fontFamily: "Arial, sans-serif",
+                fontWeight: "bold",
+                color: "#000",
+              }}
+            >
+              {updateCalendarMonthLabel()}
+            </Typography>
 
-          <span
-            title="Nästa månad"
-            onClick={handleNextMonth}
-            style={{
-              cursor: "pointer",
-              fontSize: "32px",
-              color: "black",
-              marginLeft: "20px",
-            }}
-          >
-            &gt;
-          </span>
+            <span
+              title="Nästa månad"
+              onClick={handleNextMonth}
+              style={{
+                cursor: "pointer",
+                fontSize: "32px",
+                color: "black",
+                marginLeft: "20px",
+              }}
+            >
+              &gt;
+            </span>
+          </Card>
         </div>
       </header>
       <table
@@ -109,7 +111,11 @@ const MainComponent: React.FC<MainComponentProps> = ({
                   fontSize: "12px",
                 }}
               >
-                {day}
+                <Card
+                  sx={{ display: "flex", alignItems: "center", paddingX: 2 }}
+                >
+                  <Typography>{day}</Typography>
+                </Card>
               </th>
             ))}
           </tr>
@@ -185,7 +191,9 @@ const MainComponent: React.FC<MainComponentProps> = ({
                           padding: "2px",
                         }}
                       >
-                        {holidayName}
+                        <Typography sx={{ fontSize: 10 }}>
+                          {holidayName}
+                        </Typography>
                       </div>
                     )}
                     {todoCount > 0 && (
@@ -206,7 +214,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
                           fontStyle: "italic",
                         }}
                       >
-                        {todoCount}
+                        <Typography variant="h6">{todoCount}</Typography>
                       </div>
                     )}
                   </td>

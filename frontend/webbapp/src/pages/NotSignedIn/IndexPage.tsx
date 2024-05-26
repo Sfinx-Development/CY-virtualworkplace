@@ -1,8 +1,9 @@
 import { keyframes } from "@emotion/react";
-import { Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
+import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
-import { FormattedMessage } from "react-intl";
+import PresentInfo from "../../components/PresentInfo";
 
 const IndexPage = () => {
   const navigate = useNavigate();
@@ -14,17 +15,16 @@ const IndexPage = () => {
   `;
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        minHeight: "100vh",
         width: "100%",
         background: "linear-gradient(45deg, #333333, #666666)",
         animation: `${gradientAnimation} 10s ease infinite`,
         color: "#FFF",
-        overflowX: "hidden",
       }}
     >
       <Container
@@ -33,119 +33,93 @@ const IndexPage = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: isMobile ? "20px 10px" : "40px 20px",
+          padding: isMobile ? "20px" : "40px",
+          margin: 0,
+          width: "100%",
+          flexGrow: 1,
         }}
       >
-        <section
-          style={{
+        <Typography variant={isMobile ? "h5" : "h3"} gutterBottom>
+          <FormattedMessage id="index1" />
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <FormattedMessage id="index2" />
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          sx={{
+            marginY: 4,
+            backgroundColor: "#FF6B6B",
+            color: "white",
+          }}
+          onClick={() => navigate("/createaccount")}
+        >
+          <FormattedMessage id="index_button_createaccount" />
+        </Button>
+        <div style={{ display: "flex" }}>
+          <Box
+            component="img"
+            src="https://i.imgur.com/3ZY0ydQ.jpeg"
+            alt="two happy girls working by computers"
+            sx={{
+              width: "100%",
+              maxWidth: 600,
+              borderRadius: 2,
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              marginBottom: 4,
+              height: 300,
+            }}
+          />
+          <Box
+            component="img"
+            src="https://www.bareinternational.cl/wp-content/uploads/sites/4/2020/02/Company-cultures-in-remote-offices.jpeg"
+            alt="two happy girls working by computers"
+            sx={{
+              width: 600,
+              borderRadius: 2,
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              marginBottom: 4,
+              maxHeight: 300,
+            }}
+          />
+        </div>
+        <Box
+          sx={{
             textAlign: "center",
-            marginBottom: isMobile ? "0px" : "40px",
-            color: "#FFF",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-          }}
-        >
-          <Typography variant={isMobile ? "h5" : "h3"} gutterBottom>
-            <FormattedMessage id="index1" />
-          </Typography>
-
-          <Typography variant="subtitle1" gutterBottom>
-            <FormattedMessage id="index2" />
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            fullWidth
-            style={{
-              margin: isMobile ? "30px" : "40px",
-              backgroundColor: "#FF6B6B",
-              color: "white",
-            }}
-            onClick={() => navigate("/createaccount")}
-          >
-            <FormattedMessage id="index_button_createaccount" />
-          </Button>
-        </section>
-
-        <img
-          src="https://i.imgur.com/3ZY0ydQ.jpeg"
-          alt="two happy girls working by computers"
-          style={{
+            marginBottom: 4,
             width: "100%",
-            borderRadius: "8px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-          }}
-        />
-
-        <section
-          style={{
-            textAlign: "center",
-            marginTop: "10px",
-            color: "#FFF",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignContent: "space-between",
           }}
         >
-          <Typography variant={isMobile ? "h5" : "h4"} gutterBottom>
-            <FormattedMessage id="index3" />
-          </Typography>
-          <div
-            style={{
+          <Box
+            sx={{
               display: "flex",
+              flexDirection: isMobile ? "column" : "row",
               justifyContent: "space-around",
-              marginTop: "20px",
+              width: "100%",
+              maxWidth: 800,
+              marginTop: 2,
             }}
           >
-            <div>
-              <Typography variant="h5" gutterBottom>
-                <FormattedMessage id="index5_title" />
-              </Typography>
-              <Typography
-                variant={isMobile ? "subtitle2" : "body1"}
-                gutterBottom
-                style={{ marginLeft: "5px" }}
-              >
-                <FormattedMessage id="index5_sub" />
-              </Typography>
-            </div>
-            <div>
-              <Typography variant="h5" gutterBottom>
-                <FormattedMessage id="index4_title" />
-              </Typography>
-              <Typography
-                variant={isMobile ? "subtitle2" : "body1"}
-                gutterBottom
-              >
-                <FormattedMessage id="index4_sub" />
-              </Typography>
-            </div>
-            <div>
-              <Typography variant="h5" gutterBottom>
-                <FormattedMessage id="index6_title" />
-              </Typography>
-              <Typography
-                variant={isMobile ? "subtitle2" : "body1"}
-                gutterBottom
-                style={{ marginLeft: "5px" }}
-              >
-                <FormattedMessage id="index6_sub" />
-              </Typography>
-            </div>
-          </div>
-        </section>
+            <PresentInfo titleId="index5_title" descriptionId="index5_sub" />
+            <PresentInfo titleId="index4_title" descriptionId="index4_sub" />
+            <PresentInfo titleId="index6_title" descriptionId="index6_sub" />
+          </Box>
+        </Box>
 
-        <section
-          style={{
+        <Box
+          sx={{
             textAlign: "center",
-            marginTop: "40px",
-            color: "#FFF",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            width: "100%",
           }}
         >
           <Typography variant={isMobile ? "h6" : "h4"} gutterBottom>
@@ -156,14 +130,18 @@ const IndexPage = () => {
             color="secondary"
             size="large"
             fullWidth
-            style={{ margin: "20px", borderColor: "#FF6B6B", color: "#FF6B6B" }}
+            sx={{
+              marginTop: 2,
+              borderColor: "#FF6B6B",
+              color: "#FF6B6B",
+            }}
             onClick={() => navigate("/signin")}
           >
             <FormattedMessage id="index_button_signin" />
           </Button>
-        </section>
+        </Box>
       </Container>
-    </div>
+    </Box>
   );
 };
 

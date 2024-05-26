@@ -10,7 +10,7 @@ public class Team
     public string ImageUrl { get; set; }
     public bool IsOpenForJoining { get; set; }
     public bool AllCanCreateMeetings { get; set; }
-    public List<Profile> Profiles { get; set; }
+    public List<Profile> Profiles = new();
 
     public Team() { }
 

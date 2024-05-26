@@ -2,7 +2,9 @@ import {
   Add as AddIcon,
   ConnectWithoutContact as ConnectWithoutContactIcon,
 } from "@mui/icons-material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import GroupIcon from "@mui/icons-material/Group";
 import {
   Box,
   Button,
@@ -14,6 +16,7 @@ import {
   Grid,
   IconButton,
   Typography,
+  keyframes,
 } from "@mui/material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +29,6 @@ import {
   GetMyTeamsAsync,
   setActiveTeam,
 } from "../../slices/teamSlice";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const ChooseTeam = () => {
   //const user = useAppSelector((state) => state.userSlice.user);
@@ -53,6 +55,12 @@ const ChooseTeam = () => {
     dispatch(DeleteTeamRequest(requestId));
   };
 
+  const gradientAnimation = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
   return (
     <Box
       sx={{
@@ -62,6 +70,8 @@ const ChooseTeam = () => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        background: "linear-gradient(45deg, #333333, #666666)",
+        animation: `${gradientAnimation} 10s ease infinite`,
       }}
     >
       <IconButton
@@ -207,6 +217,30 @@ const ChooseTeam = () => {
               </Grid>
             ))}
         </Grid>
+        {myTeams?.length == 0 && myRequests?.length == 0 && (
+          <Box
+            sx={{
+              display:
+                myTeams?.length === 0 && myRequests?.length === 0
+                  ? "flex"
+                  : "none",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: 4,
+              backgroundColor: "#f5f5f5",
+              borderRadius: 2,
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              marginTop: 2,
+            }}
+          >
+            <GroupIcon sx={{ fontSize: 60, color: "#ccc", marginBottom: 2 }} />
+            <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              Du är inte medlem i ett team ännu.
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );
