@@ -54,7 +54,13 @@ const MainComponent: React.FC<MainComponentProps> = ({
             marginTop: "10px",
           }}
         >
-          <Card sx={{ display: "flex", alignItems: "center", paddingX: 2 }}>
+          <Card
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              paddingX: 2,
+            }}
+          >
             <span
               title="Föregående månad"
               onClick={handlePrevMonth}
@@ -173,7 +179,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
                       }
                     }}
                   >
-                    {day}
+                    <Typography sx={{ fontWeight: 600 }}>{day}</Typography>
                     {holidayName && (
                       <div
                         style={{
@@ -214,7 +220,9 @@ const MainComponent: React.FC<MainComponentProps> = ({
                           fontStyle: "italic",
                         }}
                       >
-                        <Typography variant="h6">{todoCount}</Typography>
+                        <Typography sx={{ fontWeight: 600 }}>
+                          {todoCount}
+                        </Typography>
                       </div>
                     )}
                   </td>

@@ -27,6 +27,7 @@ import {
   GetProfileSurveysAsync,
   GetTeamSurveysAsync,
 } from "../../slices/survey";
+import { theme1 } from "../../theme";
 
 interface PieValueType {
   id: string;
@@ -63,8 +64,7 @@ export default function SurveyPage() {
     (state) => state.surveySlice.profileSurveys
   );
   const [chartData, setChartData] = useState<ChartData>({ data: [] });
-  const [currentSurvey, setCurrentSurvey] =
-    useState<Survey | null>();
+  const [currentSurvey, setCurrentSurvey] = useState<Survey | null>();
 
   useEffect(() => {
     dispatch(getActiveProfile());
@@ -160,6 +160,7 @@ export default function SurveyPage() {
             flexDirection: isMobile ? "column" : "row",
             alignItems: isMobile ? "center" : "flex-start",
             width: "90%",
+            color: "white",
           }}
         >
           <Box
@@ -167,6 +168,7 @@ export default function SurveyPage() {
               flex: 1,
               display: "flex",
               justifyContent: "center",
+              color: "white",
             }}
           >
             {" "}
@@ -197,11 +199,12 @@ export default function SurveyPage() {
                     flexDirection={"column"}
                     alignItems={"center"}
                     padding={isMobile ? 0 : 2}
+                    color={"white"}
                   >
                     <Typography>
-                      {new Date(
-                        currentSurvey.startTime
-                      ).toLocaleDateString("sv-SE")}{" "}
+                      {new Date(currentSurvey.startTime).toLocaleDateString(
+                        "sv-SE"
+                      )}{" "}
                       -{" "}
                       {new Date(currentSurvey.endTime).toLocaleDateString(
                         "sv-SE"
@@ -217,7 +220,7 @@ export default function SurveyPage() {
                   sx={{
                     [`& .${pieArcLabelClasses.root}`]: {
                       fill: "white",
-                      fontWeight: "bold",
+                      color: "white",
                     },
                   }}
                 />
@@ -232,7 +235,13 @@ export default function SurveyPage() {
               </Container>
             )}
           </Box>
-          <Box sx={{ maxWidth: isMobile ? "100%" : 300, textAlign: "center" }}>
+          <Box
+            sx={{
+              maxWidth: isMobile ? "100%" : 300,
+              textAlign: "center",
+              color: "white",
+            }}
+          >
             <Button
               variant="contained"
               onClick={() => navigate("/createsurvey")}
@@ -271,7 +280,10 @@ export default function SurveyPage() {
                       onClick={() => loadStatistic(check)}
                       sx={{
                         marginTop: 2,
-                        backgroundColor: "lightgrey",
+                        backgroundColor:
+                          currentSurvey?.id == check.id
+                            ? theme1.palette.primary.main
+                            : "lightgrey",
                         minWidth: isMobile ? "100%" : 200,
                         display: "flex",
                         justifyContent: "space-between",

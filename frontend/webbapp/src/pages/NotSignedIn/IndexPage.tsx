@@ -22,8 +22,8 @@ const IndexPage = () => {
         alignItems: "center",
         minHeight: "100vh",
         width: "100%",
-        background: "linear-gradient(45deg, #333333, #666666)",
-        animation: `${gradientAnimation} 10s ease infinite`,
+        backgroundImage:
+          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
         color: "#FFF",
       }}
     >

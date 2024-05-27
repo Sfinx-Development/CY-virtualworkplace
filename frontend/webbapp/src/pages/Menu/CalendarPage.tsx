@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Card, Container, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Todo } from "../../../types";
 import CalendarCellDialog from "../../components/calendarComponents/calendarCellDialog";
@@ -383,7 +383,7 @@ export default function CalendarPage() {
           flexDirection: isMobile ? "column" : "row",
           alignItems: "center",
           justifyContent: "center",
-          padding: isMobile ? "20px" : "40px",
+          padding: isMobile ? "20px" : "0px",
           margin: 0,
           width: "100%",
           flexGrow: 1,
@@ -410,10 +410,9 @@ export default function CalendarPage() {
                   width: "100%",
                 }}
               >
-                <div
+                <Card
                   className="todo-aside"
                   style={{
-                    backgroundColor: "rgb(211, 145, 158)",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -454,12 +453,12 @@ export default function CalendarPage() {
                     handleCreateTodo={handleCreateTodo}
                     fieldError={fieldError}
                   />
-                </div>
+                </Card>
 
                 <div id="todo-list-div" className="alltodos-div">
-                  <div
+                  <Card
                     className="my-todos-div"
-                    style={{
+                    sx={{
                       backgroundColor: "rgb(211, 145, 158)",
                       display: "flex",
                       flexDirection: "column",
@@ -543,7 +542,7 @@ export default function CalendarPage() {
                         id="headphone-icon"
                       ></i>
                     </Button>
-                  </div>
+                  </Card>
 
                   <div
                     className="todo-list"
@@ -584,7 +583,6 @@ export default function CalendarPage() {
               zIndex: 1,
               marginLeft: "20px",
               marginRight: "20px",
-              backgroundColor: "rgb(211, 145, 158)",
               opacity: 0.8,
               display: "flex",
               flexDirection: "column",
@@ -610,39 +608,28 @@ export default function CalendarPage() {
 
             <TodayAside currentTime={currentTime} />
 
-            <div
+            <Card
               className="todo-aside"
-              style={{
-                backgroundColor: "rgb(211, 145, 158)",
+              sx={{
+                backgroundColor: "white",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                paddingY: 4,
               }}
             >
-              <Button
-                id="add-todo-btn"
-                variant="outlined"
-                style={{
-                  backgroundColor: "rgb(171, 92, 121)",
-                  padding: "4px",
-                  color: "rgb(255, 255, 255)",
-                  border: "none",
-                  borderRadius: "2px",
-                  height: "50px",
-                  width: "280px",
-                  letterSpacing: "2px",
-                  fontSize: "14px",
-                  fontFamily: '"Helvetica", Arial, sans-serif',
+              <Card
+                sx={{
+                  backgroundImage:
+                    "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
+                  color: "white",
+                  padding: 2,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-around",
-                  position: "relative",
-                  overflow: "hidden",
-                  transition: "width 0.3s ease",
                 }}
               >
-                Lägg till uppgifter eller påminnelser här nedan
-              </Button>
+                <Typography>Lägg till uppgifter här nedan</Typography>
+              </Card>
               <TodoAside
                 title={title}
                 setTitle={SetTitle}
@@ -653,93 +640,91 @@ export default function CalendarPage() {
                 handleCreateTodo={handleCreateTodo}
                 fieldError={fieldError}
               />
-            </div>
+              <Button
+                id="show-todos-btn"
+                style={{
+                  color: "black",
+                  border: "none",
+                  borderRadius: "2px",
+                  backgroundColor: "rgb(214, 196, 203)",
+                  top: "15px",
+                  height: "50px",
+                  width: "280px",
+                  letterSpacing: "2px",
+                  fontSize: "14px",
+                  fontFamily: '"Helvetica", Arial, sans-serif',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "width 0.3s ease",
+                }}
+                onClick={handleGetTodos}
+              >
+                Se alla uppgifter
+              </Button>
+            </Card>
 
             <div id="todo-list-div" className="alltodos-div">
-              <div
+              {/* <Card
                 className="my-todos-div"
-                style={{
-                  backgroundColor: "rgb(211, 145, 158)",
+                sx={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  paddingY: 2,
+                  backgroundColor: "rgb(214, 196, 203)",
                 }}
-              >
-                <CalendarCellDialog
-                  open={openTodoPopup}
-                  onClose={() => setOpenTodoPopup(false)}
-                  todoDate={todoDate}
-                  title={title}
-                  SetTitle={SetTitle}
-                  description={description}
-                  setDescription={setDescription}
-                  handleCreateTodo={handleCreateTodo}
-                  selectedDayTodos={selectedDayTodos}
-                  isEditMode={isEditMode}
-                  todoIdToEdit={todoIdToEdit}
-                  editedTitle={editedTitle}
-                  setEditedTitle={setEditedTitle}
-                  editedDate={editedDate}
-                  setEditedDate={setEditedDate}
-                  editedDescription={editedDescription}
-                  setEditedDescription={setEditedDescription}
-                  handleDeleteTodo={handleDeleteTodo}
-                  handleSetEditMode={handleSetEditMode}
-                  handleEditTodo={handleEditTodo}
-                  handleKeyPress={handleKeyPress}
-                />
+              > */}
+              <CalendarCellDialog
+                open={openTodoPopup}
+                onClose={() => setOpenTodoPopup(false)}
+                todoDate={todoDate}
+                title={title}
+                SetTitle={SetTitle}
+                description={description}
+                setDescription={setDescription}
+                handleCreateTodo={handleCreateTodo}
+                selectedDayTodos={selectedDayTodos}
+                isEditMode={isEditMode}
+                todoIdToEdit={todoIdToEdit}
+                editedTitle={editedTitle}
+                setEditedTitle={setEditedTitle}
+                editedDate={editedDate}
+                setEditedDate={setEditedDate}
+                editedDescription={editedDescription}
+                setEditedDescription={setEditedDescription}
+                handleDeleteTodo={handleDeleteTodo}
+                handleSetEditMode={handleSetEditMode}
+                handleEditTodo={handleEditTodo}
+                handleKeyPress={handleKeyPress}
+              />
 
-                <Button
-                  id="show-todos-btn"
-                  variant="outlined"
-                  style={{
-                    color: "white",
-                    border: "none",
-                    borderRadius: "2px",
-                    backgroundColor: "rgb(171, 92, 121)",
+              <TodoDialogAside
+                open={openDialog}
+                onClose={handleCloseTodoDialog}
+                todos={todosen}
+                handleDeleteTodo={handleDeleteTodo}
+                handleSetEditMode={handleSetEditMode}
+                isEditMode={isEditMode}
+                todoIdToEdit={todoIdToEdit}
+                editedTitle={editedTitle}
+                setEditedTitle={setEditedTitle}
+                editedDate={editedDate}
+                setEditedDate={setEditedDate}
+                editedDescription={editedDescription}
+                setEditedDescription={setEditedDescription}
+                handleKeyPress={handleKeyPress}
+                handleEditTodo={handleEditTodo}
+                openDialog={false}
+                setOpenDialog={setOpenDialog}
+              />
 
-                    top: "15px",
-                    height: "50px",
-                    width: "280px",
-                    letterSpacing: "2px",
-                    fontSize: "14px",
-                    fontFamily: '"Helvetica", Arial, sans-serif',
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition: "width 0.3s ease",
-                  }}
-                  onClick={handleGetTodos}
-                >
-                  Se alla uppgifter
-                </Button>
-
-                <TodoDialogAside
-                  open={openDialog}
-                  onClose={handleCloseTodoDialog}
-                  todos={todosen}
-                  handleDeleteTodo={handleDeleteTodo}
-                  handleSetEditMode={handleSetEditMode}
-                  isEditMode={isEditMode}
-                  todoIdToEdit={todoIdToEdit}
-                  editedTitle={editedTitle}
-                  setEditedTitle={setEditedTitle}
-                  editedDate={editedDate}
-                  setEditedDate={setEditedDate}
-                  editedDescription={editedDescription}
-                  setEditedDescription={setEditedDescription}
-                  handleKeyPress={handleKeyPress}
-                  handleEditTodo={handleEditTodo}
-                  openDialog={false}
-                  setOpenDialog={setOpenDialog}
-                />
-
-                <Button id="read-todos-btn" aria-label="headphone icon">
-                  <i className="fa-solid fa-headphones" id="headphone-icon"></i>
-                </Button>
-              </div>
+              <Button id="read-todos-btn" aria-label="headphone icon">
+                <i className="fa-solid fa-headphones" id="headphone-icon"></i>
+              </Button>
+              {/* </Card> */}
 
               <div
                 className="todo-list"

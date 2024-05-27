@@ -173,22 +173,6 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         color2="white"
       /> */}
 
-      {ongoingMeeting && (
-        <Card sx={{ my: 2 }}>
-          <CardActionArea
-            onClick={() => {
-              dispatch(setActiveMeeting(ongoingMeeting.meetingId));
-              connectToVideo();
-            }}
-          >
-            <CardContent>
-              <Typography variant="h6" align="center" color={"white"}>
-                Gå med i mötet {ongoingMeeting.name}
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-      )}
       {isMobile ? (
         <FormControl fullWidth>
           <Select
@@ -270,7 +254,27 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               </div>
             )}
           </div>
-
+          {ongoingMeeting && (
+            <Card sx={{ py: 2, backgroundColor: "lightgreen" }}>
+              <CardActionArea
+                onClick={() => {
+                  dispatch(setActiveMeeting(ongoingMeeting.meetingId));
+                  connectToVideo();
+                }}
+              >
+                <CardContent>
+                  <Typography
+                    variant="body2"
+                    align="center"
+                    fontWeight={600}
+                    color={"black"}
+                  >
+                    {ongoingMeeting.name} pågår
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          )}
           <div
             style={{
               display: "flex",

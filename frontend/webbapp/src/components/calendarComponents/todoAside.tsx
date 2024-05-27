@@ -1,6 +1,6 @@
-import React from 'react';
-import { TextField, Button, Typography } from '@mui/material';
-import { theme1 } from '../../theme';
+import { Button, TextField, Typography } from "@mui/material";
+import React from "react";
+import { theme1 } from "../../theme";
 
 interface TodoFormProps {
   title: string;
@@ -39,20 +39,20 @@ const TodoAside: React.FC<TodoFormProps> = ({
       />
 
       <div>
-        <input
-          type="text"
-          placeholder="Beskrivning"
+        <TextField
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          style={{
-            borderRadius: "4px",
-            marginTop: "20px",
-            marginLeft: "20px",
-            height: "80px",
-            width: "240px",
+          variant="outlined"
+          type="text"
+          placeholder="Beskrivning"
+          multiline
+          maxRows={4}
+          sx={{
+            width: "250px",
+            marginTop: 2,
             resize: "none",
-            padding: "8px",
-            fontSize: "14px",
+            backgroundColor: "white",
+            overflow: "hidden",
           }}
         />
 
@@ -73,6 +73,7 @@ const TodoAside: React.FC<TodoFormProps> = ({
             variant="outlined"
             sx={{
               width: "250px",
+              backgroundColor: "white",
               marginTop: 2,
               "& label": {
                 color: "transparent",
@@ -114,4 +115,3 @@ const TodoAside: React.FC<TodoFormProps> = ({
 };
 
 export default TodoAside;
-
