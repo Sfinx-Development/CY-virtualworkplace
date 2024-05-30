@@ -1,3 +1,4 @@
+import ConnectedTvIcon from "@mui/icons-material/ConnectedTv";
 import {
   Box,
   Button,
@@ -14,6 +15,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { MeetingOccasionNoDate, ProfileHubDTO } from "../../../types";
 import FlexNavcard from "../../components/FlexNavcard";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   GetMyMeetingsAsync,
   setActiveMeeting,
@@ -32,6 +34,8 @@ import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
 import Connector from "../AfterChosenTeam/OnlineConnection";
+import LightbulbIcon from "@mui/icons-material/Lightbulb";
+import PieChartIcon from "@mui/icons-material/PieChart";
 
 interface ConnectFormProps {
   connectToVideo: () => void;
@@ -152,9 +156,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "rgba(0, 0, 0, 0.2)",
-        backgroundImage:
-          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
+        backgroundColor: "rgba(0, 0, 0, 0.9)",
         margin: 0,
         flex: 1,
         alignItems: "center",
@@ -194,7 +196,7 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             display: "flex",
             justifyContent: "space-around",
             alignItems: "center",
-            width: "100%",
+            width: "95%",
             gap: 2,
             marginRight: 4,
             marginLeft: 4,
@@ -214,14 +216,15 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               backgroundColor={meetingRoomColor}
               title="Möten"
               icon={
-                <img
-                  src="https://i.imgur.com/HRZXZA9.png"
-                  alt="project management icon"
-                  style={{
-                    maxWidth: isMobile ? 30 : 40,
-                    height: isMobile ? 30 : 40,
-                  }}
-                />
+                // <img
+                //   src="https://i.imgur.com/HRZXZA9.png"
+                //   alt="project management icon"
+                //   style={{
+                //     maxWidth: isMobile ? 30 : 40,
+                //     height: isMobile ? 30 : 40,
+                //   }}
+                // />
+                <ConnectedTvIcon />
               }
               onClick={handleMeetingDropdownToggle}
             />
@@ -288,11 +291,12 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
               navigationPage="createproject"
               title="Projekt"
               icon={
-                <img
-                  src="https://i.imgur.com/GvdAMWN.png"
-                  alt="project management icon"
-                  style={{ maxWidth: 40, height: 40 }}
-                />
+                // <img
+                //   src="https://i.imgur.com/GvdAMWN.png"
+                //   alt="project management icon"
+                //   style={{ maxWidth: 40, height: 40 }}
+                // />
+                <LightbulbIcon />
               }
               onClick={handleProjectDropdownToggle}
             />
@@ -331,11 +335,12 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             navigationPage="healthcheck"
             title="Statistik"
             icon={
-              <img
-                src="https://i.imgur.com/XrvQ6nN.png"
-                alt="pie chart icon"
-                style={{ maxWidth: 40, height: 40 }}
-              />
+              // <img
+              //   src="https://i.imgur.com/XrvQ6nN.png"
+              //   alt="pie chart icon"
+              //   style={{ maxWidth: 40, height: 40 }}
+              // />
+              <PieChartIcon />
             }
           />
 
@@ -344,11 +349,12 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
             navigationPage="settings"
             title="Inställningar"
             icon={
-              <img
-                src="https://i.imgur.com/U8AEeOy.png"
-                alt="project management icon"
-                style={{ maxWidth: 40, height: 40 }}
-              />
+              // <img
+              //   src="https://i.imgur.com/U8AEeOy.png"
+              //   alt="project management icon"
+              //   style={{ maxWidth: 40, height: 40 }}
+              // />
+              <SettingsIcon />
             }
           />
         </Box>
@@ -365,7 +371,11 @@ export const MeetingRoom = ({ connectToVideo }: ConnectFormProps) => {
       >
         <div
           style={{
+            display: "flex",
+            flexDirection: "row",
             width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
             flex: 1,
           }}
         >

@@ -7,7 +7,6 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -18,6 +17,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatDate } from "../../../dateUtil";
 import { isMobile } from "../../../globalConstants";
 import { UpdateComment, UpdateCommentNoDate } from "../../../types";
 import UpdatePreview from "../../components/UpdatePreview";
@@ -31,7 +31,6 @@ import {
 } from "../../slices/projectSlice";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getActiveTeam } from "../../slices/teamSlice";
-import { formatDate } from "../../../dateUtil";
 
 export default function UpdateComments() {
   const activeUpdate = useAppSelector(
@@ -131,21 +130,37 @@ export default function UpdateComments() {
   };
 
   return (
-    <Container
-      sx={{
-        width: "100vw",
+    <div
+      style={{
+        position: "relative",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
+        backgroundColor: "rgba(0, 0, 0, 0.9)",
+        margin: 0,
         flex: 1,
+        width: "100%",
       }}
     >
-      <Typography variant={isMobile ? "h5" : "h4"}>
-        {activeUpdate?.title ?? "Ingen titel"}
-      </Typography>
-      <Box>
+      <Box
+        sx={{
+          padding: 2,
+          backgroundColor: "rgba(255,255,255,0.1)",
+          borderRadius: 2,
+          margin: 1,
+        }}
+      >
+        <Typography variant={isMobile ? "h5" : "h4"} color={"white"}>
+          {activeUpdate?.title ?? "Ingen titel"}
+        </Typography>
+      </Box>
+
+      <Box sx={{ paddingX: 2 }}>
         {orderedComments && orderedComments.length > 0 && (
           <Box>
-            <Typography variant="h5">Händelser</Typography>
+            <Typography variant="h5" color={"white"}>
+              Händelser
+            </Typography>
             {orderedComments?.map((comment: UpdateCommentNoDate) => (
               <Card key={comment.id} style={{ marginBottom: "15px" }}>
                 <Dialog
@@ -289,6 +304,6 @@ export default function UpdateComments() {
           </CardActionArea>
         </Card>
       </Box>
-    </Container>
+    </div>
   );
 }

@@ -1,4 +1,3 @@
-import { keyframes } from "@emotion/react";
 import { Box, Button, Container, Typography } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
@@ -7,12 +6,6 @@ import PresentInfo from "../../components/PresentInfo";
 
 const IndexPage = () => {
   const navigate = useNavigate();
-
-  const gradientAnimation = keyframes`
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  `;
 
   return (
     <Box
@@ -50,11 +43,11 @@ const IndexPage = () => {
           variant="contained"
           color="primary"
           size="large"
-          fullWidth
           sx={{
             marginY: 4,
             backgroundColor: "#FF6B6B",
             color: "white",
+            width: "50%",
           }}
           onClick={() => navigate("/createaccount")}
         >

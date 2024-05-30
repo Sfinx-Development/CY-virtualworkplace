@@ -145,7 +145,7 @@ export default function SurveyPage() {
   };
 
   return (
-    <Container sx={{ paddingX: "20px", paddingY: 1 }}>
+    <Container sx={{ padding: "20px" }}>
       <div
         style={{
           display: "flex",

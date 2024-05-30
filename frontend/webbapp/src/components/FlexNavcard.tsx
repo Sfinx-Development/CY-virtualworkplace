@@ -35,9 +35,10 @@ export default function FlexNavcard(props: NavCardProps) {
       sx={{
         display: "flex",
         flex: 1,
-        backgroundColor: "white",
-        borderColor: props.backgroundColor,
+        backgroundColor: "transparent",
+        borderColor: "rgba(255,255,255,0.1)",
         maxHeight: 90,
+        borderRadius: 10,
       }}
     >
       <CardActionArea onClick={handleClick}>
@@ -49,42 +50,67 @@ export default function FlexNavcard(props: NavCardProps) {
             alt={props.title}
           />
         )}
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          {props.icon || props.title ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            justifyContent: "center",
+            paddingBottom: 0,
+          }}
+        >
+          {(props.icon || props.title) && (
             <CardContent
               sx={{
                 flex: "1",
                 display: "flex",
-                justifyContent: isMobile ? "space-evenly" : "center",
+                justifyContent: "center",
                 alignItems: "center",
-                flexDirection: isMobile ? "row" : "column",
                 padding: 1,
-                backgroundColor: props.backgroundColor,
+                boxShadow: 0.5,
+                backgroundColor: "rgba(255,255,255,0.1)",
+                borderRadius: 10,
+                paddingTop: 2,
+                position: "relative",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
               }}
             >
-              <Typography
-                component="div"
-                sx={{
-                  textAlign: "center",
-                  fontSize: isMobile ? 20 : "22",
-                  fontWeight: 500,
-                }}
-              >
-                {props.title}
-              </Typography>
-              {props.icon ? (
+              {props.icon && (
                 <Box
                   sx={{
+                    position: "absolute",
+                    left: 10,
                     display: "flex",
+                    alignItems: "center",
                     justifyContent: "center",
-                    marginLeft: isMobile ? 1 : 0,
+                    height: 40,
+                    width: 40,
+                    borderRadius: "50%",
+                    color: "white",
+                    border: "2px solid white",
                   }}
                 >
                   {props.icon}
                 </Box>
-              ) : null}
+              )}
+              <Typography
+                component="div"
+                sx={{
+                  textAlign: "center",
+                  fontSize: isMobile ? 20 : 25,
+                  color: "white",
+                  flexGrow: 1,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {props.title}
+              </Typography>
             </CardContent>
-          ) : null}
+          )}
         </Box>
       </CardActionArea>
     </Card>

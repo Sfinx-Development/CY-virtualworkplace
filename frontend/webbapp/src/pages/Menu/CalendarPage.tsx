@@ -372,8 +372,7 @@ export default function CalendarPage() {
         alignItems: "center",
         minHeight: "100vh",
         width: "100%",
-        backgroundImage:
-          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
+        backgroundColor: "black",
         color: "#FFF",
       }}
     >

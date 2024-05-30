@@ -10,15 +10,14 @@ import {
   Link,
   TextField,
   Typography,
-  keyframes,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import { FormattedMessage } from "react-intl";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { GetMyTeamsAsync } from "../../slices/teamSlice";
 import { logInUserAsync, logOutUserAsync } from "../../slices/userSlice";
-import { FormattedMessage } from "react-intl";
 //roomreducer?? kanske? så att allt ändras automatiskt med färger beroende på var du är inne på?
 export default function SignIn() {
   const logInError = useAppSelector((state) => state.userSlice.logInError);
@@ -84,21 +83,14 @@ export default function SignIn() {
     }
   };
 
-  //göra dessa globala också sen - global stil?
-  const gradientAnimation = keyframes`
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  `;
-
   return (
     <div
       style={{
-        padding: isMobile ? 0 : "20px",
+        padding: isMobile ? 0 : "0px",
         height: "100vh",
         width: "100%",
-        background: "linear-gradient(45deg, #333333, #666666)",
-        animation: `${gradientAnimation} 10s ease infinite`,
+        backgroundImage:
+          "linear-gradient(315deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.9) 74%)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -184,7 +176,6 @@ export default function SignIn() {
           <FormattedMessage id="signIn5_button_signIn" />
         </Button>
         <Link href="forgotpassword" underline="hover">
-         
           <FormattedMessage id="signIn6_link_forgotP" />
         </Link>
 
@@ -195,7 +186,6 @@ export default function SignIn() {
             navigate("/createaccount");
           }}
         >
-        
           <FormattedMessage id="signIn7_create" />
         </Button>
       </div>

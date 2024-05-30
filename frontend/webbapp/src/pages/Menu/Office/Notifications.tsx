@@ -103,7 +103,7 @@ export default function Notifications() {
     if (activeTeam) {
       dispatch(GetAllTeamRequestsAsync(activeTeam.id));
     }
-  }, [activeTeam]);
+  }, [activeTeam, teamRequests]);
 
   useEffect(() => {
     if (surveys && profilesurveys) {
@@ -228,7 +228,7 @@ export default function Notifications() {
             </List>
           </Box>
         ) : null}
-        {teamRequests?.length == 0 && activeSurveys?.length == 0 ? (
+        {!teamRequests && !activeSurveys ? (
           <Box mt={0.5}>
             <Typography>Ingen oläst notifikation</Typography>
           </Box>

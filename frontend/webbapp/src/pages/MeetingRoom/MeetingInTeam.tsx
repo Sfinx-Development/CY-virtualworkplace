@@ -124,7 +124,9 @@ export default function MeetingInTeamsPage() {
       <Box sx={{ width: "90%" }}>
         {upcomingMeetings && upcomingMeetings.length > 0 ? (
           <>
-            <Typography variant="h5">Kommande möten</Typography>
+            <Typography variant="h5" sx={{ color: "white" }}>
+              Kommande möten
+            </Typography>
             {upcomingMeetings?.map((meeting: MeetingOccasionNoDate) => (
               <Card
                 key={meeting.id}
@@ -206,7 +208,9 @@ export default function MeetingInTeamsPage() {
 
         {pastMeetings && pastMeetings.length > 0 && (
           <Box>
-            <Typography variant="h5">Passerade möten</Typography>
+            <Typography variant="h5" sx={{ color: "white" }}>
+              Passerade möten
+            </Typography>
             {pastMeetings?.map((meeting: MeetingOccasionNoDate) => (
               <Card
                 key={meeting.id}

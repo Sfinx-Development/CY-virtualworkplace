@@ -1,6 +1,7 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { isMobile } from "../../../globalConstants";
 import { useAppDispatch } from "../../slices/store";
 import { createJoinAsync } from "../../slices/teamSlice";
 import { theme1 } from "../../theme";
@@ -59,7 +60,16 @@ export default function JoinTeam() {
   };
 
   return (
-    <Container sx={{ padding: "20px" }}>
+    <div
+      style={{
+        padding: isMobile ? 0 : "0px",
+        height: "100vh",
+        width: "100%",
+        backgroundColor: "rgba(0,0,0,0.9)",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
       <div
         style={{
           display: "flex",
@@ -67,10 +77,15 @@ export default function JoinTeam() {
           alignItems: "center",
           justifyContent: "center",
           marginTop: 20,
+          width: isMobile ? "100%" : "60%",
+          paddingTop: 0,
+          borderRadius: 4,
+          paddingBottom: 40,
+          backgroundColor: "rgba(255,255,255,0.9)",
         }}
       >
         {fieldError ? (
-          <Typography>Alla fält måste vara ifyllda</Typography>
+          <Typography color={"red"}>Alla fält måste vara ifyllda</Typography>
         ) : null}
         <TextField
           variant="outlined"
@@ -79,7 +94,10 @@ export default function JoinTeam() {
           onChange={(event) => setRole(event.target.value)}
           onKeyDown={handleRoleEnterPress}
         />
-        <Typography variant="h6" sx={{ marginTop: 5, textAlign: "center" }}>
+        <Typography
+          variant="h6"
+          sx={{ marginTop: 5, textAlign: "center", color: "black" }}
+        >
           Skriv in den kod som du får från ett befintligt team
         </Typography>
         <div
@@ -120,12 +138,12 @@ export default function JoinTeam() {
         <Button
           variant="contained"
           color="primary"
-          sx={{ paddingY: 2, paddingX: 4, color: "white" }}
+          sx={{ paddingY: 2, marginY: 2, paddingX: 4, color: "white" }}
           onClick={handleJoinTeam}
         >
           Gå med i Team
         </Button>
       </div>
-    </Container>
+    </div>
   );
 }

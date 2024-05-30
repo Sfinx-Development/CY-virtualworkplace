@@ -1,9 +1,12 @@
 import {
+  Alert,
+  AlertColor,
   Button,
   Card,
   Container,
   FormControlLabel,
   FormGroup,
+  Snackbar,
   Switch,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -22,10 +25,24 @@ export default function SettingsPage() {
   const [allCanCreateMeetings, setAllCanCreateMeetings] =
     useState<boolean>(false);
 
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
   useEffect(() => {
     dispatch(getActiveTeam());
     dispatch(getActiveProfile());
   }, []);
+
+  const handleSnackbarClose = (
+    event: React.SyntheticEvent,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
 
   useEffect(() => {
     if (activeTeam) {
@@ -47,6 +64,9 @@ export default function SettingsPage() {
         allCanCreateMeetings: allCanCreateMeetings,
       };
       dispatch(updateAsync(updatedTeam));
+      setSnackbarSeverity("success");
+      setSnackbarMessage("Ändringar sparade!");
+      setOpenSnackbar(true);
     }
   };
 
@@ -69,6 +89,15 @@ export default function SettingsPage() {
           gap: 2,
         }}
       >
+        <Snackbar open={openSnackbar} autoHideDuration={6000}>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={snackbarSeverity as AlertColor}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
         <Card sx={{ width: isMobile ? "100%" : "80%", padding: 1 }}>
           <FormGroup>
             <FormControlLabel

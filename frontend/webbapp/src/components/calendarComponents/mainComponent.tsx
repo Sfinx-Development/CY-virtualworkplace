@@ -59,6 +59,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
               display: "flex",
               alignItems: "center",
               paddingX: 2,
+              backgroundColor: "rgba(255,255,255,0.1)",
             }}
           >
             <span
@@ -67,7 +68,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
               style={{
                 cursor: "pointer",
                 fontSize: "32px",
-                color: "black",
+                color: "white",
                 marginRight: "20px",
               }}
             >
@@ -81,7 +82,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
                 margin: "10px",
                 fontFamily: "Arial, sans-serif",
                 fontWeight: "bold",
-                color: "#000",
+                color: "white",
               }}
             >
               {updateCalendarMonthLabel()}
@@ -93,7 +94,7 @@ const MainComponent: React.FC<MainComponentProps> = ({
               style={{
                 cursor: "pointer",
                 fontSize: "32px",
-                color: "black",
+                color: "white",
                 marginLeft: "20px",
               }}
             >
@@ -118,9 +119,14 @@ const MainComponent: React.FC<MainComponentProps> = ({
                 }}
               >
                 <Card
-                  sx={{ display: "flex", alignItems: "center", paddingX: 2 }}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    paddingX: 2,
+                    backgroundColor: "rgba(255,255,255,0.1)",
+                  }}
                 >
-                  <Typography>{day}</Typography>
+                  <Typography sx={{ color: "white" }}>{day}</Typography>
                 </Card>
               </th>
             ))}

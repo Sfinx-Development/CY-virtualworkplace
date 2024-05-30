@@ -1,4 +1,4 @@
-import { Button, Container, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isMobile } from "../../../globalConstants";
@@ -78,12 +78,28 @@ export default function CreateUpdate() {
   };
 
   return (
-    <Container sx={{ padding: "20px" }}>
+    <div
+      style={{
+        position: "relative",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "rgba(0, 0, 0, 0.9)",
+        margin: 0,
+        flex: 1,
+        alignItems: "center",
+        width: "100%",
+      }}
+    >
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          backgroundColor: "rgba(255,255,255,0.9)",
+          borderRadius: 4,
+          padding: 40,
+          marginTop: 2,
         }}
       >
         {fieldError && (
@@ -167,6 +183,6 @@ export default function CreateUpdate() {
           Spara
         </Button>
       </div>
-    </Container>
+    </div>
   );
 }

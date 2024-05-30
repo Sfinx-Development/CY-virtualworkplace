@@ -261,7 +261,7 @@ export default function Menu() {
           </Box>
         </Container>
 
-        <Container>
+        <Container sx={{ marginTop: 8 }}>
           <Box
             sx={{
               display: "flex",
@@ -282,7 +282,7 @@ export default function Menu() {
             />
 
             <NavButtonCard
-              imageUrl="https://i.imgur.com/PeKAt1b.png"
+              imageUrl="https://i.imgur.com/7caeH2X.png"
               navigationPage="/meetingroom"
               title="Mötesrum"
               borderColor={theme1.palette.room.main}
@@ -326,7 +326,6 @@ export default function Menu() {
             />
           </Box>
         </Container>
-
       </div>
     </section>
   );

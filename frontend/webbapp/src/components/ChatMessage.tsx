@@ -38,7 +38,7 @@ export default function ChatMessage(props: ChatMessageProps) {
         display: "flex",
         flexDirection: "column",
         backgroundColor:
-          props.message.profileId == activeProfile?.id ? "#f4f4f4" : "white",
+          props.message.profileId == activeProfile?.id ? "#CCCCCC" : "#EEEEEE",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between" }}></div>

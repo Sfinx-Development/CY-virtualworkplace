@@ -6,6 +6,7 @@ import FlexNavcard from "../../../components/FlexNavcard";
 import { getActiveProfile } from "../../../slices/profileSlice";
 import { useAppDispatch, useAppSelector } from "../../../slices/store";
 import { getActiveTeam } from "../../../slices/teamSlice";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export default function Office() {
   const dispatch = useAppDispatch();
@@ -89,11 +90,12 @@ export default function Office() {
             navigationPage="information"
             title="Min info"
             icon={
-              <img
-                src="https://i.imgur.com/6YGqDBk.png"
-                alt="information icon"
-                style={{ width: 40, height: 40 }}
-              />
+              // <img
+              //   src="https://i.imgur.com/6YGqDBk.png"
+              //   alt="information icon"
+              //   style={{ width: 40, height: 40 }}
+              // />
+              <SettingsIcon />
             }
             backgroundColor="#fbe3b4"
           />

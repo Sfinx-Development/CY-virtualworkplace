@@ -97,6 +97,7 @@ export default function CreateMeetingPage() {
         display: "flex",
         justifyContent: "center",
         backgroundColor: "rgba(255, 255, 255, 0.9)",
+        // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
       }}
     >
       <div
@@ -121,7 +122,10 @@ export default function CreateMeetingPage() {
             value={newMeetingName}
             onChange={(e) => setNewMeetingName(e.target.value)}
             variant="outlined"
-            sx={{ width: "250px", marginTop: 2 }}
+            sx={{
+              width: "250px",
+              marginTop: 2,
+            }}
           />
           <TextField
             label="Beskrivning"

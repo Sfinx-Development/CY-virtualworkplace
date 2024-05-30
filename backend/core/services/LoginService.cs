@@ -84,8 +84,7 @@ namespace core
             }
             catch (FormatException ex)
             {
-                Console.WriteLine($"error converting Base64 string: {ex.Message}");
-                return null;
+                throw new FormatException();
             }
         }
     }
